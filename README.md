@@ -1,0 +1,2 @@
+# MemoBom
+Daily note
