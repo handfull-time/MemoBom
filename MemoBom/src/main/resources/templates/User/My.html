@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{Common/LayoutBase}">
+	 
+<th:block layout:fragment="title">제목</th:block>
+
+<th:block layout:fragment="css">
+	<style>
+		
+	</style>
+</th:block>
+	 
+<th:block layout:fragment="header"></th:block>
+	 
+<th:block layout:fragment="content">
+  <div class="pt-4 space-y-4">
+    <div class="flex items-center justify-between">
+      <h2 class="font-semibold">나의 개인 화면</h2>
+      <a th:href="@{/Memo/Board.html}" class="text-sm">메인으로</a>
+    </div>
+
+    <!--<div class="border rounded-xl p-4 flex items-center gap-3">
+      <img class="w-12 h-12 rounded-full" th:src="${user.profileImg} ?: @{/images/profile-placeholder.svg}" alt="profile" />
+      <div class="flex-1">
+        <div class="font-semibold" th:text="${user.nickname}">사용자 별명</div>
+        <div class="text-xs text-slate-500">회원 정보 관리</div>
+      </div>
+      <label class="text-sm border rounded-lg px-3 py-2 cursor-pointer">
+        아이콘 변경
+        <input id="profileFile" type="file" accept="image/*" class="hidden" />
+      </label>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 text-sm">
+      <a class="border rounded-xl p-3" th:href="@{/Board/List.html(type='write')}">작성글 <span class="text-slate-500" th:text="${stats.write}">20</span></a>
+      <a class="border rounded-xl p-3" th:href="@{/Board/List.html(type='comment')}">댓글수 <span class="text-slate-500" th:text="${stats.comment}">15</span></a>
+      <a class="border rounded-xl p-3" th:href="@{/Board/List.html(type='emotion')}">이모션 <span class="text-slate-500" th:text="${stats.emotion}">11</span></a>
+      <a class="border rounded-xl p-3" th:href="@{/Board/List.html(type='scrap')}">스크랩 <span class="text-slate-500" th:text="${stats.scrap}">2</span></a>
+    </div>
+
+    <div class="space-y-2">
+      <button class="w-full h-11 rounded-xl border" type="button">별명 수정</button>
+      <button class="w-full h-11 rounded-xl border" type="button">비밀번호 수정</button>
+    </div>
+	-->
+  </div>
+</th:block>
+
+<th:block layout:fragment="footer">
+	바닥
+</th:block>
+
+<th:block layout:fragment="script">
+	script
+</th:block>
+</html>

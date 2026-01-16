@@ -1,0 +1,21 @@
+<div xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      class="modal-container bg-white rounded-lg shadow-lg relative"
+     role="dialog" aria-modal="true" style="width:auto; max-height: calc(100vh - 2rem);">
+
+  <div class="modal-header bg-gray-700 text-white text-center p-3 cursor-move"
+       onmousedown="startDrag(event, this)">
+    <span class="font-bold"><th:block layout:fragment="modalTitle"/></span>
+    <button type="button" onclick="closePopup(this)" class="absolute top-2 right-2 text-white hover:text-gray-300 text-xl" aria-label="Close">❌</button>
+  </div>
+
+  <div class="modal-content p-4 overflow-y-auto max-h-[80vh]">
+    <th:block layout:fragment="modalContent"/>
+  </div>
+
+  <div class="modal-footer p-4 flex justify-end space-x-2">
+    <th:block layout:fragment="modalButton"/>
+  </div>
+  
+  <th:block layout:fragment="modalScript"/>
+</div>

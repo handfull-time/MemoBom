@@ -1,0 +1,38 @@
+package com.utime.memoBom.user.vo;
+
+import java.time.LocalDateTime;
+
+import com.utime.memoBom.common.vo.EJwtRole;
+
+import lombok.Data;
+
+/**
+ * 사용자 정보
+ */
+@Data
+public class UserVo {
+	/** 회원 번호 */
+	long userNo;
+	/** 생성일 */
+	LocalDateTime regDate;
+	/** 수정일 */
+	LocalDateTime updateDate;
+	/** 사용 여부 */
+	boolean enabled;
+	/** 권한 */
+	EJwtRole role;
+	/** 가입 경로 */
+	String provider;
+	/** id */
+	String id;
+	/** 사용자 email */
+	String email;
+	/** 닉네임 */
+	String nickname;
+	/** 비고 */
+	String note;
+	/** 이미지 URL */
+	String profileUrl;
+//	/** OAuth access token */
+//	String socialToken;
+}

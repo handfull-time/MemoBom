@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mobile Template</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    /* 스크롤바 숨기기 유틸리티 클래스 */
+    .scrollbar-hide {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-slate-900">
+
+  <div class="max-w-md mx-auto h-dvh flex flex-col bg-white shadow-lg overflow-hidden relative">
+
+    <header class="h-14 shrink-0 flex items-center justify-between px-4 border-b border-gray-200 bg-white z-10">
+      <button type="button" class="p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+
+      <h1 class="font-bold text-lg">내용내용</h1>
+
+      <button type="button" class="p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto scrollbar-hide p-6 bg-slate-50">
+      <div class="space-y-6">
+        <h2 class="text-2xl font-bold leading-tight">
+          글 길어 지면 <span class="text-red-500 underline decoration-wavy">스크롤바는</span> 안보이지만 <br/>
+          스크롤 되도록 함.
+        </h2>
+        
+        <p class="text-gray-600 leading-relaxed">
+          여기에 아주 긴 텍스트가 들어갑니다. 스크롤 동작을 확인하기 위한 더미 텍스트입니다. 
+          상단 헤더와 하단 푸터는 고정된 상태로 유지되며, 이 영역만 부드럽게 스크롤됩니다.
+          모바일 환경에서의 사용자 경험(UX)을 위해 스크롤바는 시각적으로 숨겨져 있습니다.
+        </p>
+        
+        <div class="h-40 bg-blue-100 rounded-lg flex items-center justify-center text-blue-500 font-medium">
+          이미지 영역 예시 1
+        </div>
+        
+        <p class="text-gray-600 leading-relaxed">
+          중간 내용이 계속 추가되어도 레이아웃은 깨지지 않습니다. Flexbox의 flex-col과 flex-1 속성을 사용하여 
+          화면 높이에 맞게 꽉 채워집니다.
+        </p>
+
+        <div class="h-40 bg-purple-100 rounded-lg flex items-center justify-center text-purple-500 font-medium">
+          이미지 영역 예시 2
+        </div>
+
+        <p class="text-gray-600 leading-relaxed">
+           스크롤이 끝까지 내려가는지 확인해 보세요. 하단 고정 영역 바로 위까지 내용이 표시됩니다.
+           Bottom Bar가 컨텐츠를 가리지 않도록 padding-bottom을 별도로 줄 필요가 없습니다. 
+           (Flex 구조 덕분)
+        </p>
+        
+        <div class="h-40 bg-green-100 rounded-lg flex items-center justify-center text-green-500 font-medium">
+          이미지 영역 예시 3
+        </div>
+        
+         <p class="text-gray-600 leading-relaxed">
+           마지막 내용입니다.
+        </p>
+      </div>
+    </main>
+
+    <footer class="h-14 shrink-0 flex items-center justify-center border-t border-gray-200 bg-white z-10">
+      <span class="font-medium text-gray-700">바닥내용</span>
+    </footer>
+
+  </div>
+</body>
+</html>

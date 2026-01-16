@@ -1,0 +1,55 @@
+server:
+  servlet:
+    context-path: /${appName}
+  tomcat:
+    accept-count: 50
+  compression:
+    enabled: true
+    min-response-size: 2048
+  forward-headers-strategy: native  # https로 수신 처리
+    
+spring:
+  application:
+    name: ${appName}
+  datasource:
+    url: jdbc:log4jdbc:h2:file:${h2.path}/${appName}.h2;AUTO_SERVER=TRUE
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    username: ${h2.username}
+    password: ${h2.password}
+    dbcp2:
+      validation-query: SELECT 1
+    hikari:
+      auto-commit: false
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 120000
+      max-lifetime: 600000
+      connection-timeout: 15000
+  h2:
+    console:
+      enabled: true
+      path: /DbConsoleH2
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+#  security:
+#    user:
+#      name: ${security.name}
+#      password: ${security.password}
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  cache.type: caffeine
+  profiles:
+    include: oauth  # application-oauth.properties 파일을 로드함
+
+app:
+  push:
+    vapid:
+      subject: "mailto:utimezgd@gmail.com" # 관리자 연락처 필수
+      public-key: ${env.push.public}
+      private-key: ${env.push.private}
+
+# 캐시
+caffeine.spec: maximumSize=100,expireAfterAccess=7d

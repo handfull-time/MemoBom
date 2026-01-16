@@ -1,0 +1,109 @@
+<script xmlns:th="http://www.thymeleaf.org" th:inline="javascript" th:fragment="PwaPushScript">
+
+	/* ===============================
+	   PWA Push
+	   =============================== */
+
+	/* Service Worker 등록 */
+	async function registerServiceWorker() {
+		if (!("serviceWorker" in navigator)) {
+			console.warn("Service Worker not supported");
+			return null;
+		}
+
+		/* 🔹 sw.js 경로를 Thymeleaf가 자동 계산 */
+		const SW_URL = /*[[@{/sw.js}]]*/ "/sw.js";
+
+		const reg = await navigator.serviceWorker.register(SW_URL, {
+			scope: SW_URL.substring(0, SW_URL.lastIndexOf("/") + 1)
+		});
+
+		return reg;
+	}
+
+	/* 알림 권한 요청 */
+	async function requestNotificationPermission() {
+		if (!("Notification" in window)) return "denied";
+		return await Notification.requestPermission();
+	}
+	
+	async function loadVapidPublicKey() {
+
+	  const res = await fetch(/*[[@{/Push/vapid-public-key}]]*/ "/api/push/vapid-public-key");
+	  if (!res.ok) throw new Error("Failed to load vapid public key");
+
+	  return await res.text(); // 또는 res.json().key
+	}
+
+	/* 푸시 구독 + 서버 저장 */
+	async function subscribePush() {
+		/* 🔹 서버에서 내려준 VAPID Public Key */
+		const vapidPublicKey = loadVapidPublicKey();
+
+		if (!vapidPublicKey) {
+			console.error("VAPID public key not provided");
+			return {ok: false};
+		}
+
+		const permission = await requestNotificationPermission();
+		if (permission !== "granted") {
+			return {ok: false, reason: "permission_denied"};
+		}
+		
+		const reg = await navigator.serviceWorker.ready;
+
+		let subscription = await reg.pushManager.getSubscription();
+		if (!subscription) {
+			subscription = await reg.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+			});
+		}
+
+		/* 🔹 구독 저장 API (Security 인증 필요) */
+		const subscribeApi = /*[[@{/Push/subscription}]]*/ "/Push/subscription";
+		
+		/* 서버에 구독 정보 저장 (로그인 사용자) */
+		await fetch(subscribeApi, {
+			method: "POST",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify(subscription)
+		});
+
+		return {ok: true};
+	}
+
+	/* Base64URL → Uint8Array */
+	function urlBase64ToUint8Array(base64UrlString) {
+		const padding = "=".repeat((4 - (base64UrlString.length % 4)) % 4);
+		const base64 = (base64UrlString + padding)
+			.replace(/-/g, "+")
+			.replace(/_/g, "/");
+
+		const raw = atob(base64);
+		const output = new Uint8Array(raw.length);
+
+		for (let i = 0; i < raw.length; i++) {
+			output[i] = raw.charCodeAt(i);
+		}
+		return output;
+	}
+
+	/* 🔔 버튼에서 호출할 함수 */
+	async function enablePush() {
+		try {
+			await registerServiceWorker();
+			const result = await subscribePush();
+
+			if (result.ok) {
+				await alertP("푸시 알림이 활성화되었습니다.");
+			} else {
+				await alertP("푸시 알림 권한이 거부되었습니다.");
+			}
+		} catch (e) {
+			console.error(e);
+			await alertP("푸시 설정 중 오류가 발생했습니다.");
+		}
+	}
+
+</script>

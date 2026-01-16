@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
+<mapper namespace="com.utime.memoBom.common.mapper.KeyValueMapper">
+
+	<!-- Key-Value 테이블 생성 -->
+	<insert id="createKayValueTable">
+        CREATE TABLE APP_KV (
+			K VARCHAR(128) PRIMARY KEY,
+			V CLOB,
+			EXPIRE_AT TIMESTAMP,
+			UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+    </insert>
+	
+	<!--키가 있나?-->
+	<select id="containKey" parameterType="map" resultType="boolean">
+		SELECT 
+			CASE COUNT(1) 
+	   			WHEN 1 THEN 1
+				ELSE 0
+	   		END AS RES
+	   	FROM APP_KV
+	   	WHERE K = #{key}
+          AND (EXPIRE_AT IS NULL OR EXPIRE_AT > CURRENT_TIMESTAMP)
+	</select>
+	
+	<!-- 값 조회 -->
+	<select id="getValue" parameterType="map" resultType="string">
+        SELECT V
+        FROM APP_KV
+        WHERE K = #{key}
+          AND (EXPIRE_AT IS NULL OR EXPIRE_AT > CURRENT_TIMESTAMP)
+    </select>
+
+    <!-- 값 설정 -->
+	<update id="setValue" parameterType="map">
+		MERGE INTO APP_KV TARGET
+		USING (
+		  SELECT
+		    CAST(#{key} AS VARCHAR(128)) AS K,
+		    CAST(#{value} AS CLOB) AS V,
+		    CASE
+		      WHEN #{expireMinute} > 0
+		        THEN DATEADD('MINUTE', #{expireMinute}, CURRENT_TIMESTAMP)
+		      ELSE NULL
+		    END AS EXPIRE_AT
+		) SOURCE
+		ON TARGET.K = SOURCE.K
+		WHEN MATCHED THEN
+		  UPDATE SET
+		    V = SOURCE.V,
+		    EXPIRE_AT = SOURCE.EXPIRE_AT,
+		    UPDATED_AT = CURRENT_TIMESTAMP
+		WHEN NOT MATCHED THEN
+		  INSERT (K, V, EXPIRE_AT, UPDATED_AT)
+		  VALUES (SOURCE.K, SOURCE.V, SOURCE.EXPIRE_AT, CURRENT_TIMESTAMP);
+    </update>
+
+    <!-- 키 삭제 -->
+	<delete id="deleteKey" parameterType="map">
+        DELETE FROM APP_KV
+        WHERE K = #{key}
+    </delete>	
+
+	<!-- 키 만료 시간 설정 -->
+	<update id="setExpire" parameterType="map">
+        UPDATE APP_KV
+        SET EXPIRE_AT = CASE
+                          WHEN #{expireMinute} > 0
+                            THEN DATEADD('MINUTE', #{expireMinute}, CURRENT_TIMESTAMP)
+                          ELSE NULL
+                        END,
+            UPDATED_AT = CURRENT_TIMESTAMP
+        WHERE K = #{key}
+    </update>
+
+	<!-- 키 만료 시간 조회 -->
+    <select id="getExpire" parameterType="map" resultType="int">
+        SELECT 
+            CASE 
+                WHEN EXPIRE_AT IS NULL THEN -1
+                ELSE DATEDIFF('MINUTE', CURRENT_TIMESTAMP, EXPIRE_AT)
+            END AS MINUTES_REMAINING
+        FROM APP_KV
+        WHERE K = #{key}
+    </select>
+
+	<!-- 만료된 키 삭제 -->
+    <delete id="removeExpire">
+        DELETE FROM APP_KV WHERE EXPIRE_AT IS NOT NULL AND EXPIRE_AT <![CDATA[ <= ]]> CURRENT_TIMESTAMP
+    </delete>
+    
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
+<mapper namespace="com.utime.memoBom.common.mapper.CommonMapper">
+
+	<!-- 테이블 이름 일치 여부 -->
+	<select id="existTable" parameterType="map" resultType="boolean">
+		SELECT 
+			CASE COUNT(1) 
+	   			WHEN 1 THEN 1
+				ELSE 0
+	   		END AS RES
+	   	FROM INFORMATION_SCHEMA.TABLES
+	   	WHERE 1=1
+	   		AND TABLE_NAME = #{tableName}
+	   		AND TABLE_SCHEMA = 'PUBLIC'
+	</select>
+	
+	<!-- 인덱스 생성 -->
+	<update id="createIndex" parameterType="map">
+		CREATE INDEX ${indexName} ON ${tableName} ( ${columns} )
+	</update>
+	
+	<update id="createUniqueIndex" parameterType="map">
+		CREATE UNIQUE INDEX ${indexName} ON ${tableName} ( ${columns} )
+	</update>
+
+	<!-- 테이블 삭제 -->
+	<update id="dropTable" parameterType="map">
+		DROP TABLE ${tableName}
+	</update>
+	
+	<!-- 바이너리 데이터 VO MAP -->
+	<resultMap id="BinResultVoMap" type="com.utime.memoBom.common.vo.BinResultVo">
+		<result column="BIN_DATA" property="binary" jdbcType="VARBINARY" />
+		<result column="LAST_DATE" property="lastDate" />
+	</resultMap>
+	
+	<!-- 테이블 컬럼 정보 조회 -->
+    <select id="getColumnInfo" resultType="java.util.Map">
+        SELECT 
+        	COLUMN_NAME, DATA_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = #{tableName}
+    </select>
+	
+	<!-- 컬럼 제거 -->
+    <update id="dropColumn">
+        ALTER TABLE ${tableName} DROP COLUMN ${columnName}
+    </update>
+
+	<!-- 컬럼 추가 -->
+    <update id="addColumn">
+        ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}
+        <if test="columnDefault != null">
+            DEFAULT #{columnDefault}
+        </if>
+        <if test="isNullable != null and !isNullable">
+            NOT NULL
+        </if>
+    </update>
+    
+</mapper>

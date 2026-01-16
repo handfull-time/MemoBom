@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+    <Properties>
+        <Property name="LOG_PATH">/var/log/MemoBom</Property>
+        <Property name="LOG_FILE_NAME">memoBom</Property>
+        
+        <Property name="LOG_DATEFORMAT_PATTERN">{yyyy-MM-dd HH:mm:ss.SSS}</Property>
+        
+        <Property name="CONSOLE_LOG_FORMAT">%d${LOG_DATEFORMAT_PATTERN} %highlight{%-5p}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} [%15.15t] %style{%-40.40C{1.}.%M:%L}{cyan} : %n%m%n%wEx</Property>
+
+        <Property name="FILE_LOG_FORMAT">%d${LOG_DATEFORMAT_PATTERN} %-5p [%15.15t] %-40.40C{1.}.%M:%L : %n%m%n%wEx</Property>
+    </Properties>
+    
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout disableAnsi="false" pattern="${CONSOLE_LOG_FORMAT}"/>
+        </Console>
+
+        <RollingFile name="File"
+            fileName="${LOG_PATH}/${LOG_FILE_NAME}.log"
+            filePattern="${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyyMMdd}.log">
+            
+            <PatternLayout pattern="${FILE_LOG_FORMAT}" />
+            
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_PATH}">
+                    <IfFileName glob="*.log" />
+                    <IfLastModified age="100d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="log4jdbc.log4j2" level="OFF" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+        
+        <Logger name="jdbc.sqltiming" level="INFO" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Logger>
+        
+        <Logger name="jdbc.sqlonly" level="OFF" />
+        <Logger name="jdbc.audit" level="OFF" />
+        <Logger name="jdbc.resultset" level="OFF" />
+        <Logger name="jdbc.resultsettable" level="OFF" />
+        <Logger name="jdbc.connection" level="OFF" />
+        
+        <Root level="INFO">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,13 @@
+{
+  "name": "MemoBom",
+  "short_name": "Bom",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "icons": [
+    { "src": "/MemoBom/images/favicon/favicon_128.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/MemoBom/images/favicon/favicon_128.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
