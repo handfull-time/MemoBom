@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TopicController {
 	
+	// Mosaic (조각보)로 바꾸자.
 	final TopicService topicServce;
 	
 	/**

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
+
+<th:block layout:fragment="title">오류</th:block>
+
+<th:block layout:fragment="css">
+	<style>
+
+	</style>
+</th:block>
+
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header_Error}"></div>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="p-4 text-center">
+		<p class="text-sm font-semibold mb-4">[[${res.code}]]</p>
+        <p class="text-lg font-semibold mb-4">[[${res.message}]]</p>
+        <button
+            type="button"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onclick="history.back()">
+            확인
+        </button>
+    </div>
+</th:block>
+
+<th:block layout:fragment="footer">
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+</th:block>
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+
+	</script>
+</th:block>
+
+</html>

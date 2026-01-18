@@ -21,6 +21,7 @@
 </th:block>
 
 <th:block layout:fragment="script">
+	
 	<script th:inline="javascript">
 		function onClickWrite() {
             const content = document.getElementById('content').value.trim();
@@ -30,12 +31,28 @@
             }
 			
 			const sendObj = {
-				topicUid: "",
+				topicUid: /*[[${topic.uid}]]*/ null,
                 content: content
 			}
-
-            showLoadingOverlay();
 			
+			const url = /*[[@{/Board/Write.json}]]*/ '/Board/Write.json';
+			
+			const res = apiPost("/Board/Write.json", sendObj);
+			
+                .then(response => {
+                    if (response.code === "0") {
+                        // 성공 → 메인부터 시작
+                        alertP('작은 조각이 작성되었습니다.').then(() => {
+                            location.replace("/");
+                        });
+                    } else {
+                        MyToast.show(response.message || "저장에 실패했습니다.");
+                    }
+                })
+                .catch(() => {
+                    MyToast.show(response.message || '작은 조각 작성에 실패했습니다.');
+                })
+
 			
 
 						api.post("/Board/Write.json", {
