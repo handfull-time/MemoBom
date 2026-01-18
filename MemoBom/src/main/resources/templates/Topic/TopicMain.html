@@ -5,7 +5,7 @@
 <th:block layout:fragment="title">Topic</th:block>
 
 <th:block layout:fragment="header">
-	<div th:replace="~{Fragments/Header :: Header_Search('Topic')}"></div>
+	<div th:replace="~{Fragments/Header :: Header_Search('🔙', 'Topic', '◻️')}"></div>
 </th:block>
 
 <th:block layout:fragment="content">
@@ -390,7 +390,11 @@
 			const url = /*[[@{/Topic/Topic.html}]]*/ "/Topic/Topic.html";
 			location.href = url + "?keyword=" + encodeURIComponent(keyword);
 		}
-	</script>
+		
+		function functionLeft(){
+			history.back();
+		}
+		</script>
 </th:block>
 
 </html>

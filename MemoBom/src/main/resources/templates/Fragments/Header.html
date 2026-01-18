@@ -10,14 +10,14 @@
 		<div class="justify-self-end w-8 h-6"></div>
 	</div>
 </th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_CreateTopic">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Back(title)">
 	<div class="grid grid-cols-3 items-center h-full px-2">
 		<button type="button" aria-label="back" onclick="history.back()"
 			class="justify-self-start text-2xl leading-none">
 			🔙
 		</button>
 		<h1 class="justify-self-center text-base font-semibold leading-none">
-			Topic [[${topic.uid==null? 'New':' ' + topic.name}]]
+			[[${title}]]  
 		</h1>
 		<div class="justify-self-end w-8 h-6"></div>
 	</div>
@@ -34,18 +34,18 @@
 		<div class="justify-self-end w-8 h-6"></div>
 	</div>
 </th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Search(title)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Search(leftTitle, title, rightTitle)">
 	<div id="headerSearchRoot" class="h-full px-2 flex items-center">
 
 
 		<div class="shrink-0 flex items-center">
 			<!-- Left button -->
-			<button type="button" aria-label="left" onclick="history.back()"
+			<button type="button" aria-label="left" onclick="functionLeft()"
 				class="shrink-0 w-10 h-10 flex items-center justify-center text-2xl leading-none">
-				🔙
+				[[${leftTitle}]]
 			</button>
 
-			<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 2칸 = w-20 -->
+			<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 1칸 = w-10 -->
 			<div data-role="left-spacer" class="w-10"></div>
 		</div>
 		<!-- Center area (Title / Search input) -->
@@ -76,7 +76,7 @@
 			</button>
 			<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
 				class="w-10 h-10 flex items-center justify-center text-2xl leading-none">
-				◻️
+				[[${rightTitle}]]
 			</button>
 		</div>
 	</div>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
+
+<th:block layout:fragment="title">작은 조각</th:block>
+
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header_Back('작은 조각')}"></div><!--편린-->
+</th:block>
+
+<th:block layout:fragment="content">
+	<textarea
+		id="content"
+		class="w-full h-full resize-none outline-none bg-slate-50 p-2 text-base"
+		placeholder="글을 작성해 주세요."></textarea>
+</th:block>
+
+
+<th:block layout:fragment="footer">
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+</th:block>
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		function onClickWrite() {
+            const content = document.getElementById('content').value.trim();
+            if (!content || content.length === 0) {
+                alertP('내용을 입력해 주세요.');
+                return;
+            }
+			
+			const sendObj = {
+				topicUid: "",
+                content: content
+			}
+
+            showLoadingOverlay();
+			
+			
+
+						api.post("/Board/Write.json", {
+							topicUid: "",
+							content: content
+						}).then(res => {
+
+							if (res.code === "0") {
+								// 성공 → 메인부터 시작
+								'작은 조각이 작성되었습니다.');
+								location.replace("/");
+							} else {
+								MyToast.show(res.message || "저장에 실패했습니다.");
+							}
+
+						}).catch(() => {
+							MyToast.show(response.message || '작은 조각 작성에 실패했습니다.');
+						});
+
+                .finally(() => {
+                    hideLoadingOverlay();
+                });
+        }
+	</script>
+</th:block>
+
+</html>
