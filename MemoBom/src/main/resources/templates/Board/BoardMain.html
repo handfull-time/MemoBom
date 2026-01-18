@@ -1,45 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
 
-<head>
-	<title>MemoBom</title>
-	<meta charset="UTF-8">
+<th:block layout:fragment="title">Memo</th:block>
 
-	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header}"></div>
+</th:block>
 
-	<script type="text/javascript" th:src="@{/js/tailwind/tailwind.min.js}"></script>
-	<th:script th:replace="~{Common/Script :: CommonScript}" />
-	<!-- toast script -->
-	<script type="text/javascript" th:src="@{/js/MyToast.js}"></script>
-	<!-- <a href="https://www.untitledui.com/resources/file-icons" title="file icons">파일 확장자 아이콘 참조</a> -->
-	<style>
-	</style>
+<th:block layout:fragment="content">
+Board
+</th:block>
 
-</head>
+<th:block layout:fragment="footer">
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+</th:block>
 
-<body class="h-screen flex flex-col">
-	<!-- Header -->
-	<div th:replace="~{Board/Header :: header}" class="flex-none"></div>
-
-	<!-- Main Content: Directory Tree + File List -->
-	<div class="flex-1 flex">
-		MemoBom
-	</div>
-
-	<!-- Footer -->
-	<div th:replace="~{Board/Footer :: footer}" class="flex-none border-t border-gray-300 text-sm px-2 py-1"></div>
-
-	<!-- Optional: Add a simple resizable script -->
+<th:block layout:fragment="script">
 	<script th:inline="javascript">
 	</script>
-
-	<!-- 로딩 오버레이 -->
-	<div th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></div>
-	<!-- alert confirm prompt -->
-	<div th:replace="~{Common/AlertView :: AlertView}"></div>
-	<!-- 모달창 -->
-	<div th:replace="~{Common/ModalView :: ModalView}"></div>
-
-</body>
+</th:block>
 
 </html>

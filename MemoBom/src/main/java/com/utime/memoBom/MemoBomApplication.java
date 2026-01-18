@@ -263,8 +263,8 @@ google.client-secret=
 		
 		String configPath =  source.getProperty("spring.config.import");
 		configPath = configPath.substring("file:".length());
-		log.error("config file : {}", configPath );
-		log.error("port : {}", source.getProperty("port") );
+		log.info("config file : {}", configPath );
+		log.info("port : {}", source.getProperty("port") );
 		
 		final File config = new File( configPath );
 		if( ! config.exists() ) {

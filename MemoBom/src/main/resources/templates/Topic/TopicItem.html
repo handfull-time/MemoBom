@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
+
+<th:block layout:fragment="title">Create Topic</th:block>
+
+<th:block layout:fragment="css">
+	<style>
+
+	</style>
+</th:block>
+
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header_CreateTopic}"></div>
+</th:block>
+
+<th:block layout:fragment="content">
+
+	<div class="space-y-4">
+
+		<!-- hidden topicNo -->
+		<input type="hidden" id="topicNo" th:value="${topic?.topicNo}" />
+
+		<!-- Threads-like card -->
+		<div class="bg-white rounded-2xl border border-slate-200 p-4">
+			<!-- 상단: 이모지 + 이름 -->
+			<div class="flex items-start gap-3">
+				<!-- Emoji -->
+				<div class="shrink-0">
+					<label class="block text-xs text-slate-500 mb-1">이모지</label>
+					<input type="hidden" id="imogi" th:value="${topic?.imogi}" />
+					<button type="button" id="emojiBtn" class="w-12 h-12 rounded-xl border border-slate-200 text-xl"
+						th:text="${topic?.imogi ?: '😊'}">
+						😊
+					</button>
+
+					<emoji-picker id="emojiPicker" style="display:none; position:absolute;"></emoji-picker>
+				</div>
+
+				<!-- Name -->
+				<div class="flex-1">
+					<label class="block text-xs text-slate-500 mb-1">이름</label>
+					<div class="flex gap-2">
+						<input type="text" id="name" required th:value="${topic?.name}" maxlength="36"
+							placeholder="예: 아이디어"
+							class="flex-1 h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300" />
+						<button type="button" id="btnCheckName"
+							class="h-12 px-4 whitespace-nowrap rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold">
+							🔍
+						</button>
+					</div>
+
+					<!-- 상태 메시지 -->
+					<p id="nameStatus" class="mt-2 text-sm"></p>
+					<p class="mt-1 text-xs text-slate-400">저장 전 이름 중복 확인이 필요합니다.</p>
+				</div>
+			</div>
+
+			<!-- Description -->
+			<div class="mt-4">
+				<label class="block text-xs text-slate-500 mb-1">설명</label>
+				<textarea id="description" rows="4" maxlength="256" placeholder="이 토픽을 어떤 용도로 쓸지 간단히 적어주세요."
+					class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300 resize-none"
+					th:text="${topic?.description}"></textarea>
+			</div>
+
+			<!-- HashTag -->
+			<div class="mt-4">
+				<label class="block text-xs text-slate-500 mb-1">해시태그</label>
+				<input type="text" id="hashTag" maxlength="256" th:value="${topic?.hashTag}" placeholder="#내용 #아이디어 #회의"
+					class="w-full h-12 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-300" />
+				<p class="mt-1 text-xs text-slate-400">공백으로 구분 (예: #내용 #내용)</p>
+			</div>
+
+			<!-- Color -->
+			<div class="mt-4">
+				<!-- Color -->
+				<label class="block text-xs text-slate-500 mb-1">색상</label>
+
+				<div class="flex items-center gap-2">
+					<!-- 실제 값 저장용 (서버로 보낼 값) -->
+					<input type="hidden" id="color" th:value="${topic?.color}" />
+
+					<!-- 네이티브 컬러 다이얼로그 -->
+					<input type="color" id="colorPicker"
+						class="w-12 h-12 p-0 rounded-xl border border-slate-200 bg-white cursor-pointer" value="#64748b"
+						aria-label="색상 선택" />
+
+					<!-- 선택한 색상 텍스트 표시(읽기 전용) -->
+					<input type="text" id="colorText" readonly
+						class="flex-1 h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700"
+						placeholder="#RRGGBB" />
+
+					<!-- 미리보기(기존 유지 가능) -->
+					<div id="colorPreview" class="w-10 h-10 rounded-xl border border-slate-200"></div>
+				</div>
+
+				<p class="mt-1 text-xs text-slate-400">색상을 눌러 선택하세요.</p>
+			</div>
+			<!-- Emoji Set Type -->
+			<div class="mt-4">
+				<label class="block text-xs text-slate-500 mb-1">이모지 세트</label>
+				<div class="grid grid-cols-2 gap-2">
+					<!-- 감정형 -->
+					<button type="button" data-set="1" id="btnSetEmotion"
+						class="emoji-set-btn w-full rounded-2xl border border-slate-200 bg-white p-3 text-left hover:bg-slate-50">
+						<div class="flex items-center justify-between">
+							<div class="font-semibold text-slate-900 text-sm">감정형</div>
+							<span
+								class="set-check hidden text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white">선택</span>
+						</div>
+						<!--<div class="mt-1 text-xs text-slate-500">기쁨 · 보통 · 슬픔 · 화남 · 매우좋음</div>-->
+						<div class="mt-2 flex items-center gap-1 text-lg">
+							<span>😊</span><span>😐</span><span>😢</span><span>😠</span><span>🤩</span>
+						</div>
+					</button>
+
+					<!-- 반응형 -->
+					<button type="button" data-set="2" id="btnSetReaction"
+						class="emoji-set-btn w-full rounded-2xl border border-slate-200 bg-white p-3 text-left hover:bg-slate-50">
+						<div class="flex items-center justify-between">
+							<div class="font-semibold text-slate-900 text-sm">반응형</div>
+							<span
+								class="set-check hidden text-xs px-2 py-0.5 rounded-full bg-slate-900 text-white">선택</span>
+						</div>
+						<!--<div class="mt-1 text-xs text-slate-500">좋아요 · 공감 · 웃김 · 놀람 · 슬픔</div>-->
+						<div class="mt-2 flex items-center gap-1 text-lg">
+							<span>👍</span><span>❤️</span><span>😂</span><span>😮</span><span>😢</span>
+						</div>
+					</button>
+				</div>
+				<p class="mt-1 text-xs text-slate-400">토픽 성격에 맞는 반응 방식을 선택하세요.</p>
+			</div>
+			<div class="mt-4">
+				<!-- External toggle -->
+				<label class="block text-xs text-slate-500 mb-1">외부 공개</label>
+				<label
+					class="h-12 px-4 rounded-xl border border-slate-200 flex items-center justify-between cursor-pointer select-none">
+					<span class="text-sm text-slate-700">공개</span>
+					<input type="checkbox" id="external" th:checked="${topic?.external}"
+						class="h-5 w-5 accent-slate-900" />
+				</label>
+				<p class="mt-1 text-xs text-slate-400">체크 시 외부에 노출</p>
+			</div>
+		</div>
+
+		<!-- 글로벌 메시지 -->
+		<div id="globalMsg" class="hidden text-sm rounded-xl p-3 border"></div>
+
+		<!-- 버튼 -->
+		<div class="flex gap-2">
+			<button type="button" onclick="history.back()" class="flex-1 h-12 rounded-xl border border-slate-200 bg-slate-100
+		           text-slate-600 font-medium hover:bg-slate-200">
+				취소
+			</button>
+
+			<button type="button" id="btnSave" class="flex-1 h-12 rounded-xl
+		           bg-slate-900 text-slate-400 font-semibold
+		           enabled:hover:bg-slate-800
+		           disabled:bg-slate-300 disabled:text-slate-400">
+				저장
+			</button>
+		</div>
+	</div>
+</th:block>
+
+<th:block layout:fragment="footer">
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+</th:block>
+
+<th:block layout:fragment="script">
+
+	<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+	<script>
+		const btn = document.getElementById('emojiBtn');
+		const picker = document.getElementById('emojiPicker');
+		const input = document.getElementById('imogi');
+
+		btn.addEventListener('click', (e) => {
+			picker.style.display = 'block';
+			picker.style.top = e.target.getBoundingClientRect().bottom + 'px';
+			picker.style.left = e.target.getBoundingClientRect().left + 'px';
+		});
+
+		picker.addEventListener('emoji-click', event => {
+			input.value = event.detail.unicode;
+			btn.textContent = event.detail.unicode;
+			picker.style.display = 'none';
+		});
+	</script>
+
+
+	<script th:inline="javascript">
+
+		(() => {
+			const $ = (id) => document.getElementById(id);
+
+			const elTopicNo = $("topicNo");
+			const elImogi = $("imogi");
+			const elName = $("name");
+			const elHashTag = $("hashTag");
+			const elDesc = $("description");
+			const elColor = $("color");
+			const elExternal = $("external");
+			const elColorPicker = $("colorPicker");
+			const elColorText = $("colorText");
+
+			const elNameStatus = $("nameStatus");
+			const elGlobalMsg = $("globalMsg");
+			const elColorPreview = $("colorPreview");
+
+			const btnCheckName = $("btnCheckName");
+			const btnSave = $("btnSave");
+			const btnSetEmotion = $("btnSetEmotion");
+			const btnSetReaction = $("btnSetReaction");
+			// ---- emoji set selection ----
+			function setEmojiSetType(v) {
+				const n = v;
+				elEmojiSetType = n;
+
+				// reset
+				[btnSetEmotion, btnSetReaction].forEach((b) => {
+					b.classList.remove("ring-2", "ring-slate-900", "border-slate-900");
+					const ck = b.querySelector(".set-check");
+					if (ck) ck.classList.add("hidden");
+				});
+
+				const active = (n === 'REACTION') ? btnSetReaction : btnSetEmotion;
+				active.classList.add("ring-2", "ring-slate-900", "border-slate-900");
+				const ck = active.querySelector(".set-check");
+				if (ck) ck.classList.remove("hidden");
+			}
+
+			btnSetEmotion.addEventListener("click", () => setEmojiSetType('EMOTION'));
+			btnSetReaction.addEventListener("click", () => setEmojiSetType('REACTION'));
+
+			// 초기값 적용 (없으면 1)
+			let elEmojiSetType = /*[[${topic.emojiSetType}]]*/ 'EMOTION'; 
+			setEmojiSetType(elEmojiSetType);
+
+			
+
+			// ---- UI helpers ----
+			function showGlobal(type, text) {
+				elGlobalMsg.classList.remove("hidden");
+				elGlobalMsg.textContent = text;
+
+				// reset classes
+				elGlobalMsg.classList.remove(
+					"bg-red-50", "border-red-200", "text-red-700",
+					"bg-green-50", "border-green-200", "text-green-700",
+					"bg-slate-50", "border-slate-200", "text-slate-700"
+				);
+
+				if (type === "ok") elGlobalMsg.classList.add("bg-green-50", "border-green-200", "text-green-700");
+				else if (type === "err") elGlobalMsg.classList.add("bg-red-50", "border-red-200", "text-red-700");
+				else elGlobalMsg.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
+			}
+
+			function clearGlobal() {
+				elGlobalMsg.classList.add("hidden");
+				elGlobalMsg.textContent = "";
+			}
+
+			function setNameStatus(type, text) {
+				elNameStatus.textContent = text || "";
+				elNameStatus.className = "mt-2 text-sm";
+				if (type === "ok") elNameStatus.classList.add("text-green-700");
+				else if (type === "err") elNameStatus.classList.add("text-red-700");
+				else elNameStatus.classList.add("text-slate-500");
+			}
+
+			function isHexColor(v) {
+				return /^#[0-9a-fA-F]{6}$/.test((v || "").trim());
+			}
+
+			function updateColorPreview() {
+				const v = (elColor.value || "").trim();
+				if (isHexColor(v)) elColorPreview.style.background = v;
+				else elColorPreview.style.background = "";
+			}
+
+			function normalizeHex(v) {
+				const s = (v || "").trim();
+				return /^#[0-9a-fA-F]{6}$/.test(s) ? s : "";
+			}
+
+			function applyColor(hex) {
+				// hidden 값
+				elColor.value = hex;
+
+				// text 표시
+				elColorText.value = hex;
+
+				// preview
+				elColorPreview.style.background = hex || "";
+			}
+
+			function initColor() {
+				// 서버에서 내려온 값이 #RRGGBB면 그대로, 아니면 기본값 지정
+				const fromServer = normalizeHex(elColor.value);
+				const initial = fromServer || "#64748b";
+
+				elColorPicker.value = initial;
+				applyColor(initial);
+			}
+
+			elColorPicker.addEventListener("input", () => {
+				applyColor(elColorPicker.value);
+			});
+
+
+			// ---- name duplicate check state ----
+			let lastCheckedName = "";
+			let nameOk = false; // true only when server says code==="0"
+			let checking = false;
+
+			function invalidateNameCheck() {
+				nameOk = false;
+				lastCheckedName = "";
+				setNameStatus("info", "");
+			}
+
+			async function checkSameName() {
+				const name = (elName.value || "").trim();
+				clearGlobal();
+
+				if (!name) {
+					setNameStatus("err", "이름을 입력해주세요.");
+					nameOk = false;
+					return false;
+				}
+
+				// 이미 확인된 이름이면 스킵
+				if (nameOk && lastCheckedName === name) return true;
+
+				checking = true;
+				setNameStatus("info", "중복 확인 중...");
+				btnCheckName.disabled = true;
+
+				const url = /*[[@{/Topic/SameName.json}]]*/ '/Topic/SameName.json';
+				try {
+					const data = await apiGet(`${url}?name=${encodeURIComponent(name)}`);
+
+					if (!data) {
+						setNameStatus("err", "중복 확인에 실패했습니다.");
+						nameOk = false;
+						return false;
+					}
+
+					if (data.code === "0") {
+						lastCheckedName = name;
+						nameOk = true;
+						setNameStatus("ok", "사용 가능한 이름입니다.");
+						return true;
+					} else {
+						nameOk = false;
+						setNameStatus("err", data.message || "동일 이름 있음");
+						return false;
+					}
+				} catch (e) {
+					nameOk = false;
+					setNameStatus("err", "중복 확인 중 오류가 발생했습니다.");
+					return false;
+				} finally {
+					checking = false;
+					btnCheckName.disabled = false;
+				}
+			}
+
+			// ---- save ----
+			function buildPayload() {
+				const topicNoRaw = (elTopicNo.value || "").trim();
+				const topicNo = topicNoRaw ? Number(topicNoRaw) : 0;
+
+				return {
+					topicNo,
+					name: (elName.value || "").trim(),
+					hashTag: (elHashTag.value || "").trim(),
+					description: (elDesc.value || "").trim(),
+					color: (elColor.value || "").trim(),
+					external: !!elExternal.checked,
+					imogi: (elImogi.value || "").trim(),
+					emojiSetType: elEmojiSetType
+				};
+			}
+
+			async function saveTopic() {
+				clearGlobal();
+
+				const payload = buildPayload();
+
+				if (!payload.name) {
+					showGlobal("err", "이름을 입력해주세요.");
+					elName.focus();
+					return;
+				}
+
+				// 저장 전 중복확인 필수
+				const ok = await checkSameName();
+				if (!ok) {
+					showGlobal("err", "이름 중복 확인을 통과해야 저장할 수 있습니다.");
+					return;
+				}
+
+				btnSave.disabled = true;
+
+				try {
+					const url = /*[[@{/Topic/SaveTopic.json}]]*/ '/Topic/SaveTopic.json';
+					const data = await apiPost(url, payload);
+
+					if (!data) {
+						showGlobal("err", "저장 실패");
+						return;
+					}
+
+					if (data.code === "0") {
+						alertP("새 Topic이 저장되었습니다.");
+						location.href = /*[[@{/}]]*/ '/';
+					} else {
+						showGlobal("err", data.message || "저장 실패");
+					}
+				} catch (e) {
+					showGlobal("err", "저장 중 오류가 발생했습니다.");
+				} finally {
+					btnSave.disabled = false;
+				}
+			}
+
+			// ---- events ----
+			btnCheckName.addEventListener("click", checkSameName);
+			btnSave.addEventListener("click", saveTopic);
+
+			// 이름이 바뀌면 중복확인 무효화 + 디바운스 자동 체크
+			let t = null;
+			elName.addEventListener("input", () => {
+				invalidateNameCheck();
+				if (t) clearTimeout(t);
+				t = setTimeout(() => {
+					// 입력 중 멈췄을 때 자동 체크(원치 않으면 이 줄을 주석 처리)
+					checkSameName();
+				}, 450);
+			});
+
+			// 엔터키 저장 방지(의도치 않은 submit 방지)
+			[elName, elHashTag, elColor].forEach(el => {
+				el.addEventListener("keydown", (e) => {
+					if (e.key === "Enter") e.preventDefault();
+				});
+			});
+
+			// 컬러 프리뷰
+			elColor.addEventListener("input", updateColorPreview);
+			updateColorPreview();
+		})();
+	</script>
+</th:block>
+
+</html>

@@ -29,4 +29,10 @@ public class AppDefine {
 	public static final String KeyPushPrivate = "env.push.private";
 	/** PWA 푸시 public 키 */
 	public static final String KeyPushPublic = "env.push.public";
+	
+	public static final String KeyShowHeader = "showHeader";
+	
+	public static final String KeyShowFooter = "showFooter";
+
+	public static final String AssetVersion = "0.0.1";
 }

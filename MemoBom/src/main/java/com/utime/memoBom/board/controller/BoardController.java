@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
@@ -33,10 +34,21 @@ public class BoardController {
 		}else if( ! topicServce.hasTopic(user) ){
 			return "redirect:/Topic/index.html";
 		}else {
+			model.addAttribute("board", boardServce.getBoardList(user) );
 			return "Board/BoardMain";
 		}
     }
 
+	@GetMapping(path = "Topic.html", params = "uid")
+    public String boardTopicFromUid( ModelMap model, UserVo user, @RequestParam("uid") String topicUid ) {
+		model.addAttribute("board", boardServce.getTopicBoardListFromTopicUid(user, topicUid) );
+		return "Board/BoardMain";
+    }
 	
+	@GetMapping(path = "Topic.html", params = "user")
+    public String boardTopicFromUser( ModelMap model, UserVo user, @RequestParam("user") String userUid) {
+		model.addAttribute("board", boardServce.getTopicBoardListFromUserUid(user, userUid) );
+		return "Board/BoardMain";
+    }
 }
 

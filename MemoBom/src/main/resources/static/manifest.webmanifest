@@ -7,7 +7,7 @@
   "background_color": "#ffffff",
   "theme_color": "#111827",
   "icons": [
-    { "src": "/MemoBom/images/favicon/favicon_128.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/MemoBom/images/favicon/favicon_128.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/MemoBom/images/favicon/favicon_192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/MemoBom/images/favicon/favicon_512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }

@@ -61,6 +61,8 @@ public class AuthenticationController {
 		
 		model.addAttribute("error", error );
 		model.addAttribute("message", message );
+		model.addAttribute(AppDefine.KeyShowHeader, false);
+	    model.addAttribute(AppDefine.KeyShowFooter, false);
 		
         return "Auth/Login";
     }

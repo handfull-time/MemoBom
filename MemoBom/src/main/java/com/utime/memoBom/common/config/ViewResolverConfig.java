@@ -1,6 +1,6 @@
 package com.utime.memoBom.common.config;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -56,16 +56,20 @@ public class ViewResolverConfig implements WebMvcConfigurer {
 	private AsyncHandlerInterceptor viewInterceptor;
     
     @Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		
-    	final List<String> patterns = Arrays.stream(WhiteAddressList.AddressList).map(path -> path.endsWith("/") ? path + "**" : path ).toList();
-		
-//		registry.addInterceptor( this.viewInterceptor ).excludePathPatterns(patterns).addPathPatterns("/**/*.html");
-		registry
-			.addInterceptor( this.viewInterceptor )
-			.excludePathPatterns(patterns)
-			.excludePathPatterns("/**/*.json")
-			.addPathPatterns("/**");
+    public void addInterceptors(InterceptorRegistry registry) {
+        List<String> excludeList = new ArrayList<>();
+        for (String path : WhiteAddressList.AddressList) {
+            if (path.endsWith("/")) {
+                excludeList.add(path + "**");
+            } else {
+                excludeList.add(path);
+            }
+        }
+
+        registry.addInterceptor(this.viewInterceptor)
+                .addPathPatterns("/**") // 모든 경로 추가
+                .excludePathPatterns(excludeList) // 화이트리스트 제외
+                .excludePathPatterns("/**/*.json", "/**/*.js", "/**/*.css", "/images/**"); // 공통 정적 자원 제외
     }
     
 	@Bean

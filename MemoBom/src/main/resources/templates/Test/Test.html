@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{Common/LayoutBase}">
-	 
+ 
 <th:block layout:fragment="title">제목</th:block>
 
 <th:block layout:fragment="css">
@@ -11,21 +11,22 @@
 	</style>
 </th:block>
 	 
-<th:block layout:fragment="header">해더</th:block>
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header}"></div>
+</th:block>
 	 
 <th:block layout:fragment="content">
 	내용
 </th:block>
 
-
 <th:block layout:fragment="footer">
-	바닥
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
 </th:block>
 
 <th:block layout:fragment="script">
-<javascript>
-	
-</javascript>
+	<script th:inline="javascript">
+		
+	</script>
 </th:block>
 </html>
 

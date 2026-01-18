@@ -74,8 +74,8 @@ public class SecurityConfig {
 	
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers( permitAllWhiteList ).permitAll() // 누구나 접근 가능.
-        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name()) // 어드민이 갈 곳. 
-        	    .requestMatchers("/User/**", "/Board/**", "/Topic/**", "/Push/**").hasRole(EJwtRole.User.name()) // 일반 유저가 갈 곳.
+//        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name()) // 어드민이 갈 곳. 
+//        	    .requestMatchers("/User/**", "/Board/**", "/Topic/**", "/Push/**").hasRole(EJwtRole.User.name()) // 일반 유저가 갈 곳.
                 .anyRequest().authenticated()
             );
         

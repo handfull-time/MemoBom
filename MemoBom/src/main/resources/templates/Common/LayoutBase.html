@@ -1,38 +1,34 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<title>MemoBom<th:block layout:fragment="title"></th:block>
-	</title>
-
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+	<title th:text="'MemoBom' + (${pageTitle} != null ? ' - ' + ${pageTitle} : '')">MemoBom</title>
 
 	<link rel="stylesheet" th:href="@{/css/tailwind/tailwind.min.css}">
 	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
+	<th:block layout:fragment="css"></th:block>
 
 	<style>
-		/* 스크롤바 숨기기 유틸리티 클래스 */
 		.scrollbar-hide {
 			-ms-overflow-style: none;
-			/* IE and Edge */
 			scrollbar-width: none;
-			/* Firefox */
 		}
 
 		.scrollbar-hide::-webkit-scrollbar {
 			display: none;
-			/* Chrome, Safari, Opera */
 		}
 	</style>
-	<th:block layout:fragment="css"></th:block>
 </head>
 
 <body class="bg-gray-100 text-slate-900">
 
-	<div class="max-w-md mx-auto h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">
+	<!--<div class="max-w-md md:max-w-xl lg:max-w-2xl mx-auto min-h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">-->
+	<div class="w-full mx-auto min-h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">
+		
 
-		<header class="h-12 shrink-0 flex items-center justify-between px-2 border-b border-gray-200 bg-white z-10">
+		<header th:if="${showHeader == null || showHeader}"
+			class="relative h-12 pt-[env(safe-area-inset-top)] shrink-0 border-b border-gray-200 bg-white z-10">
 			<th:block layout:fragment="header"></th:block>
 		</header>
 
@@ -40,17 +36,19 @@
 			<th:block layout:fragment="content"></th:block>
 		</main>
 
-		<footer class="h-8 shrink-0 flex items-center justify-center border-t border-gray-200 bg-white z-10">
-			<div class="text-xs text-gray-400" >MemoBom • <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}" /> </div>
-			<!--<th:block layout:fragment="footer"></th:block>-->
+		<footer th:if="${showFooter == null || showFooter}"
+			class="h-8 shrink-0 flex items-center justify-center border-t border-gray-200 bg-white z-10">
+			<th:block layout:fragment="footer"></th:block>
 		</footer>
 	</div>
 
 	<div th:replace="~{Common/AlertView :: AlertView}"></div>
-	<div th:replace="~{Common/ModalView :: ModalView}"></div>
-	<th:script th:replace="~{Common/Script :: CommonScript}" />
+	<th:block th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></th:block>
+	<th:block th:replace="~{Common/ModalView :: ModalView}"></th:block>
 
-	<script type="text/javascript" th:src="@{/js/MyToast.js}"></script>
+	<script type="text/javascript" th:src="@{/js/api.js(v=${assetVersion})}"></script>
+	<script type="text/javascript" th:src="@{/js/app.js(v=${assetVersion})}"></script>
+	<script type="text/javascript" th:src="@{/js/MyToast.js(v=${assetVersion})}"></script>
 
 	<th:block layout:fragment="script"></th:block>
 </body>

@@ -41,5 +41,7 @@ class ViewHandlerInterceptor implements AsyncHandlerInterceptor {
 				model.addAttribute(AppDefine.KeyParamUser, obj );
 			}
         }
+		
+		model.addAttribute("assetVersion", AppDefine.AssetVersion );
 	}
 }

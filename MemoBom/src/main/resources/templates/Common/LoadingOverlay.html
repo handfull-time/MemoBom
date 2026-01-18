@@ -1,33 +1,32 @@
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="LoadingOverlay">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="LoadingOverlay">
 
-    <!-- 로딩 오버레이 -->
-    <div id="fileLoadingOverlay"
-        class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow px-6 py-4 flex items-center space-x-3 text-sm">
-            <div class="animate-pulse text-2xl">⏳</div>
-            <div class="text-gray-700">
-                작업 중입니다...
-                <div class="text-xs text-gray-400 mt-1">잠시 기다려 주세요.</div>
-            </div>
-        </div>
-    </div>
+	<!-- 로딩 오버레이 -->
+	<div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
+		<div class="bg-white rounded-lg shadow px-6 py-4 flex items-center space-x-3 text-sm">
+			<div class="animate-pulse text-2xl">⏳</div>
+			<div class="text-gray-700">
+				작업 중입니다...
+				<div class="text-xs text-gray-400 mt-1">잠시 기다려 주세요.</div>
+			</div>
+		</div>
+	</div>
 
-    <script th:inline="javascript">
-        // 로딩 오버레이 제어
-        let loadingCount = 0;
+	<script th:inline="javascript">
+		// 로딩 오버레이 제어
+		let loadingCount = 0;
 
-        function showLoading() {
-            loadingCount++;
-            const overlay = document.getElementById('fileLoadingOverlay');
-            overlay?.classList.remove('hidden');
-        }
+		function showLoading() {
+			loadingCount++;
+			const overlay = document.getElementById('loadingOverlay');
+			overlay?.classList.remove('hidden');
+		}
 
-        function hideLoading() {
-            loadingCount = Math.max(0, loadingCount - 1);
-            if (loadingCount > 0) return;
+		function hideLoading() {
+			loadingCount = Math.max(0, loadingCount - 1);
+			if (loadingCount > 0) return;
 
-            const overlay = document.getElementById('fileLoadingOverlay');
-            overlay?.classList.add('hidden');
-        }
-    </script>
-</div>
+			const overlay = document.getElementById('loadingOverlay');
+			overlay?.classList.add('hidden');
+		}
+	</script>
+</th:block>

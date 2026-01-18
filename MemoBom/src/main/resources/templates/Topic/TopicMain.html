@@ -1,54 +1,360 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
 
-<head>
-	<title>MemoBom</title>
-	<meta charset="UTF-8">
+<th:block layout:fragment="title">Topic</th:block>
 
-	<link rel="manifest" th:href="@{/manifest.webmanifest}">
+<th:block layout:fragment="header">
+	<div th:replace="~{Fragments/Header :: Header}"></div>
+</th:block>
 
-	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
+<th:block layout:fragment="content">
 
-	<script type="text/javascript" th:src="@{/js/tailwind/tailwind.min.js}"></script>
-	<th:script th:replace="~{Common/Script :: CommonScript}" />
-	<!-- toast script -->
-	<script type="text/javascript" th:src="@{/js/MyToast.js}"></script>
-	<!-- <a href="https://www.untitledui.com/resources/file-icons" title="file icons">파일 확장자 아이콘 참조</a> -->
-	<style>
-	</style>
+	<!-- 상단 섹션: 인기 -->
+	<section class="space-y-2">
+		<div class="px-2 pt-2">
+			<h2 class="text-2xl font-extrabold tracking-tight">인기 Topic</h2>
+			<p class="text-xs text-slate-500 mt-1">요즘 뜨는 토픽을 모아봤어요.</p>
+		</div>
 
-</head>
+		<div id="trendingList" class="space-y-2"></div>
+	</section>
 
-<body class="h-screen flex flex-col">
-	<!-- Header -->
-	<div th:replace="~{Board/Header :: header}" class="flex-none"></div>
+	<div class="h-4"></div>
 
-	<!-- Main Content: Directory Tree + File List -->
-	<div class="flex-1 flex">
-		Topic 
-		<a th:href="@{/Auth/Withdraw/Google}">Service withdrawal</a>
-		
-		<button type="button" onclick="enablePush()">
-		  푸시 알림 켜기
-		</button>
-	</div>
+	<!-- 하단 섹션: 새로운 -->
+	<section class="space-y-2">
+		<div class="px-2 pt-2">
+			<h2 class="text-2xl font-extrabold tracking-tight">새로운 Topic</h2>
+			<p class="text-xs text-slate-500 mt-1">최근 생성된 토픽이에요.</p>
+		</div>
 
-	<!-- Footer -->
-	<div th:replace="~{Board/Footer :: footer}" class="flex-none border-t border-gray-300 text-sm px-2 py-1"></div>
+		<div id="freshList" class="space-y-2"></div>
+	</section>
 
-	<!-- Optional: Add a simple resizable script -->
+	<!-- 상태 메시지 -->
+	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
+
+	<!-- topic row template -->
+	<template id="tplTopicRow">
+		<div class="topic-row bg-white rounded-2xl border border-slate-200 p-3 shadow-sm">
+			<div class="flex items-start gap-3">
+				<!-- emoji badge -->
+				<div class="shrink-0">
+					<div
+						class="emoji-badge w-11 h-11 rounded-2xl flex items-center justify-center text-2xl border border-slate-200 bg-slate-50">
+						😊
+					</div>
+				</div>
+
+				<!-- right 영역 -->
+				<div class="min-w-0 flex-1">
+
+					<!-- ✅ 상단 3영역: [토픽] [작성자] [Flow버튼] -->
+					<div class="flex items-center gap-2"
+						style="grid-template-columns: minmax(0, 1fr) minmax(0, 160px) 96px;">
+						<!-- (1) 토픽 영역 -->
+						<div class="min-w-0 flex-1">
+							<span
+								class="topic-name block font-extrabold text-lg truncate cursor-pointer hover:underline">
+								TopicName
+							</span>
+						</div>
+
+						<!-- (2) 작성자 영역 -->
+						<div class="shrink-0 flex items-center gap-3">
+							<button type="button" class="topic-user flex items-center gap-2 max-w-[140px]">
+								<img class="topic-user-img w-6 h-6 rounded-full border border-slate-200 object-cover"
+									alt="프로필" />
+								<span class="topic-user-name text-xs text-slate-600 truncate">
+									작성자
+								</span>
+							</button>
+
+							<button type="button"
+								class="btn-follow w-24 h-9 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm font-semibold hover:bg-slate-50">
+								Flow 신청
+							</button>
+						</div>
+					</div>
+
+					<!-- Description -->
+					<div class="topic-desc text-sm text-slate-600 mt-2 line-clamp-2">
+						설명
+					</div>
+
+					<!-- HashTag -->
+					<div class="topic-tags text-xs text-slate-400 mt-1 truncate">
+						#tag
+					</div>
+
+					<!-- meta -->
+					<div class="flex items-center gap-4 mt-2 text-xs text-slate-600">
+						<div class="flex items-center gap-1">
+							<span aria-hidden="true">👥</span>
+							<span class="topic-flow">0</span>
+						</div>
+						<div class="flex items-center gap-1">
+							<span aria-hidden="true">📝</span>
+							<span class="topic-memo">0</span>
+						</div>
+
+						<span class="topic-uid hidden"></span>
+						<span class="topic-no hidden"></span>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</template>
+
+</th:block>
+
+<th:block layout:fragment="footer">
+	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+</th:block>
+
+<th:block layout:fragment="script">
 	<script th:inline="javascript">
+		(() => {
+			const $ = (id) => document.getElementById(id);
+
+			const elTrending = $("trendingList");
+			const elFresh = $("freshList");
+			const elState = $("stateBox");
+			const tpl = $("tplTopicRow");
+
+			function showState(type, text) {
+				elState.classList.remove("hidden");
+				elState.textContent = text;
+
+				elState.classList.remove(
+					"bg-red-50", "border-red-200", "text-red-700",
+					"bg-green-50", "border-green-200", "text-green-700",
+					"bg-slate-50", "border-slate-200", "text-slate-700"
+				);
+
+				if (type === "err") elState.classList.add("bg-red-50", "border-red-200", "text-red-700");
+				else if (type === "ok") elState.classList.add("bg-green-50", "border-green-200", "text-green-700");
+				else elState.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
+			}
+
+			function hideState() {
+				elState.classList.add("hidden");
+				elState.textContent = "";
+			}
+
+			function safeText(v, fallback = "") {
+				if (v === null || v === undefined) return fallback;
+				const s = String(v).trim();
+				return s ? s : fallback;
+			}
+
+			function renderList(container, topics) {
+				container.innerHTML = "";
+
+				if (!topics || topics.length === 0) {
+					const empty = document.createElement("div");
+					empty.className = "mx-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500";
+					empty.textContent = "표시할 토픽이 없습니다.";
+					container.appendChild(empty);
+					return;
+				}
+
+				topics.forEach((t) => {
+					const node = tpl.content.firstElementChild.cloneNode(true);
+
+					const emoji = node.querySelector(".emoji-badge");
+					const name = node.querySelector(".topic-name");
+					const desc = node.querySelector(".topic-desc");
+					const tags = node.querySelector(".topic-tags");
+					const flow = node.querySelector(".topic-flow");
+					const memo = node.querySelector(".topic-memo");
+					const btn = node.querySelector(".btn-follow");
+					const uid = node.querySelector(".topic-uid");
+					const no = node.querySelector(".topic-no");
+					const userBtn = node.querySelector(".topic-user");
+					const userImg = node.querySelector(".topic-user-img");
+					const userName = node.querySelector(".topic-user-name");
+
+
+					// 데이터 바인딩
+					emoji.textContent = safeText(t.imogi, "😊");
+					name.textContent = safeText(t.name, "(이름 없음)");
+					desc.textContent = safeText(t.description, "");
+					tags.textContent = safeText(t.hashTag, "");
+					flow.textContent = Number(t.flowCount || 0).toLocaleString();
+					memo.textContent = Number(t.memoCount || 0).toLocaleString();
+					uid.textContent = safeText(t.uid, "");
+					no.textContent = String(t.topicNo ?? "");
+					const userUid = (t.user && t.user.uid) ? String(t.user.uid).trim() : "";
+					const nick = (t.user && t.user.nickname) ? String(t.user.nickname).trim() : "";
+					const profileUrl = (t.user && t.user.profileUrl) ? String(t.user.profileUrl).trim() : "";
+
+					userName.textContent = nick || "Unknown";
+					if (profileUrl) userImg.src = profileUrl;
+					else userImg.removeAttribute("src"); // 빈 src 방지
+
+
+
+					// 컬러 적용(배지 배경 + 카드 좌측 라인 느낌)
+					const color = safeText(t.color, "");
+					if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+						emoji.style.background = color;
+						emoji.style.borderColor = "rgba(148,163,184,0.6)"; // slate-400 느낌
+						node.style.borderLeft = `6px solid ${color}`;
+					}
+
+					// 팔로우 버튼(예시 동작: 토글 UI만)
+					// flow 버튼(서버 연동)
+					let isFlow = !!t.flow;           // ✅ 서버에서 내려오는 boolean
+					let busy = false;
+
+					function applyFlowUI() {
+						if (isFlow) {
+							// ✅ flow 상태: "Flow 해지" + 진한 버튼
+							btn.textContent = "Flow 해지";
+							btn.classList.remove("bg-white", "text-slate-800", "border-slate-200", "hover:bg-slate-50");
+							btn.classList.add("bg-slate-900", "text-pink-500", "border-slate-900");
+						} else {
+							// ✅ 미flow 상태: "Flow 신청" + 흰 버튼
+							btn.textContent = "Flow 신청";
+							btn.classList.add("bg-white", "text-slate-800", "border-slate-200", "hover:bg-slate-50");
+							btn.classList.remove("bg-slate-900", "text-pink-500", "border-slate-900");
+						}
+					}
+
+					applyFlowUI();
+
+					btn.addEventListener("click", async (e) => {
+						e.stopPropagation(); // 카드 클릭 이벤트 막기
+						if (busy) return;
+
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showState("err", "uid가 없어 Flow를 처리할 수 없습니다.");
+							return;
+						}
+
+						busy = true;
+						btn.disabled = true;
+
+						try {
+							const url = /*[[@{/Topic/Flow.json}]]*/ "/Topic/Flow.json";
+
+							const res = await apiPost(url, {uid: uidVal});
+
+							if (!res || res.code !== "0") {
+								showState("err", (res && res.message) ? res.message : "처리에 실패했습니다.");
+								return;
+							}
+
+							// ✅ 성공 시 UI 상태 전환
+							const before = isFlow;
+							isFlow = !isFlow;
+							applyFlowUI();
+
+							// ✅ (선택) flowCount 숫자도 같이 증감
+							// 서버가 최신 카운트를 내려주지 않으니 UX용으로만 반영
+							const cur = Number(t.flowCount || 0);
+							if (!before && isFlow) t.flowCount = cur + 1;     // 신청
+							if (before && !isFlow) t.flowCount = Math.max(0, cur - 1); // 해지
+							flow.textContent = Number(t.flowCount || 0).toLocaleString();
+
+							// (선택) 성공 메시지
+							// showState("ok", isFlow ? "Flow 신청 완료" : "Flow 해지 완료");
+						} catch (err) {
+							showState("err", "네트워크 오류로 처리하지 못했습니다.");
+						} finally {
+							busy = false;
+							btn.disabled = false;
+						}
+					});
+
+					// topic name 클릭 → Topic 화면 이동
+					const nameEl = node.querySelector(".topic-name");
+					nameEl.addEventListener("click", (e) => {
+						e.stopPropagation(); // 카드 클릭 이벤트 방지
+
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showState("err", "토픽 UID가 없습니다.");
+							return;
+						}
+
+						const url = /*[[@{/Board/Topic.html}]]*/ "/Board/Topic.html";
+						location.href = url + "?uid=" + encodeURIComponent(uidVal);
+					});
+					
+					emoji.addEventListener("click", (e) => {
+                        e.stopPropagation(); // 카드 클릭 이벤트 방지
+
+                        const uidVal = (t.uid || "").trim();
+                        if (!uidVal) {
+                            showState("err", "토픽 UID가 없습니다.");
+                            return;
+                        }
+						
+                        const url = /*[[@{/Topic/Item.html}]]*/ "/Topic/Item.html";
+                        location.href = url + "?uid=" + encodeURIComponent(uidVal);
+                    });
+
+					userBtn.addEventListener("click", (e) => {
+						e.stopPropagation(); // 카드 클릭과 분리
+						if (!userUid) {
+							showState("err", "사용자 UID가 없습니다.");
+							return;
+						}
+						const url = /*[[@{/Board/Topic.html}]]*/ "/Board/Topic.html";
+						location.href = url + "?user=" + encodeURIComponent(userUid);
+					});
+
+
+					// (선택) 카드 클릭 시 상세 이동 — 필요 시 URL만 맞춰서 사용
+					node.addEventListener("click", (e) => {
+						// 버튼 클릭은 카드 클릭으로 처리하지 않음
+						if (e.target.closest(".btn-follow")) return;
+						console.log(e.target);
+
+						// 예시: /Topic/TopicView?topicNo=...
+						// location.href = /*[[@{/Topic/View}]]*/ "/Topic/View" + "?topicNo=" + encodeURIComponent(t.topicNo);
+
+						// 지금은 동작 안하게(원하시면 라우팅에 맞춰 바로 연결해드릴게요)
+					});
+
+					container.appendChild(node);
+				});
+			}
+
+			async function load() {
+				hideState();
+
+				const url = /*[[@{/Topic/TopicList.json}]]*/ "/Topic/TopicList.json";
+
+				try {
+					// loading overlay가 app.js에 있다면 여기서 show/hide 호출해도 됨
+					const res = await apiGet(url);
+
+					if (!res || res.code !== "0" || !res.data) {
+						showState("err", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.");
+						renderList(elTrending, []);
+						renderList(elFresh, []);
+						return;
+					}
+
+					renderList(elTrending, res.data.trending || []);
+					renderList(elFresh, res.data.fresh || []);
+				} catch (e) {
+					showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
+					renderList(elTrending, []);
+					renderList(elFresh, []);
+				}
+			}
+
+			// DOM ready
+			window.addEventListener("DOMContentLoaded", load);
+		})();
 	</script>
-
-	<!-- 로딩 오버레이 -->
-	<div th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></div>
-	<!-- alert confirm prompt -->
-	<div th:replace="~{Common/AlertView :: AlertView}"></div>
-	<!-- 모달창 -->
-	<div th:replace="~{Common/ModalView :: ModalView}"></div>
-	<!--<script type="text/javascript" th:src="@{/js/pwa-push.js}"></script>-->
-	<script th:replace="~{Common/PwaPushScript :: PwaPushScript}"></script>
-
-</body>
+</th:block>
 
 </html>

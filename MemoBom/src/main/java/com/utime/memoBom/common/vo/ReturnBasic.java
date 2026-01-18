@@ -5,6 +5,8 @@ public class ReturnBasic {
 	protected String code;
 	protected String message;
 	
+	protected Object data;
+	
 	public ReturnBasic() {
 		this(AppDefine.ERROR_OK, null);
 	}
@@ -41,4 +43,16 @@ public class ReturnBasic {
 		return ! AppDefine.ERROR_OK.equals(this.code);
 	}
 
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		return "ReturnBasic [code=" + code + ", message=" + message + ", data=" + data + "]";
+	}
 }

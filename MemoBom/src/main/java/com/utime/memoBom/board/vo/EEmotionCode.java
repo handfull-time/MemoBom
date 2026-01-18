@@ -1,0 +1,22 @@
+package com.utime.memoBom.board.vo;
+
+public enum EEmotionCode {
+    JOY("joy", "😊"),
+    NORMAL("normal", "😐"),
+    SADNESS("sadness", "😢"),
+    ANGER("anger", "😠"),
+    AWESOME("awesome", "🤩"),
+
+    LIKE("like", "👍"),
+    EMPATHY("empathy", "❤️"),
+    FUNNY("funny", "😂"),
+    SURPRISE("surprise", "😮");
+
+    public final String code;
+    public final String emoji;
+
+    EEmotionCode(String code, String emoji) {
+        this.code = code;
+        this.emoji = emoji;
+    }
+}

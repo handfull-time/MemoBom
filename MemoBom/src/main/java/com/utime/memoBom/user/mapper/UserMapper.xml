@@ -10,6 +10,7 @@
 			, UPDATE_DATE TIMESTAMP NOT NULL <!-- 수정일 -->
 			, ENABLED BOOLEAN DEFAULT FALSE NOT NULL <!-- 사용 여부. T:사용, F:미사용 -->
 			, ROLE VARCHAR(16) NOT NULL
+			, UID UUID DEFAULT RANDOM_UUID() NOT NULL <!-- 고유 ID -->
 			, PROVIDER VARCHAR(16) NOT NULL
 			, ID VARCHAR(32) NOT NULL
 			, EMAIL VARCHAR(128) DEFAULT NULL
@@ -82,6 +83,7 @@
 		, REG_DATE
 		, UPDATE_DATE
 		, ENABLED 
+		, UID
 		, ROLE 
 		, PROVIDER 
 		, ID 
@@ -98,6 +100,7 @@
 		<result column="ENABLED" property="enabled"/>
 		<result column="ROLE" property="role"/>
 		<result column="PROVIDER" property="provider"/>
+		<result column="UID" property="uid"/>
 		<result column="ID" property="id"/>
 		<result column="EMAIL" property="email" typeHandler="com.utime.memoBom.common.typeHandler.SeedEncryptTypeHandler"/>
 		<result column="NICKNAME" property="nickname"/>

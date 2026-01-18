@@ -23,6 +23,8 @@ public class UserVo {
 	EJwtRole role;
 	/** 가입 경로 */
 	String provider;
+	/** 사용자 고유 ID */
+	String uid;
 	/** id */
 	String id;
 	/** 사용자 email */
