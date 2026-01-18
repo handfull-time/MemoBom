@@ -7,6 +7,7 @@ import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -63,7 +64,7 @@ class TopicServiceImpl implements TopicService {
 		
 		final TopicVo result;
 		
-		if( uid == null ) {
+		if( AppUtils.isEmpty(uid) ) {
 			result = new TopicVo();
 		} else {
 			result = topicDao.loadTopic(uid);
@@ -73,9 +74,9 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public TopicListVo listTopic(UserVo user) {
+	public TopicListVo listTopic(UserVo user, int page, String keyword) {
 		
-		return topicDao.listTopic( user, 1 );
+		return topicDao.listTopic( user, page, keyword );
 	}
 	
 	@Override

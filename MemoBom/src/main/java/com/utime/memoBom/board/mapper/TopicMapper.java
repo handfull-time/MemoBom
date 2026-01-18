@@ -73,6 +73,12 @@ public interface TopicMapper {
 	 * @return
 	 */
 	List<TopicVo> listTopicFresh(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
+	
+	/**
+	 * topic 검색 목록
+	 * @return
+	 */
+	List<TopicVo> searchTopic(@Param("userNo") long userNo, @Param("keyword") String keyword, @Param("pageSize") int pageSize, @Param("offset") int offset);
 
 	/**
 	 * Topic이 하나도 없나?
@@ -110,4 +116,6 @@ public interface TopicMapper {
 	 * @return
 	 */
 	boolean isTopicFollowed(@Param("userNo") long userNo, @Param("topicNo") long no );
+
+	
 }

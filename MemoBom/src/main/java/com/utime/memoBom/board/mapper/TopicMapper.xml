@@ -143,6 +143,7 @@
         <result property="imogi" column="IMOGI" />
         <result property="color" column="COLOR" />
         
+        <result property="user.uid" column="USER_UID" />
         <result property="user.nickname" column="NICKNAME" />
         <result property="user.profileUrl" column="PROFILE_IMG_PATH" />
         <result property="memoCount" column="MEMO_COUNT" />
@@ -179,6 +180,7 @@
 			, TP.DESCRIPTION
 			, TP.IMOGI
 			, TP.COLOR
+			, USR.UID AS USER_UID
 			, USR.NICKNAME 
 			, USR.PROFILE_IMG_PATH
 			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
@@ -193,7 +195,9 @@
 				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
 			LEFT JOIN MB_MEMO_BOARD MB
 				ON MB.TOPIC_NO = TP.TOPIC_NO
-		WHERE TP.ENABLED = TRUE
+		WHERE 1=1
+			AND TP.ENABLED = TRUE
+			AND TP.EXTERNAL = TRUE
 		GROUP BY
 			TP.TOPIC_NO
 			, TP.OWNER_NO
@@ -225,6 +229,7 @@
 			, TP.DESCRIPTION
 			, TP.IMOGI
 			, TP.COLOR
+			, USR.UID AS USER_UID
 			, USR.NICKNAME 
 			, USR.PROFILE_IMG_PATH 
 			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
@@ -239,7 +244,9 @@
 				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
 			LEFT JOIN MB_MEMO_BOARD MB
 				ON MB.TOPIC_NO = TP.TOPIC_NO
-		WHERE TP.ENABLED = TRUE
+		WHERE 1=1
+			AND TP.ENABLED = TRUE
+			AND TP.EXTERNAL = TRUE
 		GROUP BY
 			TP.TOPIC_NO
 			, TP.OWNER_NO
@@ -256,6 +263,59 @@
 			TP.TOPIC_NO DESC
 		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
+	
+	<!-- topic 검색 목록 -->
+	<select id="searchTopic" resultMap="TopicResultMap">
+		SELECT
+			TP.TOPIC_NO
+			, TP.OWNER_NO
+			, TP.EXTERNAL
+			, TP.UID
+			, TP.NAME
+			, TP.HASH_KEYWORD 
+			, TP.DESCRIPTION
+			, TP.IMOGI
+			, TP.COLOR
+			, USR.UID AS USER_UID
+			, USR.NICKNAME 
+			, USR.PROFILE_IMG_PATH 
+			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
+			, COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
+			, COUNT(DISTINCT MB.BOARD_NO) AS MEMO_COUNT
+		FROM MB_TOPIC TP
+			JOIN MB_USER USR
+				ON TP.OWNER_NO = USR.USER_NO
+			LEFT JOIN MB_TOPIC_FOLLOW ALLFL
+				ON ALLFL.TOPIC_NO = TP.TOPIC_NO
+			LEFT JOIN MB_TOPIC_FOLLOW MYFL
+				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
+			LEFT JOIN MB_MEMO_BOARD MB
+				ON MB.TOPIC_NO = TP.TOPIC_NO
+		WHERE 1=1
+			AND TP.ENABLED = TRUE
+			AND TP.EXTERNAL = TRUE
+			AND ( 
+				TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR TP.HASH_KEYWORD LIKE CONCAT('%', #{keyword}, '%')
+				OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
+			)
+		GROUP BY
+			TP.TOPIC_NO
+			, TP.OWNER_NO
+			, TP.EXTERNAL
+			, TP.UID
+			, TP.NAME
+			, TP.HASH_KEYWORD
+			, TP.DESCRIPTION
+			, TP.IMOGI
+			, TP.COLOR
+			, USR.NICKNAME
+			, USR.PROFILE_IMG_PATH
+		ORDER BY
+			TP.TOPIC_NO DESC
+		LIMIT #{pageSize} OFFSET #{offset}
+	</select>
+
 	
 	<!--topic 번호 조회-->
 	<select id="selectTopicNoByUid" parameterType="string" resultType="long">

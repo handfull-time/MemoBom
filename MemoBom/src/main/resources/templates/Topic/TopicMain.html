@@ -5,11 +5,19 @@
 <th:block layout:fragment="title">Topic</th:block>
 
 <th:block layout:fragment="header">
-	<div th:replace="~{Fragments/Header :: Header}"></div>
+	<div th:replace="~{Fragments/Header :: Header_Search('Topic')}"></div>
 </th:block>
 
 <th:block layout:fragment="content">
 
+	<th:block th:if="${keyword != null}">
+        <div class="px-2 pt-2">
+            <h2 class="text-lg font-extrabold tracking-tight">검색 결과: "<span th:text="${keyword}">키워드</span>"</h2>
+        </div>
+		<div id="searchList" class="space-y-2"></div>
+	</th:block>
+	
+	<th:block th:if="${keyword == null}">
 	<!-- 상단 섹션: 인기 -->
 	<section class="space-y-2">
 		<div class="px-2 pt-2">
@@ -31,6 +39,7 @@
 
 		<div id="freshList" class="space-y-2"></div>
 	</section>
+	</th:block>
 
 	<!-- 상태 메시지 -->
 	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
@@ -121,6 +130,7 @@
 
 			const elTrending = $("trendingList");
 			const elFresh = $("freshList");
+			const elSearch = $("searchList");
 			const elState = $("stateBox");
 			const tpl = $("tplTopicRow");
 
@@ -151,6 +161,11 @@
 			}
 
 			function renderList(container, topics) {
+				
+				if( !container ){
+                    return;
+                }
+				
 				container.innerHTML = "";
 
 				if (!topics || topics.length === 0) {
@@ -328,12 +343,18 @@
 
 			async function load() {
 				hideState();
-
+				
 				const url = /*[[@{/Topic/TopicList.json}]]*/ "/Topic/TopicList.json";
+
+				const keyword = /*[[${keyword}]]*/ null;
+				let urlWithKeyword = url;
+				if(keyword){
+                    urlWithKeyword = url + "?keyword=" + encodeURIComponent(keyword);
+                }
 
 				try {
 					// loading overlay가 app.js에 있다면 여기서 show/hide 호출해도 됨
-					const res = await apiGet(url);
+					const res = await apiGet(urlWithKeyword);
 
 					if (!res || res.code !== "0" || !res.data) {
 						showState("err", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.");
@@ -342,8 +363,12 @@
 						return;
 					}
 
-					renderList(elTrending, res.data.trending || []);
-					renderList(elFresh, res.data.fresh || []);
+					if(keyword){
+						renderList(elSearch, res.data.search || []);
+					} else{
+						renderList(elTrending, res.data.trending || []);
+						renderList(elFresh, res.data.fresh || []);
+					}
 				} catch (e) {
 					showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
 					renderList(elTrending, []);
@@ -354,6 +379,17 @@
 			// DOM ready
 			window.addEventListener("DOMContentLoaded", load);
 		})();
+		
+		function headerSearch(keyword) {
+			
+			if( !keyword || keyword.trim() === "" ){
+				return;
+			}
+			
+            // Topic 검색 처리
+			const url = /*[[@{/Topic/Topic.html}]]*/ "/Topic/Topic.html";
+			location.href = url + "?keyword=" + encodeURIComponent(keyword);
+		}
 	</script>
 </th:block>
 

@@ -10,4 +10,6 @@ public class TopicListVo {
 	List<TopicVo> trending;
 	/** 최신 토픽 */
 	List<TopicVo> fresh;
+	/** 검색 토픽 */
+	List<TopicVo> search;
 }

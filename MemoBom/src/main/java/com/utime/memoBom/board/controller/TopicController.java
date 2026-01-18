@@ -79,11 +79,13 @@ public class TopicController {
 	
 	@ResponseBody
 	@GetMapping("TopicList.json")
-	public ReturnBasic listTopic( UserVo user ) {
+	public ReturnBasic listTopic( UserVo user, 
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page, 
+			@RequestParam(name = "keyword", required = false) String keyword ) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( topicServce.listTopic( user ) );
+		result.setData( topicServce.listTopic( user, page, keyword  ) );
 
 		return result;
 	}
@@ -121,5 +123,12 @@ public class TopicController {
 		
 		return topicServce.flow( user, reqVo );
 	}
+	
+	@GetMapping(path = "Topic.html", params = "keyword")
+    public String topicSearch( ModelMap model, UserVo user, @RequestParam("keyword") String keyword) {
+		model.addAttribute("keyword", keyword );
+		return "Topic/TopicMain";
+    }
+
 }
 

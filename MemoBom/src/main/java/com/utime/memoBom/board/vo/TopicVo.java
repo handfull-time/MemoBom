@@ -10,7 +10,6 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 public class TopicVo extends TopicReqVo{
-	String uid;
 	UserVo user;
 	boolean flow;
 	int memoCount;

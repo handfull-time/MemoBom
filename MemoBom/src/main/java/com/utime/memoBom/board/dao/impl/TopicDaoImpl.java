@@ -9,6 +9,7 @@ import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.mapper.CommonMapper;
+import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.annotation.PostConstruct;
@@ -53,7 +54,7 @@ class TopicDaoImpl implements TopicDao{
 		
 		int result;
 		
-		if( reqVo.getTopicNo() < 0L ) {
+		if( AppUtils.isEmpty( reqVo.getUid() ) ) {
 			reqVo.setOwnerNo(user.getUserNo());
 			result = topicMapper.insertTopic(reqVo);
 			result += topicMapper.insertTopicFlow(user.getUserNo(), reqVo.getTopicNo());
@@ -77,15 +78,20 @@ class TopicDaoImpl implements TopicDao{
 	}
 	
 	@Override
-	public TopicListVo listTopic(UserVo user, int page) {
+	public TopicListVo listTopic(UserVo user, int page, String keyword) {
 		
 		final TopicListVo result = new TopicListVo();
 		
 		int pageSize = 5;
 		int offset = (page - 1) * pageSize;
 		
-		result.setFresh( topicMapper.listTopicFresh(user.getUserNo(), pageSize, offset) );
-		result.setTrending( topicMapper.listTopicTrending(user.getUserNo(), pageSize, offset) );
+		if( !AppUtils.isEmpty(keyword) ) {
+			keyword = keyword.trim();
+			result.setSearch( topicMapper.searchTopic(user.getUserNo(), keyword, pageSize, offset) );
+		}else {
+			result.setFresh( topicMapper.listTopicFresh(user.getUserNo(), pageSize, offset) );
+			result.setTrending( topicMapper.listTopicTrending(user.getUserNo(), pageSize, offset) );
+		}
 		
 		return result;
 	}

@@ -19,7 +19,7 @@
 	<div class="space-y-4">
 
 		<!-- hidden topicNo -->
-		<input type="hidden" id="topicNo" th:value="${topic?.topicNo}" />
+		<input type="hidden" id="uid" th:value="${topic?.uid}" />
 
 		<!-- Threads-like card -->
 		<div class="bg-white rounded-2xl border border-slate-200 p-4">
@@ -148,7 +148,7 @@
 		<div id="globalMsg" class="hidden text-sm rounded-xl p-3 border"></div>
 
 		<!-- 버튼 -->
-		<div class="flex gap-2">
+		<div class="flex gap-2" th:if="${topic.ownerNo == user.userNo || topic.topicNo < 0}">
 			<button type="button" onclick="history.back()" class="flex-1 h-12 rounded-xl border border-slate-200 bg-slate-100
 		           text-slate-600 font-medium hover:bg-slate-200">
 				취소
@@ -195,7 +195,7 @@
 		(() => {
 			const $ = (id) => document.getElementById(id);
 
-			const elTopicNo = $("topicNo");
+			const eluid = $("uid");
 			const elImogi = $("imogi");
 			const elName = $("name");
 			const elHashTag = $("hashTag");
@@ -370,11 +370,9 @@
 
 			// ---- save ----
 			function buildPayload() {
-				const topicNoRaw = (elTopicNo.value || "").trim();
-				const topicNo = topicNoRaw ? Number(topicNoRaw) : 0;
 
 				return {
-					topicNo,
+					uid: eluid.value || null,
 					name: (elName.value || "").trim(),
 					hashTag: (elHashTag.value || "").trim(),
 					description: (elDesc.value || "").trim(),
@@ -416,7 +414,7 @@
 
 					if (data.code === "0") {
 						alertP("새 Topic이 저장되었습니다.");
-						location.href = /*[[@{/}]]*/ '/';
+						location.href = /*[[@{/Topic/}]]*/ '/Topic/';
 					} else {
 						showGlobal("err", data.message || "저장 실패");
 					}

@@ -42,7 +42,7 @@ public interface TopicService {
 	 * @param user
 	 * @return
 	 */
-	TopicListVo listTopic(UserVo user);
+	TopicListVo listTopic(UserVo user, int page, String keyword );
 
 	/**
 	 * Topic이 하나도 없나?

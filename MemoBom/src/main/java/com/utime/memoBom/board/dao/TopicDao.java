@@ -49,7 +49,7 @@ public interface TopicDao {
 	 * @param page 1부터 시작
 	 * @return
 	 */
-	TopicListVo listTopic(UserVo user, int page);
+	TopicListVo listTopic(UserVo user, int page, String keyword );
 
 	/**
 	 * Topic이 하나도 없나?
