@@ -7,10 +7,12 @@ import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 class TopicServiceImpl implements TopicService {
 
 	final TopicDao topicDao;
+	final KeyValueDao keyValueDao;
+	
+	@Override
+	public String createKey(HttpServletRequest request, UserVo user) {
+
+		return KeyUtil.createKey(keyValueDao, request, user);
+	}
 
 	@Override
 	public boolean hasTopic(UserVo user) {

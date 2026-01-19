@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>접근 불가</title>
-    <script type="text/javascript" th:src="@{/js/tailwind/tailwind.min.js}"></script>
-</head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md">
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{Common/LayoutBase}">
+ 
+<th:block layout:fragment="title">MemoBom</th:block>
+
+<th:block layout:fragment="css">
+</th:block>
+	 
+<th:block layout:fragment="header">
+	<th:block  th:replace="~{Fragments/Header :: Header_Back('-_-;;;')}"></th:block >
+</th:block>
+	 
+<th:block layout:fragment="content">
+	<div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md">
         <div class="text-red-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M9.172 9.172a4 4 0 115.656 5.656M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
@@ -16,7 +22,14 @@
         <h1 class="text-2xl font-bold text-gray-800 mt-4">접근 불가 페이지</h1>
         <p class="text-gray-600 mt-2">이 페이지에 접근할 수 없습니다.</p>
         <p class="text-gray-500 mt-2">접근하려던 주소: <span class="font-semibold text-red-500" th:text="${reqAddress}"></span></p>
-        <a th:href="@{/Index.html}" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">홈으로 돌아가기</a>
+        <a th:href="@{/}" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">홈으로 돌아가기</a>
     </div>
-</body>
+</th:block>
+
+<th:block layout:fragment="footer">
+	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block >
+</th:block>
+
+<th:block layout:fragment="script">
+</th:block>
 </html>

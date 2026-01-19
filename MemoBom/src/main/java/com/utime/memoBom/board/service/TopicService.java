@@ -11,6 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface TopicService {
 
 	/**
+	 * 키 생성
+	 * @param request
+	 * @return
+	 */
+	String createKey(HttpServletRequest request, UserVo user);
+	
+	/**
 	 * 팔로우 한 topic이 있나?
 	 * @param user
 	 * @return true:있다. flase:없다.

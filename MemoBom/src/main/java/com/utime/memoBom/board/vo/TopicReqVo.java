@@ -4,11 +4,12 @@ import lombok.Data;
 
 @Data
 public class TopicReqVo {
+	/** 검증 키 */
+	String seal;
 	/** 고유번호 */
 	long topicNo = -1L;
 	/** 고유 id */
 	String uid;
-
 	/** 소유자 번호 */
 	long ownerNo;
 	/** 사용 여부 */

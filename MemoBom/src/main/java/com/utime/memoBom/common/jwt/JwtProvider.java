@@ -276,6 +276,7 @@ public class JwtProvider {
                 return null;
             }
         }
+        intervalMap.put(sid, user);
         return user;
     }
 

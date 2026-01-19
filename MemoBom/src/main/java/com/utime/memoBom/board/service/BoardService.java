@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.service;
 
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.UserVo;
@@ -15,9 +16,9 @@ public interface BoardService {
 	 * @param request
 	 * @return
 	 */
-	String createKey(HttpServletRequest request);
+	String createKey(HttpServletRequest request, UserVo user);
 	
-	Object getTopicBoardListFromTopicUid(UserVo user, String topicUid);
+	TopicVo getTopicBoardListFromTopicUid(UserVo user, String topicUid);
 
 	Object getBoardList(UserVo user);
 

@@ -1,25 +1,35 @@
 package com.utime.memoBom.user.handler;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import com.utime.memoBom.common.jwt.JwtProvider;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+@RequiredArgsConstructor
+class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+	private final JwtProvider jwtProvider;
+	
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
         
+        // 로그아웃 처리 (브라우저에 남은 JWT 쿠키 삭제)
+        jwtProvider.procLogout(request, response);
+
         // 1. 에러 로그 남기기 (서버 관리용)
         // 구체적인 에러 메시지를 남겨야 나중에 디버깅이 편합니다.
         log.error("OAuth2 Login Failed: {}", exception.getMessage());

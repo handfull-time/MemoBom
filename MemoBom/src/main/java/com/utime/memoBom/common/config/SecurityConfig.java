@@ -85,9 +85,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
         	    // 1) 로그인 사용자만(또는 ROLE_USER) 필요한 “구체 경로”를 먼저
         	    .requestMatchers(
-        	    		  "/Fragment/New.html"
+        	    		  "/Fragment/Tessera.html"
         	    		, "/Fragment/Save.json"
-        	    		, "/Mosaic/New.html"
+        	    		, "/Mosaic/Ensemble.html"
         	    		, "/Mosaic/Save.json"
         	    		, "/Mosaic/Flow.json"
         	    		, "/Push/**"
@@ -98,7 +98,7 @@ public class SecurityConfig {
         	    .requestMatchers(permitAllWhiteList).permitAll()
 
         	    // 3) Admin
-        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name())
+        	    .requestMatchers("/Spring/**").hasRole(EJwtRole.Admin.name())
 
         	    // 4) 나머지 로그인(인증)된 사용자만 접근 가능
         	    .anyRequest().authenticated()

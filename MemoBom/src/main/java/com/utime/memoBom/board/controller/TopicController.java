@@ -15,6 +15,7 @@ import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -32,12 +33,12 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String topicMain( ModelMap model, UserVo user ) {
+    public String topicMain( HttpServletRequest request, ModelMap model, UserVo user ) {
 		
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
 		}else if(topicServce.isEmpty() ){
-			return this.topicItem(model, null);
+			return this.topicItem(request, model, user, null);
 		}else {
 			return "Topic/TopicMain";
 		}
@@ -60,10 +61,12 @@ public class TopicController {
 	 * @param reqVo
 	 * @return
 	 */
-	@GetMapping("New.html")
-	public String topicNew( ModelMap model ) {
-		return this.topicItem(model, null);
+	@GetMapping("Ensemble.html")
+	public String topicNew( HttpServletRequest request, ModelMap model, UserVo user ) {
+		return this.topicItem(request, model, user, null);
 	}
+	
+	final String KeySeal = "seal";
 	
 	/**
 	 * 토픽 상세 보기
@@ -71,8 +74,26 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Item.html")
-	public String topicItem( ModelMap model, @RequestParam("uid") String uid ) {
-		model.addAttribute("topic", topicServce.loadTopic( uid ));
+	public String topicItem( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam("uid") String uid ) {
+		
+		final TopicVo topic = topicServce.loadTopic( uid );
+		
+		model.addAttribute("topic", topic);
+		
+		
+		
+		if( uid == null ) {
+			model.addAttribute(KeySeal, topicServce.createKey(request, user));
+		}else if( user != null ) {
+			if( topic.getUser().getUid().equals(user.getUid() ) ) {
+				model.addAttribute(KeySeal, topicServce.createKey(request, user));
+			}else {
+				model.addAttribute(KeySeal, KeySeal);
+			}
+		}else {
+			model.addAttribute(KeySeal, KeySeal);
+		}
+		
 		return "Topic/TopicItem";
 	}
 	

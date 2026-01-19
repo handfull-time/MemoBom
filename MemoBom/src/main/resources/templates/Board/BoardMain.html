@@ -9,7 +9,8 @@
 </th:block>
 
 <th:block layout:fragment="content">
-Board
+	<input type="hidden" id="topicUid" th:value="${topicUid}"/>
+	<input type="hidden" id="userUid" th:value="${userUid}"/>
 </th:block>
 
 <th:block layout:fragment="footer">
@@ -23,7 +24,8 @@ Board
 		}
 		
 		function functionRight(){
-			location.href = /*[[@{/Fragment/New.html}]]*/ '/Fragment/New.html';
+			// 글 작성하기
+			location.href = /*[[@{/Fragment/Tessera.html}]]*/ '/Fragment/Tessera.html';
 		}
 	</script>
 </th:block>

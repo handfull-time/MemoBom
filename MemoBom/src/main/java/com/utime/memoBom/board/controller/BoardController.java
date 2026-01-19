@@ -30,6 +30,9 @@ public class BoardController {
 	final BoardService boardServce;
 	final TopicService topicServce;
 	
+	final String topicUid = "topicUid";
+	final String userUid = "userUid";
+	
 	/**
 	 * 로그인 화면
 	 * @param request
@@ -44,13 +47,16 @@ public class BoardController {
 		}else if( ! topicServce.hasTopic(user) ){
 			return "redirect:/Mosaic/index.html";
 		}else {
-			model.addAttribute("board", boardServce.getBoardList(user) );
+			
+			model.addAttribute(this.userUid, user == null? null:user.getUid());
+			model.addAttribute(this.topicUid, null);
+			
 			return "Board/BoardMain";
 		}
     }
 
-	@GetMapping("New.html")
-	public String saveFragment( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam(value="topic") String topicUid ) {
+	@GetMapping("Tessera.html")
+	public String newFragment( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam(value="topic", required = false) String topicUid ) {
 		
 		final TopicVo topic = topicServce.loadTopic(topicUid);
 		if( topic == null ) {
@@ -59,7 +65,7 @@ public class BoardController {
 			return "Common/ErrorAlert";
 		}
 		
-		final String key = boardServce.createKey(request);
+		final String key = boardServce.createKey(request, user);
 		if( key == null ) {
 			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
@@ -82,13 +88,19 @@ public class BoardController {
 	
 	@GetMapping(path = "Mosaic.html", params = "uid")
     public String boardTopicFromUid( ModelMap model, UserVo user, @RequestParam("uid") String topicUid ) {
-		model.addAttribute("board", boardServce.getTopicBoardListFromTopicUid(user, topicUid) );
+
+		model.addAttribute(this.userUid, null);
+		model.addAttribute(this.topicUid, topicUid);
+
 		return "Board/BoardMain";
     }
 	
 	@GetMapping(path = "Mosaic.html", params = "user")
     public String boardTopicFromUser( ModelMap model, UserVo user, @RequestParam("user") String userUid) {
-		model.addAttribute("board", boardServce.getTopicBoardListFromUserUid(user, userUid) );
+
+		model.addAttribute(this.userUid, userUid);
+		model.addAttribute(this.topicUid, null);
+		
 		return "Board/BoardMain";
     }
 }

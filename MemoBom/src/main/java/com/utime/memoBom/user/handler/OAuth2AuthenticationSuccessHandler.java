@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
 
@@ -43,7 +43,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         
-    	// 1. Authentication을 OAuth2AuthenticationToken으로 캐스팅
+        // 로그아웃 처리 (브라우저에 남은 JWT 쿠키 삭제)
+        jwtProvider.procLogout(request, response);
+
+        // 1. Authentication을 OAuth2AuthenticationToken으로 캐스팅
         final OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
 
         // 2. Registration ID 추출 (google, naver, kakao 등 application.yml에 적은 이름)
@@ -111,9 +114,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			} catch (Exception e) {
 				log.error("", e);
 			} 
-
-            // 로그아웃 처리 (브라우저에 남은 JWT 쿠키 삭제)
-            jwtProvider.procLogout(request, response);
 
             // 다시 로그인 페이지로 이동
             getRedirectStrategy().sendRedirect(request, response, "/Auth/Login.html");
