@@ -18,7 +18,7 @@ import com.utime.memoBom.user.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("Topic")
+@RequestMapping("Mosaic")
 @RequiredArgsConstructor
 public class TopicController {
 	
@@ -60,6 +60,16 @@ public class TopicController {
 	 * @param reqVo
 	 * @return
 	 */
+	@GetMapping("New.html")
+	public String topicNew( ModelMap model ) {
+		return this.topicItem(model, null);
+	}
+	
+	/**
+	 * 토픽 상세 보기
+	 * @param reqVo
+	 * @return
+	 */
 	@GetMapping("Item.html")
 	public String topicItem( ModelMap model, @RequestParam("uid") String uid ) {
 		model.addAttribute("topic", topicServce.loadTopic( uid ));
@@ -72,14 +82,14 @@ public class TopicController {
 	 * @return
 	 */
 	@ResponseBody
-	@PostMapping("SaveTopic.json")
+	@PostMapping("Save.json")
 	public ReturnBasic saveTopic( UserVo user, @RequestBody TopicReqVo reqVo ) {
 		
 		return topicServce.saveTopic( user, reqVo );
 	}
 	
 	@ResponseBody
-	@GetMapping("TopicList.json")
+	@GetMapping("List.json")
 	public ReturnBasic listTopic( UserVo user, 
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page, 
 			@RequestParam(name = "keyword", required = false) String keyword ) {
@@ -97,14 +107,14 @@ public class TopicController {
 	 * @return
 	 */
 	@ResponseBody
-	@GetMapping("LoadTopic.json")
+	@GetMapping("LoadMosaic.json")
 	public ReturnBasic loadTopic( @RequestParam("uid") String uid ) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
 		TopicVo vo = topicServce.loadTopic( uid );
 		if( vo == null ) {
-			result.setCodeMessage("E", "Topic is not found.");
+			result.setCodeMessage("E", "Mosaic is not found.");
 		}else {
 			result.setData(vo);
 		}
@@ -125,7 +135,7 @@ public class TopicController {
 		return topicServce.flow( user, reqVo );
 	}
 	
-	@GetMapping(path = "Topic.html", params = "keyword")
+	@GetMapping(path = "Mosaic.html", params = "keyword")
     public String topicSearch( ModelMap model, UserVo user, @RequestParam("keyword") String keyword) {
 		model.addAttribute("keyword", keyword );
 		return "Topic/TopicMain";

@@ -8,11 +8,9 @@ import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
-import com.utime.memoBom.common.mapper.CommonMapper;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.user.vo.UserVo;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,13 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 class TopicDaoImpl implements TopicDao{
 
 	final TopicMapper topicMapper;
-	final CommonMapper common;
-	
-	@PostConstruct
-	private void init() throws Exception{
-		
-	}
-
 
 	@Override
 	public boolean hasTopic(UserVo user) {
@@ -87,10 +78,10 @@ class TopicDaoImpl implements TopicDao{
 		
 		if( !AppUtils.isEmpty(keyword) ) {
 			keyword = keyword.trim();
-			result.setSearch( topicMapper.searchTopic(user.getUserNo(), keyword, pageSize, offset) );
+			result.setSearch( topicMapper.listTopic(user.getUserNo(), keyword, pageSize, offset, "new") );
 		}else {
-			result.setFresh( topicMapper.listTopicFresh(user.getUserNo(), pageSize, offset) );
-			result.setTrending( topicMapper.listTopicTrending(user.getUserNo(), pageSize, offset) );
+			result.setFresh( topicMapper.listTopic(user.getUserNo(), null, pageSize, offset, "new"));
+			result.setTrending( topicMapper.listTopic(user.getUserNo(), null, pageSize, offset, "trending") );
 		}
 		
 		return result;

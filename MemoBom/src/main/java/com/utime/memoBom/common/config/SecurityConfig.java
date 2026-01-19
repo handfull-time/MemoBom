@@ -29,6 +29,7 @@ import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.WhiteAddressList;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Configuration
@@ -69,15 +70,40 @@ public class SecurityConfig {
         // 수동 추가
         // (주의) "/File/Stream"만 허용이면 그대로, 하위까지면 "/File/Stream/**"
         final List<RequestMatcher> extended = new java.util.ArrayList<>(permitAllMatchers);
+        extended.add(matcher.matcher("/Fragment/**"));
+        extended.add(matcher.matcher("/Mosaic/**"));
 
         final RequestMatcher[] permitAllWhiteList = extended.toArray(RequestMatcher[]::new);
 	
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers( permitAllWhiteList ).permitAll() // 누구나 접근 가능.
+//        http.authorizeHttpRequests(auth -> auth
+//                .requestMatchers( permitAllWhiteList ).permitAll() // 누구나 접근 가능.
 //        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name()) // 어드민이 갈 곳. 
-//        	    .requestMatchers("/User/**", "/Board/**", "/Topic/**", "/Push/**").hasRole(EJwtRole.User.name()) // 일반 유저가 갈 곳.
-                .anyRequest().authenticated()
-            );
+//        	    .requestMatchers("/User/**", "/Fragment/**", "/Topic/**", "/Push/**").hasRole(EJwtRole.User.name()) // 일반 유저가 갈 곳.
+//                .anyRequest().authenticated()
+//            );
+        
+        http.authorizeHttpRequests(auth -> auth
+        	    // 1) 로그인 사용자만(또는 ROLE_USER) 필요한 “구체 경로”를 먼저
+        	    .requestMatchers(
+        	    		  "/Fragment/New.html"
+        	    		, "/Fragment/Save.json"
+        	    		, "/Mosaic/New.html"
+        	    		, "/Mosaic/Save.json"
+        	    		, "/Mosaic/Flow.json"
+        	    		, "/Push/**"
+        	    		, "/User/**"
+        	    	).hasRole(EJwtRole.User.name())
+
+        	    // 2) 그 다음에 공개 경로(광범위)를 permitAll
+        	    .requestMatchers(permitAllWhiteList).permitAll()
+
+        	    // 3) Admin
+        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name())
+
+        	    // 4) 나머지 로그인(인증)된 사용자만 접근 가능
+        	    .anyRequest().authenticated()
+        	);
+
         
         http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo

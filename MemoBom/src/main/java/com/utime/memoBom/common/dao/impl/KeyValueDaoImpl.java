@@ -50,12 +50,31 @@ class KeyValueDaoImpl implements KeyValueDao {
 
 		return mapper.getValue(k);
 	}
+	
+	@Override
+	public String getValueAndRemove(String k) {
+		
+		final String result = this.getValue(k);
+		
+		this.deleteKey(k);
+		
+		return result;
+	}
 
 	@Override
 	public <T> T getObject(String k, Class<T> cls) throws RuntimeException {
 		
 		try {
 			return objectMapper.readValue(this.getValue(k), cls);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public <T> T getObjectAndRemove(String k, Class<T> cls) throws RuntimeException {
+		try {
+			return objectMapper.readValue(this.getValueAndRemove(k), cls);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -12,17 +12,6 @@ import com.utime.memoBom.user.vo.UserVo;
 @Mapper
 public interface UserMapper {
 	
-	/**
-	 * 회원 테이블 생성
-	 * @return
-	 */
-	int createUser();
-	
-	/**
-	 * 로그인 기록
-	 * @return
-	 */
-	int createLoginRecord();
 	
 	/**
 	 * 회원 검색

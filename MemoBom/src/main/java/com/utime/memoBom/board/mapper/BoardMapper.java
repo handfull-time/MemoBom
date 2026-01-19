@@ -1,9 +1,11 @@
 package com.utime.memoBom.board.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.UserVo;
 
 /**
@@ -12,16 +14,6 @@ import com.utime.memoBom.user.vo.UserVo;
 @Mapper
 public interface BoardMapper {
 
-	int createMemoBoard();
-	
-	
-	int createMemoComments();
-	
-	int createMemoScrap();
-	
-	
-	int createMemoEmotionLog();
-	
 	int upsertEmotion(long userNo, int targetType, long targetNo, String emotion);
 	
 	int deleteEmotion(long userNo, int targetType, long targetNo);
@@ -31,5 +23,9 @@ public interface BoardMapper {
 	 * @param reqVo
 	 * @return
 	 */
-	int saveFragment(UserVo user, TopicVo topic, BoardReqVo reqVo);
+	int insertFragment(@Param("user") UserVo user, @Param("device") UserDevice device, @Param("topic") TopicVo topic, @Param("req") FragmentVo reqVo);
+	
+	int mergeFragmentHashTag( @Param("name") String tagName );
+	
+	int mergeFragmentHashTagRecordByName( @Param("name")String name, @Param("fragmentNo") long fragmentNo );
 }

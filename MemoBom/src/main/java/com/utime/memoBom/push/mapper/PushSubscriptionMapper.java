@@ -15,12 +15,6 @@ import com.utime.memoBom.user.vo.UserVo;
 public interface PushSubscriptionMapper {
 	
 	/**
-	 * PushSubscriptionMapper 테이블 생성
-	 * @return
-	 */
-	int createPushSubscriptionTable();
-
-	/**
 	 * endpont 매칭 조회
 	 * @param endpoint
 	 * @return

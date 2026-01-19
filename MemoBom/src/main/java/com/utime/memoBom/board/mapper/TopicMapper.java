@@ -16,18 +16,6 @@ import com.utime.memoBom.user.vo.UserVo;
 public interface TopicMapper {
 	
 	/**
-	 * 토픽 테이블 생성
-	 * @return
-	 */
-	int createTopic();
-	
-	/**
-	 * 팔로우 테이블
-	 * @return
-	 */
-	int createTopicFlow();
-	
-	/**
 	 * 팔로우 한 topic이 있나?
 	 * @param user
 	 * @return true:있다. flase:없다.
@@ -62,23 +50,35 @@ public interface TopicMapper {
 	 */
 	TopicVo loadTopic(@Param("uid") String uid, @Param("topicNo") long no);
 	
-	/**
-	 * topic 인기 목록
-	 * @return
-	 */
-	List<TopicVo> listTopicTrending(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
-
-	/**
-	 * topic 신상 목록
-	 * @return
-	 */
-	List<TopicVo> listTopicFresh(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
+//	/**
+//	 * topic 인기 목록
+//	 * @return
+//	 */
+//	List<TopicVo> listTopicTrending(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
+//
+//	/**
+//	 * topic 신상 목록
+//	 * @return
+//	 */
+//	List<TopicVo> listTopicFresh(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
+//	
+//	/**
+//	 * topic 검색 목록
+//	 * @return
+//	 */
+//	List<TopicVo> searchTopic(@Param("userNo") long userNo, @Param("keyword") String keyword, @Param("pageSize") int pageSize, @Param("offset") int offset);
+//	
 	
 	/**
-	 * topic 검색 목록
+	 * topic 목록
+	 * @param userNo
+	 * @param keyword
+	 * @param pageSize
+	 * @param offset
+	 * @param sortType 인기 목록 : 'trending', 최신 목록: 'fresh'
 	 * @return
 	 */
-	List<TopicVo> searchTopic(@Param("userNo") long userNo, @Param("keyword") String keyword, @Param("pageSize") int pageSize, @Param("offset") int offset);
+	List<TopicVo> listTopic( @Param("userNo") long userNo, @Param("keyword") String keyword, @Param("pageSize") int pageSize, @Param("offset") int offset, @Param("sortType") String sortType);
 
 	/**
 	 * Topic이 하나도 없나?

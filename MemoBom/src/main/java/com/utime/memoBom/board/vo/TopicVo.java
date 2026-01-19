@@ -12,6 +12,6 @@ import lombok.ToString;
 public class TopicVo extends TopicReqVo{
 	UserVo user;
 	boolean flow;
-	int memoCount;
+	int fragmentCount;
 	int flowCount;
 }

@@ -5,7 +5,7 @@
 <th:block layout:fragment="title">작은 조각</th:block>
 
 <th:block layout:fragment="header">
-	<div th:replace="~{Fragments/Header :: Header_Back('작은 조각')}"></div><!--편린-->
+	<th:block th:replace="~{Fragments/Header :: Header_Back('작은 조각')}"></th:block><!--편린-->
 </th:block>
 
 <th:block layout:fragment="content">
@@ -17,7 +17,7 @@
 
 
 <th:block layout:fragment="footer">
-	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
 </th:block>
 
 <th:block layout:fragment="script">
@@ -31,13 +31,14 @@
             }
 			
 			const sendObj = {
+				seal: /*[[${seal}]]*/ null,
 				topicUid: /*[[${topic.uid}]]*/ null,
                 content: content
 			}
 			
-			const url = /*[[@{/Board/Write.json}]]*/ '/Board/Write.json';
+			const url = /*[[@{/Fragment/Write.json}]]*/ '/Fragment/Write.json';
 			
-			const res = apiPost("/Board/Write.json", sendObj);
+			const res = apiPost(url, sendObj);
 			
                 .then(response => {
                     if (response.code === "0") {

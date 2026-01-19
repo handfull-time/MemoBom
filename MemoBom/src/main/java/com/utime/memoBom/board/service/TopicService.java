@@ -6,6 +6,8 @@ import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface TopicService {
 
 	/**
@@ -57,5 +59,6 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic flow(UserVo user, TopicVo reqVo);
+
 
 }

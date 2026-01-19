@@ -1,68 +1,100 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.mapper.BoardMapper;
 import com.utime.memoBom.board.mapper.TopicMapper;
-import com.utime.memoBom.common.mapper.CommonMapper;
+import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.FragmentVo;
+import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.util.AppUtils;
+import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.vo.UserVo;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-class BoardDaoImpl implements BoardDao{
+class BoardDaoImpl implements BoardDao {
 
 	final BoardMapper boardMapper;
 	final TopicMapper topicMapper;
-	
-	final CommonMapper common;
-	
-	@PostConstruct
-	private void init() throws Exception{
+
+	/**
+	 * 해시태그 문자열을 파싱하여 순수한 키워드 목록을 반환합니다. 특징: Regex 미사용, 1-Pass 파싱, 메모리 할당 최소화
+	 *
+	 * @param rawInput 사용자가 입력한 원본 문자열
+	 * @return 중복이 제거되고 순서가 보장된 태그 Set
+	 */
+	private Set<String> parseTags(String rawInput) {
+		// 1. 순서 보장 및 중복 제거를 위해 LinkedHashSet 사용
+		final Set<String> result = new LinkedHashSet<>();
+
+		if (AppUtils.isEmpty(rawInput)) {
+			return result;
+		}
+
+		StringBuilder buffer = new StringBuilder();
+
+		// 2. 문자열을 char 배열로 변환하여 인덱스 접근 (String.charAt보다 빠름)
+		for (char c : rawInput.toCharArray()) {
+
+			// 3. 구분자 체크 (공백, 콤마, 탭, 줄바꿈 등)
+			if (c == ' ' || c == ',' || c == '\t' || c == '\n') {
+				if (buffer.length() > 0) {
+					result.add(buffer.toString());
+					buffer.setLength(0); // 버퍼 초기화 (새 객체 생성 X)
+				}
+			}
+			// 4. '#' 문자는 무시 (저장하지 않음)
+			else if (c != '#') {
+				buffer.append(c);
+			}
+		}
+
+		// 5. 마지막 버퍼에 남은 단어 처리
+		if (buffer.length() > 0) {
+			result.add(buffer.toString());
+		}
+
+		return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) throws Exception {
+
+		final FragmentVo item = new FragmentVo();
+		item.setContent(reqVo.getContent());
+		item.setIp(reqVo.getIp());
+
+		final TopicVo topic = topicMapper.loadTopic(reqVo.getUid(), -1L);
+		if (topic == null) {
+			throw new Exception("topic is null.");
+		}
+
 		int result = 0;
-		if( ! common.existTable("MB_TOPIC") ) {
-			log.info("MB_TOPIC 생성");
-			result += topicMapper.createTopic();
-			
-			result += common.createUniqueIndex("MB_TOPIC_UID_INDX", "MB_TOPIC", "UID");
-			result += common.createUniqueIndex("MB_TOPIC_NAME_UPPER_INDX", "MB_TOPIC", "NAME_UPPER");
-		}
-		
-		if( ! common.existTable("MB_TOPIC_FOLLOW") ) {
-			log.info("MB_TOPIC_FOLLOW 생성");
-			result += topicMapper.createTopicFlow();
+		result += boardMapper.insertFragment(user, device, topic, item);
+
+		final Set<String> hashTags = parseTags(reqVo.getHashTag());
+		if (hashTags.isEmpty()) {
+			return result;
 		}
 
-		log.info("초기 작업 {}", result);
-		
-		if( ! common.existTable("MB_MEMO_BOARD") ) {
-			log.info("MB_MEMO_BOARD 생성");
-			result += boardMapper.createMemoBoard();
-			
-			//result += common.createIndex("IDX_BOARD_TOPIC", "MB_MEMO_BOARD", "TOPIC_NO");
-			//result += common.createIndex("IDX_BOARD_USER", "MB_MEMO_BOARD", "USER_NO");
-			result += common.createIndex("IDX_BOARD_REG", "MB_MEMO_BOARD", "REG_DATE");
-		}
-		
-		if( ! common.existTable("MB_MEMO_COMMENTS") ) {
-			log.info("MB_MEMO_COMMENTS 생성");
-			result += boardMapper.createMemoComments();
-		}
+		final long fragmentNo = item.getFragmentNo();
 
-		if( ! common.existTable("MB_MEMO_SCRAP") ) {
-			log.info("MB_MEMO_SCRAP 생성");
-			result += boardMapper.createMemoScrap();
-		}
+		hashTags.stream().forEach(tagName -> {
+			boardMapper.mergeFragmentHashTag(tagName);
+			boardMapper.mergeFragmentHashTagRecordByName(tagName, fragmentNo);
+		});
 
-		if( ! common.existTable("MB_MEMO_EMOTION_LOG") ) {
-			log.info("MB_MEMO_EMOTION_LOG 생성");
-			result += boardMapper.createMemoEmotionLog();
-		}
-
-		log.info("초기 작업 {}", result);
+		return result;
 	}
 }

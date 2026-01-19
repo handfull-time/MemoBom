@@ -5,7 +5,7 @@
 <th:block layout:fragment="title">Memo</th:block>
 
 <th:block layout:fragment="header">
-	<div th:replace="~{Fragments/Header :: Header_Search('🔙', 'Bom', '◻️')}"></div>
+	<th:block th:replace="~{Fragments/Header :: Header_Search('🔙', 'Fragment', '✍️')}"></th:block>
 </th:block>
 
 <th:block layout:fragment="content">
@@ -13,11 +13,18 @@ Board
 </th:block>
 
 <th:block layout:fragment="footer">
-	<div th:replace="~{Fragments/Footer :: BasicFooter}"></div>
+	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
 </th:block>
 
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
+		function functionLeft(){
+			history.back();
+		}
+		
+		function functionRight(){
+			location.href = /*[[@{/Fragment/New.html}]]*/ '/Fragment/New.html';
+		}
 	</script>
 </th:block>
 

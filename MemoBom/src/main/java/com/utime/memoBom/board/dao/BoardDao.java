@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.dao;
 
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.UserVo;
 
 public interface BoardDao {
@@ -10,6 +11,6 @@ public interface BoardDao {
 	 * @param reqVo
 	 * @return
 	 */
-	int saveFragment(UserVo user, BoardReqVo reqVo) throws Exception;
+	int saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) throws Exception;
 
 }

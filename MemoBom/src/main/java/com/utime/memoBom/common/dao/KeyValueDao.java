@@ -20,12 +20,31 @@ public interface KeyValueDao {
 	String getValue(String k);
 	
 	/**
+	 * 값 조회와 동시에 제거
+	 * @param k
+	 * @return
+	 */
+	String getValueAndRemove(String k);
+
+	/**
 	 * 객체 값 조회
+	 * @param <T>
 	 * @param k
 	 * @param cls
 	 * @return
+	 * @throws RuntimeException
 	 */
 	<T> T getObject(String k, Class<T> cls) throws RuntimeException;
+	
+	/**
+	 * 객체 값 조회
+	 * @param <T>
+	 * @param k
+	 * @param cls
+	 * @return
+	 * @throws RuntimeException
+	 */
+	<T> T getObjectAndRemove(String k, Class<T> cls) throws RuntimeException;
 	
 	/**
 	 * 값 설정

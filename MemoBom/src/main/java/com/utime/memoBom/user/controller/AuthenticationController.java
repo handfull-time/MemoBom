@@ -56,7 +56,7 @@ public class AuthenticationController {
 		
 		if( user != null ) {
 			log.info( "이미 로그인 돼 있는 회원 {}", user.getId() );
-			return "redirect:/Board/index.html";
+			return "redirect:/Fragment/index.html";
 		}
 		
 		model.addAttribute("error", error );

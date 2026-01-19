@@ -15,8 +15,6 @@ public class TopicReqVo {
 	boolean enabled = true;
 	/** 이름 */
 	String name;
-	/** 검색 해쉬 값 ex) #내용 #내용 ... */
-	String hashTag;
 	/** 설명 */
 	String description;
 	/** 색 #RRGGBB 또는 'indigo' */

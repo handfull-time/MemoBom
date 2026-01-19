@@ -12,15 +12,18 @@ import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.UserVo;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 // Fragment(편린) 로 바꾸자.
 @Controller
-@RequestMapping("Board")
+@RequestMapping("Fragment")
 @RequiredArgsConstructor
 public class BoardController {
 	
@@ -39,7 +42,7 @@ public class BoardController {
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
 		}else if( ! topicServce.hasTopic(user) ){
-			return "redirect:/Topic/index.html";
+			return "redirect:/Mosaic/index.html";
 		}else {
 			model.addAttribute("board", boardServce.getBoardList(user) );
 			return "Board/BoardMain";
@@ -47,15 +50,23 @@ public class BoardController {
     }
 
 	@GetMapping("New.html")
-	public String saveFragment( ModelMap model, UserVo user, @RequestParam(value="topic") String topicUid ) {
+	public String saveFragment( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam(value="topic") String topicUid ) {
 		
-		TopicVo topic = topicServce.loadTopic(topicUid);
+		final TopicVo topic = topicServce.loadTopic(topicUid);
 		if( topic == null ) {
 			model.addAttribute("res", new ReturnBasic("E", "존재하지 않는 주제입니다.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 			return "Common/ErrorAlert";
 		}
-		//나중에 보안 키 넣자.
+		
+		final String key = boardServce.createKey(request);
+		if( key == null ) {
+			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+			return "Common/ErrorAlert";
+		}
+		
+		model.addAttribute("seal", key );
 		model.addAttribute("topic", topicServce.loadTopic(topicUid) );
 		
 		return "Board/BoardWrite";
@@ -63,18 +74,19 @@ public class BoardController {
 
 	@ResponseBody
 	@GetMapping("Save.json")
-	public ReturnBasic saveFragment( UserVo user, @RequestBody  BoardReqVo reqVo ) {
+	public ReturnBasic saveFragment( HttpServletRequest request, UserVo user, UserDevice device, @RequestBody BoardReqVo reqVo ) {
+		reqVo.setIp(AppUtils.getRemoteAddress(request));
 		
-		return boardServce.saveFragment( user, reqVo );
+		return boardServce.saveFragment( user, device, reqVo );
 	}
 	
-	@GetMapping(path = "Topic.html", params = "uid")
+	@GetMapping(path = "Mosaic.html", params = "uid")
     public String boardTopicFromUid( ModelMap model, UserVo user, @RequestParam("uid") String topicUid ) {
 		model.addAttribute("board", boardServce.getTopicBoardListFromTopicUid(user, topicUid) );
 		return "Board/BoardMain";
     }
 	
-	@GetMapping(path = "Topic.html", params = "user")
+	@GetMapping(path = "Mosaic.html", params = "user")
     public String boardTopicFromUser( ModelMap model, UserVo user, @RequestParam("user") String userUid) {
 		model.addAttribute("board", boardServce.getTopicBoardListFromUserUid(user, userUid) );
 		return "Board/BoardMain";

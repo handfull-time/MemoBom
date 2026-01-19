@@ -34,7 +34,7 @@ public class RootController {
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
 		}else {
-			return "redirect:/Board/index.html";
+			return "redirect:/Fragment/index.html";
 		}
     }
 
