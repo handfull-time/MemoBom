@@ -4,19 +4,19 @@
 <mapper namespace="com.utime.memoBom.board.mapper.BoardMapper">
 
 	<insert id="insertFragment" parameterType="map"
-		useGeneratedKeys="true" keyProperty="fragmentNo">
+		useGeneratedKeys="true" keyProperty="req.fragmentNo">
 		INSERT INTO MB_FRAGMENT ( 
 			USER_NO 
 			, TOPIC_NO 
 			, CONTENT 
 			<if test="req.ip != null and ! req.ip.isEmpty()">, IP </if>
-			<if test="req.device != null and ! req.device.isEmpty()">, DEVICE</if> 
+			<if test="device.device != null">, DEVICE</if> 
 		)VALUES ( 
 			#{user.userNo} 
 			, #{topic.topicNo} 
-			, #{reqVo.content} 
+			, #{req.content} 
 			<if test="req.ip != null and ! req.ip.isEmpty()">, #{req.ip} </if>
-			<if test="req.device != null and ! req.device.isEmpty()">, #{req.device}</if> 
+			<if test="device.device != null ">, #{device.device}</if> 
 		) 
 	</insert>
 

@@ -71,6 +71,13 @@ public class TestController {
 		return "Test/Test";
 	}
 
+	@GetMapping("TestView2")
+	public String test2(Model model) {
+	    model.addAttribute("showHeader", true);
+	    model.addAttribute("showFooter", false);
+		return "Test/Test2";
+	}
+
 	@GetMapping("Topic")
 	public String topic(Model model) {
 

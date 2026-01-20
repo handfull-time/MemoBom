@@ -43,6 +43,9 @@ public class ViewResolverConfig implements WebMvcConfigurer {
 	
 	@Resource(name="UserArgument")
 	private HandlerMethodArgumentResolver userArgument;
+	
+	@Resource(name="UserDeviceArgumentResolver")
+	private HandlerMethodArgumentResolver userDevice;
 
     /**
      * Controller에서 별도 Object 형태의 파라미터를 전달 받을 때 사용함.
@@ -50,6 +53,7 @@ public class ViewResolverConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(this.userArgument);
+        resolvers.add(this.userDevice);
     }
     
     @Resource(name="ViewInterceptor")

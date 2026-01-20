@@ -229,55 +229,73 @@
 
 
 /*
+// 기본 사용
+showCustomAlert("작업이 완료되었습니다.");
 
-<script>
-  // Confirm 예제
-  function openConfirmExample() {
-    showCustomConfirm("정말 삭제하시겠습니까?", function(result) {
-      if (result) {
-        alert("확인 버튼을 눌렀습니다.");
-      } else {
-        alert("취소 버튼을 눌렀습니다.");
-      }
-    });
-  }
+// 콜백 사용 (확인 버튼 누른 후 동작)
+showCustomAlert("저장에 성공했습니다.", function() {
+    console.log("알림창이 닫혔습니다. 다음 로직을 수행합니다.");
+    location.reload(); // 예: 페이지 새로고침
+});
 
-  // Prompt 예제
-  function openPromptExample() {
-    showCustomPrompt("이름을 입력하세요:", function(result) {
-      if (result !== false) {
-        alert("입력한 값: " + result);
-      } else {
-        alert("취소되었습니다.");
-      }
-    });
-  }
-</script>
-
-
-<script>
-  async function runExamples() {
-    await alertP("알림창! 계속 진행합니다.");
-
-    const ok = await confirmP("정말 진행할까요?");
-    if (ok) {
-      console.log("사용자가 확인을 선택");
+showCustomConfirm("정말로 삭제하시겠습니까?", function(result) {
+    if (result) {
+        // '확인' 클릭 시
+        console.log("삭제 프로세스를 진행합니다.");
+        deleteItem(); 
     } else {
-      console.log("사용자가 취소를 선택");
+        // '취소' 또는 배경 클릭, ESC 키 입력 시
+        console.log("삭제가 취소되었습니다.");
     }
+});
 
-    const name = await promptP("이름을 입력하세요", "홍길동");
-    if (name !== false) {
-      console.log("입력값:", name);
+showCustomPrompt("변경할 닉네임을 입력하세요.", function(inputValue) {
+    if (inputValue === false) {
+        console.log("입력이 취소되었습니다.");
+    } else if (inputValue.trim() === "") {
+        showCustomAlert("닉네임은 공백일 수 없습니다.");
     } else {
-      console.log("사용자가 취소");
+        console.log("입력된 닉네임:", inputValue);
+        updateNickname(inputValue);
     }
-  }
-</script>
+});
 
-<button onclick="runExamples()" 
-        class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
-  Promise 방식 실행
-</button>
+async function handleProcess() {
+    console.log("프로세스 시작");
+    
+    // 사용자가 확인을 누를 때까지 여기서 대기
+    await alertP("주의: 이 작업은 되돌릴 수 없습니다.");
+    
+    console.log("사용자가 확인했습니다. 계속 진행합니다.");
+}
+
+
+async function handleDelete() {
+    // 사용자의 응답을 기다림 (true / false)
+    const isConfirmed = await confirmP("현재 작성 중인 내용을 초기화하시겠습니까?");
+    
+    if (isConfirmed) {
+        document.getElementById("editor").value = "";
+        await alertP("초기화되었습니다.");
+    } else {
+        // 취소 시 아무것도 하지 않음
+        return;
+    }
+}
+
+
+async function renameFolder() {
+    // 두 번째 인자는 입력창의 초기값 (선택 사항)
+    const newName = await promptP("새 폴더 이름을 입력하세요", "새 폴더");
+    
+    // 취소 버튼을 누르면 false가 반환됨
+    if (newName === false) {
+        console.log("이름 변경 취소");
+        return;
+    }
+    
+    console.log("폴더 이름 변경:", newName);
+    await alertP(`폴더명이 '${newName}'(으)로 변경되었습니다.`);
+}
 
  */

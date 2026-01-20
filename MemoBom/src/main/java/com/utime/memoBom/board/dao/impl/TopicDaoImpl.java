@@ -99,12 +99,11 @@ class TopicDaoImpl implements TopicDao{
 		}
 		
 		if( topicMapper.isTopicFollowed( user.getUserNo(), topicNo ) ) {
-			topicMapper.deleteTopicFlow( user.getUserNo(), topicNo );
-			return 1;
+			result = topicMapper.deleteTopicFlow( user.getUserNo(), topicNo );
 		}else {
-			topicMapper.insertTopicFlow( user.getUserNo(), topicNo );
+			result = topicMapper.insertTopicFlow( user.getUserNo(), topicNo );
 		}
 		
-		return 0;
+		return result;
 	}
 }

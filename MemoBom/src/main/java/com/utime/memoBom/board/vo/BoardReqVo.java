@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BoardReqVo {
 	String seal;
-	String uid;
+	String topicUid;
 	String content;
 	String hashTag;
 	String ip;

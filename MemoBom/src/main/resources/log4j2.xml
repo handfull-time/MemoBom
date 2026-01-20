@@ -46,7 +46,7 @@
             <AppenderRef ref="File" />
         </Logger>
         
-        <Logger name="jdbc.sqlonly" level="INFO" additivity="false">
+        <Logger name="jdbc.sqlonly" level="OFF" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         

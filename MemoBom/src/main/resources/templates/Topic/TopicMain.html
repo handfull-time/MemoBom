@@ -51,7 +51,7 @@
 				<!-- emoji badge -->
 				<div class="shrink-0">
 					<div
-						class="emoji-badge w-11 h-11 rounded-2xl flex items-center justify-center text-2xl border border-slate-200 bg-slate-50">
+						class="emoji-badge w-auto h-8 rounded-2xl flex items-center justify-center text-2xl cursor-pointer border border-slate-200 bg-slate-50">
 						😊
 					</div>
 				</div>
@@ -80,10 +80,10 @@
 								</span>
 							</button>
 
-							<button type="button"
-								class="btn-follow w-24 h-9 rounded-xl border border-slate-200 bg-white text-slate-800 text-sm font-semibold hover:bg-slate-50">
-								Flow 신청
-							</button>
+							<button type="button" id="btn-flow"
+					            class="btn-follow w-auto h-8 flex items-center justify-center rounded-xl hover:opacity-80 transition-opacity">
+					            <img src="" alt="Flow 상태" class="flow-img h-full w-auto object-contain" />
+					        </button>
 						</div>
 					</div>
 
@@ -110,6 +110,10 @@
 
 						<span class="topic-uid hidden"></span>
 						<span class="topic-no hidden"></span>
+
+						<div class="flex items-center gap-1 ml-auto">
+							<img th:src="@{/images/noteWriteButton.svg}" alt="writer" class="fragment-write h-6 w-auto cursor-pointer object-contain" />
+						</div>
 					</div>
 
 				</div>
@@ -185,9 +189,9 @@
 					const flow = node.querySelector(".topic-flow");
 					const memo = node.querySelector(".topic-memo");
 					const btn = node.querySelector(".btn-follow");
+					const flowImg = node.querySelector(".flow-img");
 					const uid = node.querySelector(".topic-uid");
 					const no = node.querySelector(".topic-no");
-					const userBtn = node.querySelector(".topic-user");
 					const userImg = node.querySelector(".topic-user-img");
 					const userName = node.querySelector(".topic-user-name");
 
@@ -208,8 +212,6 @@
 					if (profileUrl) userImg.src = profileUrl;
 					else userImg.removeAttribute("src"); // 빈 src 방지
 
-
-
 					// 컬러 적용(배지 배경 + 카드 좌측 라인 느낌)
 					const color = safeText(t.color, "");
 					if (/^#[0-9a-fA-F]{6}$/.test(color)) {
@@ -225,15 +227,9 @@
 
 					function applyFlowUI() {
 						if (isFlow) {
-							// ✅ flow 상태: "Flow 해지" + 진한 버튼
-							btn.textContent = "Flow 해지";
-							btn.classList.remove("bg-white", "text-slate-800", "border-slate-200", "hover:bg-slate-50");
-							btn.classList.add("bg-slate-900", "text-pink-500", "border-slate-900");
+							flowImg.src = /*[[@{/images/topic_flow_apply.svg}]]*/ '/images/topic_flow_apply.svg';
 						} else {
-							// ✅ 미flow 상태: "Flow 신청" + 흰 버튼
-							btn.textContent = "Flow 신청";
-							btn.classList.add("bg-white", "text-slate-800", "border-slate-200", "hover:bg-slate-50");
-							btn.classList.remove("bg-slate-900", "text-pink-500", "border-slate-900");
+							flowImg.src = /*[[@{/images/topic_flow_cancel.svg}]]*/ '/images/topic_flow_cancel.svg';
 						}
 					}
 
@@ -285,8 +281,7 @@
 					});
 
 					// topic name 클릭 → Topic 화면 이동
-					const nameEl = node.querySelector(".topic-name");
-					nameEl.addEventListener("click", (e) => {
+					name.addEventListener("click", (e) => {
 						e.stopPropagation(); // 카드 클릭 이벤트 방지
 
 						const uidVal = (t.uid || "").trim();
@@ -312,7 +307,7 @@
                         location.href = url + "?uid=" + encodeURIComponent(uidVal);
                     });
 
-					userBtn.addEventListener("click", (e) => {
+					node.querySelector(".topic-user").addEventListener("click", (e) => {
 						e.stopPropagation(); // 카드 클릭과 분리
 						if (!userUid) {
 							showState("err", "사용자 UID가 없습니다.");
@@ -322,6 +317,17 @@
 						location.href = url + "?user=" + encodeURIComponent(userUid);
 					});
 
+					node.querySelector(".fragment-write").addEventListener("click", (e) => {
+						e.stopPropagation(); // 카드 클릭과 분리
+						const uidVal = (t.uid || "").trim();
+                        if (!uidVal) {
+                            showState("err", "토픽 UID가 없습니다.");
+                            return;
+                        }
+						
+						const url = /*[[@{/Fragment/Tessera.html}]]*/ '/Fragment/Tessera.html';
+						location.href = url + "?topic=" + encodeURIComponent(uidVal);
+					});
 
 					// (선택) 카드 클릭 시 상세 이동 — 필요 시 URL만 맞춰서 사용
 					//node.addEventListener("click", (e) => {
@@ -362,6 +368,7 @@
 						renderList(elFresh, res.data.fresh || []);
 					}
 				} catch (e) {
+					console.error(urlWithKeyword, e);
 					showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
 					renderList(elTrending, []);
 					renderList(elFresh, []);

@@ -75,7 +75,7 @@ class BoardDaoImpl implements BoardDao {
 		item.setContent(reqVo.getContent());
 		item.setIp(reqVo.getIp());
 
-		final TopicVo topic = topicMapper.loadTopic(reqVo.getUid(), -1L);
+		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
 		if (topic == null) {
 			throw new Exception("topic is null.");
 		}

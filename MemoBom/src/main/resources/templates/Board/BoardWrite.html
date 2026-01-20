@@ -62,7 +62,7 @@
 
 
 <th:block layout:fragment="footer">
-	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
+	<th:block th:replace="~{Fragments/Footer :: FooterWrite}"></th:block>
 </th:block>
 
 <th:block layout:fragment="script">
@@ -100,25 +100,19 @@
 			}
 
 			const hashtagRaw = (document.getElementById('hashtags')?.value || '').trim();
-			const hashtags = normalizeHashtags(hashtagRaw);
+			//const hashtags = normalizeHashtags(hashtagRaw);
 
 			const sendObj = {
 				seal: /*[[${seal}]]*/ null,
 				topicUid: /*[[${topic.uid}]]*/ null,
 				content: content,
-				// 서버 스펙이 아직 정해지지 않았을 수 있어 문자열도 함께 전달 (무시돼도 무해)
-				hashtags: hashtags,
-				hashtagText: hashtagRaw
+				hashTag: hashtagRaw
 			}
 
-			const url = /*[[@{/Fragment/Save.json}]]*/ '/Fragment/Save.json';
-
-			// 기존 로직 보존 + 런타임 오류 방지
-			const res = apiPost(url, sendObj);
-			const payload = sendObj;
 			try {
-				const url = /*[[@{/Mosaic/Save.json}]]*/ '/Mosaic/Save.json';
-				const data = await apiPost(url, payload);
+				const url = /*[[@{/Fragment/Save.json}]]*/ '/Fragment/Save.json';
+
+				const data = await apiPost(url, sendObj);
 
 				if (!data) {
 					showGlobal("err", "저장 실패");
@@ -126,7 +120,7 @@
 				}
 
 				if (data.code === "0") {
-					alertP("새 Mosaic이 저장되었습니다.");
+					await alertP("The new fragment has been saved.");
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {
 					showGlobal("err", data.message || "저장 실패");

@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
@@ -104,5 +106,11 @@ class TopicServiceImpl implements TopicService {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public List<TopicVo> getTopicList(UserVo user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

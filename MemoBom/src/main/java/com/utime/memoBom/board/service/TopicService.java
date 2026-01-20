@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.service;
 
+import java.util.List;
+
 import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
@@ -66,6 +68,8 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic flow(UserVo user, TopicVo reqVo);
+
+	List<TopicVo> getTopicList(UserVo user);
 
 
 }
