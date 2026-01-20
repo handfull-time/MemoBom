@@ -271,65 +271,79 @@
 	</select>
 	
 	<select id="listTopic" parameterType="map" resultMap="TopicResultMap">
-    SELECT
-        TP.TOPIC_NO
-        , TP.OWNER_NO
-        , TP.EXTERNAL
-        , TP.UID
-        , TP.NAME
-        , TP.DESCRIPTION
-        , TP.IMOGI
-        , TP.COLOR
-        , USR.UID AS USER_UID
-        , USR.NICKNAME 
-        , USR.PROFILE_IMG_PATH
-        , (COUNT(MYFL.USER_NO) > 0) AS FLOW
-        , COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
-        , COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
-    FROM MB_TOPIC TP
-        JOIN MB_USER USR
-            ON TP.OWNER_NO = USR.USER_NO
-        LEFT JOIN MB_TOPIC_FOLLOW ALLFL
-            ON ALLFL.TOPIC_NO = TP.TOPIC_NO
-        LEFT JOIN MB_TOPIC_FOLLOW MYFL
-            ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-        LEFT JOIN MB_FRAGMENT MB
-            ON MB.TOPIC_NO = TP.TOPIC_NO
-    <where>
-        AND TP.ENABLED = TRUE
-        AND TP.EXTERNAL = TRUE
-        
-        <if test="keyword != null and ! keyword.isEmpty() ">
-            AND ( 
-                TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
-                OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
-            )
-        </if>
-    </where>
-    GROUP BY
-        TP.TOPIC_NO
-        , TP.OWNER_NO
-        , TP.EXTERNAL
-        , TP.UID
-        , TP.NAME
-        , TP.DESCRIPTION
-        , TP.IMOGI
-        , TP.COLOR
-        , USR.NICKNAME
-        , USR.PROFILE_IMG_PATH
-    ORDER BY
-    <choose>
-        <when test="sortType == 'trending'">
-            COUNT(DISTINCT ALLFL.USER_NO) DESC
-            , COUNT(DISTINCT MB.FRAGMENT_NO) DESC
-            , TP.TOPIC_NO DESC
-        </when>
-        <otherwise>
-            TP.TOPIC_NO DESC
-        </otherwise>
-    </choose>
-    LIMIT #{pageSize} OFFSET #{offset}
-</select>
+	    SELECT
+	        TP.TOPIC_NO
+	        , TP.OWNER_NO
+	        , TP.EXTERNAL
+	        , TP.UID
+	        , TP.NAME
+	        , TP.DESCRIPTION
+	        , TP.IMOGI
+	        , TP.COLOR
+	        , USR.UID AS USER_UID
+	        , USR.NICKNAME 
+	        , USR.PROFILE_IMG_PATH
+	        , (COUNT(MYFL.USER_NO) > 0) AS FLOW
+	        , COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
+	        , COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
+	    FROM MB_TOPIC TP
+	        JOIN MB_USER USR
+	            ON TP.OWNER_NO = USR.USER_NO
+	        LEFT JOIN MB_TOPIC_FOLLOW ALLFL
+	            ON ALLFL.TOPIC_NO = TP.TOPIC_NO
+	        LEFT JOIN MB_TOPIC_FOLLOW MYFL
+	            ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
+	        LEFT JOIN MB_FRAGMENT MB
+	            ON MB.TOPIC_NO = TP.TOPIC_NO
+	    <where>
+	        AND TP.ENABLED = TRUE
+	        <!-- 공개/비공개 노출 정책 -->
+	        <choose>
+	            <!-- 비로그인: 공개만 -->
+	            <when test="userNo == 0">
+	                AND TP.EXTERNAL = TRUE
+	            </when>
+	
+	            <!-- 로그인: 공개 + (비공개지만 내가 팔로우한 토픽) -->
+	            <otherwise>
+	                AND (
+	                       TP.EXTERNAL = TRUE
+	                    OR (TP.EXTERNAL = FALSE AND MYFL.USER_NO IS NOT NULL)
+	                )
+	            </otherwise>
+	        </choose>
+	        
+	        <if test="keyword != null and ! keyword.isEmpty() ">
+	            AND ( 
+	                TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+	                OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
+	            )
+	        </if>
+	    </where>
+	    GROUP BY
+	        TP.TOPIC_NO
+	        , TP.OWNER_NO
+	        , TP.EXTERNAL
+	        , TP.UID
+	        , TP.NAME
+	        , TP.DESCRIPTION
+	        , TP.IMOGI
+	        , TP.COLOR
+	        , USR.NICKNAME
+	        , USR.PROFILE_IMG_PATH
+	    ORDER BY
+	    <choose>
+	        <when test="sortType == 'trending'">
+	            COUNT(DISTINCT ALLFL.USER_NO) DESC
+	            , COUNT(DISTINCT MB.FRAGMENT_NO) DESC
+	            , TP.TOPIC_NO DESC
+	        </when>
+	        <otherwise>
+	            TP.TOPIC_NO DESC
+	        </otherwise>
+	    </choose>
+	    LIMIT 5 OFFSET (#{page} - 1) * 5
+	</select>
 
 	
 	<!--topic 번호 조회-->

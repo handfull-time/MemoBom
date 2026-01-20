@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -58,6 +59,14 @@ public class BoardController {
 		}
     }
 
+	/**
+	 * Mosaic 이 여러개일 때 선택하는 화면인데... 미사용.
+	 * @param request
+	 * @param model
+	 * @param user
+	 * @return
+	 */
+	@Deprecated
 	@GetMapping(path = "Mosaic.html", params = {"!user", "!uid"})
 	public String selectMosaic( HttpServletRequest request, ModelMap model, UserVo user ) {
 
@@ -106,6 +115,8 @@ public class BoardController {
 		
 		return "Board/BoardWrite";
 	}
+	
+	
 
 	@ResponseBody
 	@PostMapping("Save.json")
@@ -133,5 +144,19 @@ public class BoardController {
 		
 		return "Board/BoardMain";
     }
+	
+	@GetMapping(path = "Fragment.json")
+    public ReturnBasic loadFragmentList( UserVo user, FragmentListReqVO reqVo ) {
+
+		return boardServce.loadFragmentList( user, reqVo );
+    }
+	
+	
+	@GetMapping(path = "Comments.json")
+    public ReturnBasic loadCommentsList( UserVo user,  @RequestParam("uid") String uid, @RequestParam(name = "pageNo", defaultValue = "1") int pageNo ) {
+
+		return boardServce.loadCommentsList( user, uid, pageNo );
+    }
+	
 }
 

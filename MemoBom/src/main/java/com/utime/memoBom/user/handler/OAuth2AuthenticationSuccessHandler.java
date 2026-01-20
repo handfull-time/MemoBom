@@ -170,7 +170,7 @@ class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessH
     	
     	if( KeyProviderGoogle.equals(provider) ) {
     		final String providerId = (String) attributes.get("sub");
-    		result = userDao.findByEmail(provider, providerId);
+    		result = userDao.findById(provider, providerId);
     		
     		if( result != null ) {
     			return result;

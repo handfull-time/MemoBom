@@ -8,10 +8,10 @@ public interface UserDao {
 	/**
 	 * 사용자 계정 찾기
 	 * @param provider
-	 * @param email
+	 * @param id
 	 * @return
 	 */
-	UserVo findByEmail(String provider, String email);
+	UserVo findById(String provider, String id);
 	
 	/**
 	 * 사용자 추가

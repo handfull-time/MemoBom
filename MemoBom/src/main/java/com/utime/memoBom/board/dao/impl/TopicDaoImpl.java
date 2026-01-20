@@ -73,15 +73,14 @@ class TopicDaoImpl implements TopicDao{
 		
 		final TopicListVo result = new TopicListVo();
 		
-		int pageSize = 5;
-		int offset = (page - 1) * pageSize;
+		final long userNo = user == null ? 0 : user.getUserNo();
 		
 		if( !AppUtils.isEmpty(keyword) ) {
 			keyword = keyword.trim();
-			result.setSearch( topicMapper.listTopic(user.getUserNo(), keyword, pageSize, offset, "new") );
+			result.setSearch( topicMapper.listTopic(userNo, keyword, page, "new") );
 		}else {
-			result.setFresh( topicMapper.listTopic(user.getUserNo(), null, pageSize, offset, "new"));
-			result.setTrending( topicMapper.listTopic(user.getUserNo(), null, pageSize, offset, "trending") );
+			result.setFresh( topicMapper.listTopic(userNo, null, page, "new"));
+			result.setTrending( topicMapper.listTopic(userNo, null, page, "trending") );
 		}
 		
 		return result;

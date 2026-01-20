@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.dao.impl;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,9 @@ import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.mapper.BoardMapper;
 import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.CommentItem;
+import com.utime.memoBom.board.vo.FragmentItem;
+import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
@@ -83,7 +87,7 @@ class BoardDaoImpl implements BoardDao {
 		int result = 0;
 		result += boardMapper.insertFragment(user, device, topic, item);
 
-		final Set<String> hashTags = parseTags(reqVo.getHashTag());
+		final Set<String> hashTags = this.parseTags(reqVo.getHashTag());
 		if (hashTags.isEmpty()) {
 			return result;
 		}
@@ -96,5 +100,17 @@ class BoardDaoImpl implements BoardDao {
 		});
 
 		return result;
+	}
+
+	@Override
+	public List<FragmentItem> loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

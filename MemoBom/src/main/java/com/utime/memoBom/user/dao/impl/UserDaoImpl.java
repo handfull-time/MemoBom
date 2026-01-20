@@ -19,9 +19,9 @@ class UserDaoImpl implements UserDao {
 	private final UserMapper userMapper;
 	
 	@Override
-	public UserVo findByEmail(String provider, String email) {
+	public UserVo findById(String provider, String id) {
 
-		return userMapper.selectUserFromIdAndProvider( provider, email);
+		return userMapper.selectUserFromIdAndProvider( provider, id);
 	}
 
 	@Override

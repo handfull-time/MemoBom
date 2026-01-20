@@ -20,7 +20,7 @@ public interface UserMapper {
 	 * @return
 	 */
 	UserVo selectUserFromIdAndProvider(@Param("provider")String provider, @Param("id")String id);
-
+	
 	/**
 	 * 회원 추가
 	 * @param user

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
@@ -33,20 +34,24 @@ public class TestController {
 	
     @ResponseBody
 	@GetMapping("Login")
-	public ReturnBasic testLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
-		UserVo userVo = new UserVo();
-		userVo.setId("" + System.currentTimeMillis());
-		userVo.setProvider("localPc");
-		userVo.setEnabled(true);
-		userVo.setEmail("test@Gmail.cococo" );
-		userVo.setRole(EJwtRole.User);
-		userVo.setNickname( "Tester" );
-		userVo.setProfileUrl( "/MemoBom/images/profile-placeholder.svg" );
-		
-		log.info("사용자 추가 정보 : {}", userVo);
-		
-		userDao.addUser(userVo);
+	public ReturnBasic testLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") String id) throws Exception {
+
+    	UserVo userVo = userDao.findById("localPc", id);
+    	
+    	if( userVo == null ) {
+    		userVo = new UserVo();
+    		userVo.setId(id);
+    		userVo.setProvider("localPc");
+    		userVo.setEnabled(true);
+    		userVo.setEmail(id + "@Gmail.cococo" );
+    		userVo.setRole(EJwtRole.User);
+    		userVo.setNickname( "Tester-" + id );
+    		userVo.setProfileUrl( "/MemoBom/images/profile-placeholder.svg" );
+    		
+    		log.info("사용자 추가 정보 : {}", userVo);
+    		
+    		userDao.addUser(userVo);
+    	}
 		
 		ReturnBasic result;
 		try {

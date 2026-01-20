@@ -6,6 +6,7 @@ import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.util.AppUtils;
@@ -28,24 +29,6 @@ class BoardServiceImpl implements BoardService {
 	
 	final KeyValueDao keyValueDao;
 	
-	@Override
-	public TopicVo getTopicBoardListFromTopicUid(UserVo user, String topicUid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getBoardList(UserVo user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getTopicBoardListFromUserUid(UserVo user, String userUid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public ReturnBasic saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) {
 		
@@ -80,4 +63,33 @@ class BoardServiceImpl implements BoardService {
 		return KeyUtil.createKey(keyValueDao, request, user);
 	}
 
+	@Override
+	public ReturnBasic loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		try {
+			result.setData( boardDao.loadFragmentList(user, reqVo) );
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "An error occurred while saving.");
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		try {
+			result.setData( boardDao.loadCommentsList(user, uid, pageNo) );
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "An error occurred while saving.");
+		}
+		
+		return result;
+	}
 }

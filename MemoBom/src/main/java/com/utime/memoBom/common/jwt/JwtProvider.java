@@ -258,7 +258,7 @@ public class JwtProvider {
         // 변경: userDao.findByEmail(id) 혹은 findById(id)
         final String provider = (String)claims.get(CLM_PROVIDER, String.class);
         
-        final UserVo user = userDao.findByEmail(provider, id); 
+        final UserVo user = userDao.findById(provider, id); 
 
         if (user == null) {
         	log.info("Db user is null.");
