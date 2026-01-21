@@ -413,4 +413,13 @@ public class AppUtils {
 
         return new UserDevice(platform, model);
     }
+    
+    public static boolean isAjaxRequest(HttpServletRequest req) {
+        String ajaxHeader = req.getHeader("X-Requested-With");
+        String contentType = req.getHeader("Content-Type");
+        
+        return "XMLHttpRequest".equals(ajaxHeader) 
+                || (contentType != null && contentType.contains("application/json"))
+                || req.getRequestURI().startsWith("/Api/"); // API 경로 예시
+    }
 }

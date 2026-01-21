@@ -9,6 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         
     	log.warn( "Url:{}\tStatus:{}\tMessage:{}", requestUri, status, authException.getMessage() );
     	
-    	if (isAjaxRequest(request)) {
+    	if (AppUtils.isAjaxRequest(request)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         } else {
         	request.getSession().setAttribute(AppDefine.KeyBeforeUri, requestUri);
@@ -63,13 +64,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         );
     }
     
-    private boolean isAjaxRequest(HttpServletRequest req) {
-        String ajaxHeader = req.getHeader("X-Requested-With");
-        String contentType = req.getHeader("Content-Type");
-        
-        return "XMLHttpRequest".equals(ajaxHeader) 
-                || (contentType != null && contentType.contains("application/json"))
-                || req.getRequestURI().startsWith("/Api/"); // API 경로 예시
-    }
+    
 
 }

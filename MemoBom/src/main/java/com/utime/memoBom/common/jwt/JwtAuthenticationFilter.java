@@ -53,7 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	
     	final ResUserVo tokenRes = jwtProvider.reissueAccessToken(request, response);
     	if( tokenRes.isError() ) {
-    		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//    		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    		SecurityContextHolder.clearContext();
+    		filterChain.doFilter(request, response);
     		return;
     	}
     	

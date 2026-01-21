@@ -1,11 +1,15 @@
 package com.utime.memoBom.common.jwt;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+
+import com.utime.memoBom.common.util.AppUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +28,11 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
     	response.setStatus( HttpServletResponse.SC_FORBIDDEN );
     	
-    	// 403 발생 시 특정 페이지로 이동
-    	response.sendRedirect( request.getContextPath() + "/Error/AccessDenied.html?url=" + request.getRequestURI());
+    	if (AppUtils.isAjaxRequest(request)) {
+    		response.setContentType("application/json;charset=UTF-8");
+    	    response.getWriter().write("{\"message\":\"Status code (403) indicating the server understood the request but refused to fulfill it.\"}");
+    	} else {
+    		response.sendRedirect( request.getContextPath() + "/Error/AccessDenied.html?url=" + URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8));
+    	}
     }
 }

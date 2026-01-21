@@ -91,6 +91,8 @@
 		, IMOGI 
 		, COLOR 
 		, EMOJI_SET_TYPE
+		, EMOTION 
+		, COMMENTS 
 	</sql>
 	
 	<resultMap id="TopicResultMap" type="com.utime.memoBom.board.vo.TopicVo">
@@ -103,13 +105,16 @@
         <result property="description" column="DESCRIPTION" />
         <result property="imogi" column="IMOGI" />
         <result property="color" column="COLOR" />
+        <result property="emotion" column="EMOTION" />
+        <result property="comments" column="COMMENTS" />
+        <result property="maxLen" column="MAX_LEN" />
         
+        <result property="flow" column="FLOW" />
         <result property="user.uid" column="USER_UID" />
         <result property="user.nickname" column="NICKNAME" />
         <result property="user.profileUrl" column="PROFILE_IMG_PATH" />
         <result property="fragmentCount" column="FRAGMENT_COUNT" />
         <result property="flowCount" column="FLOW_COUNT" />
-        <result property="flow" column="FLOW" />
          
         <result property="emojiSetType" column="EMOJI_SET_TYPE" 
             typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
@@ -127,147 +132,6 @@
 			<if test="topicNo > 0">
 				AND TOPIC_NO = #{topicNo}
 			</if>
-	</select>
-	
-	<!--topic 인기 목록-->
-	<select id="listTopicTrending" parameterType="map" resultMap="TopicResultMap">
-		SELECT
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.UID AS USER_UID
-			, USR.NICKNAME 
-			, USR.PROFILE_IMG_PATH
-			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
-			, COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
-			, COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
-		FROM MB_TOPIC TP
-			JOIN MB_USER USR
-				ON TP.OWNER_NO = USR.USER_NO
-			LEFT JOIN MB_TOPIC_FOLLOW ALLFL
-				ON ALLFL.TOPIC_NO = TP.TOPIC_NO
-			LEFT JOIN MB_TOPIC_FOLLOW MYFL
-				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-			LEFT JOIN MB_FRAGMENT MB
-				ON MB.TOPIC_NO = TP.TOPIC_NO
-		WHERE 1=1
-			AND TP.ENABLED = TRUE
-			AND TP.EXTERNAL = TRUE
-		GROUP BY
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.NICKNAME
-			, USR.PROFILE_IMG_PATH
-		ORDER BY
-			COUNT(DISTINCT ALLFL.USER_NO) DESC <!-- 인기: 팔로우 수 -->
-			, COUNT(DISTINCT MB.FRAGMENT_NO) DESC
-			, TP.TOPIC_NO DESC
-		LIMIT #{pageSize} OFFSET #{offset}
-	</select>
-	
-	<!--topic 신상 목록-->
-	<select id="listTopicFresh" parameterType="map" resultMap="TopicResultMap">
-		SELECT
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.UID AS USER_UID
-			, USR.NICKNAME 
-			, USR.PROFILE_IMG_PATH 
-			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
-			, COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
-			, COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
-		FROM MB_TOPIC TP
-			JOIN MB_USER USR
-				ON TP.OWNER_NO = USR.USER_NO
-			LEFT JOIN MB_TOPIC_FOLLOW ALLFL
-				ON ALLFL.TOPIC_NO = TP.TOPIC_NO
-			LEFT JOIN MB_TOPIC_FOLLOW MYFL
-				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-			LEFT JOIN MB_FRAGMENT MB
-				ON MB.TOPIC_NO = TP.TOPIC_NO
-		WHERE 1=1
-			AND TP.ENABLED = TRUE
-			AND TP.EXTERNAL = TRUE
-		GROUP BY
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.NICKNAME
-			, USR.PROFILE_IMG_PATH
-		ORDER BY
-			TP.TOPIC_NO DESC
-		LIMIT #{pageSize} OFFSET #{offset}
-	</select>
-	
-	<!-- topic 검색 목록 -->
-	<select id="searchTopic" resultMap="TopicResultMap">
-		SELECT
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.UID AS USER_UID
-			, USR.NICKNAME 
-			, USR.PROFILE_IMG_PATH 
-			, (COUNT(MYFL.USER_NO) > 0) AS FLOW
-			, COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
-			, COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
-		FROM MB_TOPIC TP
-			JOIN MB_USER USR
-				ON TP.OWNER_NO = USR.USER_NO
-			LEFT JOIN MB_TOPIC_FOLLOW ALLFL
-				ON ALLFL.TOPIC_NO = TP.TOPIC_NO
-			LEFT JOIN MB_TOPIC_FOLLOW MYFL
-				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-			LEFT JOIN MB_FRAGMENT MB
-				ON MB.TOPIC_NO = TP.TOPIC_NO
-		WHERE 1=1
-			AND TP.ENABLED = TRUE
-			AND TP.EXTERNAL = TRUE
-			AND ( 
-				TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
-				OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
-			)
-		GROUP BY
-			TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			, USR.NICKNAME
-			, USR.PROFILE_IMG_PATH
-		ORDER BY
-			TP.TOPIC_NO DESC
-		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
 	
 	<select id="listTopic" parameterType="map" resultMap="TopicResultMap">

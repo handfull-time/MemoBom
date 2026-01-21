@@ -235,22 +235,36 @@ public class JwtProvider {
         // ... (기존 로직 유지)
         return true;
     }
+    
+    /** DB에서 새로 읽었다. */
+    final String KeyDbReload = "R";
 
     /**
      * 토큰 Claims에서 사용자를 추출합니다.
      * OAuth 사용자의 경우 ID(Email)로 조회합니다.
      */
-    private UserVo extractUser(Claims claims) {
-        final String id = claims.getId(); // JWT Subject (여기서는 User ID/Email)
-        if (id == null || id.isBlank()) return null;
+    private ResUserVo extractUser(Claims claims) {
+    	
+    	final ResUserVo result = new ResUserVo();
+        
+    	final String id = claims.getId(); // JWT Subject (여기서는 User ID/Email)
+        if (id == null || id.isBlank()) {
+        	result.setCodeMessage("E", "ID is empty.");
+        	return result;
+        }
         
         final String sid = (String)claims.get(CLM_SID, String.class);
-        if (sid == null || sid.isBlank()) return null;
+        if (sid == null || sid.isBlank()) {
+        	result.setCodeMessage("E", "SID is empty.");
+        	return result;
+        }
 
         if( intervalMap.containsKey(sid) ) {
         	final UserVo user = intervalMap.get(sid);
         	log.info("Cash user : {}", user.toString());
-        	return user;
+        	
+        	result.setUser(user);
+        	return result;
         }
 
         // [수정] 메서드명을 일반적인 ID 조회(findById)로 변경했습니다.
@@ -262,7 +276,8 @@ public class JwtProvider {
 
         if (user == null) {
         	log.info("Db user is null.");
-        	return null;
+        	result.setCodeMessage("E", "Db user is null.");
+        	return result;
         }
         
         log.info("Db user : {}", user.toString());
@@ -273,11 +288,15 @@ public class JwtProvider {
             int tokenUserNo = Integer.parseInt(tokenUserNoStr);
             if (user.getUserNo() != tokenUserNo) {
                 log.warn("User mismatch. tokenUserNo={}, dbUserNo={}", tokenUserNo, user.getUserNo());
-                return null;
+            	result.setCodeMessage("E", "User Missmatch.");
+            	return result;
             }
         }
+        
+        result.setCode(KeyDbReload);
+        result.setUser(user);
         intervalMap.put(sid, user);
-        return user;
+        return result;
     }
 
     // =========================================================================
@@ -304,7 +323,7 @@ public class JwtProvider {
 
 		userDao.addLoginRecord( user, ip, device );
 
-        return new ReturnBasic(); // 성공 (Default "S")
+        return new ReturnBasic();
     }
 
     public ResUserVo reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
@@ -326,14 +345,19 @@ public class JwtProvider {
             return new ResUserVo("E", "유효성 검사 실패");
         }
 
-        final UserVo user = this.extractUser(claims);
-        if (user == null) return new ResUserVo("E", "사용자 정보 없음");
-
-        // 4. 새로운 Token 발급 (SID 유지)
-        this.genericUserCookie(request, response, user, claims.get(CLM_SID, String.class));
+        final ResUserVo result = this.extractUser(claims);
+        if( "E".equals( result.getCode()) ){
+        	log.warn(result.toString());
+        	return result;
+        }
         
-        final ResUserVo result = new ResUserVo();
-        result.setUser(user);
+        
+        if( KeyDbReload.equals( result.getCode()) ){
+
+            // 4. 새로운 Token 발급 (SID 유지)
+            this.genericUserCookie(request, response, result.getUser(), claims.get(CLM_SID, String.class));
+        }
+        
         return result;
     }
     
@@ -356,7 +380,7 @@ public class JwtProvider {
             return null;
         }
 
-        return this.extractUser(claims);
+        return this.extractUser(claims).getUser();
     }
 
     

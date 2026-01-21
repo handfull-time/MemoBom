@@ -82,7 +82,7 @@ public class AuthenticationController {
 	    response.addCookie(cookie);
 
 	    // 2. 구글 로그인 페이지로 강제 이동 (재로그인 유도)
-	    response.sendRedirect(request.getContextPath() + "/oauth2/authorization/google");
+	    response.sendRedirect(request.getContextPath() + "/Auth/OAuth2/google");
 	}
 }
 

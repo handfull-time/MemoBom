@@ -155,7 +155,17 @@ class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessH
 
         // 4. 로그인 성공 후 메인 페이지로 이동
         log.info("Google Login Success: {}", userVo.getId());
-        getRedirectStrategy().sendRedirect(request, response, "/Fragment/index.html");
+        
+    	String url;
+    	final Object obj = request.getSession().getAttribute(AppDefine.KeyBeforeUri);
+    	if( obj != null ) {
+    		request.getSession().removeAttribute(AppDefine.KeyBeforeUri);
+    		url = (String)obj;
+    	}else {
+    		url = "/Fragment/index.html";
+    	}
+    	
+        getRedirectStrategy().sendRedirect(request, response, url);
     }
 
     private final String KeyProviderGoogle = "google";

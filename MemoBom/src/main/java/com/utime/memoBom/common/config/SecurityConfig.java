@@ -6,10 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,11 +28,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import com.utime.memoBom.common.jwt.JwtAuthenticationFilter;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.WhiteAddressList;
 
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 
 
 @Configuration
@@ -54,6 +57,24 @@ public class SecurityConfig {
 	@Autowired
 	AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 	
+	/**
+     * 정적 자원에 대한 보안 필터 적용 제외 설정.<br/>
+     * 필터 체인을 완전히 바이패스하므로 성능 최적화에 유리하며, 
+     * 주로 public한 static resources(js, css, images 등)에 적용함.
+     * * @return WebSecurityCustomizer
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .requestMatchers(
+                "/manifest.webmanifest",
+                "/sw.js",
+                "/favicon.ico",
+                "/Error/**"
+            );
+    }
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -75,13 +96,6 @@ public class SecurityConfig {
 
         final RequestMatcher[] permitAllWhiteList = extended.toArray(RequestMatcher[]::new);
 	
-//        http.authorizeHttpRequests(auth -> auth
-//                .requestMatchers( permitAllWhiteList ).permitAll() // 누구나 접근 가능.
-//        	    .requestMatchers("/Admin/**").hasRole(EJwtRole.Admin.name()) // 어드민이 갈 곳. 
-//        	    .requestMatchers("/User/**", "/Fragment/**", "/Topic/**", "/Push/**").hasRole(EJwtRole.User.name()) // 일반 유저가 갈 곳.
-//                .anyRequest().authenticated()
-//            );
-        
         http.authorizeHttpRequests(auth -> auth
         	    // 1) 로그인 사용자만(또는 ROLE_USER) 필요한 “구체 경로”를 먼저
         	    .requestMatchers(
@@ -98,7 +112,7 @@ public class SecurityConfig {
         	    .requestMatchers(permitAllWhiteList).permitAll()
 
         	    // 3) Admin
-        	    .requestMatchers("/Spring/**").hasRole(EJwtRole.Admin.name())
+        	    .requestMatchers("/Lotus/**").hasRole(EJwtRole.Admin.name())
 
         	    // 4) 나머지 로그인(인증)된 사용자만 접근 가능
         	    .anyRequest().authenticated()
@@ -106,12 +120,14 @@ public class SecurityConfig {
 
         
         http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService)
-                )
+                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                // 로그인 시도 URL
+                .authorizationEndpoint(a -> a.baseUri("/Auth/OAuth2"))
+                // OAuth 서비스 업체 승인된 리디렉션 URI 주소. {도메인}/{contextPath}/Auth/OAuth2/callback/google	
+                .redirectionEndpoint(r -> r.baseUri("/Auth/OAuth2/callback/*"))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
-        );
+            );
         
         http.formLogin(AbstractHttpConfigurer::disable);
         
@@ -135,17 +151,12 @@ public class SecurityConfig {
         return http.build();
     }
     
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(auth -> auth
-//                .anyRequest().permitAll()
-//            )
-//            .csrf(AbstractHttpConfigurer::disable)
-//            .formLogin(AbstractHttpConfigurer::disable)
-//            .httpBasic(AbstractHttpConfigurer::disable);
-//        
-//        return http.build();
-//    }
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtAuthFilterRegistration(JwtAuthenticationFilter f) {
+        FilterRegistrationBean<JwtAuthenticationFilter> reg = new FilterRegistrationBean<>(f);
+        reg.setEnabled(false);
+        return reg;
+    }
+
 
 }
