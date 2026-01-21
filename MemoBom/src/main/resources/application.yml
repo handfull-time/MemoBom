@@ -43,6 +43,18 @@ spring:
   cache.type: caffeine
   profiles:
     include: oauth  # application-oauth.properties 파일을 로드함
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            redirect-uri: "{baseUrl}/Auth/OAuth2/callback/{registrationId}"
+
+logging:
+  level:
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG
+    org.springframework.security: DEBUG
 
 app:
   push:

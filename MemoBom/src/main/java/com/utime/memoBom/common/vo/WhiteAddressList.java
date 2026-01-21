@@ -32,7 +32,7 @@ public class WhiteAddressList {
 //			, "/images/"
 //			, "/css/"
 			"/Auth/"
-//			, "/oauth2/"
+			, "/oauth2/"
 			, "/login/"
 //			, "/Error/"
 			, "/error/"

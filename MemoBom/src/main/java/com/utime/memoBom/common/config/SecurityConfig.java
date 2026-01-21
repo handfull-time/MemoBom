@@ -121,10 +121,10 @@ public class SecurityConfig {
         
         http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                // 로그인 시도 URL
-                .authorizationEndpoint(a -> a.baseUri("/Auth/OAuth2"))
-                // OAuth 서비스 업체 승인된 리디렉션 URI 주소. {도메인}/{contextPath}/Auth/OAuth2/callback/google	
-                .redirectionEndpoint(r -> r.baseUri("/Auth/OAuth2/callback/*"))
+//                // 로그인 시도 URL
+//                .authorizationEndpoint(a -> a.baseUri("/Auth/OAuth2"))
+                // OAuth 서비스 업체 승인된 리디렉션 URI 주소. {도메인}/{contextPath}/Auth/OAuth2/callback/google
+//                .redirectionEndpoint(r -> r.baseUri("/Auth/OAuth2/callback/*"))
                 .successHandler(oAuth2AuthenticationSuccessHandler)
                 .failureHandler(oAuth2AuthenticationFailureHandler)
             );
@@ -134,11 +134,11 @@ public class SecurityConfig {
         http.logout(AbstractHttpConfigurer::disable);
         
         http
-        .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
-        .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable)); // FrameOptions 비활성화
+        	.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+        	.headers(headers -> headers.frameOptions(FrameOptionsConfig::disable)); // FrameOptions 비활성화
 
         http.sessionManagement(session -> session
-        		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        	    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         	);
 
         http.addFilterBefore(this.jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
