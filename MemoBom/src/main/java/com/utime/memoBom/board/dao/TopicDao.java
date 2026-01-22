@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.dao;
 
+import java.util.List;
+
 import com.utime.memoBom.board.vo.TopicListVo;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
@@ -64,4 +66,11 @@ public interface TopicDao {
 	 * @return
 	 */
 	int flow(UserVo user, TopicVo reqVo) throws Exception;
+	
+	/**
+	 * 사용자의 보유 Topic 목록
+	 * @param user
+	 * @return
+	 */
+	List<TopicVo> loadUserTopicList(UserVo user);
 }

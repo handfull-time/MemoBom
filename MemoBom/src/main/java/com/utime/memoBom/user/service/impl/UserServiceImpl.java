@@ -1,0 +1,27 @@
+package com.utime.memoBom.user.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.utime.memoBom.common.util.AppUtils;
+import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.service.UserService;
+import com.utime.memoBom.user.vo.UserVo;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+class UserServiceImpl implements UserService{
+	private UserDao userDao;
+
+	@Override
+	public UserVo getUserFromUid(String uid) {
+
+		if( AppUtils.isEmpty(uid))
+			return null;
+		
+		return userDao.getUserFromUid(uid);
+	}
+	
+	
+}

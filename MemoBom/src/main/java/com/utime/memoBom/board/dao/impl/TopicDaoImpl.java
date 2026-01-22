@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,5 +106,11 @@ class TopicDaoImpl implements TopicDao{
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public List<TopicVo> loadUserTopicList(UserVo user) {
+		
+		return topicMapper.loadUserTopicList(user);
 	}
 }

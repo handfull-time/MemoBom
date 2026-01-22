@@ -117,5 +117,10 @@ public interface TopicMapper {
 	 */
 	boolean isTopicFollowed(@Param("userNo") long userNo, @Param("topicNo") long no );
 
-	
+	/**
+	 * 사용자의 보유 Topic 목록
+	 * @param user
+	 * @return
+	 */
+	List<TopicVo> loadUserTopicList(UserVo user);
 }

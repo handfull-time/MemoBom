@@ -38,4 +38,11 @@ public interface UserDao {
 	 * @throws Exception
 	 */
 	int deleteUser(UserVo userVo)throws Exception;
+	
+	/**
+	 * 사용자 정보 조회
+	 * @param uid
+	 * @return
+	 */
+	UserVo getUserFromUid(String uid);
 }

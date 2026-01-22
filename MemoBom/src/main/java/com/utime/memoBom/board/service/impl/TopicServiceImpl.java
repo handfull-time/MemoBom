@@ -73,15 +73,11 @@ class TopicServiceImpl implements TopicService {
 	@Override
 	public TopicVo loadTopic(String uid) {
 		
-		final TopicVo result;
-		
 		if( AppUtils.isEmpty(uid) ) {
-			result = new TopicVo();
-		} else {
-			result = topicDao.loadTopic(uid);
-		}
+			return null;
+		} 
 		
-		return result;
+		return topicDao.loadTopic(uid);
 	}
 	
 	@Override
@@ -109,8 +105,8 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public List<TopicVo> getTopicList(UserVo user) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<TopicVo> loadUserTopicList(UserVo user) {
+		
+		return topicDao.loadUserTopicList(user);
 	}
 }

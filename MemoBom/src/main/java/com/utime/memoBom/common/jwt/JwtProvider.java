@@ -311,6 +311,8 @@ public class JwtProvider {
     public ReturnBasic procLogin(HttpServletRequest request, HttpServletResponse response, UserVo user) throws Exception {
         if (user == null) return new ReturnBasic("E", "사용자 정보 없음");
 
+        this.procLogout(request, response);
+        
         final String sid = java.util.UUID.randomUUID().toString();
 
         this.genericUserCookie(request, response, user, sid);

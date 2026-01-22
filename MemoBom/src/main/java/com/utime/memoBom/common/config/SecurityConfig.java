@@ -93,6 +93,7 @@ public class SecurityConfig {
         final List<RequestMatcher> extended = new java.util.ArrayList<>(permitAllMatchers);
         extended.add(matcher.matcher("/Fragment/**"));
         extended.add(matcher.matcher("/Mosaic/**"));
+        extended.add(matcher.matcher("/"));
 
         final RequestMatcher[] permitAllWhiteList = extended.toArray(RequestMatcher[]::new);
 	
@@ -133,8 +134,7 @@ public class SecurityConfig {
         
         http.logout(AbstractHttpConfigurer::disable);
         
-        http
-        	.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+        http.csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
         	.headers(headers -> headers.frameOptions(FrameOptionsConfig::disable)); // FrameOptions 비활성화
 
         http.sessionManagement(session -> session

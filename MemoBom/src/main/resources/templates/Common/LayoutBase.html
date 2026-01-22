@@ -7,6 +7,10 @@
 
 	<link rel="stylesheet" th:href="@{/css/tailwind/tailwind.min.css}">
 	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
+	<script th:inline="javascript">
+	  	window.contextPath = (/*[[@{/}]]*/ '').replace(/\/$/, "");
+		console.info('contextPath', window.contextPath);
+	</script>
 	<th:block layout:fragment="css"></th:block>
 
 	<style>
@@ -47,7 +51,6 @@
 	<th:block th:replace="~{Common/ModalView :: ModalView}"></th:block>
 
 	<script type="text/javascript" th:src="@{/js/api.js(v=${assetVersion})}"></script>
-	<script type="text/javascript" th:src="@{/js/app.js(v=${assetVersion})}"></script>
 	<script type="text/javascript" th:src="@{/js/MyToast.js(v=${assetVersion})}"></script>
 
 	<th:block layout:fragment="script"></th:block>

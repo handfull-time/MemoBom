@@ -277,7 +277,7 @@ class LoggingAspect {
      * @return
      * @throws Throwable
      */
-    @Around("execution(* com.utime.memoBom.*.controller.*.*(..))")
+    @Around("within(com.utime.memoBom..controller..*)")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
     	final ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

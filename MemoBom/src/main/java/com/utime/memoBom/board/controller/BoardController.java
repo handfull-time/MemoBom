@@ -20,6 +20,7 @@ import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,9 +34,11 @@ public class BoardController {
 	
 	final BoardService boardServce;
 	final TopicService topicServce;
+	final UserService userServce;
 	
-	final String topicUid = "topicUid";
-	final String userUid = "userUid";
+	final String KeyUser = "user";
+	final String KeyTopic = "topic";
+	final String KeyTopics = "topics";
 	
 	/**
 	 * 로그인 화면
@@ -52,8 +55,8 @@ public class BoardController {
 			return "redirect:/Mosaic/index.html";
 		}else {
 			
-			model.addAttribute(this.userUid, user == null? null:user.getUid());
-			model.addAttribute(this.topicUid, null);
+			model.addAttribute(this.KeyUser, user);
+			model.addAttribute(this.KeyTopic, null);
 			
 			return "Board/BoardMain";
 		}
@@ -67,10 +70,10 @@ public class BoardController {
 	 * @return
 	 */
 	@Deprecated
-	@GetMapping(path = "Mosaic.html", params = {"!user", "!uid"})
+//	@GetMapping(path = "Mosaic.html", params = {"!user", "!uid"})
 	public String selectMosaic( HttpServletRequest request, ModelMap model, UserVo user ) {
 
-		final List<TopicVo> topicList = topicServce.getTopicList( user );
+		final List<TopicVo> topicList = topicServce.loadUserTopicList( user );
 		
 		if( AppUtils.isEmpty(topicList) ) {
 			return "redirect:/Mosaic/Item.html";
@@ -94,13 +97,32 @@ public class BoardController {
 	 * @return
 	 */
 	@GetMapping("Tessera.html")
-	public String newFragment( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam("topic") String topicUid ) {
-		
-		final TopicVo topic = topicServce.loadTopic(topicUid);
-		if( topic == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "존재하지 않는 주제입니다.") );
-			model.addAttribute(AppDefine.KeyShowFooter, false );
-			return "Common/ErrorAlert";
+	public String newFragment( HttpServletRequest request, ModelMap model, UserVo user, 
+			@RequestParam(name="topic", required = false) String topicUid ) {
+
+		if( ! AppUtils.isEmpty(topicUid) ) {
+			final TopicVo topic = topicServce.loadTopic(topicUid);
+			if( topic == null ) {
+				model.addAttribute("res", new ReturnBasic("E", "존재하지 않는 주제입니다.") );
+				model.addAttribute(AppDefine.KeyShowFooter, false );
+				return "Common/ErrorAlert";
+			}
+			
+			model.addAttribute(KeyTopic, topic );
+		}else {
+			final List<TopicVo> list = topicServce.loadUserTopicList( user );
+			
+			if( AppUtils.isEmpty(list)) {
+				model.addAttribute("res", new ReturnBasic("E", "개인 주제를 먼저 정하세요.") );
+				model.addAttribute(AppDefine.KeyShowFooter, false );
+				return "Common/ErrorAlert";
+			}
+			
+			if( list.size() == 1 ) {
+				model.addAttribute(KeyTopic, list.get(0) );
+			}else {
+				model.addAttribute(KeyTopics, list );
+			}
 		}
 		
 		final String key = boardServce.createKey(request, user);
@@ -111,7 +133,6 @@ public class BoardController {
 		}
 		
 		model.addAttribute("seal", key );
-		model.addAttribute("topic", topicServce.loadTopic(topicUid) );
 		
 		return "Board/BoardWrite";
 	}
@@ -127,23 +148,25 @@ public class BoardController {
 		return boardServce.saveFragment( user, device, reqVo );
 	}
 	
-	@GetMapping(path = "Mosaic.html", params = "uid")
-    public String boardTopicFromUid( ModelMap model, UserVo user, @RequestParam("uid") String topicUid ) {
+	@GetMapping(path = "Mosaic.html")
+    public String boardTopicFromUid( ModelMap model, UserVo user, 
+    		@RequestParam(name="uid", required = false) String topicUid,
+    		@RequestParam(name="user", required = false) String userUid) {
 
-		model.addAttribute(this.userUid, null);
-		model.addAttribute(this.topicUid, topicUid);
+		model.addAttribute(KeyUser, userServce.getUserFromUid(userUid));
+		model.addAttribute(KeyTopics, topicServce.loadTopic(topicUid) );
 
 		return "Board/BoardMain";
     }
 	
-	@GetMapping(path = "Mosaic.html", params = "user")
-    public String boardTopicFromUser( ModelMap model, UserVo user, @RequestParam("user") String userUid) {
-
-		model.addAttribute(this.userUid, userUid);
-		model.addAttribute(this.topicUid, null);
-		
-		return "Board/BoardMain";
-    }
+//	@GetMapping(path = "Mosaic.html", params = "user")
+//    public String boardTopicFromUser( ModelMap model, UserVo user, ) {
+//
+//		model.addAttribute(KeyUser, );
+//		model.addAttribute(KeyTopic, null);
+//		
+//		return "Board/BoardMain";
+//    }
 	
 	@GetMapping(path = "Fragment.json")
     public ReturnBasic loadFragmentList( UserVo user, FragmentListReqVO reqVo ) {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -63,7 +64,11 @@ public class TopicController {
 	 */
 	@GetMapping("Ensemble.html")
 	public String topicNew( HttpServletRequest request, ModelMap model, UserVo user ) {
-		return this.topicItem(request, model, user, null);
+		
+		model.addAttribute("topic", new TopicVo());
+		model.addAttribute(KeySeal, topicServce.createKey(request, user));
+		
+		return "Topic/TopicItem";
 	}
 	
 	final String KeySeal = "seal";
@@ -77,6 +82,11 @@ public class TopicController {
 	public String topicItem( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam("uid") String uid ) {
 		
 		final TopicVo topic = topicServce.loadTopic( uid );
+		if( topic == null ) {
+			model.addAttribute("res", new ReturnBasic("E", "사라진 주제입니다.") );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+			return "Common/ErrorAlert";
+		}
 		
 		model.addAttribute("topic", topic);
 		

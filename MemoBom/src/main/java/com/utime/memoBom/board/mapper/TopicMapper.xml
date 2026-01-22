@@ -206,7 +206,7 @@
 	            TP.TOPIC_NO DESC
 	        </otherwise>
 	    </choose>
-	    LIMIT 5 OFFSET (#{page} - 1) * 5
+	    LIMIT 3 OFFSET (#{page} - 1) * 3
 	</select>
 
 	
@@ -245,5 +245,26 @@
        	FROM MB_TOPIC_FOLLOW
        	WHERE USER_NO = #{userNo}
           AND TOPIC_NO = #{topicNo}
+    </select>
+    
+    <!--사용자의 보유 Topic 목록-->
+    <select id="loadUserTopicList" resultMap="TopicResultMap">
+    	SELECT
+	        TP.TOPIC_NO
+	        , TP.OWNER_NO
+	        , TP.EXTERNAL
+	        , TP.UID
+	        , TP.NAME
+	        , TP.IMOGI
+	        , TP.COLOR
+	    FROM MB_TOPIC TP
+	        JOIN MB_USER USR
+	            ON TP.OWNER_NO = USR.USER_NO
+	        JOIN MB_TOPIC_FOLLOW MYFL
+	            ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
+	    WHERE 1=1
+	    	AND TP.ENABLED = TRUE
+	    	AND USR.USER_NO = #{userNo}
+	    ORDER BY TP.NAME
     </select>
 </mapper>

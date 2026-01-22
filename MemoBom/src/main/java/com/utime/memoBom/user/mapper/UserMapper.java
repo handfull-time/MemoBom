@@ -43,4 +43,9 @@ public interface UserMapper {
 	 * @return
 	 */
 	int removeUser(UserVo userVo);
+
+	/**
+	 * 사용자 정보 조회
+	 */
+	UserVo selectUserFromUid(@Param("uid")String uid);
 }

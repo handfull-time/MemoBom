@@ -84,7 +84,7 @@
 		SELECT 
 			<include refid="UserColumn" /> 
 		FROM MB_USER UR 
-		WHERE UR.ID = #{id} AND PROVIDER = #{provider}
+		WHERE UR.ID = #{id} AND PROVIDER = #{provider} AND ENABLED = TRUE
 	</select>
 
 	<!--회원 정보 제거-->
@@ -97,5 +97,13 @@
 			, ID  = '${userNo}'
 		WHERE USER_NO = ${userNo}
 	</update>
+	
+	<!--사용자 정보 조회-->
+	<select id="selectUserFromUid" parameterType="map">
+		SELECT 
+			<include refid="UserColumn" /> 
+		FROM MB_USER UR 
+		WHERE UR.UID = #{uid} AND ENABLED = TRUE
+	</select>
 	
 </mapper>

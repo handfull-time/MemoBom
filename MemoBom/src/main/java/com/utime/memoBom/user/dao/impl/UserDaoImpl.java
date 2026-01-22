@@ -43,4 +43,10 @@ class UserDaoImpl implements UserDao {
 		
 		return userMapper.removeUser(userVo);
 	}
+	
+	@Override
+	public UserVo getUserFromUid(String uid) {
+		
+		return userMapper.selectUserFromUid(uid);
+	}
 }

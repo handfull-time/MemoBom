@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.service.AuthService;
@@ -52,18 +53,25 @@ public class AuthenticationController {
 	@GetMapping("Login.html")
     public String loginPage( HttpServletRequest request, ModelMap model, UserVo user,
     		@RequestParam(required = false) String error,
-    		@RequestParam(required = false) String message) {
+    		@RequestParam(required = false) String message,
+    		@RequestParam(required = false) String returnUrl
+    		) {
 		
 		if( user != null ) {
 			log.info( "이미 로그인 돼 있는 회원 {}", user.getId() );
-			return "redirect:/Fragment/index.html";
+			return "redirect:/";
 		}
 		
 		model.addAttribute("error", error );
 		model.addAttribute("message", message );
 		model.addAttribute(AppDefine.KeyShowHeader, false);
 	    model.addAttribute(AppDefine.KeyShowFooter, false);
-		
+	    
+	    if( AppUtils.isNotEmpty(returnUrl)) {
+	    	// 로그인 후 이전 페이지로 이동
+	    	request.getSession().setAttribute(AppDefine.KeyBeforeUri, returnUrl);
+	    }
+	    
         return "Auth/Login";
     }
 	

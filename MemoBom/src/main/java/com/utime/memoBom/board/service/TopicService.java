@@ -47,6 +47,13 @@ public interface TopicService {
 	 * @return
 	 */
 	TopicVo loadTopic(String uid);
+	
+	/**
+	 * 사용자의 보유 Topic 목록
+	 * @param user
+	 * @return
+	 */
+	List<TopicVo> loadUserTopicList(UserVo user);
 
 	/**
 	 * topic 목록
@@ -68,8 +75,5 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic flow(UserVo user, TopicVo reqVo);
-
-	List<TopicVo> getTopicList(UserVo user);
-
 
 }
