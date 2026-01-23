@@ -86,6 +86,7 @@ class BoardDaoImpl implements BoardDao {
 
 		int result = 0;
 		result += boardMapper.insertFragment(user, device, topic, item);
+		result += topicMapper.updateTopicStatsFollowCount( topic.getTopicNo() );
 
 		final Set<String> hashTags = this.parseTags(reqVo.getHashTag());
 		if (hashTags.isEmpty()) {
@@ -104,8 +105,8 @@ class BoardDaoImpl implements BoardDao {
 
 	@Override
 	public List<FragmentItem> loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return boardMapper.loadFragmentList(user, reqVo);
 	}
 
 	@Override

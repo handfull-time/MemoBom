@@ -9,8 +9,9 @@
 </th:block>
 
 <th:block layout:fragment="content">
-	<input type="hidden" id="topicUid" th:value="${topicUid}"/>
-	<input type="hidden" id="userUid" th:value="${userUid}"/>
+	[[${user}]]
+	<hr/>
+	[[${topic}]]
 </th:block>
 
 <th:block layout:fragment="footer">

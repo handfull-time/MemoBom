@@ -39,7 +39,7 @@ public class TopicController {
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
 		}else if(topicServce.isEmpty() ){
-			return this.topicItem(request, model, user, null);
+			return "redirect:/Mosaic/Ensemble.html";
 		}else {
 			return "Topic/TopicMain";
 		}

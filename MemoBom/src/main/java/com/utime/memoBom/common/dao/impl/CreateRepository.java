@@ -48,6 +48,12 @@ class CreateRepository {
 			result ++;
 		}
 
+		if( mapper.createTopicStats() > 0 ) {
+			log.info("MB_TOPIC_STATS 생성");
+			result ++;
+			result += common.createIndex("IDX_TOPIC_STATS_TRENDING", "MB_TOPIC_STATS", "FOLLOW_COUNT DESC, FRAGMENT_COUNT DESC, TOPIC_NO DESC");
+		}
+
 		if ( mapper.createFragment() > 0 ) {
 			log.info("MB_FRAGMENT 생성");
 			result ++;
@@ -88,6 +94,8 @@ class CreateRepository {
 			result += common.createIndex("MB_PUSH_SUB_USER_NO_INDX", "MB_PUSH_SUB", "USER_NO");
 			result += common.createUniqueIndex("MB_PUSH_SUB_END_POINT_INDX", "MB_PUSH_SUB", "END_POINT");
 		}
+		
+		
 		
 		log.info("초기 작업 {}", result);
 	}

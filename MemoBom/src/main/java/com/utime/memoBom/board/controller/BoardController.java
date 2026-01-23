@@ -63,32 +63,6 @@ public class BoardController {
     }
 
 	/**
-	 * Mosaic 이 여러개일 때 선택하는 화면인데... 미사용.
-	 * @param request
-	 * @param model
-	 * @param user
-	 * @return
-	 */
-	@Deprecated
-//	@GetMapping(path = "Mosaic.html", params = {"!user", "!uid"})
-	public String selectMosaic( HttpServletRequest request, ModelMap model, UserVo user ) {
-
-		final List<TopicVo> topicList = topicServce.loadUserTopicList( user );
-		
-		if( AppUtils.isEmpty(topicList) ) {
-			return "redirect:/Mosaic/Item.html";
-		}
-		
-		if( topicList.size() == 1 ) {
-			return this.newFragment(request, model, user, topicList.get(0).getUid());
-		}
-		
-		model.addAttribute("topicList", topicList);
-		
-		return "Board/MosaicSelect";
-	}
-
-	/**
 	 * 새 글 쓰기
 	 * @param request
 	 * @param model
@@ -135,8 +109,14 @@ public class BoardController {
 		return "Board/BoardWrite";
 	}
 	
-	
-
+	/**
+	 * 편린 저장
+	 * @param request
+	 * @param user
+	 * @param device
+	 * @param reqVo
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping("Save.json")
 	public ReturnBasic saveFragment( HttpServletRequest request, UserVo user, UserDevice device, @RequestBody BoardReqVo reqVo ) {
@@ -146,33 +126,44 @@ public class BoardController {
 		return boardServce.saveFragment( user, device, reqVo );
 	}
 	
+	/**
+	 * 특정 주제의 게시글 보기
+	 * @param model
+	 * @param user 현재 로그인한 사용자
+	 * @param topicUid 특정 주제의 글만 보기 (선택)
+	 * @param userUid 특정 사용자의 글만 보기 (선택)
+	 * @return
+	 */
 	@GetMapping(path = "Mosaic.html")
     public String boardTopicFromUid( ModelMap model, UserVo user, 
     		@RequestParam(name="uid", required = false) String topicUid,
     		@RequestParam(name="user", required = false) String userUid) {
 
 		model.addAttribute(KeyUser, userServce.getUserFromUid(userUid));
-		model.addAttribute(KeyTopics, topicServce.loadTopic(topicUid) );
+		model.addAttribute(KeyTopic, topicServce.loadTopic(topicUid) );
 
 		return "Board/BoardMain";
     }
 	
-//	@GetMapping(path = "Mosaic.html", params = "user")
-//    public String boardTopicFromUser( ModelMap model, UserVo user, ) {
-//
-//		model.addAttribute(KeyUser, );
-//		model.addAttribute(KeyTopic, null);
-//		
-//		return "Board/BoardMain";
-//    }
-	
-	@GetMapping(path = "Fragment.json")
+	/**
+	 * 편린 목록 조회
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
+	@GetMapping(path = "Fragments.json")
     public ReturnBasic loadFragmentList( UserVo user, FragmentListReqVO reqVo ) {
 
 		return boardServce.loadFragmentList( user, reqVo );
     }
 	
-	
+	/**
+	 * 댓글 목록 조회
+	 * @param user
+	 * @param uid
+	 * @param pageNo
+	 * @return
+	 */
 	@GetMapping(path = "Comments.json")
     public ReturnBasic loadCommentsList( UserVo user,  @RequestParam("uid") String uid, @RequestParam(name = "pageNo", defaultValue = "1") int pageNo ) {
 

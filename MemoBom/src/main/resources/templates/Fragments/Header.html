@@ -1,28 +1,26 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Error">
-	<div class="grid grid-cols-3 items-center h-full px-2">
-		<button type="button" aria-label="back" onclick="history.back()"
-			class="justify-self-start text-2xl leading-none">
-			🔙
-		</button>
-		<h1 id="headerTitle" class="justify-self-center text-base font-semibold leading-none">
-			Error
-		</h1>
-		<div class="justify-self-end w-8 h-6"></div>
-	</div>
+<th:block xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="Header_Back(title)">
+  <div class="relative flex items-center h-full px-2">
+
+    <button type="button"
+            aria-label="back"
+            onclick="history.back()"
+            class="z-10 text-2xl leading-none">
+      🔙
+    </button>
+
+    <h1 id="headerTitle"
+        class="absolute left-1/2 -translate-x-1/2
+               max-w-[70%]
+               text-base font-semibold leading-none
+               whitespace-nowrap overflow-hidden text-ellipsis text-center">
+      [(${title})]
+    </h1>
+
+  </div>
 </th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Back(title)">
-	<div class="grid grid-cols-3 items-center h-full px-2">
-		<button type="button" aria-label="back" onclick="history.back()"
-			class="justify-self-start text-2xl leading-none">
-			🔙
-		</button>
-		<h1 id="headerTitle" class="justify-self-center text-base font-semibold leading-none">
-			[(${title})]
-		</h1>
-		<div class="justify-self-end w-8 h-6"></div>
-	</div>
-</th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_MosaicMain">
+
+<th:block th:fragment="Header_MosaicMain">
 	<div class="grid grid-cols-3 items-center h-full px-2">
 		<button type="button" aria-label="back" onclick="history.back()"
 			class="justify-self-start text-2xl leading-none">
@@ -34,9 +32,8 @@
 		<div class="justify-self-end w-8 h-6"></div>
 	</div>
 </th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Header_Search(leftTitle, title, rightTitle)">
+<th:block th:fragment="Header_Search(leftTitle, title, rightTitle)">
 	<div id="headerSearchRoot" class="h-full px-2 flex items-center">
-
 
 		<div class="shrink-0 flex items-center">
 			<!-- Left button -->
@@ -137,4 +134,5 @@
 			});
 		})();
 	</script>
+</th:block>
 </th:block>

@@ -86,30 +86,31 @@
         <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
             <result property="uid" column="user_uid" />
             <result property="nickName" column="user_nickname" />
+            <result property="profileUrl" column="user_img_url" />
         </association>
         
         <association property="topic" javaType="com.utime.memoBom.board.vo.TopicVo">
             <result property="uid" column="topic_uid" />
+            <result property="name" column="topic_name" />
             <result property="color" column="topic_color" />
             <result property="imogi" column="topic_imogi" />
         </association>
     </resultMap>
 
-    <select id="loadList" parameterType="map" resultMap="FragmentItemMap">
+    <select id="loadFragmentList" parameterType="map" resultMap="FragmentItemMap">
         SELECT 
             f.UID           AS fragment_uid,
             f.CONTENT       AS content,
             f.REG_DATE      AS reg_date,
-            
             <!-- 작성자 정보 -->
             u.UID           AS user_uid,
             u.NICKNAME      AS user_nickname,
-            
+            u.PROFILE_IMG_PATH AS user_img_url,
             <!-- 토픽 정보 -->
             t.UID           AS topic_uid,
+            t.NAME	 		AS topic_name,
             t.COLOR         AS topic_color,
             t.IMOGI 		AS topic_imogi,
-            
             <!-- [변경됨] 스크랩 여부 판별 로직 -->
             <choose>
                 <when test="user != null ">
@@ -147,25 +148,23 @@
 	        </if>
 
             <!-- 필터: 작성자 -->
-            <if test="userUid != null and ! userUid.isEmpty() ">
+            <if test="req.userUid != null and ! req.userUid.isEmpty() ">
                 AND u.UID = #{userUid}
             </if>
             
             <!-- 필터: 토픽 -->
-            <if test="topicUid != null and ! topicUid.isEmpty() ">
+            <if test="req.topicUid != null and ! req.topicUid.isEmpty() ">
                 AND t.UID = #{topicUid}
             </if>
             
             <!-- 필터: 키워드 검색 -->
-            <if test="keyword != null and ! keyword.isEmpty() ">
+            <if test="req.keyword != null and ! req.keyword.isEmpty() ">
                 AND f.CONTENT LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
-        
         ORDER BY f.REG_DATE DESC
-        
         <!-- 페이징 (페이지당 5개) -->
-        LIMIT 5 OFFSET (#{pageNo} - 1) * 5
+        LIMIT 5 OFFSET (#{req.pageNo} - 1) * 5
     </select>
 
 </mapper>

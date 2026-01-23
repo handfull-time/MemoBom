@@ -11,7 +11,7 @@
 </th:block>
 
 <th:block layout:fragment="header">
-	<div th:replace="~{Fragments/Header :: Header_Error}"></div>
+	<div th:replace="~{Fragments/Header :: Header_Back(res.code)}"></div>
 </th:block>
 
 <th:block layout:fragment="content">

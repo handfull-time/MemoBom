@@ -70,4 +70,9 @@ public interface CreateMapper {
 	
 	int createFragmentHashTagRecord();
 
+	/**
+	 * 토픽 통계 생성
+	 * @return
+	 */
+	int createTopicStats();
 }

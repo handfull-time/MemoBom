@@ -45,14 +45,15 @@ class TopicDaoImpl implements TopicDao{
 	@Transactional(rollbackFor = Exception.class)
 	public int saveTopic(UserVo user, TopicReqVo reqVo) throws Exception {
 		
-		int result;
+		int result = 0;
 		
 		if( AppUtils.isEmpty( reqVo.getUid() ) ) {
 			reqVo.setOwnerNo(user.getUserNo());
-			result = topicMapper.insertTopic(reqVo);
+			result += topicMapper.insertTopic(reqVo);
 			result += topicMapper.insertTopicFlow(user.getUserNo(), reqVo.getTopicNo());
+			result += topicMapper.insertTopicStats(reqVo.getTopicNo());
 		}else {
-			result = topicMapper.updateTopic(reqVo);
+			result += topicMapper.updateTopic(reqVo);
 		}
 		
 		return result;
@@ -101,8 +102,10 @@ class TopicDaoImpl implements TopicDao{
 		
 		if( topicMapper.isTopicFollowed( user.getUserNo(), topicNo ) ) {
 			result = topicMapper.deleteTopicFlow( user.getUserNo(), topicNo );
+			result += topicMapper.decreaseTopicStatsFollowCount( topicNo );
 		}else {
 			result = topicMapper.insertTopicFlow( user.getUserNo(), topicNo );
+			result += topicMapper.updateTopicStatsFollowCount( topicNo );
 		}
 		
 		return result;

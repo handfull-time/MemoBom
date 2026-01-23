@@ -134,7 +134,7 @@
 			</if>
 	</select>
 	
-	<select id="listTopic" parameterType="map" resultMap="TopicResultMap">
+	<select id="listTopic2" parameterType="map" resultMap="TopicResultMap">
 	    SELECT
 	        TP.TOPIC_NO
 	        , TP.OWNER_NO
@@ -208,6 +208,75 @@
 	    </choose>
 	    LIMIT 3 OFFSET (#{page} - 1) * 3
 	</select>
+	
+	<select id="listTopic" parameterType="map" resultMap="TopicResultMap">
+		SELECT
+			  TP.TOPIC_NO
+			, TP.OWNER_NO
+			, TP.EXTERNAL
+			, TP.UID
+			, TP.NAME
+			, TP.DESCRIPTION
+			, TP.IMOGI
+			, TP.COLOR
+			
+			, USR.UID AS USER_UID
+			, USR.NICKNAME
+			, USR.PROFILE_IMG_PATH
+			
+			, (MYFL.USER_NO IS NOT NULL) AS FLOW
+			
+			, COALESCE(ST.FOLLOW_COUNT, 0)   AS FLOW_COUNT
+			, COALESCE(ST.FRAGMENT_COUNT, 0) AS FRAGMENT_COUNT
+			
+		FROM MB_TOPIC TP
+			JOIN MB_USER USR
+				ON TP.OWNER_NO = USR.USER_NO
+			
+			LEFT JOIN MB_TOPIC_FOLLOW MYFL
+				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
+			
+			LEFT JOIN MB_TOPIC_STATS ST
+				ON ST.TOPIC_NO = TP.TOPIC_NO
+			
+		<where> 1=1
+			AND TP.ENABLED = TRUE
+			
+			<!-- 공개/비공개 노출 정책 -->
+			<choose>
+			  <when test="userNo == 0">
+				AND TP.EXTERNAL = TRUE
+			  </when>
+			  <otherwise>
+				AND (
+					   TP.EXTERNAL = TRUE
+					OR (TP.EXTERNAL = FALSE AND MYFL.USER_NO IS NOT NULL)
+				)
+			  </otherwise>
+			</choose>
+			
+			<if test="keyword != null and !keyword.isEmpty()">
+			  AND (
+				   TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
+			  )
+			</if>
+			</where>
+			
+		ORDER BY
+			<choose>
+			<when test="sortType == 'trending'">
+			  COALESCE(ST.FOLLOW_COUNT, 0) DESC
+			  , COALESCE(ST.FRAGMENT_COUNT, 0) DESC
+			  , TP.TOPIC_NO DESC
+			</when>
+			<otherwise>
+			  TP.TOPIC_NO DESC
+			</otherwise>
+			</choose>
+		LIMIT 3 OFFSET (#{page} - 1) * 3
+</select>
+
 
 	
 	<!--topic 번호 조회-->
@@ -267,4 +336,77 @@
 	    	AND USR.USER_NO = #{userNo}
 	    ORDER BY TP.NAME
     </select>
+    
+    <!-- topic 통계 정보 생성 -->
+    <insert id="insertTopicStats" parameterType="map">
+    	INSERT INTO MB_TOPIC_STATS (TOPIC_NO) VALUES (#{topicNo})
+    </insert>
+    
+    <!-- topic 팔로우 수 증가 -->
+    <update id="updateTopicStatsFollowCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+		   SET FOLLOW_COUNT = FOLLOW_COUNT + 1,
+       		UPDATED_AT = CURRENT_TIMESTAMP
+ 		WHERE TOPIC_NO = #{topicNo}
+    </update>
+
+    <!-- topic 팔로우 수 감소 -->
+    <update id="decreaseTopicStatsFollowCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+    		SET FOLLOW_COUNT = CASE WHEN FOLLOW_COUNT > 0 THEN FOLLOW_COUNT - 1 ELSE 0 END,
+    		UPDATED_AT = CURRENT_TIMESTAMP
+    	WHERE TOPIC_NO = #{topicNo}
+    </update>
+
+    <!--글 작성 성공 후 +1, 최신글 시간 갱신-->
+    <update id="increaseTopicStatsFragmentCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+		   SET FRAGMENT_COUNT = FRAGMENT_COUNT + 1,
+		       LAST_FRAGMENT_AT = CURRENT_TIMESTAMP,
+		       UPDATED_AT = CURRENT_TIMESTAMP
+		 WHERE TOPIC_NO = #{topicNo}
+    </update>
+    
+    <!--글 삭제(soft delete) 성공 후 -1-->
+    <update id="decreaseTopicStatsFragmentCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+		   SET FRAGMENT_COUNT = CASE WHEN FRAGMENT_COUNT > 0 THEN FRAGMENT_COUNT - 1 ELSE 0 END,
+		       UPDATED_AT = CURRENT_TIMESTAMP
+		WHERE TOPIC_NO = #{topicNo}
+    </update>
+    
+    <!-- 통계 리빌드용 -->
+    <update id="rebuildTopicStats">
+    MERGE INTO MB_TOPIC_STATS ST
+		USING (
+		    SELECT
+		        TP.TOPIC_NO AS TOPIC_NO,
+		        COALESCE(FL.CNT, 0) AS FOLLOW_COUNT,
+		        COALESCE(FG.CNT, 0) AS FRAGMENT_COUNT,
+		        COALESCE(CM.CNT, 0) AS COMMENT_COUNT,
+		        FG.LAST_AT AS LAST_FRAGMENT_AT
+		    FROM MB_TOPIC TP
+		    LEFT JOIN (SELECT TOPIC_NO, COUNT(*) CNT FROM MB_TOPIC_FOLLOW GROUP BY TOPIC_NO) FL
+		      ON FL.TOPIC_NO = TP.TOPIC_NO
+		    LEFT JOIN (SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
+		               FROM MB_FRAGMENT WHERE IS_DELETED = FALSE GROUP BY TOPIC_NO) FG
+		      ON FG.TOPIC_NO = TP.TOPIC_NO
+		    LEFT JOIN (SELECT F.TOPIC_NO, COUNT(*) CNT
+		               FROM MB_FRAGMENT_COMMENTS C
+		               JOIN MB_FRAGMENT F ON F.FRAGMENT_NO = C.FRAGMENT_NO
+		               WHERE F.IS_DELETED = FALSE
+		               GROUP BY F.TOPIC_NO) CM
+		      ON CM.TOPIC_NO = TP.TOPIC_NO
+		) SRC
+		ON ST.TOPIC_NO = SRC.TOPIC_NO
+		WHEN MATCHED THEN UPDATE SET
+		    ST.FOLLOW_COUNT = SRC.FOLLOW_COUNT,
+		    ST.FRAGMENT_COUNT = SRC.FRAGMENT_COUNT,
+		    ST.COMMENT_COUNT = SRC.COMMENT_COUNT,
+		    ST.LAST_FRAGMENT_AT = SRC.LAST_FRAGMENT_AT,
+		    ST.UPDATED_AT = CURRENT_TIMESTAMP
+		WHEN NOT MATCHED THEN INSERT (TOPIC_NO, FOLLOW_COUNT, FRAGMENT_COUNT, COMMENT_COUNT, LAST_FRAGMENT_AT, UPDATED_AT)
+		VALUES (SRC.TOPIC_NO, SRC.FOLLOW_COUNT, SRC.FRAGMENT_COUNT, SRC.COMMENT_COUNT, SRC.LAST_FRAGMENT_AT, CURRENT_TIMESTAMP)
+	</update>    	
+
 </mapper>

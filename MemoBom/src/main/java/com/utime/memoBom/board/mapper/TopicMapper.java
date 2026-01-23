@@ -49,26 +49,7 @@ public interface TopicMapper {
 	 * @return
 	 */
 	TopicVo loadTopic(@Param("uid") String uid, @Param("topicNo") long no);
-	
-//	/**
-//	 * topic 인기 목록
-//	 * @return
-//	 */
-//	List<TopicVo> listTopicTrending(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
-//
-//	/**
-//	 * topic 신상 목록
-//	 * @return
-//	 */
-//	List<TopicVo> listTopicFresh(@Param("userNo") long userNo, @Param("pageSize") int pageSize, @Param("offset") int offset);
-//	
-//	/**
-//	 * topic 검색 목록
-//	 * @return
-//	 */
-//	List<TopicVo> searchTopic(@Param("userNo") long userNo, @Param("keyword") String keyword, @Param("pageSize") int pageSize, @Param("offset") int offset);
-//	
-	
+
 	/**
 	 * topic 목록
 	 * @param userNo
@@ -123,4 +104,39 @@ public interface TopicMapper {
 	 * @return
 	 */
 	List<TopicVo> loadUserTopicList(UserVo user);
+	
+	/**
+	 * topic 통계 정보 생성
+	 * @param topicNo
+	 * @return
+	 */
+	int insertTopicStats( @Param("topicNo") long topicNo );
+	
+	/**
+	 * topic 팔로우 수 갱신
+	 * @param topicNo
+	 * @return
+	 */
+	int updateTopicStatsFollowCount( @Param("topicNo") long topicNo);
+	
+	/**
+	 * topic 팔로우 수 감소
+	 * @param topicNo
+	 * @return
+	 */
+	int decreaseTopicStatsFollowCount( @Param("topicNo") long topicNo);
+	
+	/**
+	 * 글 작성 성공 후 +1, 최신글 시간 갱신
+	 * @param topicNo
+	 * @return
+	 */
+	int increaseTopicStatsFragmentCount( @Param("topicNo") long topicNo);
+	
+	/**
+	 * 글 삭제 성공 후 -1
+	 * @param topicNo
+	 * @return
+	 */
+	int decreaseTopicStatsFragmentCount( @Param("topicNo") long topicNo);
 }

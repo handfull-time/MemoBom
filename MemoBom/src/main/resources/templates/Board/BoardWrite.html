@@ -58,48 +58,28 @@
   </div>
 </div>
 
-	<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
-	<div style="
-      display:flex;
-      flex-direction:column;
-      height:calc(100dvh - 120px);
-      height:calc(100vh - 120px);
-      min-height:320px;
-  ">
+<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
+<div class="flex flex-col min-h-[320px] h-[calc(100dvh-120px)] h-[calc(100vh-120px)]">
 
-		<!-- 본문: 남은 공간 전부 차지 -->
-		<textarea id="content"
-		          name="content"
-		          placeholder="내용을 입력해 주세요."
-		          disabled
-		          style="flex:1; min-height:0; width:100%; border:none; outline:none;
-		                 resize:none; padding:12px; font-size:15px;
-		                 box-sizing:border-box; background:transparent;">
-		</textarea>
+  <!-- 본문: 남은 공간 전부 차지 -->
+  <textarea id="content"
+            name="content"
+            placeholder="내용을 입력해 주세요."
+            disabled
+            class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-[15px] box-border bg-transparent">
+  </textarea>
 
+  <!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
+  <div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
+    <input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
+           class="w-full border-0 outline-none text-[13px] text-slate-600 bg-transparent" />
 
-		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
-		<div style="
-        position:sticky;
-        bottom:0;
-        border-top:1px solid #eee;
-        padding:8px 12px 10px;
-        background:#fff;
-    ">
-			<input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)" style="
-          width:100%;
-          border:none;
-          outline:none;
-          font-size:13px;
-          color:#555;
-          background:transparent;
-        " />
-			<div style="margin-top:4px;font-size:11px;color:#aaa;">
-				쉼표(,) 또는 띄어쓰기로 여러 개 입력할 수 있어요.
-			</div>
-		</div>
+    <div class="mt-1 text-[11px] text-slate-400">
+      쉼표(,) 또는 띄어쓰기로 여러 개 입력할 수 있어요.
+    </div>
+  </div>
 
-	</div>
+</div>
 
 </th:block>
 
