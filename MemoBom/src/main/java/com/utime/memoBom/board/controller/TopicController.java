@@ -68,7 +68,7 @@ public class TopicController {
 		model.addAttribute("topic", new TopicVo());
 		model.addAttribute(KeySeal, topicServce.createKey(request, user));
 		
-		return "Topic/TopicItem";
+		return "Topic/TopicItem2";
 	}
 	
 	final String KeySeal = "seal";

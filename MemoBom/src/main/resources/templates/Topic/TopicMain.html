@@ -46,79 +46,55 @@
 
 	<!-- topic row template -->
 	<template id="tplTopicRow">
-		<div class="topic-row bg-white rounded-2xl border border-slate-200 p-3 shadow-sm">
-			<div class="flex items-start gap-3">
-				<!-- emoji badge -->
-				<div class="shrink-0">
-					<div
-						class="emoji-badge w-auto h-8 rounded-2xl flex items-center justify-center text-2xl cursor-pointer border border-slate-200 bg-slate-50">
-						😊
-					</div>
-				</div>
+	    <div class="topic-row bg-white rounded-xl border border-slate-200 p-1.5 shadow-sm transition-all active:bg-slate-50">
+	        <div class="flex items-center gap-1.5">
+	            <div class="shrink-0">
+	                <div class="emoji-badge w-10 h-10 rounded-lg flex items-center justify-center text-xl cursor-pointer border border-slate-200 bg-slate-50 shadow-sm">
+	                    😊
+	                </div>
+	            </div>
 
-				<!-- right 영역 -->
-				<div class="min-w-0 flex-1">
+	            <div class="min-w-0 flex-1">
+	                <div class="flex items-center justify-between gap-2">
+	                    <span class="topic-name block font-bold text-base text-slate-900 truncate cursor-pointer hover:text-indigo-600 transition-colors">
+	                        MosaicName
+	                    </span>
+	                    <button type="button" id="btn-flow" class="btn-follow shrink-0 h-7 flex items-center justify-center rounded-lg hover:opacity-80 transition-opacity">
+	                        <img src="" alt="Flow" class="flow-img h-full w-auto object-contain" />
+	                    </button>
+	                </div>
 
-					<!-- ✅ 상단 3영역: [토픽] [작성자] [Flow버튼] -->
-					<div class="flex items-center gap-2"
-						style="grid-template-columns: minmax(0, 1fr) minmax(0, 160px) 96px;">
-						<!-- (1) 토픽 영역 -->
-						<div class="min-w-0 flex-1">
-							<span
-								class="topic-name block font-extrabold text-lg truncate cursor-pointer hover:underline">
-								MosaicName
-							</span>
-						</div>
+	                <div class="topic-desc text-xs text-slate-500 mt-0.5 line-clamp-1">
+	                    설명문이 들어갑니다.
+	                </div>
 
-						<!-- (2) 작성자 영역 -->
-						<div class="shrink-0 flex items-center gap-3">
-							<button type="button" class="topic-user flex items-center gap-2 max-w-[140px]">
-								<img class="topic-user-img w-6 h-6 rounded-full border border-slate-200 object-cover"
-									alt="프로필" />
-								<span class="topic-user-name text-xs text-slate-600 truncate">
-									작성자
-								</span>
-							</button>
+	                <div class="flex items-center justify-between mt-1.5 pt-1.5 border-t border-slate-50">
+	                    <div class="flex items-center gap-3 text-[10px] font-medium text-slate-400">
+	                        <div class="flex items-center gap-0.5">
+	                            <span class="opacity-70">👥</span>
+	                            <span class="topic-flow text-slate-600 font-semibold">0</span>
+	                        </div>
+	                        <div class="flex items-center gap-0.5">
+	                            <span class="opacity-70">📝</span>
+	                            <span class="topic-memo text-slate-600 font-semibold">0</span>
+	                        </div>
+	                        <span class="topic-uid hidden"></span>
+	                        <span class="topic-no hidden"></span>
+	                    </div>
 
-							<button type="button" id="btn-flow"
-					            class="btn-follow w-auto h-8 flex items-center justify-center rounded-xl hover:opacity-80 transition-opacity">
-					            <img src="" alt="Flow 상태" class="flow-img h-full w-auto object-contain" />
-					        </button>
-						</div>
-					</div>
-
-					<!-- Description -->
-					<div class="topic-desc text-sm text-slate-600 mt-2 line-clamp-2">
-						설명
-					</div>
-
-					<!-- HashTag
-					<div class="topic-tags text-xs text-slate-400 mt-1 truncate">
-						#tag
-					</div>
-					-->
-					<!-- meta -->
-					<div class="flex items-center gap-4 mt-2 text-xs text-slate-600">
-						<div class="flex items-center gap-1">
-							<span aria-hidden="true">👥</span>
-							<span class="topic-flow">0</span>
-						</div>
-						<div class="flex items-center gap-1">
-							<span aria-hidden="true">📝</span>
-							<span class="topic-memo">0</span>
-						</div>
-
-						<span class="topic-uid hidden"></span>
-						<span class="topic-no hidden"></span>
-
-						<div class="flex items-center gap-1 ml-auto">
-							<img th:src="@{/images/noteWriteButton.svg}" alt="writer" class="fragment-write h-6 w-auto cursor-pointer object-contain" />
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
+	                    <div class="flex items-center gap-2">
+	                        <button type="button" class="topic-user flex items-center gap-1.5 max-w-[100px]">
+	                            <img class="topic-user-img w-4 h-4 rounded-full border border-slate-200 object-cover" alt="P" />
+	                            <span class="topic-user-name text-[10px] text-slate-500 truncate font-medium">작성자</span>
+	                        </button>
+	                        <div class="fragment-write-container border-l border-slate-100 pl-2">
+	                            <img th:src="@{/images/noteWriteButton.svg}" alt="write" class="fragment-write h-5 w-auto cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
 	</template>
 
 </th:block>

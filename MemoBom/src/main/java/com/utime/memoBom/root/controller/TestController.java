@@ -5,14 +5,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.common.jwt.JwtProvider;
+import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
-import com.utime.memoBom.user.service.AuthService;
 import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,9 +31,13 @@ public class TestController {
 
     private final UserDao userDao;
 	
-    @ResponseBody
-	@GetMapping("Login")
-	public ReturnBasic testLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("id") String id) throws Exception {
+    @GetMapping("Login")
+	public String testLogin() throws Exception {
+    	return "Test/TestLogin";
+    }
+    
+    @GetMapping("LoginGo")
+	public String testLoginGo(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam() String id) throws Exception {
 
     	UserVo userVo = userDao.findById("localPc", id);
     	
@@ -53,15 +56,17 @@ public class TestController {
     		userDao.addUser(userVo);
     	}
 		
-		ReturnBasic result;
 		try {
-			result = jwtProvider.procLogin(request, response, userVo);
+			ReturnBasic result = jwtProvider.procLogin(request, response, userVo);
+			log.info(result.toString());
 		} catch (Exception e) {
 			log.error("", e);
-			result = new ReturnBasic("E", e.getLocalizedMessage());
+			model.addAttribute("res", new ReturnBasic("E", e.getMessage()) );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+			return "Common/ErrorAlert";
 		}
 
-		return result;
+		return "redirect:/";
 	}
 
 	@GetMapping("Layout")

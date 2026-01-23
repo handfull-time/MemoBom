@@ -5,9 +5,6 @@
 <th:block layout:fragment="title">Mosaic</th:block>
 
 <th:block layout:fragment="css">
-	<style>
-
-	</style>
 </th:block>
 
 <th:block layout:fragment="header">
@@ -15,7 +12,6 @@
 </th:block>
 
 <th:block layout:fragment="content">
-
 	<div class="space-y-4">
 
 		<!-- Threads-like card -->
@@ -120,16 +116,48 @@
 				</div>
 				<p class="mt-1 text-xs text-slate-400">토픽 성격에 맞는 반응 방식을 선택하세요.</p>
 			</div>
+			
 			<div class="mt-4">
-				<!-- External toggle -->
-				<label class="block text-xs text-slate-500 mb-1">외부 공개</label>
-				<label
-					class="h-12 px-4 rounded-xl border border-slate-200 flex items-center justify-between cursor-pointer select-none">
-					<span class="text-sm text-slate-700">공개</span>
-					<input type="checkbox" id="external" th:checked="${topic?.external}"
-						class="h-5 w-5 accent-slate-900" />
-				</label>
-				<p class="mt-1 text-xs text-slate-400">체크 시 외부에 노출</p>
+				<!-- maxLen -->
+				<div class="flex items-center gap-2 justify-between">
+					<label class="block text-xs text-slate-500 mb-1">입력 최대 글자 수</label>
+
+					<select name="maxLen"
+					  class="w-30 rounded-lg border border-gray-300 bg-white px-3 py-2
+					         text-sm text-gray-900
+					         focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+					>
+					  <option value="100">아주 조금</option>
+					  <option value="250">조금</option>
+					  <option value="500" selected>보통</option>
+					  <option value="1000">많이</option>
+					  <option value="1500">아주 많이</option>
+					</select>
+				</div>
+			</div>
+			<div class="mt-4">
+				<!-- maxLen -->
+				<div class="flex items-center gap-2 justify-between">
+					<label class="block text-xs text-slate-500 mb-1">공개 여부</label>
+
+					<pp-toggle name="external" off-text="🤫" on-text="🌍" th:attr="checked=${topic.external} ? 'checked' : null"></pp-toggle>
+				</div>
+			</div>
+			<div class="mt-4">
+				<!-- emotion -->
+				<div class="flex items-center gap-2 justify-between">
+					<label class="block text-xs text-slate-500 mb-1">이모션 여부</label>
+	
+					<pp-toggle name="emotion" off-text="⛔" on-text="✅" th:attr="checked=${topic.emotion} ? 'checked' : null"></pp-toggle>
+				</div>
+			</div>
+			<div class="mt-4">
+				<!-- emotion -->
+				<div class="flex items-center gap-2 justify-between">
+					<label class="block text-xs text-slate-500 mb-1">댓글 여부</label>
+	
+					<pp-toggle name="comments" off-text="⛔" on-text="✅" th:attr="checked=${topic.comments} ? 'checked' : null"></pp-toggle>
+				</div>
 			</div>
 		</div>
 
@@ -160,6 +188,8 @@
 <th:block layout:fragment="script">
 
 	<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+	<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
+	
 	<script>
 		const btn = document.getElementById('emojiBtn');
 		const picker = document.getElementById('emojiPicker');
@@ -200,6 +230,11 @@
 			const btnSave = $("btnSave");
 			const btnSetEmotion = $("btnSetEmotion");
 			const btnSetReaction = $("btnSetReaction");
+			
+			const elEmotion = $("emotion");
+			const elComments = $("comments");
+			const elMaxLen = $("maxLen");
+				
 			// ---- emoji set selection ----
 			function setEmojiSetType(v) {
 				const n = v;
@@ -366,7 +401,10 @@
 					color: (elColor.value || "").trim(),
 					external: !!elExternal.checked,
 					imogi: (elImogi.value || "").trim(),
-					emojiSetType: elEmojiSetType
+					emojiSetType: elEmojiSetType,
+					emotion: !!elEmotion.checked,
+					comments: !!elComments.checked,
+		            maxLen: parseInt(elMaxLen.value || "0", 10)
 				};
 			}
 
