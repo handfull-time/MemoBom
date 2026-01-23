@@ -9,6 +9,54 @@
 </th:block>
 
 <th:block layout:fragment="content">
+	
+<!-- Topic Select Modal (compact) -->
+<div id="topicSelectModal"
+     th:if="${topics != null and #lists.size(topics) > 1}"
+     class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-3">
+
+  <div class="w-full max-w-sm rounded-2xl bg-white shadow-2xl">
+    <!-- 헤더 -->
+    <div class="px-4 pt-4 pb-3 border-b border-slate-100">
+      <div class="text-base font-extrabold text-slate-800">토픽 선택</div>
+      <div class="text-xs text-slate-500 mt-1">주제를 선택하면 바로 작성할 수 있어요.</div>
+
+      <!-- 검색 -->
+      <div class="mt-3">
+        <input id="topicSearch" type="text"
+               placeholder="토픽 검색..."
+               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm
+                      outline-none focus:ring-2 focus:ring-slate-300/40" />
+      </div>
+    </div>
+
+    <!-- 리스트: 많을 때 대비 스크롤 -->
+    <div id="modalTopicList"
+         class="max-h-[46vh] overflow-y-auto px-2 py-2">
+      <button type="button"
+              th:each="t : ${topics}"
+              class="topic-row w-full flex items-center gap-2 rounded-xl px-3 py-2
+                     hover:bg-slate-50 transition text-left"
+              th:attr="data-uid=${t.uid},
+                       data-maxlen=${t.maxLen},
+                       data-color=${t.color},
+                       data-name=${t.name}">
+        <span class="text-lg w-6 text-center" th:text="${t.imogi}">🧩</span>
+        <span class="flex-1 text-sm font-semibold text-slate-800 truncate"
+              th:text="${t.name}">Topic</span>
+
+        <span class="h-3 w-3 rounded-full border border-black/10 shrink-0"
+              th:style="'background:' + ${t.color}"></span>
+      </button>
+
+      <!-- 검색 결과 없음 -->
+      <div id="topicEmpty"
+           class="hidden px-4 py-6 text-center text-sm text-slate-400">
+        검색 결과가 없습니다.
+      </div>
+    </div>
+  </div>
+</div>
 
 	<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
 	<div style="
@@ -20,18 +68,15 @@
   ">
 
 		<!-- 본문: 남은 공간 전부 차지 -->
-		<textarea id="content" name="content" placeholder="내용을 입력해 주세요." style="
-        flex:1;
-        min-height:0;            /* 중요: flex 자식이 제대로 늘/줄도록 */
-        width:100%;
-        border:none;
-        outline:none;
-        resize:none;
-        padding:12px;
-        font-size:15px;
-        box-sizing:border-box;
-        background:transparent;
-      "></textarea>
+		<textarea id="content"
+		          name="content"
+		          placeholder="내용을 입력해 주세요."
+		          disabled
+		          style="flex:1; min-height:0; width:100%; border:none; outline:none;
+		                 resize:none; padding:12px; font-size:15px;
+		                 box-sizing:border-box; background:transparent;">
+		</textarea>
+
 
 		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
 		<div style="
@@ -67,6 +112,80 @@
 
 <th:block layout:fragment="script">
 
+<script th:inline="javascript">
+  const topics = /*[[${topics}]]*/ [];
+  let selectedTopicUid = null;
+
+  function applyTopicToEditor(topic) {
+    const ta = document.getElementById("content");
+    selectedTopicUid = topic.uid;
+
+	const header = document.getElementById("headerTitle");
+	if (header && topic.name) {
+	    header.textContent = topic.name + " · 작은 조각";
+	}
+	  
+    const maxLen = Number(topic.maxLen || 0);
+    if (maxLen > 0) ta.setAttribute("maxlength", String(maxLen));
+    else ta.removeAttribute("maxlength");
+
+    ta.removeAttribute("disabled");
+    ta.focus();
+
+    const modal = document.getElementById("topicSelectModal");
+    if (modal) modal.remove();
+  }
+
+  function initTopicModalCompact() {
+    // 1개면 자동
+    if (!Array.isArray(topics) || topics.length <= 1) {
+      if (topics?.length === 1) applyTopicToEditor(topics[0]);
+      return;
+    }
+
+    // 클릭 선택
+    document.querySelectorAll("#modalTopicList .topic-row").forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyTopicToEditor({
+          uid: btn.dataset.uid,
+          maxLen: Number(btn.dataset.maxlen || 0),
+          color: btn.dataset.color,
+          name: btn.dataset.name
+        });
+      });
+    });
+
+    // 검색
+    const input = document.getElementById("topicSearch");
+    const empty = document.getElementById("topicEmpty");
+    const rows = Array.from(document.querySelectorAll("#modalTopicList .topic-row"));
+
+    const applyFilter = () => {
+      const q = (input.value || "").trim().toLowerCase();
+      let visible = 0;
+
+      rows.forEach(r => {
+        const name = (r.dataset.name || "").toLowerCase();
+        const ok = !q || name.includes(q);
+        r.classList.toggle("hidden", !ok);
+        if (ok) visible++;
+      });
+
+      if (empty) empty.classList.toggle("hidden", visible !== 0);
+    };
+
+    input?.addEventListener("input", applyFilter, { passive: true });
+    // 진입 시 바로 포커스
+    input?.focus();
+  }
+
+  document.addEventListener("DOMContentLoaded", initTopicModalCompact);
+
+  // 저장 시 사용
+  // onClickWrite에서: topicUid: selectedTopicUid 로 전송하는 것 유지
+</script>
+
+
 	<script th:inline="javascript">
 		function normalizeHashtags(raw) {
 			// 사용자 입력 거부감 최소화: 자유 입력 허용, 내부적으로만 가볍게 정리
@@ -93,9 +212,14 @@
 		}
 
 		async function onClickWrite() {
+			if (Array.isArray(topics) && topics.length > 1 && !selectedTopicUid) {
+			  await alertP( "토픽을 선택해 주세요.");
+			  return;
+			}
+
 			const content = document.getElementById('content').value.trim();
 			if (!content || content.length === 0) {
-				alertP('내용을 입력해 주세요.');
+				await alertP('내용을 입력해 주세요.');
 				return;
 			}
 
@@ -104,7 +228,7 @@
 
 			const sendObj = {
 				seal: /*[[${seal}]]*/ null,
-				topicUid: /*[[${topic.uid}]]*/ null,
+				topicUid: selectedTopicUid,
 				content: content,
 				hashTag: hashtagRaw
 			}
@@ -136,3 +260,9 @@
 </th:block>
 
 </html>
+<!--
+	토픽마다 placeholder 문구를 바꾸기 ("이 토픽에는 이런 내용을 써보세요")
+	maxLen 초과 직전 카운트 색상 경고(예: 90% 넘으면 주황 → 빨강)
+	마지막으로 선택한 토픽 localStorage에 기억해서 다음 작성 시 자동 선택
+	토픽 색을 textarea 포커스 링이나 하단 바에 살짝 반영해서 “지금 쓰는 토픽” 감각 주기
+-->

@@ -81,7 +81,7 @@ if (!customElements.get('pp-toggle')) {
 	             <span class="knob absolute left-1 inline-block h-5 w-5 rounded-full bg-white shadow-sm transform transition-transform duration-300 translate-x-0"></span>
 	           </button>
 
-	           <input type="hidden" name="${this.escape(this.name)}" value="N">
+	           <input type="hidden" id="${this.escape(this.name)}" name="${this.escape(this.name)}" value="N">
 	         `;
 		}
 

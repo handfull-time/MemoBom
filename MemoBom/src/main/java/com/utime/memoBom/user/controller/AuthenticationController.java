@@ -66,6 +66,7 @@ public class AuthenticationController {
 		model.addAttribute("message", message );
 		model.addAttribute(AppDefine.KeyShowHeader, false);
 	    model.addAttribute(AppDefine.KeyShowFooter, false);
+	    model.addAttribute(AppDefine.KeyLoadScript, false );
 	    
 	    if( AppUtils.isNotEmpty(returnUrl)) {
 	    	// 로그인 후 이전 페이지로 이동

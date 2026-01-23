@@ -4,7 +4,7 @@
 			class="justify-self-start text-2xl leading-none">
 			🔙
 		</button>
-		<h1 class="justify-self-center text-base font-semibold leading-none">
+		<h1 id="headerTitle" class="justify-self-center text-base font-semibold leading-none">
 			Error
 		</h1>
 		<div class="justify-self-end w-8 h-6"></div>
@@ -16,8 +16,8 @@
 			class="justify-self-start text-2xl leading-none">
 			🔙
 		</button>
-		<h1 class="justify-self-center text-base font-semibold leading-none">
-			[(${title})]  
+		<h1 id="headerTitle" class="justify-self-center text-base font-semibold leading-none">
+			[(${title})]
 		</h1>
 		<div class="justify-self-end w-8 h-6"></div>
 	</div>
@@ -51,7 +51,7 @@
 		<!-- Center area (Title / Search input) -->
 		<div class="flex-1 min-w-0">
 			<!-- Title -->
-			<h1 data-role="title" class="text-center text-base font-semibold leading-none truncate">
+			<h1 id="headerTitle" data-role="title" class="text-center text-base font-semibold leading-none truncate">
 				[[${title}]]
 			</h1>
 
@@ -61,7 +61,7 @@
 					<input data-role="input" type="search" inputmode="search" autocomplete="off" placeholder="검색"
 						class="flex-1 min-w-0 bg-transparent outline-none text-sm" />
 					<button type="button" aria-label="search" data-action="do-search"
-						class="shrink-0 px-2 text-xl leading-none">
+						class="shrink-0 px-2 text-sx leading-none">
 						🔍
 					</button>
 				</div>
@@ -71,7 +71,7 @@
 		<!-- Right area: (Search button 붙어서) + Right button -->
 		<div class="shrink-0 flex items-center gap-0">
 			<button type="button" aria-label="open-search" data-action="open-search"
-				class="w-10 h-10 flex items-center justify-center text-xl leading-none">
+				class="w-10 h-10 flex items-center justify-center text-sx leading-none">
 				🔍
 			</button>
 			<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"

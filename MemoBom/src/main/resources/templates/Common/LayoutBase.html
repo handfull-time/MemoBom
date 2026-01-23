@@ -5,7 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 	<title th:text="'MemoBom' + (${pageTitle} != null ? ' - ' + ${pageTitle} : '')">MemoBom</title>
 
-	<link rel="stylesheet" th:href="@{/css/tailwind/tailwind.min.css}">
+	<script type="text/javascript" th:src="@{/js/tailwind/tailwind.min.js}"></script>
+	<!--<script src="https://cdn.tailwindcss.com"></script>-->
 	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
 	<script th:inline="javascript">
 	  	window.contextPath = (/*[[@{/}]]*/ '').replace(/\/$/, "");
@@ -46,12 +47,14 @@
 		</footer>
 	</div>
 
-	<div th:replace="~{Common/AlertView :: AlertView}"></div>
-	<th:block th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></th:block>
-	<th:block th:replace="~{Common/ModalView :: ModalView}"></th:block>
-
 	<script type="text/javascript" th:src="@{/js/api.js(v=${assetVersion})}"></script>
-	<script type="text/javascript" th:src="@{/js/MyToast.js(v=${assetVersion})}"></script>
+
+	<th:block th:if="${loadScript == null || loadScript}">
+		<div th:replace="~{Common/AlertView :: AlertView}"></div>
+		<th:block th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></th:block>
+		<th:block th:replace="~{Common/ModalView :: ModalView}"></th:block>
+		<script type="text/javascript" th:src="@{/js/MyToast.js(v=${assetVersion})}"></script>
+	</th:block>
 
 	<th:block layout:fragment="script"></th:block>
 </body>

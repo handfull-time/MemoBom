@@ -63,6 +63,7 @@ public class TestController {
 			log.error("", e);
 			model.addAttribute("res", new ReturnBasic("E", e.getMessage()) );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
 		}
 

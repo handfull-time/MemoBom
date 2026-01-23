@@ -15,6 +15,99 @@
 </th:block>
 
 <th:block layout:fragment="content">
+	<br/>
+	<button onClick="ShowTo(1)">toast 오류</button>
+	<br/>
+	<button onClick="ShowTo(3)">toast 성공</button>
+	<br/>
+	<button onClick="ShowTo(5)">toast 기본</button>
+	<br/>	
+	<!-- BG / Gradient / Alpha 시각 테스트 템플릿 -->
+	<div class="min-h-screen bg-white p-8">
+	  <h1 class="text-2xl font-extrabold mb-6">Tailwind BG 테스트</h1>
+
+	  <!-- 흰색 배경 위 테스트 -->
+	  <h2 class="text-lg font-bold mb-3">1) White background 위</h2>
+	  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+	    <!-- Solid -->
+	    <div class="rounded-xl p-5 text-white shadow-lg bg-rose-600">
+	      <div class="font-bold">SOLID</div>
+	      <div class="text-sm opacity-90">bg-rose-600</div>
+	    </div>
+
+	    <!-- Solid with alpha -->
+	    <div class="rounded-xl p-5 text-white shadow-lg bg-rose-600/80">
+	      <div class="font-bold">SOLID + alpha</div>
+	      <div class="text-sm opacity-90">bg-rose-600/80</div>
+	    </div>
+
+	    <!-- Gradient no alpha -->
+	    <div class="rounded-xl p-5 text-white shadow-lg bg-gradient-to-br from-rose-500 via-red-500 to-fuchsia-600">
+	      <div class="font-bold">GRADIENT (no alpha)</div>
+	      <div class="text-sm opacity-90">from-rose-500 via-red-500 to-fuchsia-600</div>
+	    </div>
+
+	    <!-- Gradient with alpha (현재 토스트 같은 느낌) -->
+	    <div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40">
+	      <div class="font-bold">GRADIENT (alpha)</div>
+	      <div class="text-sm opacity-90">/45 /30 /40</div>
+	    </div>
+
+	    <!-- Glass style (alpha + blur) -->
+	    <div class="rounded-xl p-5 text-gray-900 shadow-lg backdrop-blur-md ring-1 ring-rose-300/30
+	                bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40">
+	      <div class="font-bold">GLASS (alpha + blur)</div>
+	      <div class="text-sm opacity-90">이 조합이 “흰 카드처럼” 보이기 쉬움</div>
+	    </div>
+
+	    <!-- Recommended: base + glass -->
+	    <div class="rounded-xl p-5 text-white shadow-lg backdrop-blur-md ring-1 ring-white/25 shadow-rose-900/40
+	                bg-rose-600/80 bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40">
+	      <div class="font-bold">RECOMMENDED</div>
+	      <div class="text-sm opacity-90">베이스(bg-rose-600/80) + 효과(gradient)</div>
+	    </div>
+	  </div>
+
+	  <!-- 회색 배경 위 테스트 (투명도 체감 확 올라감) -->
+	  <h2 class="text-lg font-bold mb-3">2) Gray background 위 (투명도 확인용)</h2>
+	  <div class="rounded-2xl bg-slate-100 p-6">
+	    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+	      <div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
+	        <div class="font-bold">INFO glass</div>
+	        <div class="text-sm opacity-90">from-sky-500/40 ...</div>
+	      </div>
+
+	      <div class="rounded-xl p-5 text-white shadow-lg bg-sky-600/80 bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-white/25">
+	        <div class="font-bold">INFO recommended</div>
+	        <div class="text-sm opacity-90">bg-sky-600/80 + gradient</div>
+	      </div>
+
+	      <div class="rounded-xl p-5 text-white shadow-lg bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600">
+	        <div class="font-bold">SUCCESS gradient</div>
+	        <div class="text-sm opacity-90">no alpha</div>
+	      </div>
+
+	      <div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-amber-400/45 via-yellow-500/30 to-orange-500/40 backdrop-blur-md ring-1 ring-amber-300/30">
+	        <div class="font-bold">WARNING glass</div>
+	        <div class="text-sm opacity-90">alpha + blur</div>
+	      </div>
+
+	      <div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40 backdrop-blur-md ring-1 ring-rose-300/30">
+	        <div class="font-bold">ERROR glass</div>
+	        <div class="text-sm opacity-90">alpha + blur</div>
+	      </div>
+
+	      <div class="rounded-xl p-5 text-white shadow-lg bg-fuchsia-600 ring-4 ring-fuchsia-300/60 shadow-[0_0_40px_rgba(217,70,239,0.7)]">
+	        <div class="font-bold">NEON (debug)</div>
+	        <div class="text-sm opacity-90">존재감 MAX</div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+</th:block>
+
+<th:block layout:fragment="contentTest">
 	내용
 	<pp-toggle label="푸시 알림" name="push" checked></pp-toggle>
 	<br/>
@@ -23,7 +116,13 @@
 	<pp-toggle label="광고성 정보 수신" name="marketing"></pp-toggle>
 	<br/>
 	<pp-toggle label="광고성 정보 수신" name="marT" onchange="call(this)"></pp-toggle>
-	
+	<br/>
+	<button onClick="ShowTo(1)">toast 오류</button>
+	<br/>
+	<button onClick="ShowTo(3)">toast 성공</button>
+	<br/>
+	<button onClick="ShowTo(5)">toast 기본</button>
+	<br/>
 	https://tailscan.com/colors?utm_source=chatgpt.com<br/>
 	https://tailwindcss.com/docs/colors?utm_source=chatgpt.com
 </th:block>
@@ -41,7 +140,18 @@
 
 	<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
 	<script>
-		
+		function ShowTo(a){
+			if( a == 1 ){
+				showToast("오류", "중복 확인 중 오류가 발생했습니다.", ToastType.ERROR);	
+			}
+			
+			if( a == 3 ){
+				showToast("성공", "중복 확인 중 오류가 발생했습니다.", ToastType.SUCCESS);	
+			}
+			if( a == 5 ){
+				showToast("기본입니다.");	
+			}
+		}
 	 </script>
 
 </th:block>

@@ -100,28 +100,24 @@ public class BoardController {
 	public String newFragment( HttpServletRequest request, ModelMap model, UserVo user, 
 			@RequestParam(name="topic", required = false) String topicUid ) {
 
+		final List<TopicVo> list;
 		if( ! AppUtils.isEmpty(topicUid) ) {
 			final TopicVo topic = topicServce.loadTopic(topicUid);
 			if( topic == null ) {
 				model.addAttribute("res", new ReturnBasic("E", "존재하지 않는 주제입니다.") );
 				model.addAttribute(AppDefine.KeyShowFooter, false );
+			    model.addAttribute(AppDefine.KeyLoadScript, false );
 				return "Common/ErrorAlert";
 			}
-			
-			model.addAttribute(KeyTopic, topic );
+			list = List.of(topic);
 		}else {
-			final List<TopicVo> list = topicServce.loadUserTopicList( user );
+			list = topicServce.loadUserTopicList( user );
 			
 			if( AppUtils.isEmpty(list)) {
 				model.addAttribute("res", new ReturnBasic("E", "개인 주제를 먼저 정하세요.") );
 				model.addAttribute(AppDefine.KeyShowFooter, false );
+			    model.addAttribute(AppDefine.KeyLoadScript, false );
 				return "Common/ErrorAlert";
-			}
-			
-			if( list.size() == 1 ) {
-				model.addAttribute(KeyTopic, list.get(0) );
-			}else {
-				model.addAttribute(KeyTopics, list );
 			}
 		}
 		
@@ -129,9 +125,11 @@ public class BoardController {
 		if( key == null ) {
 			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
 		}
 		
+		model.addAttribute(KeyTopics, list );
 		model.addAttribute("seal", key );
 		
 		return "Board/BoardWrite";

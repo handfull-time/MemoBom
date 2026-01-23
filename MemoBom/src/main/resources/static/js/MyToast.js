@@ -24,7 +24,7 @@ const ToastTheme = {
 		ring: "ring-amber-300/30",
 	},
 	[ToastType.ERROR]: {
-		bg: "bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40",
+		bg: "bg-rose-600/80 bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40",
 		bar: "bg-rose-100/90",
 		ring: "ring-rose-300/30",
 	},

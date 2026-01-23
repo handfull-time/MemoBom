@@ -1,11 +1,13 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="BasicFooter">
+<th:block xmlns:th="http://www.thymeleaf.org"> 
+<th:block th:fragment="BasicFooter">
 	<div class="text-xs text-gray-400" >MemoBom • <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}" /> </div>
 </th:block>
 
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="FooterWrite">
+<th:block th:fragment="FooterWrite">
 	<div class="w-full h-full flex items-center justify-end px-3">
 		<button id="btnWrite" class="text-xl" onclick="onClickWrite()">
 			✍️
 		</button>
 	</div>
+</th:block>
 </th:block>

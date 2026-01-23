@@ -68,7 +68,7 @@ public class TopicController {
 		model.addAttribute("topic", new TopicVo());
 		model.addAttribute(KeySeal, topicServce.createKey(request, user));
 		
-		return "Topic/TopicItem2";
+		return "Topic/TopicItem";
 	}
 	
 	final String KeySeal = "seal";
@@ -85,6 +85,7 @@ public class TopicController {
 		if( topic == null ) {
 			model.addAttribute("res", new ReturnBasic("E", "사라진 주제입니다.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
 		}
 		
