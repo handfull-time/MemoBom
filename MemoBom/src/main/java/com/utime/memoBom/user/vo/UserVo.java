@@ -2,6 +2,7 @@ package com.utime.memoBom.user.vo;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.utime.memoBom.common.vo.EJwtRole;
 
 import lombok.Data;
@@ -14,8 +15,10 @@ public class UserVo {
 	/** 회원 번호 */
 	long userNo;
 	/** 생성일 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD HH:mm", timezone = "Asia/Seoul")
 	LocalDateTime regDate;
 	/** 수정일 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD HH:mm", timezone = "Asia/Seoul")
 	LocalDateTime updateDate;
 	/** 사용 여부 */
 	boolean enabled;

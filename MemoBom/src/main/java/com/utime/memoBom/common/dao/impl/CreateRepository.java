@@ -58,6 +58,7 @@ class CreateRepository {
 			log.info("MB_FRAGMENT 생성");
 			result ++;
 
+			result += common.createUniqueIndex("UID_UIQ_MB_FRAGMENT_INDX", "MB_FRAGMENT", "UID");
 			result += common.createIndex("IDX_BOARD_REG", "MB_FRAGMENT", "REG_DATE");
 		}
 
@@ -74,6 +75,7 @@ class CreateRepository {
 		if ( mapper.createFragmentEmotionLog() > 0 ) {
 			log.info("MB_FRAGMENT_EMOTION_LOG 생성");
 			result ++;
+			result += common.createUniqueIndex("UQ_EMOTION_LOG", "MB_FRAGMENT_EMOTION_LOG", "USER_NO, TARGET_TYPE, TARGET_NO");
 		}
 
 		if ( mapper.createFragmentHashTag() > 0 ) {
@@ -86,6 +88,7 @@ class CreateRepository {
 			result ++;
 
 			result += common.createIndex("IDX_MB_FRAGMENT_HASHTAG_RECORD_FRAGMENT_NO", "MB_FRAGMENT_HASHTAG_RECORD", "FRAGMENT_NO");
+			result += common.createIndex("IDX_MB_FRAGMENT_HASHTAG_RECORD_TAG_NO", "MB_FRAGMENT_HASHTAG_RECORD", "TAG_NO");
 		}
 		
 		if( mapper.createPushSubscriptionTable() > 0 ) {
@@ -95,7 +98,12 @@ class CreateRepository {
 			result += common.createUniqueIndex("MB_PUSH_SUB_END_POINT_INDX", "MB_PUSH_SUB", "END_POINT");
 		}
 		
-		
+		if( mapper.createShare() > 0 ) {
+			log.info("MB_SHARE 생성");
+			result ++;
+			result += common.createIndex("MB_PUSH_SUB_USER_NO_INDX", "MB_PUSH_SUB", "USER_NO");
+			result += common.createUniqueIndex("MB_PUSH_SUB_END_POINT_INDX", "MB_PUSH_SUB", "END_POINT");
+		}
 		
 		log.info("초기 작업 {}", result);
 	}

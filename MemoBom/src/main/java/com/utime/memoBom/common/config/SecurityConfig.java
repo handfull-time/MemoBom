@@ -89,7 +89,6 @@ public class SecurityConfig {
             .toList();
 
         // 수동 추가
-        // (주의) "/File/Stream"만 허용이면 그대로, 하위까지면 "/File/Stream/**"
         final List<RequestMatcher> extended = new java.util.ArrayList<>(permitAllMatchers);
         extended.add(matcher.matcher("/Fragment/**"));
         extended.add(matcher.matcher("/Mosaic/**"));
@@ -157,6 +156,5 @@ public class SecurityConfig {
         reg.setEnabled(false);
         return reg;
     }
-
-
 }
+

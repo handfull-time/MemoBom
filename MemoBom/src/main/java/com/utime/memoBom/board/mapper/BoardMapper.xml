@@ -28,32 +28,6 @@
 		VALUES (#{name})
 	</update>
 	
-	<update id="mergeFragmentHashTagRecordByName" parameterType="map">
-		MERGE INTO MB_FRAGMENT_HASHTAG_RECORD (TAG_NO, FRAGMENT_NO)
-		KEY (TAG_NO, FRAGMENT_NO)
-		VALUES (
-			(SELECT TAG_NO FROM MB_FRAGMENT_HASHTAG WHERE NAME = #{name})
-			, #{fragmentNo}
-		)
-	</update>
-	
-	<update id="upsertEmotion">
-		MERGE INTO MB_FRAGMENT_EMOTION_LOG (
-			USER_NO, TARGET_TYPE, TARGET_NO, EMOTION, UPDATE_DATE
-		) KEY ( USER_NO, TARGET_TYPE, TARGET_NO ) 
-		VALUES (
-			#{userNo}, #{targetType}, #{targetNo}, #{emotion}, CURRENT_TIMESTAMP
-		)
-	</update>
-	
-	<!-- 리액션 삭제(해제) -->
-	<delete id="deleteEmotion">
-		DELETE FROM MB_FRAGMENT_EMOTION_LOG
-		WHERE 1=1
-			AND USER_NO = #{userNo}
-			AND TARGET_TYPE = #{targetType}
-			AND TARGET_NO = #{targetNo}
-	</delete>
 	
 	<!-- 대상(게시글/댓글)별 리액션 카운트 -->
 	<select id="selectEmotionCountsByTarget" resultType="map">
@@ -85,7 +59,7 @@
         
         <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
             <result property="uid" column="user_uid" />
-            <result property="nickName" column="user_nickname" />
+            <result property="nickname" column="user_nickname" />
             <result property="profileUrl" column="user_img_url" />
         </association>
         
@@ -94,8 +68,51 @@
             <result property="name" column="topic_name" />
             <result property="color" column="topic_color" />
             <result property="imogi" column="topic_imogi" />
+            <result property="imogi" column="topic_imogi" />
+            <result property="emojiSetType" column="emoji_set_type" 
+            	typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
         </association>
+        
+        <collection property="hashtagList"
+            ofType="string"
+            column="fragment_uid"
+            select="selectHashtagListByFragmentUid" />
+            
+        <collection property="emotionList"
+            ofType="com.utime.memoBom.board.vo.EmotionItem"
+            column="fragment_uid"
+            select="selectEmotionListByFragmentUid" />
+
     </resultMap>
+
+	<!-- 해시테그 목록  -->    
+    <select id="selectHashtagListByFragmentUid" parameterType="string" resultType="string">
+	    SELECT h.NAME
+	    FROM MB_FRAGMENT_HASHTAG h
+		    INNER JOIN MB_FRAGMENT_HASHTAG_RECORD r
+		        ON r.TAG_NO = h.TAG_NO
+		    INNER JOIN MB_FRAGMENT f
+		        ON f.FRAGMENT_NO = r.FRAGMENT_NO
+	    WHERE f.UID = #{fragmentUid}
+	    ORDER BY h.NAME
+	</select>
+	
+	<!-- 감정(리액션) 목록  -->
+	<select id="selectEmotionListByFragmentUid" parameterType="string" resultType="com.utime.memoBom.board.vo.EmotionItem">
+	    SELECT
+	        EMOTION          AS emotion,
+	        COUNT(*)         AS count
+	    FROM MB_FRAGMENT_EMOTION_LOG
+	    WHERE 1=1
+	    	AND TARGET_TYPE = 1
+	    	AND TARGET_NO = (
+				SELECT 
+					FRAGMENT_NO
+				FROM MB_FRAGMENT
+				WHERE UID = #{fragmentUid}
+	      )
+	    GROUP BY EMOTION
+	</select>
 
     <select id="loadFragmentList" parameterType="map" resultMap="FragmentItemMap">
         SELECT 
@@ -111,6 +128,7 @@
             t.NAME	 		AS topic_name,
             t.COLOR         AS topic_color,
             t.IMOGI 		AS topic_imogi,
+            t.EMOJI_SET_TYPE AS emoji_set_type,
             <!-- [변경됨] 스크랩 여부 판별 로직 -->
             <choose>
                 <when test="user != null ">
@@ -137,7 +155,6 @@
         	INNER JOIN MB_TOPIC_FOLLOW l ON l.TOPIC_NO = t.TOPIC_NO AND l.USER_NO = #{user.userNo}  
         </if>
         WHERE 1=1
-        <where>
             <!-- 기본 조건 -->
             AND f.IS_DELETED = FALSE
             AND u.ENABLED = TRUE
@@ -148,23 +165,133 @@
 	        </if>
 
             <!-- 필터: 작성자 -->
-            <if test="req.userUid != null and ! req.userUid.isEmpty() ">
-                AND u.UID = #{userUid}
+            <if test="req.userUid != null and !req.userUid.isEmpty() ">
+                AND u.UID = #{req.userUid}
             </if>
             
             <!-- 필터: 토픽 -->
-            <if test="req.topicUid != null and ! req.topicUid.isEmpty() ">
-                AND t.UID = #{topicUid}
+            <if test="req.topicUid != null and !req.topicUid.isEmpty() ">
+                AND t.UID = #{req.topicUid}
             </if>
             
             <!-- 필터: 키워드 검색 -->
-            <if test="req.keyword != null and ! req.keyword.isEmpty() ">
-                AND f.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+            <if test="req.keyword != null and !req.keyword.isEmpty() ">
+                AND f.CONTENT LIKE CONCAT('%', #{req.keyword}, '%')
             </if>
-        </where>
+
+            <!-- 필터: 해시태그 -->
+			<if test="req.hashtag != null and !req.hashtag.isEmpty()">
+			  AND EXISTS (
+			      SELECT 1
+			      FROM MB_FRAGMENT_HASHTAG_RECORD r
+			      	INNER JOIN MB_FRAGMENT_HASHTAG h ON h.TAG_NO = r.TAG_NO
+			      WHERE r.FRAGMENT_NO = f.FRAGMENT_NO
+			        AND h.NAME = #{req.hashtag}
+			  )
+			</if>
+
         ORDER BY f.REG_DATE DESC
         <!-- 페이징 (페이지당 5개) -->
         LIMIT 5 OFFSET (#{req.pageNo} - 1) * 5
     </select>
+    
+    <!--스크랩 존재 여부 확인  -->
+    <select id="existsScrap" resultType="boolean">
+    	SELECT 
+			CASE COUNT(1) 
+	   			WHEN 0 THEN 0
+				ELSE 1
+	   		END AS RES
+	   	FROM MB_FRAGMENT_SCRAP
+	   	WHERE 1=1	
+	   	    AND USER_NO = #{userNo}
+            AND FRAGMENT_NO = (
+                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid}
+            )
+    </select>
+    
+	<!--스크랩 삭제  -->
+	<delete id="deleteScrap">
+        DELETE FROM MB_FRAGMENT_SCRAP
+        WHERE 1=1
+            AND USER_NO = #{userNo}
+            AND FRAGMENT_NO = (
+                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid}
+            )
+    </delete>
+	
+	<!--스크랩 추가  -->
+	<insert id="insertScrap" parameterType="map">
+        INSERT INTO MB_FRAGMENT_SCRAP (
+            USER_NO,
+            FRAGMENT_NO
+        ) VALUES (
+            #{userNo},
+            (SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid})
+        )
+    </insert>
+    
+    <select id="selectFragmentContentPreview" resultType="string">
+	    SELECT
+	        CASE
+	            WHEN LENGTH(CAST(CONTENT AS VARCHAR)) > 64
+	            THEN SUBSTRING(CAST(CONTENT AS VARCHAR), 1, 64) || '...'
+	            ELSE CAST(CONTENT AS VARCHAR)
+	        END
+	    FROM MB_FRAGMENT
+	    WHERE UID = #{uid}
+	</select>
+
+	<!--공유 정보 삽입-->
+	<insert id="insertShareInfo" parameterType="map">
+        INSERT INTO MB_SHARE (
+            FRAGMENT_NO,
+            USER_NO
+        ) VALUES (
+            (
+                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid}
+            )
+            #{userNo}s
+        )
+    </insert>
+    
+    <sql id="getTargetNoSql">
+	 	(<choose>
+			<when test="req.targetType.name() == 'Board'">
+				SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{req.uid}
+			</when>
+			<otherwise>
+				SELECT COMMENT_NO FROM MB_FRAGMENT_COMMENT WHERE UID = #{req.uid}
+			</otherwise>
+	    </choose>)
+	</sql>
+    
+	<!-- 감정 표현 삭제(해제) -->
+	<delete id="deleteEmotion" parameterType="map">
+		DELETE FROM MB_FRAGMENT_EMOTION_LOG
+		WHERE 1=1
+			AND USER_NO = #{userNo}
+			AND TARGET_TYPE = #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EmotionTargetTypeHandler}
+			AND TARGET_NO = <include refid="getTargetNoSql" />
+			AND EMOTION = #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
+	</delete>
+	
+	<update id="upsertEmotion" parameterType="map">
+		MERGE INTO MB_FRAGMENT_EMOTION_LOG (
+			USER_NO
+			, TARGET_TYPE
+			, TARGET_NO
+			, EMOTION
+			, UPDATE_DATE
+		) KEY (USER_NO, TARGET_TYPE, TARGET_NO)
+		VALUES (
+			#{userNo}
+			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EmotionTargetTypeHandler}
+			, <include refid="getTargetNoSql" />
+			, #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
+			, CURRENT_TIMESTAMP
+		)
+</update>
+
 
 </mapper>

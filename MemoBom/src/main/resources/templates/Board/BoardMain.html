@@ -9,9 +9,74 @@
 </th:block>
 
 <th:block layout:fragment="content">
-	[[${user}]]
-	<hr/>
-	[[${topic}]]
+
+	<!-- 리스트 컨테이너 -->
+	<div id="fragmentList" class="space-y-3 pb-6"></div>
+
+	<!-- 로딩/끝 상태 -->
+	<div id="listState" class="hidden mx-2 mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500"></div>
+
+	<!-- 카드 템플릿 -->
+	<template id="tplFragmentCard">
+		<div class="mx-2 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+
+			<!-- top meta row -->
+			<div class="flex items-center gap-2 px-3 py-2 border-b border-slate-100">
+				<!-- topic pill -->
+				<div class="topicPill inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-semibold"
+					 style="background:#eef2ff;">
+					<span class="topicEmoji">🧩</span>
+					<span class="topicName">Topic</span>
+				</div>
+
+				<!-- center user -->
+				<div class="flex-1 min-w-0 flex items-center justify-center gap-2">
+					<img class="userImg w-6 h-6 rounded-full border border-slate-200 object-cover" alt="user" />
+					<div class="userName text-xs font-medium text-slate-700 truncate">User</div>
+				</div>
+
+				<!-- right date -->
+				<div class="regDate text-[11px] text-slate-400 whitespace-nowrap">2026-01-24 11:22</div>
+			</div>
+
+			<!-- content -->
+			<div class="px-3 py-2.5">
+				<div class="content text-sm text-slate-800 leading-relaxed whitespace-pre-wrap break-words">
+					content...
+				</div>
+
+				<!-- hashtags (선택) -->
+				<div class="hashtagWrap mt-2 flex flex-wrap gap-1.5"></div>
+
+				<!-- bottom actions -->
+				<div class="mt-3 flex items-center justify-between gap-2">
+
+					<!-- left: scrap + comment placeholder -->
+					<div class="flex items-center gap-2">
+						<button type="button" class="btnScrap inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs
+													border border-slate-200 bg-slate-50 hover:bg-slate-100">
+							<span class="scrapIcon"></span>
+							<span class="scrapText"></span>
+						</button>
+
+						<!-- 댓글 영역 placeholder (추후 lazy comments) -->
+						<div class="commentPlaceholder text-xs text-slate-400">
+							💬 댓글(준비중)
+						</div>
+					</div>
+
+					<!-- emotions -->
+					<div class="emotionRow flex items-center gap-1.5"></div>
+				</div>
+			</div>
+
+			<!-- comments area placeholder block (공간만) -->
+			<div class="commentArea hidden px-3 pb-3">
+				<!-- TODO: /Fragment/Comments.json?uid={topicUid}&pageNo=1 -->
+			</div>
+		</div>
+	</template>
+
 </th:block>
 
 <th:block layout:fragment="footer">
@@ -19,13 +84,239 @@
 </th:block>
 
 <th:block layout:fragment="script">
+
 	<script th:inline="javascript">
-		function functionLeft(){
-			history.back();
+		// 서버에서 내려오는 조건(있으면 사용)
+		const user = /*[[${user}]]*/ {};
+		const topic = /*[[${topic}]]*/ {};
+		const keyword = /*[[${keyword}]]*/ null;
+
+		// 무한 스크롤 상태
+		let pageNo = 1;
+		let loading = false;
+		let ended = false;
+
+		const elList = document.getElementById('fragmentList');
+		const elState = document.getElementById('listState');
+		const tpl = document.getElementById('tplFragmentCard');
+
+		// LayoutBase의 main이 스크롤 컨테이너임
+		const scrollHost = document.querySelector('main');
+
+		// emotion 표시용(프론트 매핑)
+		const EMOTION_META = {
+			JOY: { emoji: "😊", label: "기쁨" },
+			NORMAL: { emoji: "😐", label: "보통" },
+			SADNESS: { emoji: "😢", label: "슬픔" },
+			ANGER: { emoji: "😠", label: "화남" },
+			AWESOME: { emoji: "🤩", label: "최고" },
+
+			LIKE: { emoji: "👍", label: "좋아요" },
+			EMPATHY: { emoji: "❤️", label: "공감" },
+			FUNNY: { emoji: "😂", label: "웃김" },
+			SURPRISE: { emoji: "😮", label: "놀람" },
+		};
+
+		function showState(text) {
+			if (!elState) return;
+			elState.textContent = text;
+			elState.classList.remove('hidden');
 		}
-		
-		function functionRight(){
-			// 글 작성하기
+		function hideState() {
+			if (!elState) return;
+			elState.classList.add('hidden');
+			elState.textContent = '';
+		}
+
+		function safeText(v, fallback = '') {
+			if (v === null || v === undefined) return fallback;
+			const s = String(v);
+			return s;
+		}
+
+		function buildHashtags(elWrap, hashtags) {
+			elWrap.innerHTML = '';
+			if (!Array.isArray(hashtags) || hashtags.length === 0) return;
+
+			hashtags.forEach(tag => {
+				const chip = document.createElement('span');
+				chip.className = "text-[11px] text-slate-600 bg-slate-100 border border-slate-200 rounded-full px-2 py-0.5";
+				chip.textContent = `#${tag}`;
+				elWrap.appendChild(chip);
+			});
+		}
+
+		function buildEmotions(elRow, emotionList) {
+			elRow.innerHTML = '';
+			if (!Array.isArray(emotionList) || emotionList.length === 0) return;
+
+			emotionList.forEach(e => {
+				const code = e?.emotion;
+				const meta = EMOTION_META[code] || { emoji: "❓", label: code || "UNKNOWN" };
+
+				const btn = document.createElement('button');
+				btn.type = "button";
+				btn.className =
+					"inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white " +
+					"px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50";
+
+				const emoji = document.createElement('span');
+				emoji.textContent = meta.emoji;
+
+				const cnt = document.createElement('span');
+				cnt.className = "text-slate-500";
+				cnt.textContent = String(e?.count ?? 0);
+
+				btn.appendChild(emoji);
+				btn.appendChild(cnt);
+
+				// TODO: 클릭 시 emotion 처리 (추후)
+				btn.addEventListener('click', (ev) => {
+					ev.stopPropagation();
+					// showToast(meta.label, "이모션 기능은 준비중입니다.", ToastType.INFO, 1500);
+				});
+
+				elRow.appendChild(btn);
+			});
+		}
+
+		function makeCard(item) {
+			const node = tpl.content.firstElementChild.cloneNode(true);
+
+			// topic
+			const topicPill = node.querySelector('.topicPill');
+			const topicEmoji = node.querySelector('.topicEmoji');
+			const topicName = node.querySelector('.topicName');
+
+			const t = item?.topic || {};
+			const tColor = safeText(t.color, '#eef2ff');
+
+			// 배경색(토픽 컬러)
+			topicPill.style.background = tColor;
+
+			topicEmoji.textContent = safeText(t.imogi, '🧩');
+			topicName.textContent = safeText(t.name, 'Topic');
+
+			// user
+			const u = item?.user || {};
+			const userImg = node.querySelector('.userImg');
+			const userName = node.querySelector('.userName');
+
+			userName.textContent = safeText(u.nickname, 'Unknown');
+
+			const purl = safeText(u.profileUrl, '');
+			if (purl) userImg.src = purl;
+			else userImg.classList.add('hidden');
+
+			// date
+			node.querySelector('.regDate').textContent = safeText(item?.regDate, '');
+
+			// content
+			node.querySelector('.content').textContent = safeText(item?.content, '');
+
+			// hashtags
+			buildHashtags(node.querySelector('.hashtagWrap'), item?.hashtagList);
+
+			// scrap
+			const btnScrap = node.querySelector('.btnScrap');
+			const scrapIcon = node.querySelector('.scrapIcon');
+			const scrapText = node.querySelector('.scrapText');
+
+			let isScrap = !!item?.scrap;
+			function syncScrapUI() {
+				if (isScrap) {
+					btnScrap.classList.remove('bg-slate-50');
+					btnScrap.classList.add('bg-amber-50', 'border-amber-200');
+					scrapIcon.textContent = '📌';
+					//scrapText.textContent = '스크랩됨';
+				} else {
+					btnScrap.classList.remove('bg-amber-50', 'border-amber-200');
+					btnScrap.classList.add('bg-slate-50');
+					scrapIcon.textContent = '📌';
+					//scrapText.textContent = '스크랩';
+				}
+			}
+			syncScrapUI();
+
+			btnScrap.addEventListener('click', (ev) => {
+				ev.stopPropagation();
+				// TODO: /Fragment/Scrap.json 같은 API가 붙으면 처리
+				// 임시 토글(테스트용)
+				isScrap = !isScrap;
+				syncScrapUI();
+			});
+
+			// emotions
+			buildEmotions(node.querySelector('.emotionRow'), item?.emotionList);
+
+			// 카드 클릭(원하면 상세로)
+			node.addEventListener('click', () => {
+				// TODO: 상세 화면이 있으면 이동
+				// location.href = `/Fragment/Item.html?uid=${encodeURIComponent(item.uid)}`;
+			});
+
+			return node;
+		}
+
+		async function loadNextPage() {
+			if (loading || ended) return;
+
+			loading = true;
+			hideState();
+
+			const sendObj = {
+				userUid: user?.userUid,
+				topicUid: topic?.topicUid,
+				keyword: keyword || '',
+				hashTag: '',
+				pageNo: pageNo
+			};
+
+			try {
+				const url = /*[[@{/Fragment/Fragments.json}]]*/ '/Fragment/Fragments.json';
+				const res = await apiGetWithParam(url, sendObj);
+
+				if (!res || res.code !== "0") {
+					showState(res?.message || "목록을 불러오지 못했습니다.");
+					return;
+				}
+
+				const list = Array.isArray(res.data) ? res.data : [];
+
+				// ✅ 마지막 페이지: data가 null 또는 []
+				if (!list || list.length === 0) {
+					ended = true;
+					showState("마지막입니다.");
+					return;
+				}
+
+				list.forEach(item => elList.appendChild(makeCard(item)));
+				pageNo += 1;
+
+			} catch (e) {
+				showState("네트워크 오류로 목록을 불러오지 못했습니다.");
+			} finally {
+				loading = false;
+			}
+		}
+
+		function onScroll() {
+			if (!scrollHost) return;
+
+			// 아래로(손가락을 위로) 스크롤했을 때, 바닥 근처면 다음 페이지 로드
+			const nearBottom = scrollHost.scrollTop + scrollHost.clientHeight >= scrollHost.scrollHeight - 180;
+			if (nearBottom) loadNextPage();
+		}
+
+		async function init() {
+			await loadNextPage(); // 1page
+			scrollHost?.addEventListener('scroll', onScroll, { passive: true });
+		}
+
+		window.addEventListener("DOMContentLoaded", init);
+
+		function functionLeft() { history.back(); }
+		function functionRight() {
 			location.href = /*[[@{/Fragment/Tessera.html}]]*/ '/Fragment/Tessera.html';
 		}
 	</script>

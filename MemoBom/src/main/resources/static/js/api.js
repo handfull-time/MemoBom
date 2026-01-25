@@ -50,7 +50,8 @@ async function apiRequest(url, options = {}, { timeoutMs = 15000, debug = true }
 		const isJson = ct.includes('application/json');
 
 		const data = isJson ? await res.json().catch(() => null) : await res.text().catch(() => null);
-
+		if (debug) console.info('✅ response － data', data);
+		
 		if (!res.ok) {
 			const msg =
 				(data && typeof data === 'object' && (data.message || data.error)) ||

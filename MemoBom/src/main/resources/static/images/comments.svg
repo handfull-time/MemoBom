@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 120 100"
+     width="240"
+     height="200">
+
+  <!-- 말풍선 외곽 -->
+  <path
+    d="
+      M20 10
+      H100
+      Q110 10 110 20
+      V65
+      Q110 75 100 75
+      H65
+      L55 90
+      L50 75
+      H20
+      Q10 75 10 65
+      V20
+      Q10 10 20 10
+      Z
+    "
+    fill="#F9FAFB"
+    stroke="#4B5563"
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+
+  <!-- 왼쪽 세로 라인 -->
+  <line x1="25" y1="25" x2="25" y2="65"
+        stroke="#4B5563"
+        stroke-width="4"
+        stroke-linecap="round" />
+
+  <!-- 텍스트 라인들 -->
+  <line x1="40" y1="30" x2="90" y2="30"
+        stroke="#4B5563"
+        stroke-width="3"
+        stroke-linecap="round" />
+
+  <line x1="40" y1="45" x2="90" y2="45"
+        stroke="#4B5563"
+        stroke-width="3"
+        stroke-linecap="round" />
+
+  <line x1="40" y1="60" x2="75" y2="60"
+        stroke="#4B5563"
+        stroke-width="3"
+        stroke-linecap="round" />
+</svg>

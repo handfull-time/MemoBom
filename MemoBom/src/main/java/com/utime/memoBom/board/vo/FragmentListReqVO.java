@@ -14,7 +14,7 @@ public class FragmentListReqVO {
 	/** 검색어 */
 	String keyword;
 	/** 해쉬테그 */
-	String hashTag;
+	String hashtag;
 	/** 페이징. 1부터 시작 */
 	int pageNo = 1;
 }

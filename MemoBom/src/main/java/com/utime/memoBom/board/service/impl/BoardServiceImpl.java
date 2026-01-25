@@ -1,13 +1,17 @@
 package com.utime.memoBom.board.service.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.EEmotionCode;
+import com.utime.memoBom.board.vo.EEmotionTargetType;
+import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
-import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -89,6 +93,52 @@ class BoardServiceImpl implements BoardService {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
 		}
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic procEmotion(UserVo user, EmotionReqVo emotionReqVo) {
+		final ReturnBasic result = new ReturnBasic();
+		
+		try {
+			result.setData( boardDao.procEmotion(user, emotionReqVo) );
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "Error during emotion processing.");
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic procScrap(UserVo user, String fragmentUid) {
+		final ReturnBasic result = new ReturnBasic();
+		
+		try {
+			Boolean isScrapped = boardDao.procScrap(user, fragmentUid);
+			if( isScrapped == null ) {
+				result.setCodeMessage("E", "Failed to process scrap.");
+			}else {
+				result.setData( isScrapped );
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "An error occurred while saving.");
+		}
+		
+		return result;
+	}
+	
+	@Value("${appName}")
+	private String appName;
+	
+	@Override
+	public ShareVo loadShareInfo(UserVo user, String uid) throws Exception{
+		
+		final ShareVo result = boardDao.addShareInfo(user, uid);
+		
+		result.setTitle(this.appName + " - Shared");
 		
 		return result;
 	}

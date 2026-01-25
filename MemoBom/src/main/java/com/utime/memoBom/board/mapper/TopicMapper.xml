@@ -239,7 +239,7 @@
 			LEFT JOIN MB_TOPIC_STATS ST
 				ON ST.TOPIC_NO = TP.TOPIC_NO
 			
-		<where> 1=1
+		WHERE 1=1
 			AND TP.ENABLED = TRUE
 			
 			<!-- 공개/비공개 노출 정책 -->
@@ -261,11 +261,10 @@
 				OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
 			  )
 			</if>
-			</where>
 			
 		ORDER BY
 			<choose>
-			<when test="sortType == 'trending'">
+			<when test="sortType ==  @com.utime.memoBom.board.vo.ETopicSortType@trending">
 			  COALESCE(ST.FOLLOW_COUNT, 0) DESC
 			  , COALESCE(ST.FRAGMENT_COUNT, 0) DESC
 			  , TP.TOPIC_NO DESC

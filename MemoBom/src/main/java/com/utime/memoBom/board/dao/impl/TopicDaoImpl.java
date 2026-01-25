@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.mapper.TopicMapper;
-import com.utime.memoBom.board.vo.TopicListVo;
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
@@ -72,19 +72,18 @@ class TopicDaoImpl implements TopicDao{
 	}
 	
 	@Override
-	public TopicListVo listTopic(UserVo user, int page, String keyword) {
+	public List<TopicVo> listTopic(UserVo user, ETopicSortType sortType, int page, String keyword) {
 		
-		final TopicListVo result = new TopicListVo();
-		
+		final List<TopicVo> result;
 		final long userNo = user == null ? 0 : user.getUserNo();
 		
 		if( !AppUtils.isEmpty(keyword) ) {
 			keyword = keyword.trim();
-			result.setSearch( topicMapper.listTopic(userNo, keyword, page, "new") );
 		}else {
-			result.setFresh( topicMapper.listTopic(userNo, null, page, "new"));
-			result.setTrending( topicMapper.listTopic(userNo, null, page, "trending") );
+			keyword = null;
 		}
+		
+		result = topicMapper.listTopic(userNo, keyword, page, sortType);
 		
 		return result;
 	}

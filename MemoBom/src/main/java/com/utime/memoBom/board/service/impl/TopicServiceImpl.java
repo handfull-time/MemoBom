@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.service.TopicService;
-import com.utime.memoBom.board.vo.TopicListVo;
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
@@ -81,9 +81,13 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public TopicListVo listTopic(UserVo user, int page, String keyword) {
+	public ReturnBasic listTopic(UserVo user, ETopicSortType sortType, int page, String keyword) {
 		
-		return topicDao.listTopic( user, page, keyword );
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( topicDao.listTopic( user, sortType, page, keyword ) );
+		
+		return result;
 	}
 	
 	@Override

@@ -19,4 +19,21 @@ public enum EEmotionCode {
         this.code = code;
         this.emoji = emoji;
     }
+    
+    public String getCode() {
+		return code;
+	}
+    
+    public String getEmoji() {
+		return emoji;
+	}
+    
+    public static EEmotionCode fromCode(String code) {
+		for (EEmotionCode emotion : EEmotionCode.values()) {
+			if (emotion.code.equals(code)) {
+				return emotion;
+			}
+		}
+		throw new IllegalArgumentException("Unknown code: " + code);
+	}
 }

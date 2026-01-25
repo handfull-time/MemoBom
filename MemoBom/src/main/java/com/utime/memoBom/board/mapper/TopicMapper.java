@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.user.vo.UserVo;
@@ -59,7 +60,7 @@ public interface TopicMapper {
 	 * @param sortType 인기 목록 : 'trending', 최신 목록: 'fresh'
 	 * @return
 	 */
-	List<TopicVo> listTopic( @Param("userNo") long userNo, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") String sortType);
+	List<TopicVo> listTopic( @Param("userNo") long userNo, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType);
 
 	/**
 	 * Topic이 하나도 없나?

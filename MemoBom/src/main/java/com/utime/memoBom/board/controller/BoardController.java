@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.EEmotionTargetType;
+import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
+import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -151,6 +154,7 @@ public class BoardController {
 	 * @param reqVo
 	 * @return
 	 */
+	@ResponseBody
 	@GetMapping(path = "Fragments.json")
     public ReturnBasic loadFragmentList( UserVo user, FragmentListReqVO reqVo ) {
 
@@ -164,11 +168,58 @@ public class BoardController {
 	 * @param pageNo
 	 * @return
 	 */
+	@ResponseBody
 	@GetMapping(path = "Comments.json")
     public ReturnBasic loadCommentsList( UserVo user,  @RequestParam("uid") String uid, @RequestParam(name = "pageNo", defaultValue = "1") int pageNo ) {
 
 		return boardServce.loadCommentsList( user, uid, pageNo );
     }
 	
+	/**
+	 * 스크랩 처리
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping(path = "Scrap.json")
+    public ReturnBasic procScrap( UserVo user, @RequestBody EmotionReqVo reqVo ) {
+
+		return boardServce.procScrap( user, reqVo.getUid() );
+    }
+	
+	@ResponseBody
+	@PostMapping(path = "EmotionFragment.json")
+    public ReturnBasic procEmotionFragment( UserVo user, @RequestBody EmotionReqVo reqVo ) {
+
+		reqVo.setTargetType(EEmotionTargetType.Board);
+		return boardServce.procEmotion( user, reqVo );
+    }
+	
+	@ResponseBody
+	@PostMapping(path = "EmotionComment.json")
+    public ReturnBasic procEmotionComment( UserVo user, @RequestBody EmotionReqVo reqVo ) {
+
+		reqVo.setTargetType(EEmotionTargetType.Comment);
+		return boardServce.procEmotion( user, reqVo );
+    }
+	/**
+	 * 공유 정보 생성
+	 * @param user
+	 * @param uid
+	 * @return
+	 * @throws Exception 
+	 */
+	@ResponseBody
+	@PostMapping("Share.json")
+	public ShareVo getShareInfo(HttpServletRequest request, UserVo user, @RequestParam() String uid) throws Exception {
+		
+		final ShareVo result = boardServce.loadShareInfo(user, uid);
+
+		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid;
+		result.setUrl(fullUrl);
+	    
+		return result;
+	}
 }
 

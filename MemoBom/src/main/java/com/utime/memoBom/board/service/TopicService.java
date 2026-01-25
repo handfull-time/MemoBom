@@ -2,7 +2,7 @@ package com.utime.memoBom.board.service;
 
 import java.util.List;
 
-import com.utime.memoBom.board.vo.TopicListVo;
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -60,7 +60,7 @@ public interface TopicService {
 	 * @param user
 	 * @return
 	 */
-	TopicListVo listTopic(UserVo user, int page, String keyword );
+	ReturnBasic listTopic(UserVo user, ETopicSortType sortType, int page, String keyword );
 
 	/**
 	 * Topic이 하나도 없나?

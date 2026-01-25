@@ -2,7 +2,7 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
-import com.utime.memoBom.board.vo.TopicListVo;
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.user.vo.UserVo;
@@ -51,7 +51,7 @@ public interface TopicDao {
 	 * @param page 1부터 시작
 	 * @return
 	 */
-	TopicListVo listTopic(UserVo user, int page, String keyword );
+	List<TopicVo> listTopic(UserVo user, ETopicSortType sortType, int page, String keyword );
 
 	/**
 	 * Topic이 하나도 없나?
@@ -73,4 +73,5 @@ public interface TopicDao {
 	 * @return
 	 */
 	List<TopicVo> loadUserTopicList(UserVo user);
+
 }

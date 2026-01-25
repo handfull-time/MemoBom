@@ -117,7 +117,7 @@ class LoggingAspect {
 		paramStrBuffer.append(UserAgent + req.getHeader(KEY_USER_AGENT) ).append(lineSepretor);
 		paramStrBuffer.append(RemoteAddress + AppUtils.getRemoteAddress(req) ).append(lineSepretor);
 		if( user != null ) {
-			paramStrBuffer.append(UserNoHeader + user.getUserNo() ).append(lineSepretor);
+			paramStrBuffer.append(UserNoHeader + user.getUserNo() + " | " + user.getNickname() ).append(lineSepretor);
 		}
 		
 		{

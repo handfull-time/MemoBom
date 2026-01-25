@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
+import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -123,14 +124,11 @@ public class TopicController {
 	@ResponseBody
 	@GetMapping("List.json")
 	public ReturnBasic listTopic( UserVo user, 
+			@RequestParam() ETopicSortType sortType, 
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page, 
 			@RequestParam(name = "keyword", required = false) String keyword ) {
 		
-		final ReturnBasic result = new ReturnBasic();
-		
-		result.setData( topicServce.listTopic( user, page, keyword  ) );
-
-		return result;
+		return topicServce.listTopic( user, sortType, page, keyword  );
 	}
 	
 	/**

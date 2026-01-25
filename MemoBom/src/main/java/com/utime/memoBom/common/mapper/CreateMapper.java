@@ -75,4 +75,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createTopicStats();
+
+	/**
+	 * 토픽 통계 생성
+	 * @return
+	 */
+	int createShare();
 }

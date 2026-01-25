@@ -1,7 +1,10 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Repository;
@@ -12,9 +15,15 @@ import com.utime.memoBom.board.mapper.BoardMapper;
 import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentItem;
+import com.utime.memoBom.board.vo.EEmotionCode;
+import com.utime.memoBom.board.vo.EmojiSetType;
+import com.utime.memoBom.board.vo.EmojiSets;
+import com.utime.memoBom.board.vo.EmotionItem;
+import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
+import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.UserDevice;
@@ -103,15 +112,98 @@ class BoardDaoImpl implements BoardDao {
 		return result;
 	}
 
+	/**
+	 * 이모션 목록을 주어진 이모지 세트에 맞게 정규화합니다.
+	 *
+	 * @param raw  원본 이모션 목록
+	 * @param type 이모지 세트 타입
+	 * @return 정규화된 이모션 목록
+	 */
+	private static List<EmotionItem> normalizeEmotionList(
+	        List<EmotionItem> raw,
+	        EmojiSetType type 
+	) {
+	    final Map<EEmotionCode, Integer> map = new EnumMap<>(EEmotionCode.class);
+	    if( AppUtils.isNotEmpty(raw)) {
+		    for (EmotionItem e : raw) {
+		        map.put(e.getEmotion(), e.getCount());
+		    }
+	    }
+
+	    final List<EmotionItem> result = new ArrayList<>();
+	    for (EEmotionCode code : EmojiSets.allowed(type)) {
+	    	
+	        result.add(new EmotionItem(code, map.getOrDefault(code, 0) ));
+	    }
+	    
+	    return result;
+	}
+
+	
 	@Override
 	public List<FragmentItem> loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
-
-		return boardMapper.loadFragmentList(user, reqVo);
+		
+		final List<FragmentItem> result  = boardMapper.loadFragmentList(user, reqVo);
+		
+		if( AppUtils.isNotEmpty(result)) {
+			
+			result.forEach( fragment -> {
+				fragment.setEmotionList( BoardDaoImpl.normalizeEmotionList(
+				        fragment.getEmotionList(),
+				        fragment.getTopic().getEmojiSetType()
+				) );
+			});
+		}
+		
+		return result;
 	}
 
 	@Override
 	public List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * @return true면 스크랩, false면 스크랩 취소
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public Boolean procScrap(UserVo user, String fragmentUid) throws Exception {
+		
+		final boolean exists = boardMapper.existsScrap(user.getUserNo(), fragmentUid);
+	    if (exists) {
+	    	boardMapper.deleteScrap(user.getUserNo(), fragmentUid);
+	    } else {
+	    	boardMapper.insertScrap(user.getUserNo(), fragmentUid);
+	    }
+		return !exists;
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public ShareVo addShareInfo(UserVo user, String uid) throws Exception {
+		
+		final ShareVo share = new ShareVo();
+		share.setText( boardMapper.selectFragmentContentPreview(uid) );
+		
+		boardMapper.insertShareInfo(user==null? 0:user.getUserNo(), uid);
+		
+		return share;
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public List<EmotionItem> procEmotion(UserVo user, EmotionReqVo emotionReqVo) throws Exception {
+
+		int deleted = boardMapper.deleteEmotion(user.getUserNo(), emotionReqVo);
+		if (deleted == 0) {
+			deleted += boardMapper.upsertEmotion(user.getUserNo(), emotionReqVo);
+		}
+		
+		return BoardDaoImpl.normalizeEmotionList(
+				boardMapper.selectEmotionListByFragmentUid(emotionReqVo.getUid()),
+				emotionReqVo.getEmojiSetType()
+			);
 	}
 }

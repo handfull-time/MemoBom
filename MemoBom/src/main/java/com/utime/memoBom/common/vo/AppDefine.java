@@ -36,7 +36,6 @@ public class AppDefine {
 	
 	public static final String KeyLoadScript = "loadScript";
 	
-
 	public static final String AssetVersion = String.valueOf(System.currentTimeMillis());
 	
 }

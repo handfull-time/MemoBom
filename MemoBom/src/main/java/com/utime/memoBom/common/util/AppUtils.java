@@ -2,12 +2,16 @@ package com.utime.memoBom.common.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -70,36 +74,31 @@ public class AppUtils {
 	 * @param obj
 	 * @return true : null 또는 암것도 없다.
 	 */
-	@SuppressWarnings("rawtypes")
 	public static boolean isEmpty(Object obj) {
 
-		if (obj == null)
-			return true;
+		if (obj == null) return true;
 
-		if (obj instanceof String) {
-			final String str = ((String) obj).trim();
-			if (str.length() == 0) {
-				return true;
-			}
-			if (str.equalsIgnoreCase("null")) {
-				return true;
-			}
-			return false;
-		}
+	    // Optional 지원 (Modern Java)
+	    if (obj instanceof Optional) return ((Optional<?>) obj).isEmpty();
 
-		if (obj instanceof java.lang.Iterable)
-			return !((java.lang.Iterable) obj).iterator().hasNext();
+	    // String 처리 (문자열 "null" 체크는 필요에 따라 제거/유지)
+	    if (obj instanceof CharSequence) return obj.toString().trim().isEmpty();
 
-		if (obj instanceof java.util.Map)
-			return ((java.util.Map) obj).isEmpty();
+	    // Collection & Map 처리
+	    if (obj instanceof Collection) return ((Collection<?>) obj).isEmpty();
+	    if (obj instanceof Map) return ((Map<?, ?>) obj).isEmpty();
 
-		if (obj.getClass().isArray())
-			return ((Object[]) obj).length == 0;
+	    // 배열 처리 (Primitive 배열까지 대응 가능)
+	    if (obj.getClass().isArray()) {
+	        return Array.getLength(obj) == 0;
+	    }
 
-		if (obj instanceof Number)
-			return ((Number) obj).longValue() != 0L;
+	    // Number 처리 (0인 경우 비어있다고 정의할 경우)
+	    if (obj instanceof Number) {
+	        return ((Number) obj).doubleValue() == 0;
+	    }
 
-		return false;
+	    return false;
 	}
 
 	public static boolean isNotEmpty(Object obj) {
