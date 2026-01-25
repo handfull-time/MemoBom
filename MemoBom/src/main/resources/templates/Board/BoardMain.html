@@ -9,74 +9,77 @@
 </th:block>
 
 <th:block layout:fragment="content">
+	<!-- 리스트 -->
+	<div id="fragmentList" class="space-y-3"></div>
 
-	<!-- 리스트 컨테이너 -->
-	<div id="fragmentList" class="space-y-3 pb-6"></div>
+	<!-- 상태/로딩 -->
+	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
 
-	<!-- 로딩/끝 상태 -->
-	<div id="listState" class="hidden mx-2 mt-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500"></div>
-
-	<!-- 카드 템플릿 -->
+	<!-- fragment card template -->
 	<template id="tplFragmentCard">
-		<div class="mx-2 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-
-			<!-- top meta row -->
-			<div class="flex items-center gap-2 px-3 py-2 border-b border-slate-100">
-				<!-- topic pill -->
-				<div class="topicPill inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-semibold"
-					 style="background:#eef2ff;">
-					<span class="topicEmoji">🧩</span>
-					<span class="topicName">Topic</span>
-				</div>
-
-				<!-- center user -->
-				<div class="flex-1 min-w-0 flex items-center justify-center gap-2">
-					<img class="userImg w-6 h-6 rounded-full border border-slate-200 object-cover" alt="user" />
-					<div class="userName text-xs font-medium text-slate-700 truncate">User</div>
-				</div>
-
-				<!-- right date -->
-				<div class="regDate text-[11px] text-slate-400 whitespace-nowrap">2026-01-24 11:22</div>
-			</div>
-
-			<!-- content -->
-			<div class="px-3 py-2.5">
-				<div class="content text-sm text-slate-800 leading-relaxed whitespace-pre-wrap break-words">
-					content...
-				</div>
-
-				<!-- hashtags (선택) -->
-				<div class="hashtagWrap mt-2 flex flex-wrap gap-1.5"></div>
-
-				<!-- bottom actions -->
-				<div class="mt-3 flex items-center justify-between gap-2">
-
-					<!-- left: scrap + comment placeholder -->
-					<div class="flex items-center gap-2">
-						<button type="button" class="btnScrap inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs
-													border border-slate-200 bg-slate-50 hover:bg-slate-100">
-							<span class="scrapIcon"></span>
-							<span class="scrapText"></span>
-						</button>
-
-						<!-- 댓글 영역 placeholder (추후 lazy comments) -->
-						<div class="commentPlaceholder text-xs text-slate-400">
-							💬 댓글(준비중)
+		<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+			<!-- top meta -->
+			<div class="px-3 pt-3">
+				<div class="flex items-center justify-between gap-2">
+					<!-- topic badge -->
+					<div class="flex items-center gap-2 min-w-0">
+						<div class="topic-pill inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-semibold bg-slate-100">
+							<span class="topic-emoji">🧩</span>
+							<span class="topic-name truncate">Topic</span>
 						</div>
 					</div>
 
-					<!-- emotions -->
-					<div class="emotionRow flex items-center gap-1.5"></div>
+					<!-- user + date -->
+					<div class="flex items-center gap-2 shrink-0">
+						<img class="user-img w-6 h-6 rounded-full border border-slate-200 object-cover" alt="U" />
+						<div class="text-sm font-medium text-slate-700 user-name max-w-[120px] truncate">User</div>
+						<div class="text-xs text-slate-400 tabular-nums reg-date">2026-01-24 05:09</div>
+					</div>
 				</div>
+
+				<!-- content -->
+				<div class="mt-2 text-base text-slate-900 leading-relaxed content"></div>
+
+				<!-- hashtags -->
+				<div class="mt-2 flex flex-wrap gap-1.5 hashtag-box"></div>
 			</div>
 
-			<!-- comments area placeholder block (공간만) -->
-			<div class="commentArea hidden px-3 pb-3">
-				<!-- TODO: /Fragment/Comments.json?uid={topicUid}&pageNo=1 -->
+			<!-- bottom bar: LEFT emotions / RIGHT actions -->
+			<div class="mt-3 border-t border-slate-100 px-3 py-2">
+				<div class="flex items-center justify-between gap-2">
+					<!-- emotions (LEFT) -->
+					<div class="emotion-row flex flex-wrap items-center gap-2 min-w-0">
+						<!-- emotion buttons injected -->
+					</div>
+
+					<!-- actions (RIGHT) -->
+					<div class="action-row flex items-center gap-2 shrink-0">
+						<button type="button" class="btn-share inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100"
+							aria-label="share">
+							<span class="icon-share w-5 h-5"></span>
+						</button>
+
+						<button type="button" class="btn-scrap inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100"
+							aria-label="scrap">
+							<span class="icon-scrap w-5 h-5"></span>
+						</button>
+
+						<button type="button" class="btn-comment inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100"
+							aria-label="comment">
+							<span class="icon-comment w-5 h-5"></span>
+						</button>
+					</div>
+				</div>
+
+				<!-- 댓글 영역 placeholder (lazy 예정) -->
+				<div class="comment-area hidden mt-2"></div>
 			</div>
-		</div>
+
+			<!-- hidden fields -->
+			<div class="hidden fragment-uid"></div>
+			<div class="hidden emoji-set-type"></div>
+		</article>
 	</template>
-
 </th:block>
 
 <th:block layout:fragment="footer">
@@ -84,241 +87,458 @@
 </th:block>
 
 <th:block layout:fragment="script">
-
 	<script th:inline="javascript">
-		// 서버에서 내려오는 조건(있으면 사용)
-		const user = /*[[${user}]]*/ {};
-		const topic = /*[[${topic}]]*/ {};
-		const keyword = /*[[${keyword}]]*/ null;
+		(() => {
+			const user = /*[[${user}]]*/ {};
+			const topic = /*[[${topic}]]*/ {};
 
-		// 무한 스크롤 상태
-		let pageNo = 1;
-		let loading = false;
-		let ended = false;
+			const $ = (id) => document.getElementById(id);
+			const elList = $("fragmentList");
+			const elState = $("stateBox");
+			const tpl = $("tplFragmentCard");
 
-		const elList = document.getElementById('fragmentList');
-		const elState = document.getElementById('listState');
-		const tpl = document.getElementById('tplFragmentCard');
+			let pageNo = 1;
+			let loading = false;
+			let done = false;
 
-		// LayoutBase의 main이 스크롤 컨테이너임
-		const scrollHost = document.querySelector('main');
+			function showState(type, text) {
+				elState.classList.remove("hidden");
+				elState.textContent = text;
 
-		// emotion 표시용(프론트 매핑)
-		const EMOTION_META = {
-			JOY: { emoji: "😊", label: "기쁨" },
-			NORMAL: { emoji: "😐", label: "보통" },
-			SADNESS: { emoji: "😢", label: "슬픔" },
-			ANGER: { emoji: "😠", label: "화남" },
-			AWESOME: { emoji: "🤩", label: "최고" },
+				elState.classList.remove(
+					"bg-red-50", "border-red-200", "text-red-700",
+					"bg-slate-50", "border-slate-200", "text-slate-700"
+				);
+				if (type === "err") elState.classList.add("bg-red-50", "border-red-200", "text-red-700");
+				else elState.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
+			}
+			function hideState() {
+				elState.classList.add("hidden");
+				elState.textContent = "";
+			}
 
-			LIKE: { emoji: "👍", label: "좋아요" },
-			EMPATHY: { emoji: "❤️", label: "공감" },
-			FUNNY: { emoji: "😂", label: "웃김" },
-			SURPRISE: { emoji: "😮", label: "놀람" },
-		};
+			function safeText(v, fallback = "") {
+				if (v === null || v === undefined) return fallback;
+				const s = String(v).trim();
+				return s ? s : fallback;
+			}
 
-		function showState(text) {
-			if (!elState) return;
-			elState.textContent = text;
-			elState.classList.remove('hidden');
-		}
-		function hideState() {
-			if (!elState) return;
-			elState.classList.add('hidden');
-			elState.textContent = '';
-		}
+			// --- inline SVGs (요청한 것 그대로) ---
+			function svgShare() {
+				return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none">
+  <circle cx="48" cy="16" r="8" fill="#4B5563"/>
+  <circle cx="16" cy="32" r="8" fill="#4B5563"/>
+  <circle cx="48" cy="48" r="8" fill="#4B5563"/>
+  <line x1="22.7" y1="28.6" x2="41.3" y2="19.4" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
+  <line x1="22.7" y1="35.4" x2="41.3" y2="44.6" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
+</svg>`;
+			}
+			function svgScrap(on) {
+				if (on) return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
+  <path d="M20 5 H80 V95 L50 70 L20 95 Z" fill="#FEF3C7" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="34" y1="30" x2="66" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="45" x2="66" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="60" x2="56" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+				return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
+  <path d="M20 5 H80 V95 L50 70 L20 95 Z" fill="none" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="34" y1="30" x2="66" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="45" x2="66" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="60" x2="56" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+			}
+			function svgComment() {
+				return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="20" height="20">
+  <path d="M20 10 H100 Q110 10 110 20 V65 Q110 75 100 75 H65 L55 90 L50 75 H20 Q10 75 10 65 V20 Q10 10 20 10 Z"
+    fill="#F9FAFB" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="25" y1="25" x2="25" y2="65" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
+  <line x1="40" y1="30" x2="90" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="45" x2="90" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="60" x2="75" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+			}
 
-		function safeText(v, fallback = '') {
-			if (v === null || v === undefined) return fallback;
-			const s = String(v);
-			return s;
-		}
+			function applyTopicColor(pill, color) {
+				if (!color) return;
+				if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+					pill.style.background = color;
+					pill.style.border = "1px solid rgba(148,163,184,0.35)";
+				}
+			}
 
-		function buildHashtags(elWrap, hashtags) {
-			elWrap.innerHTML = '';
-			if (!Array.isArray(hashtags) || hashtags.length === 0) return;
+			function renderHashtags(box, list) {
+				box.innerHTML = "";
+				if (!list || list.length === 0) return;
+				list.forEach((t) => {
+					const tag = document.createElement("span");
+					tag.className = "inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700";
+					tag.textContent = "#" + String(t);
+					box.appendChild(tag);
+				});
+			}
 
-			hashtags.forEach(tag => {
-				const chip = document.createElement('span');
-				chip.className = "text-[11px] text-slate-600 bg-slate-100 border border-slate-200 rounded-full px-2 py-0.5";
-				chip.textContent = `#${tag}`;
-				elWrap.appendChild(chip);
-			});
-		}
+			function renderEmotions(row, item) {
+			  row.innerHTML = "";
+			  const list = item.emotionList || [];
 
-		function buildEmotions(elRow, emotionList) {
-			elRow.innerHTML = '';
-			if (!Array.isArray(emotionList) || emotionList.length === 0) return;
+			  list.forEach((e) => {
+			    const code = String(e.emotion || "");
+			    const count = Number(e.count || 0);
 
-			emotionList.forEach(e => {
-				const code = e?.emotion;
-				const meta = EMOTION_META[code] || { emoji: "❓", label: code || "UNKNOWN" };
+			    const btn = document.createElement("button");
+			    btn.type = "button";
 
-				const btn = document.createElement('button');
-				btn.type = "button";
-				btn.className =
-					"inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white " +
-					"px-2 py-1 text-[11px] text-slate-700 hover:bg-slate-50";
+			    // ✅ 숫자 없는 미니멀 버튼
+			    btn.className =
+			      "emotion-btn relative inline-flex items-center justify-center " +
+			      "w-10 h-10 rounded-full border border-slate-200 bg-white " +
+			      "hover:bg-slate-50 active:bg-slate-100";
 
-				const emoji = document.createElement('span');
-				emoji.textContent = meta.emoji;
+			    btn.dataset.emotion = code;
+			    btn.dataset.count = String(count);
 
-				const cnt = document.createElement('span');
-				cnt.className = "text-slate-500";
-				cnt.textContent = String(e?.count ?? 0);
+			    // emoji만
+			    btn.innerHTML = `
+			      <span class="text-lg leading-none">${emotionEmoji(code)}</span>
+			    `;
 
-				btn.appendChild(emoji);
-				btn.appendChild(cnt);
+			    // 접근성(툴팁/숫자 숨겨도 의미 유지)
+			    btn.setAttribute("aria-label", `${code}${count > 0 ? " " + count : ""}`);
 
-				// TODO: 클릭 시 emotion 처리 (추후)
-				btn.addEventListener('click', (ev) => {
-					ev.stopPropagation();
-					// showToast(meta.label, "이모션 기능은 준비중입니다.", ToastType.INFO, 1500);
+			    btn.addEventListener("click", async () => {
+			      await clickEmotion(btn, item);
+			    });
+
+			    row.appendChild(btn);
+			  });
+			}
+
+			function bounce(el) {
+			  // Tailwind 커스텀 애니메이션 설정 없이 Web Animations API로 처리
+			  el.animate(
+			    [
+			      { transform: "scale(1)" },
+			      { transform: "scale(1.14)" },
+			      { transform: "scale(0.96)" },
+			      { transform: "scale(1)" }
+			    ],
+			    { duration: 220, easing: "cubic-bezier(.2,.9,.2,1)" }
+			  );
+			}
+
+			function showEmotionTooltip(btn, count) {
+			  // ✅ 0이면 아예 표시하지 않음
+			  if (!count || count <= 0) return;
+
+			  // 같은 카드(또는 같은 row) 내 기존 툴팁 제거
+			  const root = btn.closest("article") || btn.closest(".emotion-row") || document;
+			  root.querySelectorAll(".emotion-tooltip").forEach(el => el.remove());
+
+			  const tip = document.createElement("div");
+			  tip.className =
+			    "emotion-tooltip absolute -top-9 left-1/2 -translate-x-1/2 " +
+			    "whitespace-nowrap rounded-full border border-slate-200 bg-white " +
+			    "px-2 py-1 text-xs text-slate-700 shadow-md pointer-events-none";
+
+			  // 말풍선 꼬리
+			  tip.innerHTML = `
+			    <div class="flex items-center gap-1">
+			      <span class="font-semibold tabular-nums">${Number(count).toLocaleString()}</span>
+			    </div>
+			    <div class="absolute left-1/2 -bottom-1.5 -translate-x-1/2 w-2.5 h-2.5 rotate-45
+			                bg-white border-r border-b border-slate-200"></div>
+			  `;
+
+			  btn.appendChild(tip);
+
+			  // 등장 애니메이션
+			  tip.animate(
+			    [
+			      { opacity: 0, transform: "translate(-50%, 6px) scale(0.98)" },
+			      { opacity: 1, transform: "translate(-50%, 0px) scale(1)" }
+			    ],
+			    { duration: 140, easing: "ease-out" }
+			  );
+
+			  // 1.2초 후 자동 제거
+			  window.setTimeout(() => {
+			    tip.animate(
+			      [
+			        { opacity: 1, transform: "translate(-50%, 0px) scale(1)" },
+			        { opacity: 0, transform: "translate(-50%, 6px) scale(0.98)" }
+			      ],
+			      { duration: 120, easing: "ease-in" }
+			    ).onfinish = () => tip.remove();
+			  }, 1200);
+			}
+
+			function emotionEmoji(code) {
+				// 필요 시 추가/수정
+				switch (code) {
+					case "LIKE": return "👍";
+					case "EMPATHY": return "❤️";
+					case "FUNNY": return "😂";
+					case "SURPRISE": return "😮";
+					case "SADNESS": return "😢";
+					case "JOY": return "😊";
+					case "NORMAL": return "😐";
+					case "ANGER": return "😠";
+					case "AWESOME": return "🤩";
+					default: return "🙂";
+				}
+			}
+
+			async function clickEmotion(btn, item) {
+			  const uid = (item.uid || "").trim();
+			  const emotion = (btn.dataset.emotion || "").trim();
+			  const emojiSetType = safeText(item.topic?.emojiSetType, "");
+
+			  if (!uid || !emotion || !emojiSetType) return;
+
+			  // ✅ 즉시 손맛(바운스)
+			  bounce(btn);
+
+			  btn.disabled = true;
+			  btn.classList.add("opacity-60");
+
+			  try {
+			    const url = /*[[@{/Fragment/EmotionFragment.json}]]*/ "/Fragment/EmotionFragment.json";
+			    const res = await apiPost(url, { uid, emotion, emojiSetType });
+
+			    if (!res || res.code !== "0") {
+			      showGlobal?.("err", (res && res.message) ? res.message : "이모션 처리 실패");
+			      return;
+			    }
+
+			    // ✅ 서버가 emotionList 전체를 내려줌 → 교체
+			    const newList = Array.isArray(res.data) ? res.data : [];
+			    item.emotionList = newList;
+
+			    // 해당 카드의 row를 다시 렌더
+			    const row = btn.closest(".emotion-row");
+			    if (row) {
+			      renderEmotions(row, item);
+
+			      // ✅ 업데이트된 버튼을 찾아서 툴팁 표시(0이면 안 뜸)
+			      const newBtn = row.querySelector(`button.emotion-btn[data-emotion="${CSS.escape(emotion)}"]`);
+			      if (newBtn) {
+			        const cntObj = newList.find(x => String(x.emotion) === emotion);
+			        const updatedCount = Number(cntObj?.count || 0);
+
+			        // 바운스는 한 번 더(원하면 제거 가능)
+			        bounce(newBtn);
+
+			        showEmotionTooltip(newBtn, updatedCount);
+			      }
+			    }
+
+			  } catch (e) {
+				console.error(e);
+			    showGlobal?.("err", "네트워크 오류로 이모션 처리 실패");
+			  } finally {
+			    btn.disabled = false;
+			    btn.classList.remove("opacity-60");
+			  }
+			}
+
+
+			function bindActions(node, item) {
+				const uid = node.querySelector(".fragment-uid").textContent.trim();
+
+				// icons
+				node.querySelector(".icon-share").innerHTML = svgShare();
+				node.querySelector(".icon-comment").innerHTML = svgComment();
+
+				// scrap icon initial
+				const iconScrap = node.querySelector(".icon-scrap");
+				iconScrap.innerHTML = svgScrap(!!item.scrap);
+
+				// share (일단 placeholder)
+				node.querySelector(".btn-share").addEventListener("click", async (e) => {
+				  e.stopPropagation();
+
+				  const uid = node.querySelector(".fragment-uid")?.textContent?.trim();
+				  if (!uid) {
+				    showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
+				    return;
+				  }
+
+				  // 1) 지원 체크
+				  if (!navigator.share) {
+				    showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
+				    return;
+				  }
+
+				  try {
+				    // 2) 공유 데이터 조회
+				    const url = /*[[@{/Fragment/Share.json}]]*/ "/Fragment/Share.json";
+				    const res = await apiGetWithParam(url, { uid });
+
+				    if (!res || res.code !== "0" || !res.data) {
+				      showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
+				      return;
+				    }
+
+				    const payload = {
+				      title: res.data.title ?? "",
+				      text: res.data.text ?? "",
+				      url: res.data.url ?? ""
+				    };
+
+				    // (선택) Web Share API Level 2: 특정 타입 지원 확인
+				    // if (navigator.canShare && !navigator.canShare(payload)) { ... }
+
+				    // 3) 실제 공유
+				    await navigator.share(payload);
+
+				  } catch (err) {
+				    // 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
+				    // 필요하면 err.name === 'AbortError' 분기 가능
+					console.error(err);
+				    showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
+				  }
 				});
 
-				elRow.appendChild(btn);
-			});
-		}
+				// comment (placeholder)
+				node.querySelector(".btn-comment").addEventListener("click", (e) => {
+					e.stopPropagation();
+					showToast?.("댓글", "댓글 기능은 준비 중입니다.", ToastType?.INFO ?? "info", 1500);
+				});
 
-		function makeCard(item) {
-			const node = tpl.content.firstElementChild.cloneNode(true);
+				// scrap toggle
+				let busy = false;
+				node.querySelector(".btn-scrap").addEventListener("click", async (e) => {
+					e.stopPropagation();
+					if (!uid || busy) return;
 
-			// topic
-			const topicPill = node.querySelector('.topicPill');
-			const topicEmoji = node.querySelector('.topicEmoji');
-			const topicName = node.querySelector('.topicName');
+					busy = true;
+					try {
+						const url = /*[[@{/Fragment/Scrap.json}]]*/ "/Fragment/Scrap.json";
+						const res = await apiPost(url, { uid });
 
-			const t = item?.topic || {};
-			const tColor = safeText(t.color, '#eef2ff');
+						if (!res || res.code !== "0") {
+							showGlobal?.("err", (res && res.message) ? res.message : "스크랩 실패");
+							return;
+						}
 
-			// 배경색(토픽 컬러)
-			topicPill.style.background = tColor;
+						const newVal = !!res.data;
+						item.scrap = newVal;
+						iconScrap.innerHTML = svgScrap(newVal);
 
-			topicEmoji.textContent = safeText(t.imogi, '🧩');
-			topicName.textContent = safeText(t.name, 'Topic');
+					} catch (err) {
+						console.error(err);
+						showGlobal?.("err", "네트워크 오류로 스크랩 실패");
+					} finally {
+						busy = false;
+					}
+				});
+			}
 
-			// user
-			const u = item?.user || {};
-			const userImg = node.querySelector('.userImg');
-			const userName = node.querySelector('.userName');
+			function createCard(item) {
+				const node = tpl.content.firstElementChild.cloneNode(true);
 
-			userName.textContent = safeText(u.nickname, 'Unknown');
+				// bind basic
+				node.querySelector(".fragment-uid").textContent = safeText(item.uid, "");
+				node.querySelector(".emoji-set-type").textContent = safeText(item.topic?.emojiSetType, "");
 
-			const purl = safeText(u.profileUrl, '');
-			if (purl) userImg.src = purl;
-			else userImg.classList.add('hidden');
+				const pill = node.querySelector(".topic-pill");
+				node.querySelector(".topic-emoji").textContent = safeText(item.topic?.imogi, "🧩");
+				node.querySelector(".topic-name").textContent = safeText(item.topic?.name, "Topic");
+				applyTopicColor(pill, safeText(item.topic?.color, ""));
 
-			// date
-			node.querySelector('.regDate').textContent = safeText(item?.regDate, '');
+				const userImg = node.querySelector(".user-img");
+				const profileUrl = safeText(item.user?.profileUrl, "");
+				if (profileUrl) userImg.src = profileUrl; else userImg.removeAttribute("src");
+				node.querySelector(".user-name").textContent = safeText(item.user?.nickname, "Unknown");
+				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
 
-			// content
-			node.querySelector('.content').textContent = safeText(item?.content, '');
+				node.querySelector(".content").textContent = safeText(item.content, "");
 
-			// hashtags
-			buildHashtags(node.querySelector('.hashtagWrap'), item?.hashtagList);
+				renderHashtags(node.querySelector(".hashtag-box"), item.hashtagList || []);
+				renderEmotions(node.querySelector(".emotion-row"), item);
 
-			// scrap
-			const btnScrap = node.querySelector('.btnScrap');
-			const scrapIcon = node.querySelector('.scrapIcon');
-			const scrapText = node.querySelector('.scrapText');
+				bindActions(node, item);
+				return node;
+			}
 
-			let isScrap = !!item?.scrap;
-			function syncScrapUI() {
-				if (isScrap) {
-					btnScrap.classList.remove('bg-slate-50');
-					btnScrap.classList.add('bg-amber-50', 'border-amber-200');
-					scrapIcon.textContent = '📌';
-					//scrapText.textContent = '스크랩됨';
-				} else {
-					btnScrap.classList.remove('bg-amber-50', 'border-amber-200');
-					btnScrap.classList.add('bg-slate-50');
-					scrapIcon.textContent = '📌';
-					//scrapText.textContent = '스크랩';
+			async function contentLoad() {
+				if (loading || done) return;
+				loading = true;
+				hideState();
+
+				const sendObj = {
+					userUid: user?.userUid,
+					topicUid: topic?.topicUid,
+					keyword: '',
+					hashTag: '',
+					pageNo: pageNo
+				};
+
+				try {
+					const url = /*[[@{/Fragment/Fragments.json}]]*/ "/Fragment/Fragments.json";
+					const res = await apiGetWithParam(url, sendObj);
+
+					if (!res || res.code !== "0") {
+						showState("err", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.");
+						return;
+					}
+
+					const list = res.data;
+
+					// 더 이상 데이터 없음
+					if (!list || list.length === 0) {
+						done = true;
+						// 마지막임을 살짝만 표시(원하면 제거)
+						// showState("info", "마지막 항목입니다.");
+						return;
+					}
+
+					list.forEach((item) => {
+						elList.appendChild(createCard(item));
+					});
+
+					pageNo += 1;
+
+				} catch (e) {
+					console.error(e);
+					showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
+				} finally {
+					loading = false;
 				}
 			}
-			syncScrapUI();
 
-			btnScrap.addEventListener('click', (ev) => {
-				ev.stopPropagation();
-				// TODO: /Fragment/Scrap.json 같은 API가 붙으면 처리
-				// 임시 토글(테스트용)
-				isScrap = !isScrap;
-				syncScrapUI();
-			});
+			// 스크롤 위로 올릴 때 자동 로딩(요청사항)
+			function bindAutoLoadOnScrollUp() {
+				let lastTop = 0;
+				window.addEventListener("scroll", () => {
+					const top = window.scrollY || document.documentElement.scrollTop || 0;
+					const goingUp = top < lastTop;
 
-			// emotions
-			buildEmotions(node.querySelector('.emotionRow'), item?.emotionList);
-
-			// 카드 클릭(원하면 상세로)
-			node.addEventListener('click', () => {
-				// TODO: 상세 화면이 있으면 이동
-				// location.href = `/Fragment/Item.html?uid=${encodeURIComponent(item.uid)}`;
-			});
-
-			return node;
-		}
-
-		async function loadNextPage() {
-			if (loading || ended) return;
-
-			loading = true;
-			hideState();
-
-			const sendObj = {
-				userUid: user?.userUid,
-				topicUid: topic?.topicUid,
-				keyword: keyword || '',
-				hashTag: '',
-				pageNo: pageNo
-			};
-
-			try {
-				const url = /*[[@{/Fragment/Fragments.json}]]*/ '/Fragment/Fragments.json';
-				const res = await apiGetWithParam(url, sendObj);
-
-				if (!res || res.code !== "0") {
-					showState(res?.message || "목록을 불러오지 못했습니다.");
-					return;
-				}
-
-				const list = Array.isArray(res.data) ? res.data : [];
-
-				// ✅ 마지막 페이지: data가 null 또는 []
-				if (!list || list.length === 0) {
-					ended = true;
-					showState("마지막입니다.");
-					return;
-				}
-
-				list.forEach(item => elList.appendChild(makeCard(item)));
-				pageNo += 1;
-
-			} catch (e) {
-				showState("네트워크 오류로 목록을 불러오지 못했습니다.");
-			} finally {
-				loading = false;
+					// 위로 스크롤 + 상단 근처면 로딩
+					if (goingUp && top < 120) {
+						contentLoad();
+					}
+					lastTop = top;
+				}, { passive: true });
 			}
-		}
 
-		function onScroll() {
-			if (!scrollHost) return;
+			async function init() {
+				await contentLoad();      // 1페이지
+				bindAutoLoadOnScrollUp(); // 위로 올리면 추가 로딩
+			}
 
-			// 아래로(손가락을 위로) 스크롤했을 때, 바닥 근처면 다음 페이지 로드
-			const nearBottom = scrollHost.scrollTop + scrollHost.clientHeight >= scrollHost.scrollHeight - 180;
-			if (nearBottom) loadNextPage();
-		}
+			window.addEventListener("DOMContentLoaded", init);
 
-		async function init() {
-			await loadNextPage(); // 1page
-			scrollHost?.addEventListener('scroll', onScroll, { passive: true });
-		}
-
-		window.addEventListener("DOMContentLoaded", init);
-
-		function functionLeft() { history.back(); }
-		function functionRight() {
-			location.href = /*[[@{/Fragment/Tessera.html}]]*/ '/Fragment/Tessera.html';
-		}
+			// header buttons
+			window.functionLeft = function() { history.back(); }
+			window.functionRight = function() {
+				location.href = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
+			}
+		})();
 	</script>
 </th:block>
 

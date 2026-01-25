@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.service;
 
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
@@ -67,5 +68,13 @@ public interface BoardService {
 	 * @return
 	 */
 	ShareVo loadShareInfo(UserVo user, String uid)throws Exception;
+
+	/**
+	 * 댓글 저장
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
+	ReturnBasic saveComment(UserVo user, CommentReqVo reqVo);
 
 }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class EmotionReqVo {
-	/** fragment uid */
+	/**  uid */
 	String uid;
 	/** 감정 상태 */
 	EEmotionCode emotion;

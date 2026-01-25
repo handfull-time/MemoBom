@@ -7,8 +7,7 @@ import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.vo.BoardReqVo;
-import com.utime.memoBom.board.vo.EEmotionCode;
-import com.utime.memoBom.board.vo.EEmotionTargetType;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
@@ -140,6 +139,21 @@ class BoardServiceImpl implements BoardService {
 		
 		result.setTitle(this.appName + " - Shared");
 		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic saveComment(UserVo user, CommentReqVo reqVo) {
+		
+		ReturnBasic result = new ReturnBasic();
+		
+		try {
+			result.setData( boardDao.saveComment(user, reqVo) );
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "An error occurred while saving.");
+		}
+
 		return result;
 	}
 }

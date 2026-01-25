@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EEmotionTargetType;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
+import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
@@ -169,6 +171,23 @@ public class BoardController {
 	 * @return
 	 */
 	@ResponseBody
+	@PostMapping(path = "SaveComment.json")
+    public ReturnBasic saveComment( HttpServletRequest request, UserVo user, UserDevice device, @RequestBody CommentReqVo reqVo ) {
+
+		reqVo.setIp(AppUtils.getRemoteAddress(request));
+		reqVo.setDevice( device.getDevice().name() );
+		
+		return boardServce.saveComment( user, reqVo );
+    }
+	
+	/**
+	 * 댓글 목록 조회
+	 * @param user
+	 * @param uid
+	 * @param pageNo
+	 * @return
+	 */
+	@ResponseBody
 	@GetMapping(path = "Comments.json")
     public ReturnBasic loadCommentsList( UserVo user,  @RequestParam("uid") String uid, @RequestParam(name = "pageNo", defaultValue = "1") int pageNo ) {
 
@@ -188,6 +207,12 @@ public class BoardController {
 		return boardServce.procScrap( user, reqVo.getUid() );
     }
 	
+	/**
+	 * 편린 감정표현 처리
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping(path = "EmotionFragment.json")
     public ReturnBasic procEmotionFragment( UserVo user, @RequestBody EmotionReqVo reqVo ) {
@@ -196,6 +221,12 @@ public class BoardController {
 		return boardServce.procEmotion( user, reqVo );
     }
 	
+	/**
+	 * 댓글 감정표현 처리
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
 	@ResponseBody
 	@PostMapping(path = "EmotionComment.json")
     public ReturnBasic procEmotionComment( UserVo user, @RequestBody EmotionReqVo reqVo ) {
@@ -211,14 +242,16 @@ public class BoardController {
 	 * @throws Exception 
 	 */
 	@ResponseBody
-	@PostMapping("Share.json")
-	public ShareVo getShareInfo(HttpServletRequest request, UserVo user, @RequestParam() String uid) throws Exception {
+	@GetMapping("Share.json")
+	public ReturnBasic getShareInfo(HttpServletRequest request, UserVo user, @RequestParam() String uid) throws Exception {
 		
-		final ShareVo result = boardServce.loadShareInfo(user, uid);
+		final ShareVo share = boardServce.loadShareInfo(user, uid);
 
 		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid;
-		result.setUrl(fullUrl);
-	    
+		share.setUrl(fullUrl);
+		
+		final ReturnBasic result = new ReturnBasic();
+		result.setData(share);
 		return result;
 	}
 }

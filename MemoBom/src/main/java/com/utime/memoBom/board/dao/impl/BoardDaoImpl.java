@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.utime.memoBom.board.mapper.BoardMapper;
 import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentItem;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EEmotionCode;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmojiSets;
@@ -205,5 +207,21 @@ class BoardDaoImpl implements BoardDao {
 				boardMapper.selectEmotionListByFragmentUid(emotionReqVo.getUid()),
 				emotionReqVo.getEmojiSetType()
 			);
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public CommentItem saveComment(UserVo user, CommentReqVo reqVo) throws Exception {
+		
+		boardMapper.insertComment(user, reqVo);
+		
+		final CommentItem result = boardMapper.selectCommentByNo(reqVo.getCommentNo());
+		
+		result.setEmotionList( BoardDaoImpl.normalizeEmotionList(
+				result.getEmotionList(),
+				reqVo.getEmojiSetType()
+		) );
+		
+		return result;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentItem;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
@@ -62,4 +63,12 @@ public interface BoardDao {
 	 * @return
 	 */
 	List<EmotionItem> procEmotion(UserVo user, EmotionReqVo emotionReqVo) throws Exception;
+	
+	/**
+	 * 댓글 저장
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
+	CommentItem saveComment(UserVo user, CommentReqVo reqVo) throws Exception;
 }

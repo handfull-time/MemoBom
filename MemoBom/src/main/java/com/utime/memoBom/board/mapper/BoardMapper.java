@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.utime.memoBom.board.vo.CommentItem;
+import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
@@ -27,8 +29,18 @@ public interface BoardMapper {
 	 */
 	int insertFragment(@Param("user") UserVo user, @Param("device") UserDevice device, @Param("topic") TopicVo topic, @Param("req") FragmentVo reqVo);
 	
+	/** * 해시태그 병합
+	 * @param tagName
+	 * @return
+	 */
 	int mergeFragmentHashTag( @Param("name") String tagName );
 	
+	/**
+	 * 해시태그-편린 연결 병합
+	 * @param name
+	 * @param fragmentNo
+	 * @return
+	 */
 	int mergeFragmentHashTagRecordByName( @Param("name")String name, @Param("fragmentNo") long fragmentNo );
 	
 	/**
@@ -104,5 +116,18 @@ public interface BoardMapper {
 	 */
 	int deleteEmotion(@Param("userNo") long userNo, @Param("req") EmotionReqVo emotionReqVo);
 	
+	/**
+	 * 댓글 저장
+	 * @param user
+	 * @param reqVo
+	 * @return
+	 */
+	int insertComment(@Param("user") UserVo user, @Param("req") CommentReqVo reqVo);
 
+	/**
+	 * 댓글 조회
+	 * @param commentNo
+	 * @return
+	 */
+	CommentItem selectCommentByNo(long commentNo);
 }

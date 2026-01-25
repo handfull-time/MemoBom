@@ -28,8 +28,21 @@
 		VALUES (#{name})
 	</update>
 	
+	<!--해시태그-편린 연결 병합-->
+	<update id="mergeFragmentHashTagRecordByName" parameterType="map">
+	    MERGE INTO MB_FRAGMENT_HASHTAG_RECORD (FRAGMENT_NO, TAG_NO)
+        KEY (FRAGMENT_NO, TAG_NO)
+        VALUES (
+            #{fragmentNo},
+            (
+                SELECT TAG_NO FROM MB_FRAGMENT_HASHTAG WHERE NAME = #{name}
+            )
+        )
+	</update>
+	
 	
 	<!-- 대상(게시글/댓글)별 리액션 카운트 -->
+	<!-- 
 	<select id="selectEmotionCountsByTarget" resultType="map">
 		SELECT 
 			EMOTION, COUNT(*) AS CNT
@@ -39,8 +52,10 @@
 			AND TARGET_NO = #{targetNo}
 		GROUP BY EMOTION
 	</select>
+	-->
 	
 	<!-- 내가 누른 리액션(1개) -->
+	<!-- 
 	<select id="selectMyEmotion" resultType="string">
 		SELECT EMOTION
 		FROM MB_FRAGMENT_EMOTION_LOG
@@ -49,7 +64,7 @@
 			AND TARGET_TYPE = #{targetType}
 			AND TARGET_NO = #{targetNo}
   </select>
-  
+  -->
   
   <resultMap id="FragmentItemMap" type="com.utime.memoBom.board.vo.FragmentItem">
         <id property="uid" column="fragment_uid" />
@@ -80,8 +95,8 @@
             
         <collection property="emotionList"
             ofType="com.utime.memoBom.board.vo.EmotionItem"
-            column="fragment_uid"
-            select="selectEmotionListByFragmentUid" />
+            column="fragment_no"
+            select="selectEmotionListByFragmentNo" />
 
     </resultMap>
 
@@ -97,8 +112,26 @@
 	    ORDER BY h.NAME
 	</select>
 	
-	<!-- 감정(리액션) 목록  -->
-	<select id="selectEmotionListByFragmentUid" parameterType="string" resultType="com.utime.memoBom.board.vo.EmotionItem">
+	
+	<resultMap id="EmotionItemMap" type="com.utime.memoBom.board.vo.EmotionItem">
+	        <result property="emotion" column="emotion" 
+        	typeHandler="com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler"/>
+        <result property="count" column="count" />
+	</resultMap>
+	
+	<!-- Fragment 감정(리액션) 목록  -->
+	<select id="selectEmotionListByFragmentNo" parameterType="long" resultMap="EmotionItemMap">
+	    SELECT
+	        EMOTION          AS emotion,
+	        COUNT(*)         AS count
+	    FROM MB_FRAGMENT_EMOTION_LOG
+	    WHERE 1=1
+	    	AND TARGET_TYPE = 1
+	    	AND TARGET_NO = #{fragment_no}
+	    GROUP BY EMOTION
+	</select>
+
+	<select id="selectEmotionListByFragmentUid" parameterType="string" resultMap="EmotionItemMap">
 	    SELECT
 	        EMOTION          AS emotion,
 	        COUNT(*)         AS count
@@ -106,16 +139,15 @@
 	    WHERE 1=1
 	    	AND TARGET_TYPE = 1
 	    	AND TARGET_NO = (
-				SELECT 
-					FRAGMENT_NO
-				FROM MB_FRAGMENT
-				WHERE UID = #{fragmentUid}
-	      )
+				SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fragment_uid}
+			)
 	    GROUP BY EMOTION
 	</select>
 
     <select id="loadFragmentList" parameterType="map" resultMap="FragmentItemMap">
         SELECT 
+            <!-- 게시글 정보 -->
+            f.FRAGMENT_NO	AS fragment_no,
             f.UID           AS fragment_uid,
             f.CONTENT       AS content,
             f.REG_DATE      AS reg_date,
@@ -245,13 +277,13 @@
 	<!--공유 정보 삽입-->
 	<insert id="insertShareInfo" parameterType="map">
         INSERT INTO MB_SHARE (
-            FRAGMENT_NO,
-            USER_NO
+            FRAGMENT_NO
+            , USER_NO
         ) VALUES (
             (
                 SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid}
             )
-            #{userNo}s
+            , #{userNo}
         )
     </insert>
     
@@ -271,7 +303,7 @@
 		DELETE FROM MB_FRAGMENT_EMOTION_LOG
 		WHERE 1=1
 			AND USER_NO = #{userNo}
-			AND TARGET_TYPE = #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EmotionTargetTypeHandler}
+			AND TARGET_TYPE = #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
 			AND TARGET_NO = <include refid="getTargetNoSql" />
 			AND EMOTION = #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
 	</delete>
@@ -286,12 +318,83 @@
 		) KEY (USER_NO, TARGET_TYPE, TARGET_NO)
 		VALUES (
 			#{userNo}
-			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EmotionTargetTypeHandler}
+			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
 			, <include refid="getTargetNoSql" />
 			, #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
 			, CURRENT_TIMESTAMP
 		)
-</update>
+	</update>
+
+	<!--댓글 추가-->
+	<insert id="insertComment" parameterType="map"
+		useGeneratedKeys="true" keyProperty="req.commentNo">
+		INSERT INTO MB_FRAGMENT_COMMENT (
+            FRAGMENT_NO
+            , USER_NO
+            , CONTENT
+            <if test="req.ip != null and ! req.ip.isEmpty()">, IP </if>
+            <if test="req.device != null and ! req.device.isEmpty()">, DEVICE</if> 
+        ) VALUES (
+			(
+                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{req.uid}
+            )
+            , #{user.userNo}
+            , #{req.content}
+            <if test="req.ip != null and ! req.ip.isEmpty()">, #{req.ip} </if>
+            <if test="req.device != null and ! req.device.isEmpty()">, #{req.device}</if> 
+        )
+	</insert>
+	
+	<resultMap id="CommentItemMap" type="com.utime.memoBom.board.vo.CommentItem">
+        <id property="uid" column="comment_uid" />
+        <result property="content" column="content" />
+        <result property="regDate" column="reg_date" />
+        <result property="scrap" column="is_scrap" /> 
+        
+        <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
+            <result property="uid" column="user_uid" />
+            <result property="nickname" column="user_nickname" />
+            <result property="profileUrl" column="user_img_url" />
+        </association>
+
+        <collection property="emotionList"
+            ofType="com.utime.memoBom.board.vo.EmotionItem"
+            column="comment_no"
+            select="selectEmotionListByCommentUid" />
+    </resultMap>
+
+	<!-- Comment 감정(리액션) 목록  -->
+	<select id="selectEmotionListByCommentUid" parameterType="string" resultMap="EmotionItemMap">
+	    SELECT
+	        EMOTION          AS emotion,
+	        COUNT(*)         AS count
+	    FROM MB_FRAGMENT_EMOTION_LOG
+	    WHERE 1=1
+	    	AND TARGET_TYPE = 2
+	    	AND TARGET_NO = #{comment_no}
+	    GROUP BY EMOTION
+	</select>
+	
+	<!--댓글 조회-->
+	<select id="selectCommentByNo" parameterType="long" resultMap="CommentItemMap">
+        SELECT
+        	c.COMMENT_NO AS comment_no, 
+            c.UID AS comment_uid,
+            c.CONTENT AS content,
+            c.REG_DATE AS reg_date,
+            <!-- 작성자 정보 -->
+            u.UID AS user_uid,
+            u.NICKNAME AS user_nickname,
+            u.PROFILE_IMG_PATH AS user_img_url,
+            
+            t.EMOJI_SET_TYPE AS emoji_set_type
+        FROM MB_FRAGMENT_COMMENT c
+        	INNER JOIN MB_USER u ON c.USER_NO = u.USER_NO
+        WHERE 1=1
+        	AND c.COMMENT_NO = #{commentNo}
+            AND c.IS_DELETED = FALSE
+            AND u.ENABLED = TRUE
+	</select>
 
 
 </mapper>

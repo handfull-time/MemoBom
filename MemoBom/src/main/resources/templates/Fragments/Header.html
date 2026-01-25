@@ -1,138 +1,142 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-<th:block th:fragment="Header_Back(title)">
-  <div class="relative flex items-center h-full px-2">
+	<th:block th:fragment="Header_Back(title)">
+		<div class="relative flex items-center h-full px-2">
 
-    <button type="button"
-            aria-label="back"
-            onclick="history.back()"
-            class="z-10 text-2xl leading-none">
-      🔙
-    </button>
+			<button type="button" aria-label="back" onclick="history.back()"
+				class="z-10 leading-none flex items-center justify-center">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+					<path d="M15 5 L8 12 L15 19" stroke="#4B5563" stroke-width="2.5" stroke-linecap="round"
+						stroke-linejoin="round" />
+				</svg>
+			</button>
 
-    <h1 id="headerTitle"
-        class="absolute left-1/2 -translate-x-1/2
+			<h1 id="headerTitle" class="absolute left-1/2 -translate-x-1/2
                max-w-[70%]
                text-base font-semibold leading-none
                whitespace-nowrap overflow-hidden text-ellipsis text-center">
-      [(${title})]
-    </h1>
-
-  </div>
-</th:block>
-
-<th:block th:fragment="Header_MosaicMain">
-	<div class="grid grid-cols-3 items-center h-full px-2">
-		<button type="button" aria-label="back" onclick="history.back()"
-			class="justify-self-start text-2xl leading-none">
-			🔙
-		</button>
-		<h1 class="justify-self-center text-base font-semibold leading-none">
-			Mosaic
-		</h1>
-		<div class="justify-self-end w-8 h-6"></div>
-	</div>
-</th:block>
-<th:block th:fragment="Header_Search(leftTitle, title, rightTitle)">
-	<div id="headerSearchRoot" class="h-full px-2 flex items-center">
-
-		<div class="shrink-0 flex items-center">
-			<!-- Left button -->
-			<button type="button" aria-label="left" onclick="functionLeft()"
-				class="shrink-0 w-10 h-10 flex items-center justify-center text-2xl leading-none">
-				[[${leftTitle}]]
-			</button>
-
-			<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 1칸 = w-10 -->
-			<div data-role="left-spacer" class="w-10"></div>
-		</div>
-		<!-- Center area (Title / Search input) -->
-		<div class="flex-1 min-w-0">
-			<!-- Title -->
-			<h1 id="headerTitle" data-role="title" class="text-center text-base font-semibold leading-none truncate">
-				[[${title}]]
+				[(${title})]
 			</h1>
 
-			<!-- Search overlay (shown when searching) -->
-			<div data-role="search" class="hidden">
-				<div class="flex items-center w-full border border-gray-300 rounded-md bg-white px-2 py-1">
-					<input data-role="input" type="search" inputmode="search" autocomplete="off" placeholder="검색"
-						class="flex-1 min-w-0 bg-transparent outline-none text-sm" />
-					<button type="button" aria-label="search" data-action="do-search"
-						class="shrink-0 px-2 text-sx leading-none">
-						🔍
-					</button>
+		</div>
+	</th:block>
+
+	<th:block th:fragment="Header_MosaicMain">
+		<div class="grid grid-cols-3 items-center h-full px-2">
+			<button type="button" aria-label="back" onclick="history.back()"
+				class="justify-self-start text-2xl leading-none">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+					<path d="M15 5 L8 12 L15 19" stroke="#4B5563" stroke-width="2.5" stroke-linecap="round"
+						stroke-linejoin="round" />
+				</svg>
+			</button>
+			<h1 class="justify-self-center text-base font-semibold leading-none">
+				Mosaic
+			</h1>
+			<div class="justify-self-end w-8 h-6"></div>
+		</div>
+	</th:block>
+	<th:block th:fragment="Header_Search(leftTitle, title, rightTitle)">
+		<div id="headerSearchRoot" class="h-full px-2 flex items-center">
+
+			<div class="shrink-0 flex items-center">
+				<!-- Left button -->
+				<button type="button" aria-label="left" onclick="functionLeft()"
+					class="shrink-0 w-10 h-10 flex items-center justify-center text-2xl leading-none">
+					[[${leftTitle}]]
+				</button>
+
+				<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 1칸 = w-10 -->
+				<div data-role="left-spacer" class="w-10"></div>
+			</div>
+			<!-- Center area (Title / Search input) -->
+			<div class="flex-1 min-w-0">
+				<!-- Title -->
+				<h1 id="headerTitle" data-role="title"
+					class="text-center text-base font-semibold leading-none truncate">
+					[[${title}]]
+				</h1>
+
+				<!-- Search overlay (shown when searching) -->
+				<div data-role="search" class="hidden">
+					<div class="flex items-center w-full border border-gray-300 rounded-md bg-white px-2 py-1">
+						<input data-role="input" type="search" inputmode="search" autocomplete="off" placeholder="검색"
+							class="flex-1 min-w-0 bg-transparent outline-none text-sm" />
+						<button type="button" aria-label="search" data-action="do-search"
+							class="shrink-0 px-2 text-sx leading-none">
+							🔍
+						</button>
+					</div>
 				</div>
+			</div>
+
+			<!-- Right area: (Search button 붙어서) + Right button -->
+			<div class="shrink-0 flex items-center gap-0">
+				<button type="button" aria-label="open-search" data-action="open-search"
+					class="w-10 h-10 flex items-center justify-center text-sx leading-none">
+					🔍
+				</button>
+				<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
+					class="w-10 h-10 flex items-center justify-center text-2xl leading-none">
+					[[${rightTitle}]]
+				</button>
 			</div>
 		</div>
 
-		<!-- Right area: (Search button 붙어서) + Right button -->
-		<div class="shrink-0 flex items-center gap-0">
-			<button type="button" aria-label="open-search" data-action="open-search"
-				class="w-10 h-10 flex items-center justify-center text-sx leading-none">
-				🔍
-			</button>
-			<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
-				class="w-10 h-10 flex items-center justify-center text-2xl leading-none">
-				[[${rightTitle}]]
-			</button>
-		</div>
-	</div>
+		<script>
+			(function () {
+				const root = document.getElementById('headerSearchRoot');
+				if (!root) return;
 
-	<script>
-		(function () {
-			const root = document.getElementById('headerSearchRoot');
-			if (!root) return;
+				const titleEl = root.querySelector('[data-role="title"]');
+				const searchWrap = root.querySelector('[data-role="search"]');
+				const inputEl = root.querySelector('[data-role="input"]');
+				const btnOpen = root.querySelector('[data-action="open-search"]');
+				const btnDo = root.querySelector('[data-action="do-search"]');
+				const rightBtn = root.querySelector('[data-role="right-btn"]');
 
-			const titleEl = root.querySelector('[data-role="title"]');
-			const searchWrap = root.querySelector('[data-role="search"]');
-			const inputEl = root.querySelector('[data-role="input"]');
-			const btnOpen = root.querySelector('[data-action="open-search"]');
-			const btnDo = root.querySelector('[data-action="do-search"]');
-			const rightBtn = root.querySelector('[data-role="right-btn"]');
+				let isOpen = false;
 
-			let isOpen = false;
+				function setOpen(next) {
+					isOpen = !!next;
+					titleEl.classList.toggle('hidden', isOpen);
+					searchWrap.classList.toggle('hidden', !isOpen);
+					btnOpen.classList.toggle('hidden', isOpen);
+					rightBtn.classList.toggle('hidden', isOpen);
 
-			function setOpen(next) {
-				isOpen = !!next;
-				titleEl.classList.toggle('hidden', isOpen);
-				searchWrap.classList.toggle('hidden', !isOpen);
-				btnOpen.classList.toggle('hidden', isOpen);
-				rightBtn.classList.toggle('hidden', isOpen);
-
-				if (isOpen) {
-					setTimeout(() => inputEl && inputEl.focus(), 0);
-					document.addEventListener('mousedown', onOutside, true);
-					document.addEventListener('touchstart', onOutside, true);
-				} else {
-					document.removeEventListener('mousedown', onOutside, true);
-					document.removeEventListener('touchstart', onOutside, true);
+					if (isOpen) {
+						setTimeout(() => inputEl && inputEl.focus(), 0);
+						document.addEventListener('mousedown', onOutside, true);
+						document.addEventListener('touchstart', onOutside, true);
+					} else {
+						document.removeEventListener('mousedown', onOutside, true);
+						document.removeEventListener('touchstart', onOutside, true);
+					}
 				}
-			}
 
-			// 검색 영역 밖 클릭/터치 시 닫힘
-			function onOutside(e) {
-				if (!isOpen) return;
-				if (!searchWrap.contains(e.target)) setOpen(false);
-			}
-
-			function doSearch() {
-				const keyword = (inputEl?.value || '').trim();
-				if (typeof window.headerSearch === 'function') {
-					window.headerSearch(keyword);
-				} else {
-					console.warn('headerSearch(keyword) 함수가 없습니다.');
+				// 검색 영역 밖 클릭/터치 시 닫힘
+				function onOutside(e) {
+					if (!isOpen) return;
+					if (!searchWrap.contains(e.target)) setOpen(false);
 				}
-				setOpen(false);
-			}
 
-			btnOpen?.addEventListener('click', () => setOpen(true));
-			btnDo?.addEventListener('click', doSearch);
+				function doSearch() {
+					const keyword = (inputEl?.value || '').trim();
+					if (typeof window.headerSearch === 'function') {
+						window.headerSearch(keyword);
+					} else {
+						console.warn('headerSearch(keyword) 함수가 없습니다.');
+					}
+					setOpen(false);
+				}
 
-			inputEl?.addEventListener('keydown', (e) => {
-				if (e.key === 'Enter') doSearch();
-				if (e.key === 'Escape') setOpen(false);
-			});
-		})();
-	</script>
-</th:block>
+				btnOpen?.addEventListener('click', () => setOpen(true));
+				btnDo?.addEventListener('click', doSearch);
+
+				inputEl?.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter') doSearch();
+					if (e.key === 'Escape') setOpen(false);
+				});
+			})();
+		</script>
+	</th:block>
 </th:block>
