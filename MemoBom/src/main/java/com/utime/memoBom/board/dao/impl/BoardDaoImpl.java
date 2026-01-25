@@ -161,9 +161,20 @@ class BoardDaoImpl implements BoardDao {
 	}
 
 	@Override
-	public List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType) {
+		
+		final List<CommentItem> result = boardMapper.loadCommentsList(uid, pageNo);
+		
+		if( AppUtils.isNotEmpty(result)) {
+			
+			result.forEach( comment -> {
+				comment.setEmotionList( BoardDaoImpl.normalizeEmotionList(
+				        comment.getEmotionList(),
+				        emojiSetType
+				) );
+			});
+		}
+		return result;
 	}
 	
 	/**
@@ -204,7 +215,7 @@ class BoardDaoImpl implements BoardDao {
 		}
 		
 		return BoardDaoImpl.normalizeEmotionList(
-				boardMapper.selectEmotionListByFragmentUid(emotionReqVo.getUid()),
+				boardMapper.selectEmotionList(emotionReqVo),
 				emotionReqVo.getEmojiSetType()
 			);
 	}

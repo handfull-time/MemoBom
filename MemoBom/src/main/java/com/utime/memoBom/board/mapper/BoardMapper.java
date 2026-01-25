@@ -90,7 +90,7 @@ public interface BoardMapper {
 	 * @param uid
 	 * @return
 	 */
-	List<EmotionItem> selectEmotionListByFragmentUid(String fragmentUid);
+	List<EmotionItem> selectEmotionList(@Param("req") EmotionReqVo emotionReqVo);
 
 	/**
 	 * 공유 정보 삽입
@@ -130,4 +130,13 @@ public interface BoardMapper {
 	 * @return
 	 */
 	CommentItem selectCommentByNo(long commentNo);
+	
+	/**
+	 * 댓글 목록 얻기
+	 * @param user
+	 * @param uid
+	 * @param pageNo
+	 * @return
+	 */
+	List<CommentItem> loadCommentsList(@Param("uid") String uid, @Param("pageNo") int pageNo);
 }

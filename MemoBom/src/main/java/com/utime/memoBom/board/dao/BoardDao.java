@@ -5,6 +5,7 @@ import java.util.List;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentItem;
 import com.utime.memoBom.board.vo.CommentReqVo;
+import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
@@ -38,7 +39,7 @@ public interface BoardDao {
 	 * @param pageNo
 	 * @return
 	 */
-	List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo);
+	List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
 	 * 스크랩 처리

@@ -8,6 +8,7 @@ import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentReqVo;
+import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
@@ -82,12 +83,12 @@ class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo) {
+	public ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
 		try {
-			result.setData( boardDao.loadCommentsList(user, uid, pageNo) );
+			result.setData( boardDao.loadCommentsList(user, uid, pageNo, emojiSetType) );
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");

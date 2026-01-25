@@ -2,6 +2,7 @@ package com.utime.memoBom.board.service;
 
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentReqVo;
+import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
@@ -43,7 +44,7 @@ public interface BoardService {
 	 * @param pageNo
 	 * @return
 	 */
-	ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo);
+	ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
 	 * 스크랩 처리

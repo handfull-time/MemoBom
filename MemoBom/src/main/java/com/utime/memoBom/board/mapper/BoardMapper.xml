@@ -131,16 +131,14 @@
 	    GROUP BY EMOTION
 	</select>
 
-	<select id="selectEmotionListByFragmentUid" parameterType="string" resultMap="EmotionItemMap">
+	<select id="selectEmotionList" parameterType="map" resultMap="EmotionItemMap">
 	    SELECT
 	        EMOTION          AS emotion,
 	        COUNT(*)         AS count
 	    FROM MB_FRAGMENT_EMOTION_LOG
 	    WHERE 1=1
-	    	AND TARGET_TYPE = 1
-	    	AND TARGET_NO = (
-				SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fragment_uid}
-			)
+	    	AND TARGET_TYPE = #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
+	    	AND TARGET_NO = <include refid="getTargetNoSql" />
 	    GROUP BY EMOTION
 	</select>
 
@@ -293,7 +291,7 @@
 				SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{req.uid}
 			</when>
 			<otherwise>
-				SELECT COMMENT_NO FROM MB_FRAGMENT_COMMENT WHERE UID = #{req.uid}
+				SELECT COMMENT_NO FROM MB_FRAGMENT_COMMENTS WHERE UID = #{req.uid}
 			</otherwise>
 	    </choose>)
 	</sql>
@@ -328,7 +326,7 @@
 	<!--댓글 추가-->
 	<insert id="insertComment" parameterType="map"
 		useGeneratedKeys="true" keyProperty="req.commentNo">
-		INSERT INTO MB_FRAGMENT_COMMENT (
+		INSERT INTO MB_FRAGMENT_COMMENTS (
             FRAGMENT_NO
             , USER_NO
             , CONTENT
@@ -385,10 +383,8 @@
             <!-- 작성자 정보 -->
             u.UID AS user_uid,
             u.NICKNAME AS user_nickname,
-            u.PROFILE_IMG_PATH AS user_img_url,
-            
-            t.EMOJI_SET_TYPE AS emoji_set_type
-        FROM MB_FRAGMENT_COMMENT c
+            u.PROFILE_IMG_PATH AS user_img_url
+        FROM MB_FRAGMENT_COMMENTS c
         	INNER JOIN MB_USER u ON c.USER_NO = u.USER_NO
         WHERE 1=1
         	AND c.COMMENT_NO = #{commentNo}
@@ -396,5 +392,28 @@
             AND u.ENABLED = TRUE
 	</select>
 
+
+	<!--댓글 목록 얻기-->
+	<select id="loadCommentsList" parameterType="map" resultMap="CommentItemMap">
+        SELECT
+        	c.COMMENT_NO AS comment_no, 
+            c.UID AS comment_uid,
+            c.CONTENT AS content,
+            c.REG_DATE AS reg_date,
+            <!-- 작성자 정보 -->
+            u.UID AS user_uid,
+            u.NICKNAME AS user_nickname,
+            u.PROFILE_IMG_PATH AS user_img_url
+        FROM MB_FRAGMENT_COMMENTS c
+        	INNER JOIN MB_USER u ON c.USER_NO = u.USER_NO
+        WHERE 1=1
+        	AND c.IS_DELETED = FALSE
+            AND u.ENABLED = TRUE
+            AND c.FRAGMENT_NO = (
+                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{uid}
+            )
+        ORDER BY c.COMMENT_NO DESC
+        LIMIT 10 OFFSET (#{pageNo} - 1) * 10
+    </select>
 
 </mapper>

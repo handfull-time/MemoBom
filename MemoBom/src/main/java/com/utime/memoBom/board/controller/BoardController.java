@@ -16,6 +16,7 @@ import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EEmotionTargetType;
+import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
@@ -189,9 +190,12 @@ public class BoardController {
 	 */
 	@ResponseBody
 	@GetMapping(path = "Comments.json")
-    public ReturnBasic loadCommentsList( UserVo user,  @RequestParam("uid") String uid, @RequestParam(name = "pageNo", defaultValue = "1") int pageNo ) {
+    public ReturnBasic loadCommentsList( UserVo user, 
+    		@RequestParam() String uid, 
+    		@RequestParam(defaultValue = "1") int pageNo,
+    		@RequestParam() EmojiSetType emojiSetType) {
 
-		return boardServce.loadCommentsList( user, uid, pageNo );
+		return boardServce.loadCommentsList( user, uid, pageNo, emojiSetType );
     }
 	
 	/**
