@@ -13,6 +13,7 @@ public class WhiteAddressList {
 	public static String [] AddressList = new String[] {
 			"/Auth/"
 			, "/Share/"
+			, "/About/"
 			, "/oauth2/"
 			, "/login/"
 //			, "/Error/"

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{Common/LayoutBase}">
+<header>
+	 <th:block layout:fragment="title">내꺼</th:block>
+</header>
+<body>	  
+<th:block layout:fragment="content">
+	<!-- 좌측 메뉴 + 우측 내용 -->
+	<div class="h-full flex">
+	
+	  <!-- Left menu (Bar) -->
+	  <aside class="w-56 shrink-0 border-r border-gray-200 bg-white">
+	    <div class="p-3 text-sm font-semibold text-gray-700">메뉴</div>
+
+	    <!-- 현재 경로(예: /My/index.html) -->
+	    <th:block th:with="path=${currentPath}">
+
+	      <nav class="px-2 pb-3 text-sm space-y-1">
+
+	        <!-- ========== Group: My ========== -->
+	        <a th:href="@{/My/index.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/My/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/My/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">My</span>
+	        </a>
+
+	        <div class="my-2 border-t border-gray-200"></div>
+
+	        <!-- ========== Group: Fragments/Mosaic ========== -->
+	        <a th:href="@{/My/Fragments.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/My/Fragments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">Fragments</span>
+	        </a>
+
+	        <a th:href="@{/My/Mosaic.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">Mosaic</span>
+	        </a>
+
+	        <div class="my-2 border-t border-gray-200"></div>
+
+	        <!-- ========== Group: Calendar ========== -->
+	        <a th:href="@{/My/Calendar.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/My/Calendar.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/My/Calendar.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">Calendar</span>
+	        </a>
+
+	        <div class="my-2 border-t border-gray-200"></div>
+
+	        <!-- ========== Group: About ========== -->
+	        <a th:href="@{/About/Opensource.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/About/Opensource.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/About/Opensource.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">Opensource</span>
+	        </a>
+
+	        <a th:href="@{/About/index.html}"
+	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
+	                     ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
+	          <span class="w-1.5 h-1.5 rounded-full"
+	                th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+	          <span class="font-medium">About</span>
+	        </a>
+
+	      </nav>
+	    </th:block>
+	  </aside>
+	
+	  <!-- Right contents -->
+	  <section class="flex-1 min-w-0 bg-slate-50 p-3">
+	    <!-- 여기 슬롯을 각 페이지가 채움 -->
+	    <th:block layout:fragment="my_content">
+	      
+	    </th:block>
+	  </section>
+	
+	</div>
+</th:block>
+</body>
+</html>
+
+

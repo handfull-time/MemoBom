@@ -29,7 +29,7 @@ public class RootController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String loginPage( HttpServletRequest request, ModelMap model, UserVo user ) {
+    public String rootPage( HttpServletRequest request, ModelMap model, UserVo user ) {
 		
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";

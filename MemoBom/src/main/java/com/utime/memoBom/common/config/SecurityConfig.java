@@ -106,6 +106,7 @@ public class SecurityConfig {
         	    		, "/Mosaic/Flow.json"
         	    		, "/Push/**"
         	    		, "/User/**"
+        	    		, "/My/**"
         	    	).hasRole(EJwtRole.User.name())
 
         	    // 2) 그 다음에 공개 경로(광범위)를 permitAll
