@@ -112,6 +112,7 @@ google.client-secret=
 	    props.setProperty("h2.path", empty);
 	    props.setProperty("google.client-id", empty);
 	    props.setProperty("google.client-secret", empty);
+	    props.setProperty("korean.dataio.key.SpcdeInfoService", empty);
 	    
 	    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             props.store(writer, "Request for property creation.");

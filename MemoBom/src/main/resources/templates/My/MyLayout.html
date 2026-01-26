@@ -2,12 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 <header>
-	<th:block layout:fragment="title">내꺼</th:block>
+	<th:block layout:fragment="my_title"></th:block>
 </header>
 
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: MyHeader}"></th:block>
+</th:block>
+
+<th:block layout:fragment="css">
+	<th:block layout:fragment="my_css"></th:block>
 </th:block>
 
 <body>
@@ -92,7 +96,6 @@
 
 		<th:block layout:fragment="my_script"></th:block>
 	</th:block>
-
 
 </body>
 

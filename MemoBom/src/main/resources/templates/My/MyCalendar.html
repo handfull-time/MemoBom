@@ -4,26 +4,40 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{My/MyLayout}">
 <head>
-  <th:block layout:fragment="css">
+  <th:block layout:fragment="my_css">
     <!-- FullCalendar (CDN) -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/main.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.20/main.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.20/main.min.css">
 
     <style>
       /* 달력 이벤트(뱃지) 줄 간격 조금 다듬기 */
       .fc .fc-daygrid-day-events { margin-top: 2px; }
       .fc .fc-daygrid-event { margin: 1px 0; }
-    </style>
+
+	  /* 일요일(빨강) */
+	  .fc .fc-day-sun .fc-daygrid-day-number,
+	  .fc .fc-col-header-cell.fc-day-sun {
+	    color: #ef4444; /* red-500 */
+	  }
+
+	  /* 토요일(파랑) */
+	  .fc .fc-day-sat .fc-daygrid-day-number,
+	  .fc .fc-col-header-cell.fc-day-sat {
+	    color: #3b82f6; /* blue-500 */
+	  }
+	</style>
+
   </th:block>
 </head>
 
 <body>
 <th:block layout:fragment="my_content">
-  <div class="bg-white border border-gray-200 rounded-xl p-3">
+  <div class="-m-2 h-[calc(100vh-48px-40px)] flex flex-col bg-white">
     <div class="flex items-center justify-between mb-2">
       <div class="text-base font-bold">Calendar</div>
       <div id="calMonthLabel" class="text-sm text-gray-500"></div>
     </div>
-    <div id="calendar"></div>
+    <div id="calendar" class="flex-1 min-h-0"></div>
   </div>
 
   <!-- 여러 개 선택 모달 -->
@@ -52,10 +66,10 @@
   </div>
 </th:block>
 
-<th:block layout:fragment="script">
+<th:block layout:fragment="my_script">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js"></script>
 
-  <script>
+  <script th:inline="javascript">
     // ======================
     // 아이콘(SVG)
     // ======================
@@ -90,8 +104,7 @@
 
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className =
-            "w-full flex items-center justify-between px-3 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-left";
+          btn.className = "w-full flex items-center justify-between px-3 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-left";
           btn.innerHTML = `
             <div class="flex items-center gap-2 text-sm">
               <span class="${target === 'fragment' ? 'text-slate-900' : 'text-slate-700'}">${ICON[target]}</span>
@@ -140,11 +153,10 @@
 
     async function loadMonth(yyyymm) {
       const base = window.contextPath || '';
-      const url = base + '/My/Calendar.json?date=' + encodeURIComponent(yyyymm);
 
-      const res = await fetch(url, { method: 'GET' });
-      const json = await res.json();
-
+	  const url = /*[[@{/My/MyCalendar.json}]]*/ '/My/Calendar.json';
+	  const json = await apiGetWithParam(url, {date: yyyymm});
+      
       if (!json || json.code !== 0) {
         monthMap = new Map();
         return;
@@ -193,12 +205,12 @@
     function navigateByItem(it) {
       const target = normalizeTarget(it.target);
       const uid = encodeURIComponent(it.uid);
-      const base = window.contextPath || '';
+      const base = /**[[@{/Fragment/Fragment.html}]]**/ '';
 
       if (target === 'fragment') {
-        location.href = base + `/Fragment.html?uid=${uid}`;
+        location.href = `${base}?uid=${uid}`;
       } else if (target === 'comment') {
-        location.href = base + `/Fragment.html?comment=${uid}`;
+        location.href = `${base}?comment=${uid}`;
       }
     }
 
@@ -210,11 +222,12 @@
 
       const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        height: "auto",
+        height: '100%',
         locale: 'ko',
         fixedWeekCount: false,
         dayMaxEventRows: 2,  // fragment+comment 정도만 보이게
         eventDisplay: 'block',
+		expandRows: true,
 
         // 이벤트를 "뱃지"처럼 보이게 (클릭/드래그 방지)
         eventClassNames: () => ['!bg-transparent', '!border-0', '!p-0', 'pointer-events-none'],
@@ -228,10 +241,10 @@
           const textCls = (kind === 'fragment') ? 'text-slate-900' : 'text-slate-700';
 
           const html = `
-            <div class="flex items-center gap-1 ${textCls} text-[11px] leading-none">
-              ${icon}<span class="font-semibold">${count}</span>
-            </div>
-          `;
+<div class="flex items-center gap-1 ${textCls} text-[11px] leading-none">
+    ${icon}<span class="font-semibold">${count}</span>
+</div>
+`;
           return { html };
         },
 

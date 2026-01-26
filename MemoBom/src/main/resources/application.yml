@@ -40,7 +40,6 @@ spring:
     multipart:
       max-file-size: 1024MB
       max-request-size: 1024MB
-  cache.type: caffeine
   profiles:
     include: oauth  # application-oauth.properties 파일을 로드함
 #  security:
@@ -63,5 +62,3 @@ app:
       public-key: ${env.push.public}
       private-key: ${env.push.private}
 
-# 캐시
-caffeine.spec: maximumSize=100,expireAfterAccess=7d

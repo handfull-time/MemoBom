@@ -19,4 +19,6 @@ public class MyWriterVo {
 	ETarget target;
 	/** uid */
 	String uid;
+	/** 이름 공휴일/기념일 사용 */
+	String name;
 }

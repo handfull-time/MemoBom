@@ -1,10 +1,12 @@
 package com.utime.memoBom.root.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.common.jwt.JwtProvider;
@@ -98,5 +100,27 @@ public class TestController {
 		return "Topic/TopicItem";
 	}
 	
+	@Value("${korean.dataio.key.SpcdeInfoService}")
+	String serviceKey;
+	
+	@ResponseBody	
+	@GetMapping("key")
+	public String key(Model model) {
+//		https://www.data.go.kr/data/15012690/openapi.do
+		
+//		기념일 정보 조회
+//		/getAnniversaryInfo
+//		공휴일 정보 조회
+//		/getRestDeInfo
+//		국경일 정보조회
+//		/getHoliDeInfo
+//		24절기 정보 조회
+//		/get24DivisionsInfo
+//		잡절 정보 조회
+//		/getSundryDayInfo
+		String url = "https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo?serviceKey="+serviceKey+"&solYear=2026&numOfRows=100";
+		// https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo?serviceKey=__key__&stdt=2026
+		return url;
+	}
 }
 
