@@ -1,108 +1,99 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{Common/LayoutBase}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
 <header>
-	 <th:block layout:fragment="title">내꺼</th:block>
+	<th:block layout:fragment="title">내꺼</th:block>
 </header>
-<body>	  
-<th:block layout:fragment="content">
-	<!-- 좌측 메뉴 + 우측 내용 -->
-	<div class="h-full flex">
-	
-	  <!-- Left menu (Bar) -->
-	  <aside class="w-56 shrink-0 border-r border-gray-200 bg-white">
-	    <div class="p-3 text-sm font-semibold text-gray-700">메뉴</div>
 
-	    <!-- 현재 경로(예: /My/index.html) -->
-	    <th:block th:with="path=${currentPath}">
 
-	      <nav class="px-2 pb-3 text-sm space-y-1">
-
-	        <!-- ========== Group: My ========== -->
-	        <a th:href="@{/My/index.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/My/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/My/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">My</span>
-	        </a>
-
-	        <div class="my-2 border-t border-gray-200"></div>
-
-	        <!-- ========== Group: Fragments/Mosaic ========== -->
-	        <a th:href="@{/My/Fragments.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/My/Fragments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">Fragments</span>
-	        </a>
-
-	        <a th:href="@{/My/Mosaic.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">Mosaic</span>
-	        </a>
-
-	        <div class="my-2 border-t border-gray-200"></div>
-
-	        <!-- ========== Group: Calendar ========== -->
-	        <a th:href="@{/My/Calendar.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/My/Calendar.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/My/Calendar.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">Calendar</span>
-	        </a>
-
-	        <div class="my-2 border-t border-gray-200"></div>
-
-	        <!-- ========== Group: About ========== -->
-	        <a th:href="@{/About/Opensource.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/About/Opensource.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/About/Opensource.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">Opensource</span>
-	        </a>
-
-	        <a th:href="@{/About/index.html}"
-	           th:class="|group flex items-center gap-2 px-3 py-2 rounded-lg transition
-	                     ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|">
-	          <span class="w-1.5 h-1.5 rounded-full"
-	                th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-	          <span class="font-medium">About</span>
-	        </a>
-
-	      </nav>
-	    </th:block>
-	  </aside>
-	
-	  <!-- Right contents -->
-	  <section class="flex-1 min-w-0 bg-slate-50 p-3">
-	    <!-- 여기 슬롯을 각 페이지가 채움 -->
-	    <th:block layout:fragment="my_content">
-	      
-	    </th:block>
-	  </section>
-	
-	</div>
+<th:block layout:fragment="header">
+	<th:block th:replace="~{Fragments/Header :: MyHeader}"></th:block>
 </th:block>
 
-<th:block layout:fragment="script">
-	<script th:inline="javascript">
-		function call(a){
-			console.info( 'click', a );
-		}
-	</script>
-</th:block>
+<body>
+	<th:block layout:fragment="content">
+		<div class="h-full flex">
 
-<th:block layout:fragment="my_script"></th:block>
+			<!-- PC: 좌측 고정 메뉴 (md 이상에서만 보임) -->
+			<aside class="hidden md:block w-56 shrink-0 border-r border-gray-200 bg-white">
+				<div class="p-3 text-sm font-semibold text-gray-700">메뉴</div>
+				<div class="px-2 pb-3">
+					<th:block th:replace="~{My/MyMenu :: Menu}"></th:block>
+				</div>
+			</aside>
+
+			<!-- Right contents -->
+			<section class="flex-1 min-w-0 bg-slate-50 p-3">
+				<th:block layout:fragment="my_content"></th:block>
+			</section>
+		</div>
+
+		<!-- Mobile: 드로어(오버레이) -->
+		<div id="myMenuDrawer" class="fixed inset-0 z-[9999] hidden md:hidden">
+			<!-- backdrop -->
+			<div class="absolute inset-0 bg-black/40" onclick="MyMenu.close()"></div>
+
+			<!-- panel -->
+			<div class="absolute left-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-xl border-r border-gray-200
+	                translate-x-0">
+				<div class="h-12 flex items-center justify-between px-3 border-b border-gray-200">
+					<div class="font-semibold">메뉴</div>
+					<button type="button" class="p-2 rounded-lg hover:bg-gray-100" onclick="MyMenu.close()"
+						aria-label="닫기">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+							<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"
+								stroke-linecap="round" />
+						</svg>
+					</button>
+				</div>
+
+				<div class="p-2">
+					<th:block th:replace="~{My/MyMenu :: Menu}"></th:block>
+				</div>
+			</div>
+		</div>
+	</th:block>
+
+
+	<th:block layout:fragment="footer">
+		<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
+	</th:block>
+
+	<th:block layout:fragment="script">
+
+		<script>
+			window.MyMenu = {
+				open() {
+					const el = document.getElementById('myMenuDrawer');
+					if (!el) return;
+					el.classList.remove('hidden');
+					document.body.style.overflow = 'hidden';
+				},
+				close() {
+					const el = document.getElementById('myMenuDrawer');
+					if (!el) return;
+					el.classList.add('hidden');
+					document.body.style.overflow = '';
+				},
+				closeIfMobile() {
+					// md 미만일 때만 닫기
+					if (window.matchMedia('(max-width: 767px)').matches) {
+						this.close();
+					}
+				}
+			};
+
+			// ESC로 닫기
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape') MyMenu.close();
+			});
+		</script>
+
+
+		<th:block layout:fragment="my_script"></th:block>
+	</th:block>
+
 
 </body>
+
 </html>
-
-

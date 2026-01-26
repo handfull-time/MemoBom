@@ -1,0 +1,69 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="Menu">
+
+	<th:block th:with="path=${currentPath}">
+
+		<nav class="text-sm space-y-1">
+			<!-- 메뉴 항목들: 예시 (active 처리 포함) -->
+			<a th:href="@{/My/index.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/My/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">My</span>
+			</a>
+
+			<div class="my-2 border-t border-gray-200"></div>
+
+			<a th:href="@{/My/Fragments.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/My/Fragments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Fragments</span>
+			</a>
+
+			<a th:href="@{/My/Mosaic.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Mosaic</span>
+			</a>
+
+			<div class="my-2 border-t border-gray-200"></div>
+
+			<a th:href="@{/My/Calendar.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/My/Calendar.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/Calendar.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Calendar</span>
+			</a>
+
+			<div class="my-2 border-t border-gray-200"></div>
+
+			<a th:href="@{/About/Opensource.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/About/Opensource.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/Opensource.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Opensource</span>
+			</a>
+
+			<a th:href="@{/About/index.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+	                   ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">About</span>
+			</a>
+		</nav>
+
+	</th:block>
+</th:block>

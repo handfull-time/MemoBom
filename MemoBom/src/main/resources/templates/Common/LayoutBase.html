@@ -27,23 +27,21 @@
 	</style>
 </head>
 
-<body class="bg-gray-100 text-slate-900">
+<body class="bg-gray-100 text-slate-900 overflow-hidden">
 
-	<!--<div class="max-w-md md:max-w-xl lg:max-w-2xl mx-auto min-h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">-->
-	<div class="w-full mx-auto min-h-screen flex flex-col bg-white shadow-lg overflow-hidden relative">
-		
+	<div class="w-full mx-auto h-[100dvh] flex flex-col bg-white shadow-lg overflow-hidden relative">
 
 		<header th:if="${showHeader == null || showHeader}"
 			class="relative h-12 pt-[env(safe-area-inset-top)] shrink-0 border-b border-gray-200 bg-white z-10">
 			<th:block layout:fragment="header"></th:block>
 		</header>
 
-		<main class="flex-1 overflow-y-auto scrollbar-hide p-2 bg-slate-50">
+		<main class="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-2 bg-slate-50">
 			<th:block layout:fragment="content"></th:block>
 		</main>
 
 		<footer th:if="${showFooter == null || showFooter}"
-			class="h-10 border-t border-gray-200 bg-white z-10">
+			class="shrink-0 h-10 border-t border-gray-200 bg-white z-10">
 			<th:block layout:fragment="footer"></th:block>
 		</footer>
 	</div>
