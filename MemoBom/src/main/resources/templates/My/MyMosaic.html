@@ -10,5 +10,13 @@
 	  <div class="text-sm opacity-90">모자잌...</div>
 	</div>
 </th:block>
+<th:block layout:fragment="my_script">
+	<script th:inline="javascript">
+		function call(b){
+			console.info( 'click', b );
+		}
+	</script>
+</th:block>
+
 </body>
 </html>

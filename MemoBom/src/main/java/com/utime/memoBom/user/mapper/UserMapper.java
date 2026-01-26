@@ -1,9 +1,12 @@
 package com.utime.memoBom.user.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 
 /**
@@ -48,4 +51,12 @@ public interface UserMapper {
 	 * 사용자 정보 조회
 	 */
 	UserVo selectUserFromUid(@Param("uid")String uid);
+	
+	/** 
+	 * 내 작성 데이터
+	 * @param user
+	 * @param date yyyyMM
+	 * @return
+	 */
+	List<MyWriterVo> selectMyWriteDataList(@Param("user")UserVo user, @Param("date")String date);
 }

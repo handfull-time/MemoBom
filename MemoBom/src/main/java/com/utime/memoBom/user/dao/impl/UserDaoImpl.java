@@ -1,11 +1,14 @@
 package com.utime.memoBom.user.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.mapper.UserMapper;
+import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
@@ -48,5 +51,11 @@ class UserDaoImpl implements UserDao {
 	public UserVo getUserFromUid(String uid) {
 		
 		return userMapper.selectUserFromUid(uid);
+	}
+	
+	@Override
+	public List<MyWriterVo> getMyWriteDataList(UserVo user, String date) {
+		
+		return userMapper.selectMyWriteDataList(user, date);
 	}
 }

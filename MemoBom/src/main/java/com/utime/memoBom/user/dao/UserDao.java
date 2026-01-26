@@ -1,6 +1,9 @@
 package com.utime.memoBom.user.dao;
 
+import java.util.List;
+
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 
 public interface UserDao {
@@ -45,4 +48,12 @@ public interface UserDao {
 	 * @return
 	 */
 	UserVo getUserFromUid(String uid);
+	
+	/** 
+	 * 내 작성 데이터
+	 * @param user
+	 * @param date yyyyMM
+	 * @return
+	 */
+	List<MyWriterVo> getMyWriteDataList(UserVo user, String date);
 }

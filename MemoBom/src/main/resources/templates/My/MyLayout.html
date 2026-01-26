@@ -91,6 +91,17 @@
 	
 	</div>
 </th:block>
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		function call(a){
+			console.info( 'click', a );
+		}
+	</script>
+</th:block>
+
+<th:block layout:fragment="my_script"></th:block>
+
 </body>
 </html>
 

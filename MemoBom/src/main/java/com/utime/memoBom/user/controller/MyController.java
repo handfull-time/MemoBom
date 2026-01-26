@@ -2,13 +2,15 @@ package com.utime.memoBom.user.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,14 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MyController {
 
+	final UserService userService;
 	/**
-	 * 로그인 화면
+	 * MyPage 화면
 	 * @param request
 	 * @param model
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String boardMain( HttpServletRequest request, ModelMap model, UserVo user ) {
+    public String myMain( UserVo user ) {
 		
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
@@ -48,4 +51,13 @@ public class MyController {
     public String myCalendar( Model model) {
 		return "My/MyCalendar";
     }
+	
+	@ResponseBody
+	@GetMapping(path = "MyCalendar.json")
+    public ReturnBasic myCalendar( UserVo user, @RequestParam String date ) {
+		
+		return userService.getMyWriteDataList( user, date );
+    }
+	
+	
 }

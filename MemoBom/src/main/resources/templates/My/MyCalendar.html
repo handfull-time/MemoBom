@@ -1,14 +1,274 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{My/MyLayout}">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{My/MyLayout}">
+
+<head>
+	<th:block layout:fragment="css">
+		<!-- FullCalendar CDN -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.css">
+		<style>
+			/* day cell 안에 표시 영역이 너무 위로 붙지 않게 */
+			.fc .fc-daygrid-day-top {
+				padding: 4px 6px;
+			}
+		</style>
+	</th:block>
+</head>
 
 <body>
-<th:block layout:fragment="my_content">
-	<div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
-	  <div class="font-bold">Calendar</div>
-	  <div class="text-sm opacity-90">달력...</div>
-	</div>
-</th:block>
+	<th:block layout:fragment="my_content">
+
+		<div class="bg-white border border-gray-200 rounded-xl p-3">
+			<div class="flex items-center justify-between mb-2">
+				<div class="text-base font-bold">Calendar</div>
+				<div id="calMonthLabel" class="text-sm text-gray-500"></div>
+			</div>
+			<div id="calendar"></div>
+		</div>
+
+		<!-- 선택 모달 -->
+		<div id="pickModal" class="fixed inset-0 z-[9999] hidden">
+			<div class="absolute inset-0 bg-black/40" onclick="CalendarPick.close()"></div>
+
+			<div class="absolute left-1/2 top-1/2 w-[92%] max-w-md -translate-x-1/2 -translate-y-1/2
+                bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+				<div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+					<div class="font-semibold" id="pickTitle">선택</div>
+					<button type="button" class="px-2 py-1 rounded hover:bg-gray-100"
+						onclick="CalendarPick.close()">✕</button>
+				</div>
+
+				<div class="p-3">
+					<div id="pickList" class="space-y-2"></div>
+				</div>
+
+				<div class="p-3 border-t border-gray-200 flex justify-end">
+					<button type="button" class="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
+						onclick="CalendarPick.close()">
+						닫기
+					</button>
+				</div>
+			</div>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="script">
+		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js"></script>
+
+		<script th:inline="javascript">
+			// ======================
+			// 아이콘(SVG)
+			// ======================
+			const ICON = {
+				fragment: `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3.5 h-3.5">
+  <path d="M7 3h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2z"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+</svg>`,
+				comment: `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3.5 h-3.5">
+  <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+</svg>`
+			};
+
+			// ======================
+			// 모달
+			// ======================
+			const CalendarPick = {
+				open(dateStr, items) {
+					const modal = document.getElementById('pickModal');
+					const title = document.getElementById('pickTitle');
+					const list = document.getElementById('pickList');
+
+					title.textContent = `${dateStr} 항목 선택`;
+					list.innerHTML = '';
+
+					items.forEach((it) => {
+						const target = normalizeTarget(it.target);
+						const label = target === 'fragment' ? 'Fragment' : 'Comment';
+
+						const btn = document.createElement('button');
+						btn.type = 'button';
+						btn.className =
+							"w-full flex items-center justify-between px-3 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-left";
+						btn.innerHTML = `
+            <div class="flex items-center gap-2 text-sm">
+              <span class="${target === 'fragment' ? 'text-slate-900' : 'text-slate-700'}">${ICON[target]}</span>
+              <span class="font-medium">${label}</span>
+              <span class="text-xs text-gray-400">(${it.uid})</span>
+            </div>
+            <span class="text-xs text-gray-400">선택</span>
+          `;
+						btn.onclick = () => {
+							CalendarPick.close();
+							navigateByItem(it);
+						};
+						list.appendChild(btn);
+					});
+
+					modal.classList.remove('hidden');
+				},
+				close() {
+					document.getElementById('pickModal').classList.add('hidden');
+				}
+			};
+
+			// ======================
+			// 데이터 보관 (date -> {fragment:[uids], comment:[uids]})
+			// ======================
+			let monthMap = new Map();
+
+			function normalizeTarget(t) {
+				if (!t) return '';
+				const v = String(t).toLowerCase();
+				if (v === 'comments') return 'comment';
+				return v; // fragment | comment
+			}
+
+			function yyyymmFromDate(d) {
+				const y = d.getFullYear();
+				const m = String(d.getMonth() + 1).padStart(2, '0');
+				return `${y}${m}`;
+			}
+
+			function setMonthLabel(d) {
+				const y = d.getFullYear();
+				const m = String(d.getMonth() + 1).padStart(2, '0');
+				document.getElementById('calMonthLabel').textContent = `${y}-${m}`;
+			}
+
+			async function loadMonth(yyyymm) {
+				// API 호출: /My/Calendar.json?date=yyyymm
+
+				const url = /*[[@{/My/MyCalendar.json}]]*/ '/My/Calendar.json';
+				const json = await apiGetWithParam(url, {date: yyyymm});
+
+				if (!json || json.code !== 0) {
+					monthMap = new Map();
+					return;
+				}
+
+				const next = new Map();
+
+				(json.data || []).forEach((row) => {
+					const date = row.date; // '2025-12-01'
+					const target = normalizeTarget(row.target);
+					const uid = row.uid;
+
+					if (!next.has(date)) next.set(date, {fragment: [], comment: []});
+					if (target === 'fragment') next.get(date).fragment.push(uid);
+					if (target === 'comment') next.get(date).comment.push(uid);
+				});
+
+				monthMap = next;
+			}
+
+			function decorateDayCell(cellEl, dateStr) {
+				// 기존 뱃지 제거
+				const old = cellEl.querySelector('[data-cal-badges="1"]');
+				if (old) old.remove();
+
+				const info = monthMap.get(dateStr);
+				if (!info) return;
+
+				const fragCount = info.fragment.length;
+				const commCount = info.comment.length;
+				if (!fragCount && !commCount) return;
+
+				const wrap = document.createElement('div');
+				wrap.setAttribute('data-cal-badges', '1');
+				wrap.className = "mt-1 flex flex-col gap-1 text-[11px] leading-none";
+
+				if (fragCount) {
+					const line = document.createElement('div');
+					line.className = "flex items-center gap-1 text-slate-900";
+					line.innerHTML = `${ICON.fragment}<span class="font-semibold">${fragCount}</span>`;
+					wrap.appendChild(line);
+				}
+				if (commCount) {
+					const line = document.createElement('div');
+					line.className = "flex items-center gap-1 text-slate-700";
+					line.innerHTML = `${ICON.comment}<span class="font-semibold">${commCount}</span>`;
+					wrap.appendChild(line);
+				}
+
+				// day cell 안쪽(날짜 숫자 아래)에 붙이기
+				const top = cellEl.querySelector('.fc-daygrid-day-top');
+				if (top) top.appendChild(wrap);
+			}
+
+			function navigateByItem(it) {
+				const target = normalizeTarget(it.target);
+				const uid = encodeURIComponent(it.uid);
+
+				const url = /*[[@{/Fragment/Fragment.html}]]*/ '/Fragment/Fragment.html';
+				if (target === 'fragment') {
+					location.href = `${url}?uid=${uid}`;
+				} else if (target === 'comment') {
+					location.href = `${url}?comment=${uid}`;
+				}
+			}
+
+			// ======================
+			// FullCalendar 초기화
+			// ======================
+			document.addEventListener('DOMContentLoaded', async () => {
+				const calendarEl = document.getElementById('calendar');
+
+				const calendar = new FullCalendar.Calendar(calendarEl, {
+					initialView: 'dayGridMonth',
+					height: "auto",
+					locale: 'ko',
+					firstDay: 0,
+					fixedWeekCount: false,
+					dayMaxEventRows: true,
+
+					// 날짜 셀 생성될 때(렌더될 때) 뱃지 주입
+					dayCellDidMount: function (info) {
+						const dateStr = info.date.toISOString().slice(0, 10); // YYYY-MM-DD
+						decorateDayCell(info.el, dateStr);
+					},
+
+					// 월 이동/초기 렌더 시점
+					datesSet: async function (info) {
+						// currentStart는 해당 월 1일(월뷰 기준)
+						const cur = info.view.currentStart;
+						setMonthLabel(cur);
+
+						const yyyymm = yyyymmFromDate(cur);
+						await loadMonth(yyyymm);
+
+						// 데이터 갱신 후 날짜 셀 다시 그림(뱃지 반영)
+						calendar.rerenderDates();
+					},
+
+					// 날짜 클릭
+					dateClick: function (info) {
+						const dateStr = info.dateStr; // YYYY-MM-DD
+						const day = monthMap.get(dateStr);
+						if (!day) return;
+
+						const items = [
+							...day.fragment.map(uid => ({date: dateStr, target: 'fragment', uid})),
+							...day.comment.map(uid => ({date: dateStr, target: 'comment', uid})),
+						];
+
+						if (items.length === 1) {
+							navigateByItem(items[0]);
+							return;
+						}
+						if (items.length >= 2) {
+							CalendarPick.open(dateStr, items);
+						}
+					}
+				});
+
+				calendar.render();
+			});
+		</script>
+	</th:block>
+
 </body>
+
 </html>
