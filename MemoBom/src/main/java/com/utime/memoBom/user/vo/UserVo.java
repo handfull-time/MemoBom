@@ -38,6 +38,4 @@ public class UserVo {
 	String note;
 	/** 이미지 URL */
 	String profileUrl;
-//	/** OAuth access token */
-//	String socialToken;
 }

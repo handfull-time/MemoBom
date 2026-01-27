@@ -31,7 +31,8 @@ class ViewHandlerInterceptor implements AsyncHandlerInterceptor {
 		
 		final String uri = req.getRequestURI();
 		final String contextPath = req.getContextPath();
-		model.addAttribute("currentURI", uri.substring(contextPath.length()) );
+		model.addAttribute("currentPath", uri.substring(contextPath.length()) );
+		model.addAttribute("assetVersion", AppDefine.AssetVersion );
 		
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -41,7 +42,6 @@ class ViewHandlerInterceptor implements AsyncHandlerInterceptor {
 				model.addAttribute(AppDefine.KeyParamUser, obj );
 			}
         }
-		
-		model.addAttribute("assetVersion", AppDefine.AssetVersion );
 	}
+	
 }

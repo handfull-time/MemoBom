@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{My/MyLayout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{My/MyLayout}">
 
 <body>
-<th:block layout:fragment="my_content">
-	<div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
-	  <div class="font-bold">About</div>
-	  <div class="text-sm opacity-90">관하여...</div>
-	</div>
-</th:block>
+	<th:block layout:fragment="my_content">
+		<div
+			class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
+			<div class="font-bold">About</div>
+			<div class="text-sm opacity-90">
+				2026.01.10 아내의 갑작스런 요청에 만들기 시작함.<br/>
+				처음엔 간단한 메모를 적을 것이 필요하다. <br/>
+				매일 매일 적었으면 했고 우리 가족끼리 공유했으면 좋겠다는 말을 함.<br/>
+				뭐... 그쯤이야 1주일이면 한참 만들고도 남겠다고 생각했음.<br/>
+				하지만...<br/>
+			</div>
+		</div>
+	</th:block>
 </body>
+
 </html>
