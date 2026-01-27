@@ -17,7 +17,7 @@ public class FragmentItem {
 	/** 사용자 정보 */
 	UserVo user;
 	/** 생성일 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD HH:mm", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 	Date regDate;
 	/** 내용 */
 	String content;

@@ -81,4 +81,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createShare();
+	
+	/**
+	 * 휴일 테이블 생성
+	 * @return
+	 */
+	int createHoliday();
 }

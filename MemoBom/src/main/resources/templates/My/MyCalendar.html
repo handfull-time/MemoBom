@@ -28,6 +28,21 @@
 	  .fc .fc-col-header-cell.fc-day-sat {
 	    color: #3b82f6; /* blue-500 */
 	  }
+	  
+	  /* holiday: 토요일이어도 일요일처럼 빨강 + 은은한 배경 */
+	  .fc .holiday-day .fc-daygrid-day-number {
+	    color: #ef4444 !important; /* red-500 */
+	    font-weight: 700;
+	  }
+	  .fc .holiday-day {
+	    background: #fff1f2; /* rose-50 느낌 */
+	  }
+
+	  /* (선택) anniversary는 살짝 강조만 */
+	  .fc .anniv-day {
+	    background: #f5f3ff; /* violet-50 느낌 */
+	  }
+
 	</style>
 
   </th:block>
@@ -45,13 +60,15 @@
 
   <!-- 여러 개 선택 모달 -->
   <div id="pickModal" class="fixed inset-0 z-[9999] hidden">
-    <div class="absolute inset-0 bg-black/40" onclick="CalendarPick.close()"></div>
+    <div class="absolute inset-0 bg-black/40" onclick="CalendarModalClose(this)"></div>
 
     <div class="absolute left-1/2 top-1/2 w-[92%] max-w-md -translate-x-1/2 -translate-y-1/2
-                bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden"
+				onclick="event.stopPropagation()">
+				
       <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
         <div class="font-semibold" id="pickTitle">선택</div>
-        <button type="button" class="px-2 py-1 rounded hover:bg-gray-100" onclick="CalendarPick.close()">✕</button>
+        <button type="button" class="px-2 py-1 rounded hover:bg-gray-100" onclick="CalendarModalClose(this)">✕</button>
       </div>
 
       <div class="p-3">
@@ -61,7 +78,7 @@
       <div class="p-3 border-t border-gray-200 flex justify-end">
         <button type="button"
                 class="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
-                onclick="CalendarPick.close()">
+                onclick="CalendarModalClose(this)">
           닫기
         </button>
       </div>
@@ -89,10 +106,18 @@
 </svg>`
     };
 
+	function CalendarModalClose(owner){
+		const gap = Date.now() - CalendarPick._justOpenedAt;
+		if ( gap< 250) return;
+		
+		CalendarPick._justOpenedAt = 0;
+		CalendarPick.close();
+	}
     // ======================
     // 모달
     // ======================
     const CalendarPick = {
+	  _justOpenedAt: 0,
       open(dateStr, items) {
         const modal = document.getElementById('pickModal');
         const title = document.getElementById('pickTitle');
@@ -104,36 +129,44 @@
         items.forEach((it) => {
           const target = normalizeTarget(it.target);
           const label = target === 'fragment' ? 'Fragment' : 'Comment';
+		  const title = (it.name && it.name.trim()) ? it.name : '(제목 없음)';
 
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = "w-full flex items-center justify-between px-3 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-left";
-          btn.innerHTML = `
-            <div class="flex items-center gap-2 text-sm">
-              <span class="${target === 'fragment' ? 'text-slate-900' : 'text-slate-700'}">${ICON[target]}</span>
-              <span class="font-medium">${label}</span>
-              <span class="text-xs text-gray-400">(${it.uid})</span>
-            </div>
-            <span class="text-xs text-gray-400">선택</span>
-          `;
+		  btn.innerHTML = `
+<div class="flex items-center gap-2 text-sm min-w-0">
+  <span class="${target === 'fragment' ? 'text-slate-900' : 'text-slate-700'}">${ICON[target]}</span>
+  <span class="font-medium shrink-0">${label}</span>
+  <span class="text-xs text-gray-500 truncate">${escapeHtml(title)}</span>
+</div>
+<span class="text-xs text-gray-400">선택</span>
+		  `;
           btn.onclick = () => {
-            CalendarPick.close();
+			CalendarModalClose('btn.onclick');
             navigateByItem(it);
           };
           list.appendChild(btn);
         });
 
+		this._justOpenedAt = Date.now();
+		console.log('reg : _justOpenedAt', this._justOpenedAt);
         modal.classList.remove('hidden');
       },
       close() {
+		const gap = Date.now() - this._justOpenedAt;
+		if ( gap< 250) return;
+		
         document.getElementById('pickModal').classList.add('hidden');
       }
     };
 
     // ======================
-    // 데이터 보관 (date -> {fragment:[uids], comment:[uids]})
+    // 데이터 보관 (date -> { fragment:[], comment:[], holidayName:null, anniversaryNames:[] })
     // ======================
-    let monthMap = new Map();
+	let monthMap = new Map();
+	let holidaySet = new Set();      // 날짜(YYYY-MM-DD)
+	let anniversarySet = new Set();  // 날짜(YYYY-MM-DD)
 
     function normalizeTarget(t) {
       if (!t) return '';
@@ -147,6 +180,16 @@
       const m = String(d.getMonth() + 1).padStart(2, '0');
       return `${y}${m}`;
     }
+	
+	// XSS 방지용
+	function escapeHtml(s){
+	  return String(s ?? '')
+	    .replaceAll('&','&amp;')
+	    .replaceAll('<','&lt;')
+	    .replaceAll('>','&gt;')
+	    .replaceAll('"','&quot;')
+	    .replaceAll("'","&#39;");
+	}
 
     function setMonthLabel(d) {
       const y = d.getFullYear();
@@ -155,67 +198,144 @@
     }
 
     async function loadMonth(yyyymm) {
+		holidaySet = new Set();
+		anniversarySet = new Set();
+
       const base = window.contextPath || '';
 
 	  const url = /*[[@{/My/MyCalendar.json}]]*/ '/My/Calendar.json';
 	  const json = await apiGetWithParam(url, {date: yyyymm});
       
-      if (!json || json.code !== 0) {
+      if (!json || json.code !== '0' ) {
         monthMap = new Map();
         return;
       }
 
       const next = new Map();
 
-      (json.data || []).forEach((row) => {
-        const date = row.date; // 'YYYY-MM-DD'
-        const target = normalizeTarget(row.target); // fragment|comment
-        const uid = row.uid;
+	  (json.data || []).forEach((row) => {
+	    const date = row.date; // 'YYYY-MM-DD'
+	    const target = normalizeTarget(row.target);
+	    const uid = (row.uid || '').trim();
+	    const name = row.name;
 
-        if (!next.has(date)) next.set(date, { fragment: [], comment: [] });
-        if (target === 'fragment') next.get(date).fragment.push(uid);
-        if (target === 'comment') next.get(date).comment.push(uid);
-      });
+		// fragment: [{uid, name}, ...]
+		if (!next.has(date)) next.set(date, {
+		  fragment: [],
+		  comment: [],
+		  holidayName: null,
+		  anniversaryNames: []
+		});
+
+		if (target === 'fragment' && uid) next.get(date).fragment.push({ uid, name: row.name || '' });
+		if (target === 'comment'  && uid) next.get(date).comment.push({ uid, name: row.name || '' });
+
+	    if (target === 'holiday') {
+	      // holiday는 uid 없음(빈 값) → 클릭 대상 아님 / 색상만
+	      holidaySet.add(date);
+	      next.get(date).holidayName = name || next.get(date).holidayName;
+	    }
+
+	    if (target === 'anniversary') {
+	      // anniversary도 uid 없음(빈 값) → 클릭 대상 아님 / 표시(원하면)
+	      anniversarySet.add(date);
+	      if (name) next.get(date).anniversaryNames.push(name);
+	    }
+	  });
+
 
       monthMap = next;
     }
 
     // ✅ monthMap -> FullCalendar events
-    function buildCalendarEvents() {
-      const events = [];
+	function buildCalendarEvents() {
+	  const events = [];
 
-      for (const [date, v] of monthMap.entries()) {
-        if (v.fragment.length) {
-          events.push({
-            start: date,
-            allDay: true,
-            title: '', // 표시 안 함 (eventContent로 커스텀)
-            extendedProps: { kind: 'fragment', count: v.fragment.length }
-          });
-        }
-        if (v.comment.length) {
-          events.push({
-            start: date,
-            allDay: true,
-            title: '',
-            extendedProps: { kind: 'comment', count: v.comment.length }
-          });
-        }
-      }
-      return events;
-    }
+	  for (const [date, v] of monthMap.entries()) {
+
+	    // ✅ holiday name 표시 (UID 없음: 표시만)
+	    if (v.holidayName) {
+	      events.push({
+	        start: date,
+	        allDay: true,
+	        title: '',
+	        extendedProps: { kind: 'holiday', name: v.holidayName }
+	      });
+	    }
+
+	    // ✅ anniversary name 표시 (여러개면 " / "로 합침)
+	    if (v.anniversaryNames && v.anniversaryNames.length) {
+	      events.push({
+	        start: date,
+	        allDay: true,
+	        title: '',
+	        extendedProps: { kind: 'anniversary', name: v.anniversaryNames.join(' / ') }
+	      });
+	    }
+
+	    // fragment/count
+	    if (v.fragment.length) {
+	      events.push({
+	        start: date,
+	        allDay: true,
+	        title: '',
+	        extendedProps: { kind: 'fragment', count: v.fragment.length }
+	      });
+	    }
+
+	    // comment/count
+	    if (v.comment.length) {
+	      events.push({
+	        start: date,
+	        allDay: true,
+	        title: '',
+	        extendedProps: { kind: 'comment', count: v.comment.length }
+	      });
+	    }
+	  }
+	  return events;
+	}
+
 
     function navigateByItem(it) {
       const target = normalizeTarget(it.target);
       const uid = encodeURIComponent(it.uid);
-      const base = /**[[@{/Fragment/Fragment.html}]]**/ '';
+      const base = /*[[@{/Fragment/Mosaic.html}]]*/ '/Fragment/Mosaic.html';
 
+	  let url = null;
       if (target === 'fragment') {
-        location.href = `${base}?uid=${uid}`;
+        url = `${base}?uid=${uid}`;
       } else if (target === 'comment') {
-        location.href = `${base}?comment=${uid}`;
+        url = `${base}?comment=${uid}`;
       }
+	  console.log('navigateByItem to', url);
+	  alert( url );
+	  
+	  if (url) {
+      	window.location = url;
+	  }
     }
+	
+	function localDateStr(d) {
+	  const y = d.getFullYear();
+	  const m = String(d.getMonth() + 1).padStart(2, '0');
+	  const day = String(d.getDate()).padStart(2, '0');
+	  return `${y}-${m}-${day}`;
+	}
+
+	function openByDate(dateStr){
+	  const day = monthMap.get(dateStr);
+	  if (!day) return;
+
+	  const items = [
+	    ...day.fragment.map(x => ({ date: dateStr, target: 'fragment', uid: x.uid, name: x.name })),
+	    ...day.comment.map(x  => ({ date: dateStr, target: 'comment',  uid: x.uid, name: x.name })),
+	  ];
+
+	  if (items.length === 0) return;
+	  if (items.length === 1) { navigateByItem(items[0]); return; }
+	  CalendarPick.open(dateStr, items);
+	}
 
     // ======================
     // FullCalendar 초기화
@@ -264,24 +384,59 @@
         },
 
         // ✅ 날짜 클릭: monthMap 기준으로 이동/모달 선택
-        dateClick: function(info) {
-          const dateStr = info.dateStr; // YYYY-MM-DD
-          const day = monthMap.get(dateStr);
-          if (!day) return;
+		dateClick: function(info) {
+		  if (info.jsEvent) {
+		    info.jsEvent.preventDefault();
+		    info.jsEvent.stopPropagation();
+		  }
+		  
+		  openByDate(info.dateStr);
+		},
+		
+		dayCellClassNames: function(arg) {
+		  const d = localDateStr(arg.date);   // ✅ 로컬 기준
+		  const cls = [];
+		  if (holidaySet.has(d)) cls.push('holiday-day');
+		  if (anniversarySet.has(d)) cls.push('anniv-day');
+		  return cls;
+		},
 
-          const items = [
-            ...day.fragment.map(uid => ({ date: dateStr, target: 'fragment', uid })),
-            ...day.comment.map(uid => ({ date: dateStr, target: 'comment', uid })),
-          ];
+		
+		eventContent: function(arg) {
+		  const kind = arg.event.extendedProps.kind;
 
-          if (items.length === 1) {
-            navigateByItem(items[0]);
-            return;
-          }
-          if (items.length >= 2) {
-            CalendarPick.open(dateStr, items);
-          }
-        }
+		  // holiday/anniversary는 name 출력
+		  if (kind === 'holiday' || kind === 'anniversary') {
+		    const name = arg.event.extendedProps.name || '';
+		    const cls = (kind === 'holiday')
+		      ? 'text-[11px] font-semibold text-red-500'
+		      : 'text-[11px] font-medium text-violet-600';
+
+		    return { html: `<div class="${cls} truncate">${name}</div>` };
+		  }
+
+		  // 기존 fragment/comment count
+		  const count = arg.event.extendedProps.count;
+		  const icon = (kind === 'fragment') ? ICON.fragment : ICON.comment;
+		  const textCls = (kind === 'fragment') ? 'text-slate-900' : 'text-slate-700';
+
+		  return {
+		    html: `<div class="flex items-center gap-1 ${textCls} text-[11px] leading-none">
+		             ${icon}<span class="font-semibold">${count}</span>
+		           </div>`
+		  };
+		},
+		
+		eventClick: function(arg) {
+		  // 클릭 이벤트가 다른 동작을 막지 않게
+		  arg.jsEvent.preventDefault();
+		  arg.jsEvent.stopPropagation();
+
+		  const dateStr = localDateStr(arg.event.start); // 로컬 YYYY-MM-DD
+		  openByDate(dateStr); // dateClick과 동일 로직
+		},
+
+
       });
 
       calendar.render();

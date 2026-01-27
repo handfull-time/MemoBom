@@ -15,10 +15,10 @@ public class UserVo {
 	/** 회원 번호 */
 	long userNo;
 	/** 생성일 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD HH:mm", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 	LocalDateTime regDate;
 	/** 수정일 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD HH:mm", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
 	LocalDateTime updateDate;
 	/** 사용 여부 */
 	boolean enabled;

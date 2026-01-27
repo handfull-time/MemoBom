@@ -10,13 +10,16 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.utime.memoBom.user.dao.HolidayDao;
 import com.utime.memoBom.user.vo.HolidayVo;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,6 +32,9 @@ public class HolidayServiceImpl {
 	
 	@Value("${korean.dataio.key.SpcdeInfoService}")
 	private String serviceKey;
+	
+	@Autowired
+	private HolidayDao holidayDao;
 	
 //	@Autowired
 //	private ObjectMapper mapper;
@@ -76,11 +82,12 @@ public class HolidayServiceImpl {
     }
     
     public List<HolidayVo> parseHolidayXml(String xml) {
-        List<HolidayVo> list = new ArrayList<>();
+    	
+        final List<HolidayVo> result = new ArrayList<>();
         
         // 1. <items> 내부만 추출 (불필요한 헤더 제거)
         String itemsBlock = this.getTagValue(xml, "items");
-        if (itemsBlock == null) return list;
+        if (itemsBlock == null) return result;
 
         // 2. <item> 태그 단위로 분할하여 처리
         int lastPos = 0;
@@ -92,19 +99,19 @@ public class HolidayServiceImpl {
             final String itemXml = itemsBlock.substring(lastPos + 6, endPos);
             
             // 3. 개별 데이터 추출 및 객체 매핑
-            HolidayVo data = new HolidayVo();
+            final HolidayVo data = new HolidayVo();
             data.setDateKind( Integer.parseInt(this.getTagValue(itemXml, "dateKind")) );
             data.setDateName( this.getTagValue(itemXml, "dateName") );
             data.setHoliday( "Y".equalsIgnoreCase(this.getTagValue(itemXml, "isHoliday")) );
             data.setLocdate( this.getTagValue(itemXml, "locdate") );
 
-            list.add(data);
+            result.add(data);
             
             // 다음 아이템 탐색을 위해 위치 이동
             lastPos = endPos + 7;
         }
 
-        return list;
+        return result;
     }
     
     public List<HolidayVo> getHolidayInfo(int year, String target) throws Exception {
@@ -114,7 +121,7 @@ public class HolidayServiceImpl {
                 .queryParam("serviceKey", serviceKey)
                 .queryParam("solYear", year)
                 .queryParam("pageNo", "1")
-                .queryParam("numOfRows", "50")
+                .queryParam("numOfRows", "120")
 //                .queryParam("_type", "json") // json으로 받고 싶을 때.
                 .build(true)
                 .toUri();
@@ -155,20 +162,43 @@ public class HolidayServiceImpl {
     
 	// 초 분 시 일 월 요일
     // 매년 1월 1일 01시 00분 00초에 실행
-    @Scheduled(cron = "0 0 1 1 1 *")
+    @Scheduled(cron = "0 0 1 1 12 *")
     public void runHoliday() throws Exception {
     	
     	final Calendar cal = Calendar.getInstance(Locale.KOREAN);
     	cal.add( Calendar.MONTH, 1);
-    	final int year = cal.get( Calendar.YEAR);
+    	final int year = cal.get( Calendar.YEAR );
     	
-    	final List<HolidayVo> holiList = List.of();
+    	//이미 데이터가 존재하면 패스.
+    	if( holidayDao.hasHolidayList(year) ) {
+			log.info( year + "년 공휴일 정보가 이미 존재합니다.");
+			return;
+		}
+    	
+    	final List<HolidayVo> holiList = new ArrayList<>();
     	
     	for( String tgarget : TargetUrl ) {
-    		holiList.addAll( this.getHolidayInfo( year, tgarget) );
+    		final List<HolidayVo> itemList = this.getHolidayInfo( year, tgarget);
+    		holiList.addAll( itemList );
     	}
     	
-    	//TODO 기념일 추가. 
-        
+    	//기념일 추가. 
+    	final int addCount = holidayDao.insertHolidayList( holiList );
+    	log.info( year + "년 공휴일 정보 " + addCount + "건이 추가되었습니다.");
+    }
+    
+    @PostConstruct
+	private void init() throws Exception{
+    	new Thread( new Runnable() {
+    		
+    		@Override
+    		public void run() {
+    			try {
+					runHoliday();
+				} catch (Exception e) {
+					log.error("초기 공휴일 정보 수집 중 오류 발생", e);
+				}    			
+    		}
+    	}).start();
     }
 }

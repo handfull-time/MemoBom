@@ -42,7 +42,7 @@ public class BoardController {
 	final TopicService topicServce;
 	final UserService userServce;
 	
-	final String KeyUser = "user";
+	final String KeyUser = "accessUser";
 	final String KeyTopic = "topic";
 	final String KeyTopics = "topics";
 	
@@ -61,7 +61,7 @@ public class BoardController {
 			return "redirect:/Mosaic/index.html";
 		}else {
 			
-			model.addAttribute(this.KeyUser, user);
+			model.addAttribute(this.KeyUser, user.getUid());
 			model.addAttribute(this.KeyTopic, null);
 			
 			return "Board/BoardMain";
@@ -143,10 +143,18 @@ public class BoardController {
 	@GetMapping(path = "Mosaic.html")
     public String boardTopicFromUid( ModelMap model, UserVo user, 
     		@RequestParam(name="uid", required = false) String topicUid,
-    		@RequestParam(name="user", required = false) String userUid) {
+    		@RequestParam(name="user", required = false) String userUid,
+    		@RequestParam(name="comment", required = false) String commentUid) {
 
-		model.addAttribute(KeyUser, userServce.getUserFromUid(userUid));
-		model.addAttribute(KeyTopic, topicServce.loadTopic(topicUid) );
+//		if( AppUtils.isNotEmpty(commentUid) ) {
+//			model.addAttribute("commentUid", commentUid);
+//		}else {
+//			model.addAttribute(KeyUser, userServce.getUserFromUid(userUid));
+//			model.addAttribute(KeyTopic, topicServce.loadTopic(topicUid) );
+//		}
+		model.addAttribute(KeyTopic, topicUid);
+		model.addAttribute(KeyUser, userUid);
+		model.addAttribute("commentUid", commentUid);
 
 		return "Board/BoardMain";
     }

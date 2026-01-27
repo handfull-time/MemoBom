@@ -111,12 +111,18 @@
 		SELECT
 		    X.REG_DATE   AS "date",
 		    X.TARGET     AS "target",
-		    X.UID        AS "uid"
+		    X.UID        AS "uid",
+	        CASE
+            	WHEN LENGTH(CAST(X.NAME AS VARCHAR)) > 26
+            		THEN SUBSTRING(CAST(X.NAME AS VARCHAR), 1, 23) || '...'
+            	ELSE CAST(X.NAME AS VARCHAR)
+       		END AS "name"
 		FROM (
 		    SELECT
 		        F.REG_DATE AS REG_DATE,
 		        'fragment' AS TARGET,
-		        CAST(F.UID AS VARCHAR) AS UID
+		        CAST(F.UID AS VARCHAR) AS UID,
+		        F.CONTENT AS NAME
 		    FROM MB_FRAGMENT F
 		    WHERE F.USER_NO = #{user.userNo}
 		      AND F.REG_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
@@ -128,11 +134,24 @@
 		    SELECT
 		        C.REG_DATE AS REG_DATE,
 		        'comment'  AS TARGET,
-		        CAST(C.UID AS VARCHAR) AS UID
+		        CAST(C.UID AS VARCHAR) AS UID,
+		        C.CONTENT AS NAME
 		    FROM MB_FRAGMENT_COMMENTS C
 		    WHERE C.USER_NO = #{user.userNo}
 		      AND C.REG_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
 		      AND C.REG_DATE <![CDATA[ < ]]> DATEADD('MONTH', 1, PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd'))
+		      
+		    UNION ALL
+		    
+		    SELECT
+		        HL.LOC_DATE AS REG_DATE,
+		        CASE WHEN HL.HOLIDAY = TRUE THEN 'holiday' ELSE 'anniversary' END AS TARGET,
+		        '' AS UID,
+		        HL.NAME AS NAME
+            FROM MB_HOLIDAY HL
+            WHERE 1=1
+            	AND HL.LOC_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
+            	AND HL.LOC_DATE <![CDATA[ < ]]> DATEADD('MONTH', 1, PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd'))
 		) X
 		ORDER BY X.REG_DATE ASC
 	</select>

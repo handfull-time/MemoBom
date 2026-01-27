@@ -11,6 +11,8 @@ public class FragmentListReqVO {
 	String userUid;
 	/** topic uid */
 	String topicUid;
+	/** 댓글 uid */
+	String cmtUid;
 	/** 검색어 */
 	String keyword;
 	/** 해쉬테그 */

@@ -153,9 +153,6 @@
 
 		
 		(() => {
-			const user = /*[[${user}]]*/ {};
-			const topic = /*[[${topic}]]*/ {};
-
 			const $ = (id) => document.getElementById(id);
 			const elList = $("fragmentList");
 			const elState = $("stateBox");
@@ -688,7 +685,7 @@
 
 				bindActions(node, item);
 				
-				bindCommentComposer(node, item, user?.profileUrl);
+				bindCommentComposer(node, item, item.user?.profileUrl);
 
 				return node;
 			}
@@ -851,10 +848,23 @@
 				if (loading || done) return;
 				loading = true;
 				hideState();
+				//const user = /*[[${accessUser}]]*/ {};
+				//const topic = /*[[${topic}]]*/ {};
+				//const commnentUid = /*[[${commentUid}]]*/ null;
 
+
+//				const sendObj = {
+//					userUid: user?.userUid,
+//					topicUid: topic?.topicUid,
+//					cmtUid: commnentUid,
+//					keyword: '',
+//					hashTag: '',
+//					pageNo: pageNo
+//				};
 				const sendObj = {
-					userUid: user?.userUid,
-					topicUid: topic?.topicUid,
+					userUid: /*[[${accessUser}]]*/ null,
+					topicUid: /*[[${topic}]]*/ null,
+					cmtUid: /*[[${commentUid}]]*/ null,
 					keyword: '',
 					hashTag: '',
 					pageNo: pageNo

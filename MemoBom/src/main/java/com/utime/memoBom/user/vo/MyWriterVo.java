@@ -13,7 +13,7 @@ import lombok.Data;
 public class MyWriterVo {
 	
 	/** 작성 일자 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "YYYY-MM-DD", timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	Date date;
 	/** 작성 종류 */
 	ETarget target;

@@ -219,6 +219,13 @@
 			        AND h.NAME = #{req.hashtag}
 			  )
 			</if>
+			<if test="req.cmtUid != null and !req.cmtUid.isEmpty()">
+			  AND f.FRAGMENT_NO = (
+			      SELECT c.FRAGMENT_NO
+			      FROM MB_FRAGMENT_COMMENTS c
+			      WHERE c.UID = #{req.cmtUid}
+			  )
+			</if>
 
         ORDER BY f.REG_DATE DESC
         <!-- 페이징 (페이지당 5개) -->
