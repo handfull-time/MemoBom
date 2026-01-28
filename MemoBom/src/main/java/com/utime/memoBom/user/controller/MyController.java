@@ -37,6 +37,11 @@ public class MyController {
 		}
 	}
 	
+	@GetMapping(path = "Alarm.html")
+    public String myAlarm(Model model) {
+		return "My/MyAlarm";
+    }
+	
 	@GetMapping(path = "Fragments.html")
     public String myFragments(Model model) {
 		return "My/MyFragments";

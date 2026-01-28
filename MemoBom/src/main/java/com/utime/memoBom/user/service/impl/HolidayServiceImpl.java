@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -81,7 +82,12 @@ public class HolidayServiceImpl {
         return source.substring(start + startTag.length(), end);
     }
     
-    public List<HolidayVo> parseHolidayXml(String xml) {
+    /**
+     * 단순 xml 분석은 걍 무식하게 처리하자. 그게 빠르다.
+     * @param xml
+     * @return
+     */
+    private List<HolidayVo> parseHolidayXml(String xml) {
     	
         final List<HolidayVo> result = new ArrayList<>();
         
@@ -110,6 +116,8 @@ public class HolidayServiceImpl {
             // 다음 아이템 탐색을 위해 위치 이동
             lastPos = endPos + 7;
         }
+        
+        log.info("데이터 분석 결과 : {}" , result.size());
 
         return result;
     }
@@ -126,20 +134,27 @@ public class HolidayServiceImpl {
                 .build(true)
                 .toUri();
 
-        final HttpClient client = HttpClient.newHttpClient();
+        final HttpClient client = HttpClient.newBuilder()
+        		.connectTimeout(Duration.ofSeconds(5))
+        		.build();
 
         final HttpRequest request = HttpRequest.newBuilder(uri)
                 .GET()
+                .timeout(Duration.ofSeconds(10))
                 .header("Accept", "application/xml")
                 .build();
 
-        final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
-        log.info("Response code: " + response.statusCode());
-        
-        final String resData = response.body();
-        log.info("Response data: " + resData );
-        
+        String resData;
+        try {
+            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            log.info("Response code: " + response.statusCode());
+            
+            resData = response.body();
+            log.info("Response data: " + resData );
+		} catch (Exception e) {
+			log.error("apis.data.go.kr", e);
+			throw e;
+		}
 //        final _Spcd spcd = mapper.readValue(resData, _Spcd.class);
         
         return this.parseHolidayXml( resData );
@@ -196,7 +211,7 @@ public class HolidayServiceImpl {
     			try {
 					runHoliday();
 				} catch (Exception e) {
-					log.error("초기 공휴일 정보 수집 중 오류 발생", e);
+					log.error("초기 공휴일 정보 수집 중 오류 발생 {}", e.getMessage());
 				}    			
     		}
     	}).start();
