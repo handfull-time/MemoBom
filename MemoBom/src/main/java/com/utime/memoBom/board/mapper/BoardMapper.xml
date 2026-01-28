@@ -40,32 +40,6 @@
         )
 	</update>
 	
-	
-	<!-- 대상(게시글/댓글)별 리액션 카운트 -->
-	<!-- 
-	<select id="selectEmotionCountsByTarget" resultType="map">
-		SELECT 
-			EMOTION, COUNT(*) AS CNT
-		FROM MB_FRAGMENT_EMOTION_LOG
-		WHERE 1=1
-			AND TARGET_TYPE = #{targetType}
-			AND TARGET_NO = #{targetNo}
-		GROUP BY EMOTION
-	</select>
-	-->
-	
-	<!-- 내가 누른 리액션(1개) -->
-	<!-- 
-	<select id="selectMyEmotion" resultType="string">
-		SELECT EMOTION
-		FROM MB_FRAGMENT_EMOTION_LOG
-		WHERE 1=1
-			AND USER_NO = #{userNo}
-			AND TARGET_TYPE = #{targetType}
-			AND TARGET_NO = #{targetNo}
-  </select>
-  -->
-  
   <resultMap id="FragmentItemMap" type="com.utime.memoBom.board.vo.FragmentItem">
         <id property="uid" column="fragment_uid" />
         <result property="content" column="content" />
@@ -90,7 +64,7 @@
         
         <collection property="hashtagList"
             ofType="string"
-            column="fragment_uid"
+            column="fragment_no"
             select="selectHashtagListByFragmentUid" />
             
         <collection property="emotionList"
@@ -101,14 +75,12 @@
     </resultMap>
 
 	<!-- 해시테그 목록  -->    
-    <select id="selectHashtagListByFragmentUid" parameterType="string" resultType="string">
+    <select id="selectHashtagListByFragmentUid" parameterType="long" resultType="string">
 	    SELECT h.NAME
 	    FROM MB_FRAGMENT_HASHTAG h
 		    INNER JOIN MB_FRAGMENT_HASHTAG_RECORD r
 		        ON r.TAG_NO = h.TAG_NO
-		    INNER JOIN MB_FRAGMENT f
-		        ON f.FRAGMENT_NO = r.FRAGMENT_NO
-	    WHERE f.UID = #{fragmentUid}
+	    WHERE r.FRAGMENT_NO = #{fragment_no}
 	    ORDER BY h.NAME
 	</select>
 	
@@ -143,92 +115,109 @@
 	</select>
 
     <select id="loadFragmentList" parameterType="map" resultMap="FragmentItemMap">
-        SELECT 
-            <!-- 게시글 정보 -->
-            f.FRAGMENT_NO	AS fragment_no,
-            f.UID           AS fragment_uid,
-            f.CONTENT       AS content,
-            f.REG_DATE      AS reg_date,
-            <!-- 작성자 정보 -->
-            u.UID           AS user_uid,
-            u.NICKNAME      AS user_nickname,
-            u.PROFILE_IMG_PATH AS user_img_url,
-            <!-- 토픽 정보 -->
-            t.UID           AS topic_uid,
-            t.NAME	 		AS topic_name,
-            t.COLOR         AS topic_color,
-            t.IMOGI 		AS topic_imogi,
-            t.EMOJI_SET_TYPE AS emoji_set_type,
-            <!-- [변경됨] 스크랩 여부 판별 로직 -->
-            <choose>
-                <when test="user != null ">
-                    CASE 
-                        WHEN EXISTS (
-                            SELECT 1 
-                            FROM MB_FRAGMENT_SCRAP fs
-                            INNER JOIN MB_USER viewer ON fs.USER_NO = viewer.USER_NO
-                            WHERE fs.FRAGMENT_NO = f.FRAGMENT_NO 
-                            AND viewer.USER_NO = #{user.userNo}
-                        ) THEN TRUE 
-                        ELSE FALSE 
-                    END
-                </when>
-                <otherwise>
-                    FALSE
-                </otherwise>
-            </choose> AS is_scrap
-
-        FROM MB_FRAGMENT f
-        INNER JOIN MB_USER u ON f.USER_NO = u.USER_NO
-        INNER JOIN MB_TOPIC t ON f.TOPIC_NO = t.TOPIC_NO
-        <if test="user != null ">
-        	INNER JOIN MB_TOPIC_FOLLOW l ON l.TOPIC_NO = t.TOPIC_NO AND l.USER_NO = #{user.userNo}  
-        </if>
-        WHERE 1=1
-            <!-- 기본 조건 -->
-            AND f.IS_DELETED = FALSE
-            AND u.ENABLED = TRUE
-            AND t.ENABLED = TRUE
-
-	        <if test="user != null ">
-	        	OR t.EXTERNAL = TRUE
-	        </if>
-
-            <!-- 필터: 작성자 -->
-            <if test="req.userUid != null and !req.userUid.isEmpty() ">
-                AND u.UID = #{req.userUid}
-            </if>
-            
-            <!-- 필터: 토픽 -->
-            <if test="req.topicUid != null and !req.topicUid.isEmpty() ">
-                AND t.UID = #{req.topicUid}
-            </if>
-            
-            <!-- 필터: 키워드 검색 -->
-            <if test="req.keyword != null and !req.keyword.isEmpty() ">
-                AND f.CONTENT LIKE CONCAT('%', #{req.keyword}, '%')
-            </if>
-
-            <!-- 필터: 해시태그 -->
-			<if test="req.hashtag != null and !req.hashtag.isEmpty()">
-			  AND EXISTS (
-			      SELECT 1
-			      FROM MB_FRAGMENT_HASHTAG_RECORD r
-			      	INNER JOIN MB_FRAGMENT_HASHTAG h ON h.TAG_NO = r.TAG_NO
-			      WHERE r.FRAGMENT_NO = f.FRAGMENT_NO
-			        AND h.NAME = #{req.hashtag}
-			  )
+	    SELECT
+	        <!-- 게시글 정보 -->
+	        f.FRAGMENT_NO    AS fragment_no,
+	        f.UID            AS fragment_uid,
+	        f.CONTENT        AS content,
+	        f.REG_DATE       AS reg_date,
+	
+	        <!-- 작성자 정보 -->
+	        u.UID            AS user_uid,
+	        u.NICKNAME       AS user_nickname,
+	        u.PROFILE_IMG_PATH AS user_img_url,
+	
+	        <!-- 토픽 정보 -->
+	        t.UID            AS topic_uid,
+	        t.NAME           AS topic_name,
+	        t.COLOR          AS topic_color,
+	        t.IMOGI          AS topic_imogi,
+	        t.EMOJI_SET_TYPE AS emoji_set_type,
+	
+	        <!-- 스크랩 여부(로그인 사용자일 때만) -->
+	        <choose>
+	            <when test="user != null">
+	                CASE WHEN s.USER_NO IS NULL THEN FALSE ELSE TRUE END
+	            </when>
+	            <otherwise>
+	                FALSE
+	            </otherwise>
+	        </choose> AS is_scrap
+	
+	    FROM MB_FRAGMENT f
+		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
+		    INNER JOIN MB_TOPIC t ON f.TOPIC_NO = t.TOPIC_NO
+	
+		    <if test="user != null">
+		        LEFT JOIN MB_FRAGMENT_SCRAP s
+		               ON s.FRAGMENT_NO = f.FRAGMENT_NO
+		              AND s.USER_NO     = #{user.userNo}
+		    </if>
+		    
+	    WHERE 1=1
+	      <!-- 기본 조건 -->
+	      AND f.IS_DELETED = FALSE
+	      AND u.ENABLED    = TRUE
+	      AND t.ENABLED    = TRUE
+	
+	      <!-- ✅ 토픽 공개/비공개 접근 조건 -->
+	      AND (
+	            t.EXTERNAL = TRUE
+	            <if test="user != null">
+	              OR (
+	                   t.EXTERNAL = FALSE
+	                   AND EXISTS (
+	                       SELECT 1
+	                       FROM MB_TOPIC_FOLLOW tf
+	                       WHERE tf.TOPIC_NO = t.TOPIC_NO
+	                         AND tf.USER_NO  = #{user.userNo}
+	                   )
+	              )
+	            </if>
+	          )
+	
+	      <!-- 검색 조건: 작성자 uid -->
+	      <if test="req.userUid != null and !req.userUid.isEmpty() ">
+	        AND u.UID = #{req.userUid}
+	      </if>
+	
+	      <!-- 검색 조건: topic uid -->
+	      <if test="req.topicUid != null and !req.topicUid.isEmpty() ">
+	        AND t.UID = #{req.topicUid}
+	      </if>
+	
+	      <!-- 검색 조건: 댓글 uid (그 댓글이 달린 글만) -->
+	      <if test="req.cmtUid != null and !req.cmtUid.isEmpty() ">
+	        AND EXISTS (
+	            SELECT 1
+	            FROM MB_FRAGMENT_COMMENTS c
+	            WHERE c.FRAGMENT_NO = f.FRAGMENT_NO
+	              AND c.IS_DELETED  = FALSE
+	              AND c.UID         = #{req.cmtUid}
+	        )
+	      </if>
+	
+	      <!-- 검색 조건: 키워드 (CLOB 대응 위해 CAST) -->
+	      <if test="keyword != null and !keyword.isEmpty() ">
+			AND (
+			     f.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+			     OR t.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+			)
 			</if>
-			<if test="req.cmtUid != null and !req.cmtUid.isEmpty()">
-			  AND f.FRAGMENT_NO = (
-			      SELECT c.FRAGMENT_NO
-			      FROM MB_FRAGMENT_COMMENTS c
-			      WHERE c.UID = #{req.cmtUid}
-			  )
-			</if>
 
-        ORDER BY f.REG_DATE DESC
-        <!-- 페이징 (페이지당 5개) -->
+	
+	      <!-- 검색 조건: 해시태그 -->
+	      <if test="req.hashtag != null and !req.hashtag.isEmpty() ">
+	        AND EXISTS (
+	            SELECT 1
+	            FROM MB_FRAGMENT_HASHTAG_RECORD r
+	            INNER JOIN MB_FRAGMENT_HASHTAG h ON h.TAG_NO = r.TAG_NO
+	            WHERE r.FRAGMENT_NO = f.FRAGMENT_NO
+	              AND h.NAME = #{req.hashtag}
+	        )
+	      </if>
+	
+	    ORDER BY f.REG_DATE DESC
         LIMIT 5 OFFSET (#{req.pageNo} - 1) * 5
     </select>
     

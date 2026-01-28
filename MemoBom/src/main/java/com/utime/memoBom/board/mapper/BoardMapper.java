@@ -49,10 +49,7 @@ public interface BoardMapper {
      * @param reqVo 검색 조건
      * @return FragmentItem 리스트
      */
-    List<FragmentItem> loadFragmentList(
-    	@Param("user") UserVo user,
-        @Param("req") FragmentListReqVO reqVo
-    );
+    List<FragmentItem> loadFragmentList( @Param("user") UserVo user, @Param("req") FragmentListReqVO reqVo );
 
     /**
      * 스크랩 존재 여부 확인
