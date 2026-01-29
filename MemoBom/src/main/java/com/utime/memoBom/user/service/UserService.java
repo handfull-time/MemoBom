@@ -1,5 +1,6 @@
 package com.utime.memoBom.user.service;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -18,6 +19,6 @@ public interface UserService {
 	 * @param date yyyyMM
 	 * @return
 	 */
-	ReturnBasic getMyWriteDataList(UserVo user, String date);
+	ReturnBasic getMyWriteDataList(LoginUser user, String date);
 
 }

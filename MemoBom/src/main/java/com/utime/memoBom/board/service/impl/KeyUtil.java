@@ -5,11 +5,11 @@ import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 
 import com.utime.memoBom.common.dao.KeyValueDao;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.EDevicePlatform;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ class KeyUtil {
 	 * @param user
 	 * @return
 	 */
-	public static String createKey(KeyValueDao keyValueDao, HttpServletRequest request, UserVo user) {
+	public static String createKey(KeyValueDao keyValueDao, HttpServletRequest request, LoginUser user) {
 		
 		final UUID guid = UUID.randomUUID();
 		final String result = guid.toString();
@@ -37,7 +37,7 @@ class KeyUtil {
 			return null;
 		}
 		
-		final String addValue = user.getUid() + device.getModel() + dp;
+		final String addValue = user.uid() + device.getModel() + dp;
 		
 		keyValueDao.setValue(result, addValue, 50);
 		
@@ -51,7 +51,7 @@ class KeyUtil {
 	 * @param seal
 	 * @return
 	 */
-	public static ReturnBasic checkKey(KeyValueDao keyValueDao, UserVo user, UserDevice device, String seal) {
+	public static ReturnBasic checkKey(KeyValueDao keyValueDao, LoginUser user, UserDevice device, String seal) {
 		
 		final String sealValue = keyValueDao.getValueAndRemove(seal);
 		
@@ -65,7 +65,7 @@ class KeyUtil {
 			return new ReturnBasic("E", "잘못된 장치 입니다.");
 		}
 		
-		final String compareValue = user.getUid() + device.getModel() + dp;
+		final String compareValue = user.uid() + device.getModel() + dp;
 		if( !sealValue.equals(compareValue) ) {
 			log.warn("접속 정보 오류 {} - {}", sealValue, compareValue);
 			return new ReturnBasic("E", "잘못된 요청 입니다.");

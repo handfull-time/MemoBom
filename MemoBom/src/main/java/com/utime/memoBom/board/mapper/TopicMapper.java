@@ -6,9 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.board.vo.query.TopicResultVo;
+import com.utime.memoBom.common.security.LoginUser;
 
 /**
  * 주제 처리
@@ -21,28 +21,29 @@ public interface TopicMapper {
 	 * @param user
 	 * @return true:있다. flase:없다.
 	 */
-	boolean hasTopic(UserVo user);
+	boolean hasTopic(LoginUser user);
 	
 	/**
 	 * 동일 이름 있는지 검사.
+	 * @param uid 
 	 * @param name
 	 * @return
 	 */
-	boolean checkSameName(@Param("name") String name);
+	boolean checkSameName(@Param("uid") String uid, @Param("name") String name);
 
 	/**
 	 * topic 저장
 	 * @param reqVo
 	 * @return
 	 */
-	int insertTopic(TopicReqVo reqVo);
+	int insertTopic(TopicVo reqVo);
 	
 	/**
 	 * topic 수정
 	 * @param reqVo
 	 * @return
 	 */
-	int updateTopic(TopicReqVo reqVo);
+	int updateTopic(TopicVo reqVo);
 
 	/**
 	 * topic 읽기
@@ -60,7 +61,7 @@ public interface TopicMapper {
 	 * @param sortType 인기 목록 : 'trending', 최신 목록: 'fresh'
 	 * @return
 	 */
-	List<TopicVo> listTopic( @Param("userNo") long userNo, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType);
+	List<TopicResultVo> listTopic( @Param("user") LoginUser user, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType);
 
 	/**
 	 * Topic이 하나도 없나?
@@ -104,7 +105,7 @@ public interface TopicMapper {
 	 * @param user
 	 * @return
 	 */
-	List<TopicVo> loadUserTopicList(UserVo user);
+	List<TopicVo> loadUserTopicList(@Param("userNo") long userNor);
 	
 	/**
 	 * topic 통계 정보 생성
@@ -140,4 +141,12 @@ public interface TopicMapper {
 	 * @return
 	 */
 	int decreaseTopicStatsFragmentCount( @Param("topicNo") long topicNo);
+
+	/**
+	 * 토픽 조회
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	TopicVo loadTopicFromUid(@Param("user") LoginUser user, @Param("uid")String topicUid);
 }

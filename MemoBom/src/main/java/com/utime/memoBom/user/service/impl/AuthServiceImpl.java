@@ -7,7 +7,8 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.common.dao.KeyValueDao;
-import com.utime.memoBom.common.jwt.JwtProvider;
+import com.utime.memoBom.common.security.JwtProvider;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.util.CacheIntervalMap;
 import com.utime.memoBom.common.util.RsaEncDec;
@@ -15,7 +16,6 @@ import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.service.AuthService;
 import com.utime.memoBom.user.vo.ReqUniqueVo;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,7 +75,7 @@ class AuthServiceImpl implements AuthService {
 	}
 	
 	@Override
-	public ReturnBasic logout(HttpServletRequest request, HttpServletResponse response, UserVo user) {
+	public ReturnBasic logout(HttpServletRequest request, HttpServletResponse response, LoginUser user) {
 		
 		jwtProvider.procLogout(request, response);
 		

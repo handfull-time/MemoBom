@@ -28,7 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.utime.memoBom.common.jwt.JwtAuthenticationFilter;
+import com.utime.memoBom.common.security.JwtAuthenticationFilter;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.WhiteAddressList;
 

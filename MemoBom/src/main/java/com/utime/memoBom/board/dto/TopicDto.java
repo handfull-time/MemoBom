@@ -1,19 +1,16 @@
-package com.utime.memoBom.board.vo;
+package com.utime.memoBom.board.dto;
+
+import com.utime.memoBom.board.vo.EmojiSetType;
 
 import lombok.Data;
 
+/**
+ * 토픽(주제) 정보 DTO
+ */
 @Data
-public class TopicReqVo {
-	/** 검증 키 */
-	String seal;
-	/** 고유번호 */
-	long topicNo = -1L;
+public class TopicDto {
 	/** 고유 id */
 	String uid;
-	/** 소유자 번호 */
-	long ownerNo;
-	/** 사용 여부 */
-	boolean enabled = true;
 	/** 이름 */
 	String name;
 	/** 설명 */

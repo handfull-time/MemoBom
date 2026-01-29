@@ -5,16 +5,16 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.vo.CommentItem;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionItem;
-import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
-import com.utime.memoBom.user.vo.UserVo;
 
 /**
  * 게시글 처리
@@ -27,7 +27,7 @@ public interface BoardMapper {
 	 * @param reqVo
 	 * @return
 	 */
-	int insertFragment(@Param("user") UserVo user, @Param("device") UserDevice device, @Param("topic") TopicVo topic, @Param("req") FragmentVo reqVo);
+	int insertFragment(@Param("user") LoginUser user, @Param("device") UserDevice device, @Param("topic") TopicVo topic, @Param("req") FragmentVo reqVo);
 	
 	/** * 해시태그 병합
 	 * @param tagName
@@ -49,7 +49,7 @@ public interface BoardMapper {
      * @param reqVo 검색 조건
      * @return FragmentItem 리스트
      */
-    List<FragmentItem> loadFragmentList( @Param("user") UserVo user, @Param("req") FragmentListReqVO reqVo );
+    List<FragmentItem> loadFragmentList( @Param("user") LoginUser user, @Param("req") FragmentListReqVO reqVo );
 
     /**
      * 스크랩 존재 여부 확인
@@ -87,7 +87,7 @@ public interface BoardMapper {
 	 * @param uid
 	 * @return
 	 */
-	List<EmotionItem> selectEmotionList(@Param("req") EmotionReqVo emotionReqVo);
+	List<EmotionItem> selectEmotionList(@Param("req") EmotionDto emotionReqVo);
 
 	/**
 	 * 공유 정보 삽입
@@ -103,7 +103,7 @@ public interface BoardMapper {
 	 * @param req
 	 * @return
 	 */
-	int upsertEmotion(@Param("userNo") long userNo, @Param("req") EmotionReqVo emotionReqVo);
+	int upsertEmotion(@Param("userNo") long userNo, @Param("req") EmotionDto emotionReqVo);
 	
 	/**
 	 * 감정 삭제
@@ -111,7 +111,7 @@ public interface BoardMapper {
 	 * @param req
 	 * @return
 	 */
-	int deleteEmotion(@Param("userNo") long userNo, @Param("req") EmotionReqVo emotionReqVo);
+	int deleteEmotion(@Param("userNo") long userNo, @Param("req") EmotionDto emotionReqVo);
 	
 	/**
 	 * 댓글 저장
@@ -119,7 +119,7 @@ public interface BoardMapper {
 	 * @param reqVo
 	 * @return
 	 */
-	int insertComment(@Param("user") UserVo user, @Param("req") CommentReqVo reqVo);
+	int insertComment(@Param("user") LoginUser user, @Param("req") CommentReqVo reqVo);
 
 	/**
 	 * 댓글 조회

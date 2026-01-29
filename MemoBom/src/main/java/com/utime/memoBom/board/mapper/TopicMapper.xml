@@ -35,96 +35,112 @@
 				ELSE 1
 	   		END AS RES
 	   	FROM MB_TOPIC
-	   	WHERE NAME_UPPER = UPPER(#{name})
+	   	WHERE 1=1
+	   		AND NAME_UPPER = UPPER(#{name})
+	   		<if test="uid != null and ! uid.isEmpty()">
+       			AND UID != #{uid}
+	   		</if>
 	</select>
 	
-	<insert id="insertTopic" parameterType="com.utime.memoBom.board.vo.TopicReqVo"
+	<insert id="insertTopic" parameterType="com.utime.memoBom.board.vo.TopicVo"
 	    useGeneratedKeys="true" keyProperty="topicNo" >
 		INSERT INTO MB_TOPIC (
 			UPDATE_DATE 
 			, OWNER_NO
 			, ENABLED 
 			, EXTERNAL
+			, EMOTION
+			, COMMENTS
+			, MAX_LEN
 			, NAME 
 			, NAME_UPPER 
 			<if test="description != null and ! description.isEmpty()">, DESCRIPTION</if>
 			<if test="imogi != null and ! imogi.isEmpty()">, IMOGI</if>
 			<if test="color != null and ! color.isEmpty()">, COLOR</if>
 			, EMOJI_SET_TYPE
+			, AI
+			<if test="color != null and ! color.isEmpty()">, PROMPT</if>
 		) VALUES (
 			CURRENT_TIMESTAMP
 			, #{ownerNo}
 			, TRUE
 			, #{external}
+			, #{emotion}
+			, #{comments}
+			, #{maxLen}
 			, #{name}
 			, UPPER(#{name})
 			<if test="description != null and ! description.isEmpty()">, #{description}</if>
 			<if test="imogi != null and ! imogi.isEmpty()">, #{imogi}</if>
 			<if test="color != null and ! color.isEmpty()">, #{color}</if>
 			, #{emojiSetType, typeHandler=com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler}
+			, #{ai}
+			<if test="prompt != null and ! prompt.isEmpty()">, #{prompt}</if>
 		)
 	</insert>
 	
 	<!--topic 수정-->
-	<update id="updateTopic" parameterType="com.utime.memoBom.board.vo.TopicReqVo">
+	<update id="updateTopic" parameterType="com.utime.memoBom.board.vo.TopicVo">
 		UPDATE MB_TOPIC SET
 			UPDATE_DATE = CURRENT_TIMESTAMP
 			, ENABLED = #{enabled}
 			, EXTERNAL = #{external}
+			, EMOTION = #{emotion}
+			, COMMENTS = #{comments}
+			, MAX_LEN = #{maxLen}
 			, NAME = #{name}
 			, NAME_UPPER = UPPER(#{name})
 			, DESCRIPTION = <choose> <when test="description != null and ! description.isEmpty()">#{description}</when> <otherwise>NULL</otherwise> </choose>
 			, IMOGI = <choose> <when test="imogi != null and ! imogi.isEmpty()">#{imogi}</when> <otherwise>NULL</otherwise> </choose>
 			, COLOR = <choose> <when test="color != null and ! color.isEmpty()">#{color}</when> <otherwise>NULL</otherwise> </choose>
 			, EMOJI_SET_TYPE = #{emojiSetType, typeHandler=com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler}
-		WHERE TOPIC_NO = #{topicNo}	
+			, AI = #{ai}
+			, PROMPT = <choose> <when test="prompt != null and ! prompt.isEmpty()">#{prompt}</when> <otherwise>NULL</otherwise> </choose>
+		WHERE UID = #{uid} AND OWNER_NO = #{ownerNo}
 	</update>
 
 	<sql id="TopicColumnSql">
-	 	TOPIC_NO
-		, ENABLED 
-		, OWNER_NO
-		, EXTERNAL
-		, UID 
-		, NAME
-		, DESCRIPTION 
-		, IMOGI 
-		, COLOR 
-		, EMOJI_SET_TYPE
-		, EMOTION 
-		, COMMENTS 
+	 	TP.TOPIC_NO
+		, TP.ENABLED 
+		, TP.OWNER_NO
+		, TP.UID 
+		, TP.EXTERNAL
+		, TP.EMOTION
+		, TP.COMMENTS
+		, TP.MAX_LEN
+		, TP.NAME
+		, TP.DESCRIPTION 
+		, TP.IMOGI 
+		, TP.COLOR 
+		, TP.EMOJI_SET_TYPE
+		, TP.AI
+		, TP.PROMPT
 	</sql>
 	
-	<resultMap id="TopicResultMap" type="com.utime.memoBom.board.vo.TopicVo">
-        <result property="topicNo" column="TOPIC_NO" />
-        <result property="enabled" column="ENABLED" />
-        <result property="ownerNo" column="OWNER_NO" />
-        <result property="external" column="EXTERNAL" />
+	<resultMap id="TopicMap" type="com.utime.memoBom.board.vo.TopicVo">
+        <id property="topicNo" column="TOPIC_NO" />
         <result property="uid" column="UID" />
+        <result property="ownerNo" column="OWNER_NO" />
+        <result property="enabled" column="ENABLED" />
         <result property="name" column="NAME" />
         <result property="description" column="DESCRIPTION" />
-        <result property="imogi" column="IMOGI" />
         <result property="color" column="COLOR" />
+        <result property="external" column="EXTERNAL" />
         <result property="emotion" column="EMOTION" />
         <result property="comments" column="COMMENTS" />
         <result property="maxLen" column="MAX_LEN" />
-        
-        <result property="flow" column="FLOW" />
-        <result property="user.uid" column="USER_UID" />
-        <result property="user.nickname" column="NICKNAME" />
-        <result property="user.profileUrl" column="PROFILE_IMG_PATH" />
-        <result property="fragmentCount" column="FRAGMENT_COUNT" />
-        <result property="flowCount" column="FLOW_COUNT" />
-         
+        <result property="imogi" column="IMOGI" />
         <result property="emojiSetType" column="EMOJI_SET_TYPE" 
             typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
+        <result property="ai" column="AI"/>
+        <result property="prompt" column="PROMPT"/>
     </resultMap>
     
 	<!--topic 정보 읽기-->
-	<select id="loadTopic" parameterType="map" resultMap="TopicResultMap">
+	<select id="loadTopic" parameterType="map" resultMap="TopicMap">
 		SELECT
 			<include refid="TopicColumnSql" /> 
-		FROM MB_TOPIC
+		FROM MB_TOPIC TP
 		WHERE 1=1
 			<if test="uid != null and ! uid.isEmpty()">
 				AND UID = #{uid}
@@ -134,147 +150,107 @@
 			</if>
 	</select>
 	
-	<select id="listTopic2" parameterType="map" resultMap="TopicResultMap">
-	    SELECT
-	        TP.TOPIC_NO
-	        , TP.OWNER_NO
-	        , TP.EXTERNAL
-	        , TP.UID
-	        , TP.NAME
-	        , TP.DESCRIPTION
-	        , TP.IMOGI
-	        , TP.COLOR
-	        , USR.UID AS USER_UID
-	        , USR.NICKNAME 
-	        , USR.PROFILE_IMG_PATH
-	        , (COUNT(MYFL.USER_NO) > 0) AS FLOW
-	        , COUNT(DISTINCT ALLFL.USER_NO) AS FLOW_COUNT
-	        , COUNT(DISTINCT MB.FRAGMENT_NO) AS FRAGMENT_COUNT
-	    FROM MB_TOPIC TP
-	        JOIN MB_USER USR
-	            ON TP.OWNER_NO = USR.USER_NO
-	        LEFT JOIN MB_TOPIC_FOLLOW ALLFL
-	            ON ALLFL.TOPIC_NO = TP.TOPIC_NO
-	        LEFT JOIN MB_TOPIC_FOLLOW MYFL
-	            ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-	        LEFT JOIN MB_FRAGMENT MB
-	            ON MB.TOPIC_NO = TP.TOPIC_NO
-	    <where>
-	        AND TP.ENABLED = TRUE
-	        <!-- 공개/비공개 노출 정책 -->
-	        <choose>
-	            <!-- 비로그인: 공개만 -->
-	            <when test="userNo == 0">
-	                AND TP.EXTERNAL = TRUE
-	            </when>
-	
-	            <!-- 로그인: 공개 + (비공개지만 내가 팔로우한 토픽) -->
-	            <otherwise>
-	                AND (
-	                       TP.EXTERNAL = TRUE
-	                    OR (TP.EXTERNAL = FALSE AND MYFL.USER_NO IS NOT NULL)
-	                )
-	            </otherwise>
-	        </choose>
-	        
-	        <if test="keyword != null and ! keyword.isEmpty() ">
-	            AND ( 
-	                TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
-	                OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
-	            )
-	        </if>
-	    </where>
-	    GROUP BY
-	        TP.TOPIC_NO
-	        , TP.OWNER_NO
-	        , TP.EXTERNAL
-	        , TP.UID
-	        , TP.NAME
-	        , TP.DESCRIPTION
-	        , TP.IMOGI
-	        , TP.COLOR
-	        , USR.NICKNAME
-	        , USR.PROFILE_IMG_PATH
-	    ORDER BY
-	    <choose>
-	        <when test="sortType == 'trending'">
-	            COUNT(DISTINCT ALLFL.USER_NO) DESC
-	            , COUNT(DISTINCT MB.FRAGMENT_NO) DESC
-	            , TP.TOPIC_NO DESC
-	        </when>
-	        <otherwise>
-	            TP.TOPIC_NO DESC
-	        </otherwise>
-	    </choose>
-	    LIMIT 3 OFFSET (#{page} - 1) * 3
-	</select>
+	<resultMap id="TopicResultMap" type="com.utime.memoBom.board.vo.query.TopicResultVo">
+        <result property="uid" column="UID" />
+        <result property="name" column="NAME" />
+        <result property="description" column="DESCRIPTION" />
+        <result property="color" column="COLOR" />
+        <result property="external" column="EXTERNAL" />
+        <result property="emotion" column="EMOTION" />
+        <result property="comments" column="COMMENTS" />
+        <result property="maxLen" column="MAX_LEN" />
+        <result property="imogi" column="IMOGI" />
+        <result property="emojiSetType" column="EMOJI_SET_TYPE" 
+            typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
+        <result property="flow" column="FLOW" />
+        <result property="flowCount" column="FLOW_COUNT" />
+        <result property="fragmentCount" column="FRAGMENT_COUNT" />
+         
+		<association property="user" javaType="com.utime.memoBom.user.vo.query.BasicUserVo">
+            <result property="uid" column="USER_UID" />
+            <result property="nickname" column="NICKNAME" />
+            <result property="profileUrl" column="PROFILE_IMG_PATH" />
+        </association>
+    </resultMap>
 	
 	<select id="listTopic" parameterType="map" resultMap="TopicResultMap">
 		SELECT
-			  TP.TOPIC_NO
-			, TP.OWNER_NO
-			, TP.EXTERNAL
-			, TP.UID
-			, TP.NAME
-			, TP.DESCRIPTION
-			, TP.IMOGI
-			, TP.COLOR
-			
-			, USR.UID AS USER_UID
-			, USR.NICKNAME
-			, USR.PROFILE_IMG_PATH
-			
-			, (MYFL.USER_NO IS NOT NULL) AS FLOW
-			
-			, COALESCE(ST.FOLLOW_COUNT, 0)   AS FLOW_COUNT
-			, COALESCE(ST.FRAGMENT_COUNT, 0) AS FRAGMENT_COUNT
-			
+		      TP.TOPIC_NO
+		    , TP.OWNER_NO
+		    , TP.EXTERNAL
+		    , TP.UID
+		    , TP.NAME
+		    , TP.DESCRIPTION
+		    , TP.IMOGI
+		    , TP.COLOR
+		    , TP.EMOTION
+		    , TP.COMMENTS
+		    , TP.MAX_LEN
+		    , TP.ENABLED
+		    , TP.EMOJI_SET_TYPE
+		
+		    , USR.UID AS USER_UID
+		    , USR.NICKNAME
+		    , USR.PROFILE_IMG_PATH
+		
+		    , (MYFL.USER_NO IS NOT NULL) AS FLOW
+		
+		    , COALESCE(ST.FOLLOW_COUNT, 0)   AS FLOW_COUNT
+		    , COALESCE(ST.FRAGMENT_COUNT, 0) AS FRAGMENT_COUNT
+		
 		FROM MB_TOPIC TP
-			JOIN MB_USER USR
-				ON TP.OWNER_NO = USR.USER_NO
-			
-			LEFT JOIN MB_TOPIC_FOLLOW MYFL
-				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
-			
-			LEFT JOIN MB_TOPIC_STATS ST
-				ON ST.TOPIC_NO = TP.TOPIC_NO
-			
-		WHERE 1=1
-			AND TP.ENABLED = TRUE
-			
-			<!-- 공개/비공개 노출 정책 -->
-			<choose>
-			  <when test="userNo == 0">
-				AND TP.EXTERNAL = TRUE
-			  </when>
-			  <otherwise>
-				AND (
-					   TP.EXTERNAL = TRUE
-					OR (TP.EXTERNAL = FALSE AND MYFL.USER_NO IS NOT NULL)
-				)
-			  </otherwise>
-			</choose>
-			
-			<if test="keyword != null and !keyword.isEmpty()">
-			  AND (
-				   TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
-				OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
-			  )
-			</if>
-			
-		ORDER BY
-			<choose>
-			<when test="sortType ==  @com.utime.memoBom.board.vo.ETopicSortType@trending">
-			  COALESCE(ST.FOLLOW_COUNT, 0) DESC
-			  , COALESCE(ST.FRAGMENT_COUNT, 0) DESC
-			  , TP.TOPIC_NO DESC
-			</when>
-			<otherwise>
-			  TP.TOPIC_NO DESC
-			</otherwise>
-			</choose>
-		LIMIT 3 OFFSET (#{page} - 1) * 3
-</select>
+		    JOIN MB_USER USR
+		        ON TP.OWNER_NO = USR.USER_NO
+		
+		    <!-- ✅ 현재 로그인 사용자: UID로 USER_NO 매핑 -->
+		    LEFT JOIN MB_USER ME
+		        ON ME.UID = #{user.uid}
+		
+		    <!-- ✅ follow 판단은 ME.USER_NO로 -->
+		    LEFT JOIN MB_TOPIC_FOLLOW MYFL
+		        ON MYFL.TOPIC_NO = TP.TOPIC_NO
+		       AND MYFL.USER_NO  = ME.USER_NO
+		
+		    LEFT JOIN MB_TOPIC_STATS ST
+		        ON ST.TOPIC_NO = TP.TOPIC_NO
+		
+		WHERE
+		    TP.ENABLED = TRUE
+		
+		    <!-- 기본은 공개 토픽만. 단, 로그인 유저가 follow 한 토픽이면 비공개도 노출 -->
+		    AND (
+		        TP.EXTERNAL = TRUE
+		        <if test="user != null">
+		            OR MYFL.USER_NO IS NOT NULL
+		        </if>
+		    )
+		
+		    <!-- 검색 -->
+		    <if test="keyword != null and keyword != ''">
+		        AND TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+		    </if>
+		
+		<choose>
+		    <when test="sortType != null and sortType.name() == 'fresh'">
+		        ORDER BY TP.REG_DATE DESC, TP.TOPIC_NO DESC
+		    </when>
+		
+		    <when test="sortType != null and sortType.name() == 'trending'">
+		        ORDER BY COALESCE(ST.FRAGMENT_COUNT, 0) DESC,
+		                 COALESCE(ST.FOLLOW_COUNT, 0) DESC,
+		                 TP.REG_DATE DESC,
+		                 TP.TOPIC_NO DESC
+		    </when>
+		
+		    <otherwise>
+		        ORDER BY TP.REG_DATE DESC, TP.TOPIC_NO DESC
+		    </otherwise>
+		</choose>
+		
+		LIMIT 5 OFFSET ((#{page} - 1) * 5)
+	</select>
+
+
 
 
 	
@@ -316,15 +292,9 @@
     </select>
     
     <!--사용자의 보유 Topic 목록-->
-    <select id="loadUserTopicList" resultMap="TopicResultMap">
+    <select id="loadUserTopicList" resultMap="TopicMap">
     	SELECT
-	        TP.TOPIC_NO
-	        , TP.OWNER_NO
-	        , TP.EXTERNAL
-	        , TP.UID
-	        , TP.NAME
-	        , TP.IMOGI
-	        , TP.COLOR
+	        <include refid="TopicColumnSql" /> 
 	    FROM MB_TOPIC TP
 	        JOIN MB_USER USR
 	            ON TP.OWNER_NO = USR.USER_NO
@@ -338,7 +308,7 @@
     
     <!-- topic 통계 정보 생성 -->
     <insert id="insertTopicStats" parameterType="map">
-    	INSERT INTO MB_TOPIC_STATS (TOPIC_NO) VALUES (#{topicNo})
+    	INSERT INTO MB_TOPIC_STATS ( TOPIC_NO ) VALUES ( #{topicNo} )
     </insert>
     
     <!-- topic 팔로우 수 증가 -->
@@ -408,4 +378,23 @@
 		VALUES (SRC.TOPIC_NO, SRC.FOLLOW_COUNT, SRC.FRAGMENT_COUNT, SRC.COMMENT_COUNT, SRC.LAST_FRAGMENT_AT, CURRENT_TIMESTAMP)
 	</update>    	
 
+	<select id="loadTopicFromUid" parameterType="map" resultMap="TopicMap">
+		SELECT
+		    <include refid="TopicColumnSql" /> 
+		FROM MB_TOPIC TP
+		    JOIN MB_USER USR
+		        ON TP.OWNER_NO = USR.USER_NO
+		
+		    LEFT JOIN MB_TOPIC_FOLLOW MYFL
+		        ON MYFL.TOPIC_NO = TP.TOPIC_NO
+		       AND MYFL.USER_NO  = #{user.userNo}
+		WHERE 1=1
+		    AND TP.UID = #{uid}
+		    AND TP.ENABLED = TRUE
+		    AND (
+		        TP.EXTERNAL = TRUE
+		        OR TP.OWNER_NO = #{user.userNo}
+		        OR MYFL.USER_NO IS NOT NULL
+		    )
+	</select>
 </mapper>

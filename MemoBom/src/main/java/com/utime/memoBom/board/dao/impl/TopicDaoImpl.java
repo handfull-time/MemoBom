@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.TopicResultVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
-import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ class TopicDaoImpl implements TopicDao{
 	final TopicMapper topicMapper;
 
 	@Override
-	public boolean hasTopic(UserVo user) {
+	public boolean hasTopic(LoginUser user) {
 		
 		return topicMapper.hasTopic(user);
 	}
@@ -36,24 +36,23 @@ class TopicDaoImpl implements TopicDao{
 	}
 
 	@Override
-	public boolean checkSameName(String name) {
+	public boolean checkSameName(String uid, String name) {
 		
-		return topicMapper.checkSameName(name);
+		return topicMapper.checkSameName(uid, name);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int saveTopic(UserVo user, TopicReqVo reqVo) throws Exception {
+	public int saveTopic(TopicVo topic) throws Exception {
 		
 		int result = 0;
 		
-		if( AppUtils.isEmpty( reqVo.getUid() ) ) {
-			reqVo.setOwnerNo(user.getUserNo());
-			result += topicMapper.insertTopic(reqVo);
-			result += topicMapper.insertTopicFlow(user.getUserNo(), reqVo.getTopicNo());
-			result += topicMapper.insertTopicStats(reqVo.getTopicNo());
+		if( AppUtils.isEmpty( topic.getUid() ) ) {
+			result += topicMapper.insertTopic(topic);
+			result += topicMapper.insertTopicFlow(topic.getOwnerNo(), topic.getTopicNo());
+			result += topicMapper.insertTopicStats(topic.getTopicNo());
 		}else {
-			result += topicMapper.updateTopic(reqVo);
+			result += topicMapper.updateTopic(topic);
 		}
 		
 		return result;
@@ -72,10 +71,9 @@ class TopicDaoImpl implements TopicDao{
 	}
 	
 	@Override
-	public List<TopicVo> listTopic(UserVo user, ETopicSortType sortType, int page, String keyword) {
+	public List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword) {
 		
-		final List<TopicVo> result;
-		final long userNo = user == null ? 0 : user.getUserNo();
+		final List<TopicResultVo> result;
 		
 		if( !AppUtils.isEmpty(keyword) ) {
 			keyword = keyword.trim();
@@ -83,27 +81,33 @@ class TopicDaoImpl implements TopicDao{
 			keyword = null;
 		}
 		
-		result = topicMapper.listTopic(userNo, keyword, page, sortType);
+		result = topicMapper.listTopic(user, keyword, page, sortType);
 		
 		return result;
 	}
 	
 	@Override
+	public TopicVo loadTopic(LoginUser user, String topicUid) {
+		
+		return topicMapper.loadTopicFromUid(user, topicUid);
+	}
+	
+	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int flow(UserVo user, TopicVo reqVo) throws Exception{
+	public int flow(LoginUser user, String uid) throws Exception{
 		
 		int result = -1;
 		
-		final long topicNo = topicMapper.selectTopicNoByUid( reqVo.getUid() );
+		final long topicNo = topicMapper.selectTopicNoByUid( uid );
 		if( topicNo <= 0L ) {
 			return result;
 		}
 		
-		if( topicMapper.isTopicFollowed( user.getUserNo(), topicNo ) ) {
-			result = topicMapper.deleteTopicFlow( user.getUserNo(), topicNo );
+		if( topicMapper.isTopicFollowed( user.userNo(), topicNo ) ) {
+			result = topicMapper.deleteTopicFlow( user.userNo(), topicNo );
 			result += topicMapper.decreaseTopicStatsFollowCount( topicNo );
 		}else {
-			result = topicMapper.insertTopicFlow( user.getUserNo(), topicNo );
+			result = topicMapper.insertTopicFlow( user.userNo(), topicNo );
 			result += topicMapper.updateTopicStatsFollowCount( topicNo );
 		}
 		
@@ -111,8 +115,8 @@ class TopicDaoImpl implements TopicDao{
 	}
 	
 	@Override
-	public List<TopicVo> loadUserTopicList(UserVo user) {
+	public List<TopicVo> loadUserTopicList(LoginUser user) {
 		
-		return topicMapper.loadUserTopicList(user);
+		return topicMapper.loadUserTopicList(user.userNo());
 	}
 }

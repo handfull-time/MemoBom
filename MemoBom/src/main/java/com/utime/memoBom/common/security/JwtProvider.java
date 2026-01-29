@@ -1,4 +1,4 @@
-package com.utime.memoBom.common.jwt;
+package com.utime.memoBom.common.security;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -40,20 +40,21 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtProvider {
 
-    private static final long ONE_SECOND = 1000L;
-    private static final long ACCESS_EXP_MS  = 60L * 60L * ONE_SECOND;       // 60분
-    private static final long REFRESH_EXP_MS = 14L * 24L * 60L * 60L * ONE_SECOND; // 14일
+    private final long ONE_SECOND = 1000L;
+    private final long CACHE_EXP_MS  = 15L * 60L * ONE_SECOND;       // 15분
+    private final long ACCESS_EXP_MS  = 60L * 60L * ONE_SECOND;       // 60분
+    private final long REFRESH_EXP_MS = 30L * 24L * 60L * 60L * ONE_SECOND; // 30일
 
-    private static final String COOKIE_ACCESS  = "accessToken";
-    private static final String COOKIE_REFRESH = "refreshToken";
+    private final String COOKIE_ACCESS  = "accessToken";
+    private final String COOKIE_REFRESH = "refreshToken";
 
-    private static final String CLM_IP     = "ReqIp";
-    private static final String CLM_AGENT  = "ReqAgent";
-    private static final String CLM_USERNO = "userNo";
-    private static final String CLM_SID    = "sid";
-    private static final String CLM_PROVIDER = "provider";
+    private final String CLM_IP     = "ReqIp";
+    private final String CLM_AGENT  = "ReqAgent";
+    private final String CLM_USERNO = "userNo";
+    private final String CLM_SID    = "sid";
+    private final String CLM_PROVIDER = "provider";
     
-	final CacheIntervalMap<String, UserVo> intervalMap = new CacheIntervalMap<>(ACCESS_EXP_MS, TimeUnit.MILLISECONDS);
+    private final CacheIntervalMap<String, UserVo> intervalMap = new CacheIntervalMap<>(CACHE_EXP_MS, TimeUnit.MILLISECONDS);
 
     @Value("${jwt.secret}")
     private String secret;

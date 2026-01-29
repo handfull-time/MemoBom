@@ -1,8 +1,8 @@
 package com.utime.memoBom.user.service;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.ReqUniqueVo;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +23,6 @@ public interface AuthService {
 	 * @param user
 	 * @return
 	 */
-	ReturnBasic logout(HttpServletRequest request, HttpServletResponse response, UserVo user);
+	ReturnBasic logout(HttpServletRequest request, HttpServletResponse response, LoginUser user);
 
 }

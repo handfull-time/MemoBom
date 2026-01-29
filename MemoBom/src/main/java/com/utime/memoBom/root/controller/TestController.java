@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
-import com.utime.memoBom.common.jwt.JwtProvider;
+import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;

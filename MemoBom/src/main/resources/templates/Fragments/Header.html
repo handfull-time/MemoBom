@@ -62,10 +62,16 @@
 
 			<div class="shrink-0 flex items-center">
 				<!-- Left button -->
-				<button type="button" aria-label="left" onclick="functionLeft()"
+				<!-- <button type="button" aria-label="left" onclick="functionLeft()"
 					class="shrink-0 w-10 h-10 flex items-center justify-center text-2xl leading-none">
 					[[${leftTitle}]]
+				</button> -->
+				<button type="button" aria-label="left" onclick="functionLeft()"
+					class="shrink-0 w-10 h-10 flex items-center justify-center">
+
+					<th:block th:if="${leftTitle != null}" th:replace="${leftTitle}"></th:block>
 				</button>
+
 
 				<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 1칸 = w-10 -->
 				<div data-role="left-spacer" class="w-10"></div>
@@ -74,8 +80,14 @@
 			<div class="flex-1 min-w-0">
 				<!-- Title -->
 				<h1 id="headerTitle" data-role="title"
-					class="text-center text-base font-semibold leading-none truncate">
-					[[${title}]]
+					class="text-center flex items-center justify-center truncate">
+
+					<span th:if="${#strings.startsWith(title, '/')}">
+						<img th:src="@{${title}}" class="h-6" />
+					</span>
+					<span th:unless="${#strings.startsWith(title, '/')}">
+						[[${title}]]
+					</span>
 				</h1>
 
 				<!-- Search overlay (shown when searching) -->
@@ -97,10 +109,16 @@
 					class="w-10 h-10 flex items-center justify-center text-sx leading-none">
 					🔍
 				</button>
-				<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
+				<!-- <button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
 					class="w-10 h-10 flex items-center justify-center text-2xl leading-none">
 					[[${rightTitle}]]
+				</button> -->
+				<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
+					class="w-10 h-10 flex items-center justify-center">
+
+					<th:block th:if="${rightTitle != null}" th:replace="${rightTitle}"></th:block>
 				</button>
+
 			</div>
 		</div>
 

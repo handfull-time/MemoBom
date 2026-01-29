@@ -219,7 +219,7 @@
 				const data = await apiPost(url, sendObj);
 
 				if (!data) {
-					showGlobal("err", "저장 실패");
+					showToast("에러", "저장중 오류 발생했습니다.", ToastType.ERROR, 1800);
 					return;
 				}
 
@@ -227,10 +227,12 @@
 					await alertP("The new fragment has been saved.");
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {
-					showGlobal("err", data.message || "저장 실패");
+					console.info( data );
+					showToast("오류", data.message, ToastType.WARNING, 1800);
 				}
 			} catch (e) {
-				showGlobal("err", "저장 중 오류가 발생했습니다.");
+				console.error( e );
+				showToast("에러", e.message, ToastType.ERROR, 1800);
 			} finally {
 				// btnSave가 없는 화면도 있을 수 있어 안전하게 처리
 				if (typeof btnSave !== 'undefined' && btnSave) btnSave.disabled = false;

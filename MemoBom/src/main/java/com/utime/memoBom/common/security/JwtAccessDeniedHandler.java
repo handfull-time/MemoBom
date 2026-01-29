@@ -1,4 +1,4 @@
-package com.utime.memoBom.common.jwt;
+package com.utime.memoBom.common.security;
 
 import java.io.IOException;
 import java.net.URLEncoder;

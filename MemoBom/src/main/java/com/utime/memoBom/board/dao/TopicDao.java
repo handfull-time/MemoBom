@@ -3,9 +3,9 @@ package com.utime.memoBom.board.dao;
 import java.util.List;
 
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.board.vo.query.TopicResultVo;
+import com.utime.memoBom.common.security.LoginUser;
 
 public interface TopicDao {
 	
@@ -14,22 +14,22 @@ public interface TopicDao {
 	 * @param user
 	 * @return true:있다. flase:없다.
 	 */
-	boolean hasTopic(UserVo user);
+	boolean hasTopic(LoginUser user);
 
 	/**
 	 * 동일 이름 있는지 검사.
+	 * @param uid 기존 것은 피하기 위해
 	 * @param name
 	 * @return
 	 */
-	boolean checkSameName(String name);
+	boolean checkSameName(String uid, String name);
 
 	/**
 	 * topic 저장
-	 * @param user
-	 * @param reqVo
+	 * @param topic
 	 * @return
 	 */
-	int saveTopic(UserVo user, TopicReqVo reqVo) throws Exception;
+	int saveTopic(TopicVo topic) throws Exception;
 
 	/**
 	 * topic 읽기
@@ -51,7 +51,7 @@ public interface TopicDao {
 	 * @param page 1부터 시작
 	 * @return
 	 */
-	List<TopicVo> listTopic(UserVo user, ETopicSortType sortType, int page, String keyword );
+	List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword );
 
 	/**
 	 * Topic이 하나도 없나?
@@ -62,16 +62,24 @@ public interface TopicDao {
 	/**
 	 * 토픽 flow 저장
 	 * @param user
-	 * @param reqVo
+	 * @param uid
 	 * @return
 	 */
-	int flow(UserVo user, TopicVo reqVo) throws Exception;
+	int flow(LoginUser user, String uid) throws Exception;
 	
 	/**
 	 * 사용자의 보유 Topic 목록
 	 * @param user
 	 * @return
 	 */
-	List<TopicVo> loadUserTopicList(UserVo user);
+	List<TopicVo> loadUserTopicList(LoginUser user);
+
+	/**
+	 * 토픽 조회
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	TopicVo loadTopic(LoginUser user, String topicUid);
 
 }

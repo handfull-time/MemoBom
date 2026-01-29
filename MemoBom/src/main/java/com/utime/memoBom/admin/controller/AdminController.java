@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.admin.service.AdminService;
+import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
-import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;

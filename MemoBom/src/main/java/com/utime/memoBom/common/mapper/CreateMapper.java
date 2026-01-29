@@ -87,4 +87,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createHoliday();
+	
+	/**
+	 * 알람 테이블 생성
+	 * @return
+	 */
+	int createAlarm();
 }

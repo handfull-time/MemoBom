@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
@@ -28,7 +29,7 @@ public class MyController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String myMain( UserVo user ) {
+    public String myMain( LoginUser user ) {
 		
 		if( user == null ) {
 			return "redirect:/Auth/Login.html";
@@ -38,17 +39,17 @@ public class MyController {
 	}
 	
 	@GetMapping(path = "Alarm.html")
-    public String myAlarm(Model model) {
+    public String myAlarm(Model model, LoginUser user ) {
 		return "My/MyAlarm";
     }
 	
 	@GetMapping(path = "Fragments.html")
-    public String myFragments(Model model) {
+    public String myFragments(Model model, LoginUser user ) {
 		return "My/MyFragments";
     }
 	
 	@GetMapping(path = "Mosaic.html")
-    public String myMosaic(Model model) {
+    public String myMosaic(Model model, LoginUser user ) {
 		return "My/MyMosaic";
     }
 	
@@ -59,7 +60,7 @@ public class MyController {
 	
 	@ResponseBody
 	@GetMapping(path = "MyCalendar.json")
-    public ReturnBasic myCalendar( UserVo user, @RequestParam String date ) {
+    public ReturnBasic myCalendar( LoginUser user , @RequestParam String date ) {
 		
 		return userService.getMyWriteDataList( user, date );
     }

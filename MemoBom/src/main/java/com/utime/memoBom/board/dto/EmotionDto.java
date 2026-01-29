@@ -1,9 +1,13 @@
-package com.utime.memoBom.board.vo;
+package com.utime.memoBom.board.dto;
+
+import com.utime.memoBom.board.vo.EEmotionCode;
+import com.utime.memoBom.board.vo.EEmotionTargetType;
+import com.utime.memoBom.board.vo.EmojiSetType;
 
 import lombok.Data;
 
 @Data
-public class EmotionReqVo {
+public class EmotionDto {
 	/**  uid */
 	String uid;
 	/** 감정 상태 */

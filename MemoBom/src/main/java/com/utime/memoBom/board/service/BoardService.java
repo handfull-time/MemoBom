@@ -1,14 +1,15 @@
 package com.utime.memoBom.board.service;
 
-import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.dto.BoardReqDto;
+import com.utime.memoBom.board.dto.EmotionDto;
+import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
-import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,14 +21,14 @@ public interface BoardService {
 	 * @param request
 	 * @return
 	 */
-	String createKey(HttpServletRequest request, UserVo user);
+	String createKey(HttpServletRequest request, LoginUser user);
 	
 	/**
 	 * Fragment(편린) 저장
 	 * @param reqVo
 	 * @return
 	 */
-	ReturnBasic saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo);
+	ReturnBasic saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo);
 
 	/**
 	 * 목록 갖고 오기
@@ -35,7 +36,7 @@ public interface BoardService {
 	 * @param reqVo
 	 * @return
 	 */
-	ReturnBasic loadFragmentList(UserVo user, FragmentListReqVO reqVo);
+	FragmentListDto loadFragmentList(LoginUser user, FragmentListReqVO reqVo);
 
 	/**
 	 * 뎃글 목록 얻기
@@ -44,7 +45,7 @@ public interface BoardService {
 	 * @param pageNo
 	 * @return
 	 */
-	ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType);
+	ReturnBasic loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
 	 * 스크랩 처리
@@ -52,7 +53,7 @@ public interface BoardService {
 	 * @param fragmentUid
 	 * @return
 	 */
-	ReturnBasic procScrap(UserVo user, String fragmentUid);
+	ReturnBasic procScrap(LoginUser user, String fragmentUid);
 
 	/**
 	 * 감정 처리
@@ -60,7 +61,7 @@ public interface BoardService {
 	 * @param emotionReqVo
 	 * @return
 	 */
-	ReturnBasic procEmotion(UserVo user, EmotionReqVo emotionReqVo);
+	ReturnBasic procEmotion(LoginUser user, EmotionDto emotionReqVo);
 
 	/**
 	 * 공유 정보 로드
@@ -68,7 +69,7 @@ public interface BoardService {
 	 * @param uid
 	 * @return
 	 */
-	ShareVo loadShareInfo(UserVo user, String uid)throws Exception;
+	ShareVo loadShareInfo(LoginUser user, String uid)throws Exception;
 
 	/**
 	 * 댓글 저장
@@ -76,6 +77,6 @@ public interface BoardService {
 	 * @param reqVo
 	 * @return
 	 */
-	ReturnBasic saveComment(UserVo user, CommentReqVo reqVo);
+	ReturnBasic saveComment(LoginUser user, CommentReqVo reqVo);
 
 }

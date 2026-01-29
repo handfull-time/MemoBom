@@ -156,4 +156,14 @@
 		ORDER BY X.REG_DATE ASC
 	</select>
 	
+	<!--단순 사용자 정보 조회-->
+	<select id="getBasicUserFromUserNo" parameterType="long" resultType="com.utime.memoBom.user.vo.query.BasicUserVo">
+		SELECT 
+			UID AS "uid"
+			, NICKNAME AS "nickname"
+			, PROFILE_IMG_PATH AS "profileUrl"
+		FROM MB_USER
+		WHERE USER_NO = #{userNo} AND ENABLED = TRUE
+	</select>
+
 </mapper>

@@ -1,8 +1,7 @@
-package com.utime.memoBom.common.jwt;
+package com.utime.memoBom.common.security;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -66,21 +64,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	filterChain.doFilter(request, response);
     }
     
-    private String rolePrefix = "ROLE_";
+//    private String rolePrefix = "ROLE_";
     
     /**
      * SecurityContext에 사용자 정보 저장
      * @param token
      */
     private void authenticateUser(UserVo user) {
-    	
-        if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            log.info("Setting Authentication for user: {}", user.getId());
-            
-            final Authentication authToken = new UsernamePasswordAuthenticationToken(user, null,
-                    Collections.singleton( new SimpleGrantedAuthority(rolePrefix + user.getRole().name()) ));
-            
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        if (user == null) return;
+
+        // 이미 인증 정보가 있으면 덮어쓰지 않음
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            return;
         }
+
+        final CustomUserDetails principal = CustomUserDetails.from(user);
+        if (principal == null) return;
+
+        log.info("Setting Authentication for userNo: {}", principal.getUserNo());
+
+        final Authentication authToken = new UsernamePasswordAuthenticationToken(
+                principal,
+                null,
+                principal.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }

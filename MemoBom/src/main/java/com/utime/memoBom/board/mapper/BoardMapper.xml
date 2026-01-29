@@ -147,11 +147,11 @@
 	    FROM MB_FRAGMENT f
 		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
 		    INNER JOIN MB_TOPIC t ON f.TOPIC_NO = t.TOPIC_NO
-	
+		    
 		    <if test="user != null">
 		        LEFT JOIN MB_FRAGMENT_SCRAP s
 		               ON s.FRAGMENT_NO = f.FRAGMENT_NO
-		              AND s.USER_NO     = #{user.userNo}
+		              AND s.USER_NO = #{user.userNo}
 		    </if>
 		    
 	    WHERE 1=1
@@ -186,6 +186,11 @@
 	        AND t.UID = #{req.topicUid}
 	      </if>
 	
+	      <!-- 검색 조건: fragment uid -->
+	      <if test="req.fragUid != null and !req.fragUid.isEmpty() ">
+	        AND f.UID = #{req.fragUid}
+	      </if>
+	
 	      <!-- 검색 조건: 댓글 uid (그 댓글이 달린 글만) -->
 	      <if test="req.cmtUid != null and !req.cmtUid.isEmpty() ">
 	        AND EXISTS (
@@ -198,13 +203,12 @@
 	      </if>
 	
 	      <!-- 검색 조건: 키워드 (CLOB 대응 위해 CAST) -->
-	      <if test="keyword != null and !keyword.isEmpty() ">
+	      <if test="req.keyword != null and !req.keyword.isEmpty() ">
 			AND (
-			     f.CONTENT LIKE CONCAT('%', #{keyword}, '%')
-			     OR t.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+			     f.CONTENT LIKE CONCAT('%', #{req.keyword}, '%')
+			     OR t.NAME_UPPER LIKE CONCAT('%', UPPER(#{req.keyword}), '%')
 			)
 			</if>
-
 	
 	      <!-- 검색 조건: 해시태그 -->
 	      <if test="req.hashtag != null and !req.hashtag.isEmpty() ">
@@ -409,7 +413,7 @@
                 SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{uid}
             )
         ORDER BY c.COMMENT_NO DESC
-        LIMIT 10 OFFSET (#{pageNo} - 1) * 10
+        LIMIT 7 OFFSET (#{pageNo} - 1) * 7
     </select>
 
 </mapper>

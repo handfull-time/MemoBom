@@ -1,19 +1,14 @@
-package com.utime.memoBom.board.vo;
+package com.utime.memoBom.board.vo.query;
+
+import com.utime.memoBom.board.vo.EmojiSetType;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import lombok.Data;
 
 @Data
-public class TopicReqVo {
-	/** 검증 키 */
-	String seal;
-	/** 고유번호 */
-	long topicNo = -1L;
+public class TopicResultVo {
 	/** 고유 id */
 	String uid;
-	/** 소유자 번호 */
-	long ownerNo;
-	/** 사용 여부 */
-	boolean enabled = true;
 	/** 이름 */
 	String name;
 	/** 설명 */
@@ -32,4 +27,12 @@ public class TopicReqVo {
 	String imogi;
 	/** 이모지 세트 타입*/
 	EmojiSetType emojiSetType = EmojiSetType.EMOTION;
+	/** 팔로우 여부 */
+	boolean flow;
+	/** 팔로우 수 */
+	int flowCount;
+	/** 게시글 수 */
+	int fragmentCount;
+	/** 소유자 정보 */
+	BasicUserVo user;
 }

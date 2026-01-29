@@ -1,18 +1,22 @@
 package com.utime.memoBom.board.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
+import com.utime.memoBom.board.dto.TopicDto;
+import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.dao.UserDao;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 class TopicServiceImpl implements TopicService {
 
 	final TopicDao topicDao;
+	final UserDao userDao;
 	final KeyValueDao keyValueDao;
 	
 	@Override
-	public String createKey(HttpServletRequest request, UserVo user) {
+	public String createKey(HttpServletRequest request, LoginUser user) {
 
 		return KeyUtil.createKey(keyValueDao, request, user);
 	}
 
 	@Override
-	public boolean hasTopic(UserVo user) {
+	public boolean hasTopic(LoginUser user) {
 		
 		return topicDao.hasTopic(user);
 	}
@@ -44,11 +49,11 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public ReturnBasic checkSameName(String name) {
+	public ReturnBasic checkSameName(String uid, String name) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		if( topicDao.checkSameName(name) ) {
+		if( topicDao.checkSameName(uid, name) ) {
 			result.setCodeMessage("E", "There is already a name.");
 		}
 		
@@ -56,12 +61,34 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public ReturnBasic saveTopic(UserVo user, TopicReqVo reqVo) {
+	public ReturnBasic saveTopic(LoginUser user, TopicSaveDto reqVo) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
+		if( topicDao.checkSameName(reqVo.getUid(),  reqVo.getName()) ) {
+			result.setCodeMessage("E", "There is already a name.");
+			return result;
+		}
+		
+		final TopicVo topic = new TopicVo();
+		topic.setName( reqVo.getName().trim() );
+		topic.setUid( reqVo.getUid() );
+		topic.setDescription( reqVo.getDescription() );
+		topic.setColor(reqVo.getColor() );
+		topic.setExternal( reqVo.isExternal() );
+		topic.setImogi( reqVo.getImogi() );
+		topic.setEmojiSetType( reqVo.getEmojiSetType() );
+		topic.setEmotion( reqVo.isEmotion() );
+		topic.setAi( reqVo.isAi() );
+		topic.setPrompt( reqVo.getPrompt() );
+		topic.setMaxLen( reqVo.getMaxLen() );
+		
+		if( AppUtils.isEmpty(topic.getUid()) ) {
+			topic.setOwnerNo( user.userNo() );
+		}
+		
 		try {
-			topicDao.saveTopic(user, reqVo);
+			topicDao.saveTopic(topic);
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
@@ -70,18 +97,48 @@ class TopicServiceImpl implements TopicService {
 		return result;
 	}
 	
+	/**
+	 * TopicVo -> TopicResultVo
+	 * @param topic
+	 * @return
+	 */
+	private TopicResultVo convertTopicToTopicResultVo(TopicVo topic) {
+		
+		final TopicResultVo result = new TopicResultVo();
+		result.setUid( topic.getUid() );
+		result.setName( topic.getName() );
+		result.setDescription( topic.getDescription() );
+		result.setColor( topic.getColor() );
+		result.setExternal( topic.isExternal() );
+		result.setEmotion( topic.isEmotion() );
+		result.setComments( topic.isComments() );
+		result.setMaxLen( topic.getMaxLen() );
+		result.setImogi( topic.getImogi() );
+		result.setEmojiSetType( topic.getEmojiSetType() );
+		result.setEmojiSetType( topic.getEmojiSetType() );
+		
+		result.setUser( userDao.getBasicUserFromUserNo( topic.getOwnerNo() ) );
+		
+		return result;
+	}
+	
 	@Override
-	public TopicVo loadTopic(String uid) {
+	public TopicResultVo loadTopic(String uid) {
 		
 		if( AppUtils.isEmpty(uid) ) {
 			return null;
 		} 
 		
-		return topicDao.loadTopic(uid);
+		final TopicVo topic = topicDao.loadTopic(uid);
+		if( topic == null ) {
+			return null;
+		}
+		
+		return this.convertTopicToTopicResultVo(topic);
 	}
 	
 	@Override
-	public ReturnBasic listTopic(UserVo user, ETopicSortType sortType, int page, String keyword) {
+	public ReturnBasic listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
@@ -91,12 +148,12 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public ReturnBasic flow(UserVo user, TopicVo reqVo) {
+	public ReturnBasic flow(LoginUser user, TopicDto reqVo) {
 	
 		final ReturnBasic result = new ReturnBasic();
 		
 		try {
-			int res = topicDao.flow(user, reqVo);
+			int res = topicDao.flow(user, reqVo.getUid());
 			if( res <= 0 ) {
 				result.setCodeMessage("E", "No changes were made.");
 			}
@@ -109,8 +166,16 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public List<TopicVo> loadUserTopicList(UserVo user) {
+	public List<TopicResultVo> loadUserTopicList(LoginUser user) {
 		
-		return topicDao.loadUserTopicList(user);
+		final List<TopicResultVo> result = new ArrayList<>();
+		
+		final List<TopicVo> list = topicDao.loadUserTopicList(user);
+		if( AppUtils.isNotEmpty(list)) {
+			for( TopicVo topic : list)
+			result.add( this.convertTopicToTopicResultVo(topic) );
+		}
+		
+		return result;
 	}
 }

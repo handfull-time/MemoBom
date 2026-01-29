@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.utime.memoBom.common.jwt.JwtProvider;
+import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;

@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.utime.memoBom.board.dto.TopicDto;
+import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.TopicReqVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.TopicResultVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.vo.UserVo;
@@ -35,11 +38,9 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String topicMain( HttpServletRequest request, ModelMap model, UserVo user ) {
+    public String topicMain( UserVo user ) {
 		
-		if( user == null ) {
-			return "redirect:/Auth/Login.html";
-		}else if(topicServce.isEmpty() ){
+		if(topicServce.isEmpty() && user != null ) {
 			return "redirect:/Mosaic/Ensemble.html";
 		}else {
 			return "Topic/TopicMain";
@@ -53,9 +54,9 @@ public class TopicController {
 	 */
 	@ResponseBody
 	@GetMapping("SameName.json")
-	public ReturnBasic checkSameName( @RequestParam("name")  String name ) {
+	public ReturnBasic checkSameName( TopicDto reqVo ) {
 		
-		return topicServce.checkSameName( name );
+		return topicServce.checkSameName( reqVo.getUid(), reqVo.getName() );
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Ensemble.html")
-	public String topicNew( HttpServletRequest request, ModelMap model, UserVo user ) {
+	public String topicNew( HttpServletRequest request, ModelMap model, LoginUser user ) {
 		
 		model.addAttribute("topic", new TopicVo());
 		model.addAttribute(KeySeal, topicServce.createKey(request, user));
@@ -80,9 +81,9 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Item.html")
-	public String topicItem( HttpServletRequest request, ModelMap model, UserVo user, @RequestParam("uid") String uid ) {
+	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam("uid") String uid ) {
 		
-		final TopicVo topic = topicServce.loadTopic( uid );
+		final TopicResultVo topic = topicServce.loadTopic( uid );
 		if( topic == null ) {
 			model.addAttribute("res", new ReturnBasic("E", "사라진 주제입니다.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
@@ -92,12 +93,10 @@ public class TopicController {
 		
 		model.addAttribute("topic", topic);
 		
-		
-		
 		if( uid == null ) {
 			model.addAttribute(KeySeal, topicServce.createKey(request, user));
 		}else if( user != null ) {
-			if( topic.getUser().getUid().equals(user.getUid() ) ) {
+			if( topic.getUser().getUid().equals(user.uid() ) ) {
 				model.addAttribute(KeySeal, topicServce.createKey(request, user));
 			}else {
 				model.addAttribute(KeySeal, KeySeal);
@@ -116,17 +115,17 @@ public class TopicController {
 	 */
 	@ResponseBody
 	@PostMapping("Save.json")
-	public ReturnBasic saveTopic( UserVo user, @RequestBody TopicReqVo reqVo ) {
+	public ReturnBasic saveTopic( LoginUser user, @RequestBody TopicSaveDto reqVo ) {
 		
 		return topicServce.saveTopic( user, reqVo );
 	}
 	
 	@ResponseBody
 	@GetMapping("List.json")
-	public ReturnBasic listTopic( UserVo user, 
+	public ReturnBasic listTopic( LoginUser user, 
 			@RequestParam() ETopicSortType sortType, 
-			@RequestParam(name = "page", required = false, defaultValue = "1") int page, 
-			@RequestParam(name = "keyword", required = false) String keyword ) {
+			@RequestParam(required = false, defaultValue = "1") int page, 
+			@RequestParam(required = false) String keyword ) {
 		
 		return topicServce.listTopic( user, sortType, page, keyword  );
 	}
@@ -138,11 +137,11 @@ public class TopicController {
 	 */
 	@ResponseBody
 	@GetMapping("LoadMosaic.json")
-	public ReturnBasic loadTopic( @RequestParam("uid") String uid ) {
+	public ReturnBasic loadTopic( @RequestParam() String uid ) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		TopicVo vo = topicServce.loadTopic( uid );
+		TopicResultVo vo = topicServce.loadTopic( uid );
 		if( vo == null ) {
 			result.setCodeMessage("E", "Mosaic is not found.");
 		}else {
@@ -160,13 +159,13 @@ public class TopicController {
 	 */
 	@ResponseBody
 	@PostMapping("Flow.json")
-	public ReturnBasic flow( UserVo user, @RequestBody TopicVo reqVo ) {
+	public ReturnBasic flow( LoginUser user, @RequestBody TopicDto reqVo ) {
 		
 		return topicServce.flow( user, reqVo );
 	}
 	
 	@GetMapping(path = "Mosaic.html", params = "keyword")
-    public String topicSearch( ModelMap model, UserVo user, @RequestParam("keyword") String keyword) {
+    public String topicSearch( ModelMap model, LoginUser user, @RequestParam() String keyword) {
 		model.addAttribute("keyword", keyword );
 		return "Topic/TopicMain";
     }

@@ -9,10 +9,12 @@ import com.utime.memoBom.common.vo.ReturnBasic;
 @Controller
 class LiveController  {
 	
+	final ReturnBasic liveOk = new ReturnBasic();
+	
 	@ResponseBody
 	@GetMapping("IsLive.json")
 	public ReturnBasic isLive() {
-		return new ReturnBasic();
+		return liveOk;
 	}
 
 }

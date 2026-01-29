@@ -1,7 +1,6 @@
 package com.utime.memoBom.board.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,24 +11,24 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.utime.memoBom.board.dao.BoardDao;
+import com.utime.memoBom.board.dto.BoardReqDto;
+import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.mapper.BoardMapper;
 import com.utime.memoBom.board.mapper.TopicMapper;
-import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentItem;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EEmotionCode;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmojiSets;
 import com.utime.memoBom.board.vo.EmotionItem;
-import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.UserDevice;
-import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +83,7 @@ class BoardDaoImpl implements BoardDao {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) throws Exception {
+	public int saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) throws Exception {
 
 		final FragmentVo item = new FragmentVo();
 		item.setContent(reqVo.getContent());
@@ -143,7 +142,7 @@ class BoardDaoImpl implements BoardDao {
 
 	
 	@Override
-	public List<FragmentItem> loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
+	public List<FragmentItem> loadFragmentList(LoginUser user, FragmentListReqVO reqVo) {
 		
 		final List<FragmentItem> result  = boardMapper.loadFragmentList(user, reqVo);
 		
@@ -159,9 +158,19 @@ class BoardDaoImpl implements BoardDao {
 		
 		return result;
 	}
+	
+	@Override
+	public FragmentItem loadFragment(LoginUser user, String fUid) {
+		final FragmentListReqVO reqVo = new FragmentListReqVO();
+		reqVo.setFragUid(fUid);
+		
+		final List<FragmentItem> list = boardMapper.loadFragmentList(user, reqVo);
+		
+		return ( AppUtils.isNotEmpty(list))? list.get(0):null;
+	}
 
 	@Override
-	public List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType) {
+	public List<CommentItem> loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType) {
 		
 		final List<CommentItem> result = boardMapper.loadCommentsList(uid, pageNo);
 		
@@ -182,36 +191,36 @@ class BoardDaoImpl implements BoardDao {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Boolean procScrap(UserVo user, String fragmentUid) throws Exception {
+	public Boolean procScrap(LoginUser user, String fragmentUid) throws Exception {
 		
-		final boolean exists = boardMapper.existsScrap(user.getUserNo(), fragmentUid);
+		final boolean exists = boardMapper.existsScrap(user.userNo(), fragmentUid);
 	    if (exists) {
-	    	boardMapper.deleteScrap(user.getUserNo(), fragmentUid);
+	    	boardMapper.deleteScrap(user.userNo(), fragmentUid);
 	    } else {
-	    	boardMapper.insertScrap(user.getUserNo(), fragmentUid);
+	    	boardMapper.insertScrap(user.userNo(), fragmentUid);
 	    }
 		return !exists;
 	}
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public ShareVo addShareInfo(UserVo user, String uid) throws Exception {
+	public ShareVo addShareInfo(LoginUser user, String uid) throws Exception {
 		
 		final ShareVo share = new ShareVo();
 		share.setText( boardMapper.selectFragmentContentPreview(uid) );
 		
-		boardMapper.insertShareInfo(user==null? 0:user.getUserNo(), uid);
+		boardMapper.insertShareInfo(user==null? 0:user.userNo(), uid);
 		
 		return share;
 	}
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public List<EmotionItem> procEmotion(UserVo user, EmotionReqVo emotionReqVo) throws Exception {
+	public List<EmotionItem> procEmotion(LoginUser user, EmotionDto emotionReqVo) throws Exception {
 
-		int deleted = boardMapper.deleteEmotion(user.getUserNo(), emotionReqVo);
+		int deleted = boardMapper.deleteEmotion(user.userNo(), emotionReqVo);
 		if (deleted == 0) {
-			deleted += boardMapper.upsertEmotion(user.getUserNo(), emotionReqVo);
+			deleted += boardMapper.upsertEmotion(user.userNo(), emotionReqVo);
 		}
 		
 		return BoardDaoImpl.normalizeEmotionList(
@@ -222,7 +231,7 @@ class BoardDaoImpl implements BoardDao {
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public CommentItem saveComment(UserVo user, CommentReqVo reqVo) throws Exception {
+	public CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception {
 		
 		boardMapper.insertComment(user, reqVo);
 		

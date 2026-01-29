@@ -1,6 +1,5 @@
 package com.utime.memoBom.common.resolver;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,20 +9,15 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.utime.memoBom.common.jwt.JwtProvider;
-import com.utime.memoBom.user.vo.UserVo;
-
-import jakarta.servlet.http.HttpServletRequest;
+import com.utime.memoBom.common.security.CustomUserDetails;
+import com.utime.memoBom.common.security.LoginUser;
 
 @Component("UserArgument")
 public class UserArgumentResolver implements HandlerMethodArgumentResolver{
 
-	@Autowired
-    private JwtProvider jwtProvider;
-	
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return parameter.getParameterType().equals(UserVo.class);
+		return LoginUser.class.equals(parameter.getParameterType());
 	}
 
 	@Override
@@ -31,22 +25,12 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver{
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) return null;
 
-		Object result = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserVo) {
-        	result = authentication.getPrincipal();
-        }
-        
-        if( result == null ) {
-        	
-            final HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        final Object principal = authentication.getPrincipal();
+        if (!(principal instanceof CustomUserDetails detail)) return null;
 
-            if (request != null ) {
-            	result = jwtProvider.getUserVoAccessToken(request);
-            }
-        }
-        
-        return result;
+        return new LoginUser(detail.getUserNo(), detail.getUid(), detail.getRole());
 	}
 
 }

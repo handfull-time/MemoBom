@@ -173,7 +173,8 @@ public class HolidayServiceImpl {
     		// 잡절
     		"getSundryDayInfo",
     		// 24절기
-    		"get24DivisionsInfo"};
+    		"get24DivisionsInfo"
+    	};
     
 	// 초 분 시 일 월 요일
     // 매년 1월 1일 01시 00분 00초에 실행
@@ -186,7 +187,7 @@ public class HolidayServiceImpl {
     	
     	//이미 데이터가 존재하면 패스.
     	if( holidayDao.hasHolidayList(year) ) {
-			log.info( year + "년 공휴일 정보가 이미 존재합니다.");
+			log.info( year + "년 DataIO 정보가 이미 존재합니다.");
 			return;
 		}
     	
@@ -199,7 +200,7 @@ public class HolidayServiceImpl {
     	
     	//기념일 추가. 
     	final int addCount = holidayDao.insertHolidayList( holiList );
-    	log.info( year + "년 공휴일 정보 " + addCount + "건이 추가되었습니다.");
+    	log.info( year + "년 정보 " + addCount + "건이 추가되었습니다.");
     }
     
     @PostConstruct
@@ -211,7 +212,7 @@ public class HolidayServiceImpl {
     			try {
 					runHoliday();
 				} catch (Exception e) {
-					log.error("초기 공휴일 정보 수집 중 오류 발생 {}", e.getMessage());
+					log.error("초기 DataIO 정보 수집 중 오류 발생 {}", e.getMessage());
 				}    			
     		}
     	}).start();

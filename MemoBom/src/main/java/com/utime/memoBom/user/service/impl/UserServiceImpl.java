@@ -2,6 +2,7 @@ package com.utime.memoBom.user.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
@@ -26,7 +27,7 @@ class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public ReturnBasic getMyWriteDataList(UserVo user, String date) {
+	public ReturnBasic getMyWriteDataList(LoginUser user , String date) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		

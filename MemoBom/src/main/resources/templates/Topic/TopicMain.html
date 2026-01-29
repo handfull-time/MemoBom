@@ -5,7 +5,11 @@
 <th:block layout:fragment="title">Mosaic</th:block>
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: Header_Search('🔙', 'Mosaic', '✍️')}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: Header_Search(
+			leftTitle=~{Fragments/icons :: favicon},
+			title='Mosaic', 
+			rightTitle=~{Fragments/icons :: topic_write}
+		) }"></th:block >
 </th:block>
 
 <th:block layout:fragment="content">
@@ -295,8 +299,8 @@
 	        e.stopPropagation();
 	        const uidVal = (t.uid || "").trim();
 	        if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
-	        const url = /*[[@{/Fragment/Mosaic.html}]]*/ "/Fragment/Mosaic.html";
-	        location.href = url + "?uid=" + encodeURIComponent(uidVal);
+	        const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
+	        location.href = url + "?topicUid=" + encodeURIComponent(uidVal);
 	      });
 
 	      emoji.addEventListener("click", (e) => {
@@ -310,8 +314,8 @@
 	      node.querySelector(".topic-user").addEventListener("click", (e) => {
 	        e.stopPropagation();
 	        if (!userUid) return showState("err", "사용자 UID가 없습니다.");
-	        const url = /*[[@{/Fragment/Mosaic.html}]]*/ "/Fragment/Mosaic.html";
-	        location.href = url + "?user=" + encodeURIComponent(userUid);
+	        const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
+	        location.href = url + "?userUid=" + encodeURIComponent(userUid);
 	      });
 
 	      node.querySelector(".fragment-write").addEventListener("click", (e) => {
@@ -427,11 +431,11 @@
 			
             // Mosaic 검색 처리
 			const url = /*[[@{/Mosaic/Mosaic.html}]]*/ "/Mosaic/Mosaic.html";
-			location.href = url + "?keyword=" + encodeURIComponent(keyword);
+			location.replace( url + "?keyword=" + encodeURIComponent(keyword) );
 		}
 		
 		function functionLeft(){
-			history.back();
+			location.replace(/*[[@{/}]]*/ '/');
 		}
 		
 		function functionRight(){

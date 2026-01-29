@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.util.LimitStringBuilder;
 import com.utime.memoBom.user.vo.UserVo;
@@ -95,7 +96,7 @@ class LoggingAspect {
         log.info(sb.toString());
     }
 	
-	private void requestLog(final ServletRequestAttributes attributes, String startValue, String packageName, String methodName, UserVo user, List<Object> objList ) {
+	private void requestLog(final ServletRequestAttributes attributes, String startValue, String packageName, String methodName, LoginUser user, List<Object> objList ) {
 
 		final HttpServletRequest req = attributes.getRequest();
 		String contentType = req.getContentType();
@@ -117,7 +118,7 @@ class LoggingAspect {
 		paramStrBuffer.append(UserAgent + req.getHeader(KEY_USER_AGENT) ).append(lineSepretor);
 		paramStrBuffer.append(RemoteAddress + AppUtils.getRemoteAddress(req) ).append(lineSepretor);
 		if( user != null ) {
-			paramStrBuffer.append(UserNoHeader + user.getUserNo() + " | " + user.getNickname() ).append(lineSepretor);
+			paramStrBuffer.append(UserNoHeader + user.userNo() ).append(lineSepretor);
 		}
 		
 		{
@@ -294,7 +295,7 @@ class LoggingAspect {
 		
 		// 요청 파라미터 처리
 		final List<Object> objList = new ArrayList<>();
-		UserVo user = null;
+		LoginUser user = null;
 		Model model = null;
 		final Object[] args = joinPoint.getArgs();
 		for (Object arg : args) {
@@ -309,8 +310,8 @@ class LoggingAspect {
 	        
 	        final Class<?> classValue = arg.getClass();
 	        
-	        if( user == null && classValue.equals(UserVo.class)) {
-	        	user = (UserVo)arg;
+	        if( user == null && classValue.equals(LoginUser.class)) {
+	        	user = (LoginUser)arg;
 	        	continue;
 	        }
 	        

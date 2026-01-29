@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -51,14 +52,14 @@ public class AuthenticationController {
 	 * @return
 	 */
 	@GetMapping("Login.html")
-    public String loginPage( HttpServletRequest request, ModelMap model, UserVo user,
+    public String loginPage( HttpServletRequest request, ModelMap model, LoginUser user,
     		@RequestParam(required = false) String error,
     		@RequestParam(required = false) String message,
     		@RequestParam(required = false) String returnUrl
     		) {
 		
 		if( user != null ) {
-			log.info( "이미 로그인 돼 있는 회원 {}", user.getId() );
+			log.info( "이미 로그인 돼 있는 회원 {}-{}", user.userNo(), user.uid() );
 			return "redirect:/";
 		}
 		
@@ -77,7 +78,7 @@ public class AuthenticationController {
     }
 	
 	@PostMapping("Logout.json")
-    public ReturnBasic logout( HttpServletRequest request, HttpServletResponse response, UserVo user) {
+    public ReturnBasic logout( HttpServletRequest request, HttpServletResponse response, LoginUser user) {
 		
         return authService.logout(request, response, user);
     }

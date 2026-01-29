@@ -5,9 +5,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 /**
  * 사용자 처리
@@ -58,5 +60,12 @@ public interface UserMapper {
 	 * @param date yyyyMM
 	 * @return
 	 */
-	List<MyWriterVo> selectMyWriteDataList(@Param("user")UserVo user, @Param("date")String date);
+	List<MyWriterVo> selectMyWriteDataList(@Param("user")LoginUser user, @Param("date")String date);
+	
+	/**
+	 * 단순 사용자 정보 조회
+	 * @param userNo
+	 * @return
+	 */
+	BasicUserVo getBasicUserFromUserNo(long userNo);
 }

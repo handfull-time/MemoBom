@@ -1,14 +1,314 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{My/MyLayout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{My/MyLayout}">
 
 <body>
-<th:block layout:fragment="my_content">
-	<div class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
-	  <div class="font-bold">Opensource</div>
-	  <div class="text-sm opacity-90">도움주신분들...</div>
-	</div>
-</th:block>
+	<th:block layout:fragment="my_title">오픈소스 소프트웨어 사용 고지</th:block>
+
+	<th:block layout:fragment="my_css">
+		<style>
+			h1 {
+				margin: 0 0 12px;
+				font-size: 22px;
+			}
+
+			h2 {
+				margin: 28px 0 10px;
+				font-size: 16px;
+			}
+
+			p,
+			li {
+				font-size: 14px;
+			}
+
+			.meta {
+				color: #444;
+				font-size: 13px;
+				margin-bottom: 18px;
+			}
+
+			.table-wrap {
+				width: 100%;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+				/* iOS 부드러운 스크롤 */
+			}
+
+			.table-wrap table {
+				min-width: 720px;
+				/* 모바일에서도 컬럼 깨지지 않게 */
+			}
+
+
+			table {
+				border-collapse: collapse;
+				font-size: 10px;
+			}
+
+			th,
+			td {
+				border: 1px solid #ddd;
+				padding: 10px;
+				vertical-align: top;
+			}
+
+			th {
+				background: #f6f6f6;
+				text-align: left;
+			}
+
+			code {
+				background: #f3f3f3;
+				padding: 1px 4px;
+				border-radius: 4px;
+			}
+
+			.note {
+				background: #fafafa;
+				border: 1px solid #e5e5e5;
+				padding: 12px;
+				border-radius: 8px;
+			}
+			
+			@media (max-width: 768px) {
+			  table {
+			    font-size: 12px;
+			  }
+
+			  th, td {
+			    padding: 6px;
+			  }
+			}
+
+		</style>
+	</th:block>
+	<th:block layout:fragment="my_content">
+		<div
+			class="rounded-xl p-5 text-gray-900 shadow-lg bg-gradient-to-br from-sky-500/40 via-blue-500/30 to-indigo-600/40 backdrop-blur-md ring-1 ring-sky-300/30">
+			<h1>오픈소스 소프트웨어 사용 고지</h1>
+			<div class="meta">
+				제품/서비스명: <strong>MemoBom</strong><br />
+				문서 버전: 1.0 / 최종 업데이트: <strong>[2026-01-29]</strong><br />
+				문의: <a href="mailto:utimezgd@gmail.com">utimezgd@gmail.com</a>
+			</div>
+
+			<div class="note">
+				<p>
+					본 제품/서비스는 오픈소스 소프트웨어를 포함하고 있습니다. 각 오픈소스의 저작권은 해당 권리자에게 있으며,
+					라이선스 조건(고지 유지, 라이선스 전문 제공, 소스 공개 의무 등)은 각 라이선스에 따릅니다.
+				</p>
+				<p>
+					아래 목록은 pom.xml에 명시된 <strong>직접 의존성(direct dependency)</strong>을 기준으로 작성되었습니다.
+					Spring Boot Starter 등은 전이 의존성을 포함하므로, 실제 배포물에는 추가 오픈소스가 포함될 수 있습니다.
+				</p>
+			</div>
+
+			<h2>1) 오픈소스 구성요소 목록</h2>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th style="width: 22%;">구성요소</th>
+							<th style="width: 28%;">Maven 좌표</th>
+							<th style="width: 10%;">버전</th>
+							<th style="width: 12%;">라이선스</th>
+							<th>홈페이지/라이선스</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Spring Boot (Web/JDBC/Security/Thymeleaf/WebSocket/AOP/OAuth2 Client/Devtools, Log4j2
+								Starter)</td>
+							<td><code>org.springframework.boot:spring-boot-starter-*</code></td>
+							<td>(BOM 관리)</td>
+							<td>Apache-2.0</td>
+							<td>
+								Spring Boot License:
+								https://github.com/spring-projects/spring-boot/blob/main/LICENSE.txt
+							</td>
+						</tr>
+
+						<tr>
+							<td>Spring Security</td>
+							<td><code>org.springframework.boot:spring-boot-starter-security</code></td>
+							<td>(BOM 관리)</td>
+							<td>Apache-2.0</td>
+							<td>
+								Spring Security License:
+								https://github.com/spring-projects/spring-security/blob/main/LICENSE.txt
+							</td>
+						</tr>
+
+						<tr>
+							<td>Thymeleaf</td>
+							<td><code>org.springframework.boot:spring-boot-starter-thymeleaf</code></td>
+							<td>(BOM 관리)</td>
+							<td>Apache-2.0</td>
+							<td>
+								Thymeleaf: https://www.thymeleaf.org/ (Apache License 2.0)
+							</td>
+						</tr>
+
+						<tr>
+							<td>Thymeleaf Layout Dialect</td>
+							<td><code>nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect</code></td>
+							<td>(BOM/명시없음)</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://github.com/ultraq/thymeleaf-layout-dialect (LICENSE)
+							</td>
+						</tr>
+
+						<tr>
+							<td>MyBatis Spring Boot Starter</td>
+							<td><code>org.mybatis.spring.boot:mybatis-spring-boot-starter</code></td>
+							<td>3.0.4</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://www.mybatis.org/spring-boot-starter/
+							</td>
+						</tr>
+
+						<tr>
+							<td>JJWT</td>
+							<td><code>io.jsonwebtoken:jjwt</code></td>
+							<td>0.12.6</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://github.com/jwtk/jjwt
+							</td>
+						</tr>
+
+						<tr>
+							<td>Project Lombok</td>
+							<td><code>org.projectlombok:lombok</code></td>
+							<td>(명시없음)</td>
+							<td>MIT</td>
+							<td>
+								https://github.com/projectlombok/lombok/blob/master/LICENSE
+							</td>
+						</tr>
+
+						<tr>
+							<td>H2 Database</td>
+							<td><code>com.h2database:h2</code></td>
+							<td>(runtime / 명시없음)</td>
+							<td>MPL-2.0 또는 EPL-1.0</td>
+							<td>
+								https://www.h2database.com/html/license.html
+							</td>
+						</tr>
+
+						<tr>
+							<td>Apache Log4j 2</td>
+							<td>
+								<code>org.apache.logging.log4j:log4j-api</code><br />
+								<code>org.apache.logging.log4j:log4j-core</code>
+							</td>
+							<td>(BOM 관리)</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://logging.apache.org/log4j/ (License: Apache 2.0)
+							</td>
+						</tr>
+
+						<tr>
+							<td>log4jdbc-log4j2</td>
+							<td><code>org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1</code></td>
+							<td>1.16</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
+							</td>
+						</tr>
+
+						<tr>
+							<td>Apache Commons Codec</td>
+							<td><code>commons-codec:commons-codec</code></td>
+							<td>(명시없음)</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://github.com/apache/commons-codec (License: Apache 2.0)
+							</td>
+						</tr>
+
+						<tr>
+							<td>Web Push (webpush-java)</td>
+							<td><code>nl.martijndwars:web-push</code></td>
+							<td>5.1.2</td>
+							<td>MIT</td>
+							<td>
+								https://github.com/web-push-libs/webpush-java
+							</td>
+						</tr>
+
+						<tr>
+							<td>Bouncy Castle Provider</td>
+							<td><code>org.bouncycastle:bcprov-jdk18on</code></td>
+							<td>1.83</td>
+							<td>Bouncy Castle Licence</td>
+							<td>
+								https://www.bouncycastle.org/download/bouncy-castle-java/
+							</td>
+						</tr>
+
+						<tr>
+							<td>Apache HttpComponents</td>
+							<td>
+								<code>org.apache.httpcomponents:httpcore</code><br />
+								<code>org.apache.httpcomponents:httpclient</code>
+							</td>
+							<td>
+								httpcore: (명시없음)<br />
+								httpclient: 4.5.14
+							</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://hc.apache.org/ (HttpComponents License: Apache 2.0)
+							</td>
+						</tr>
+
+						<tr>
+							<td>JOSE4j</td>
+							<td><code>org.bitbucket.b_c:jose4j</code></td>
+							<td>0.9.6</td>
+							<td>Apache-2.0</td>
+							<td>
+								https://mvnrepository.com/artifact/org.bitbucket.b_c/jose4j/0.9.6
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<h2>2) 주요 라이선스 안내</h2>
+			<ul>
+				<li><strong>Apache License 2.0</strong>: 저작권/라이선스 고지 유지 필요, 특허 라이선스 조항 포함. 라이선스 전문:
+					https://www.apache.org/licenses/LICENSE-2.0</li>
+				<li><strong>MIT License</strong>: 저작권/라이선스 고지 유지 필요.</li>
+				<li><strong>MPL 2.0</strong>: 파일 단위 약한 카피레프트(수정 파일 소스 공개 의무가 발생할 수 있음).</li>
+				<li><strong>EPL 1.0</strong>: 약한 카피레프트 계열. (H2는 MPL 2.0 또는 EPL 1.0 듀얼 라이선스)</li>
+				<li><strong>Bouncy Castle Licence</strong>: Bouncy Castle 고유 라이선스(배포/고지 조건 준수 필요).</li>
+			</ul>
+
+			<h2>3) 소스코드 제공 안내(해당 시)</h2>
+			<p>
+				본 제품/서비스가 특정 라이선스 조건에 따라 소스코드 제공 의무가 발생하는 오픈소스를 포함하는 경우,
+				요청 시 제공 절차 및 범위를 아래 연락처를 통해 안내드립니다.
+			</p>
+			<ul>
+				<li>연락처: <a href="mailto:utimezgd@gmail.com">utimezgd@gmail.com</a></li>
+				<li>제공 범위: 라이선스가 요구하는 범위 내의 소스 및 빌드/설치에 필요한 정보(해당 시)</li>
+			</ul>
+
+			<h2>4) 고지 사항</h2>
+			<ul>
+				<li>각 오픈소스의 저작권 및 상표권은 원 권리자에게 있습니다.</li>
+				<li>본 문서는 제품 업데이트에 따라 변경될 수 있습니다.</li>
+			</ul>
+		</div>
+	</th:block>
 </body>
+
 </html>

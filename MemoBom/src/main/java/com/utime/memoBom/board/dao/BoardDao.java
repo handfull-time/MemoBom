@@ -2,17 +2,17 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
-import com.utime.memoBom.board.vo.BoardReqVo;
+import com.utime.memoBom.board.dto.BoardReqDto;
+import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.vo.CommentItem;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionItem;
-import com.utime.memoBom.board.vo.EmotionReqVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
-import com.utime.memoBom.user.vo.UserVo;
 
 public interface BoardDao {
 	
@@ -21,7 +21,7 @@ public interface BoardDao {
 	 * @param reqVo
 	 * @return
 	 */
-	int saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) throws Exception;
+	int saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) throws Exception;
 
 	/**
 	 * 목록 갖고 오기
@@ -29,7 +29,14 @@ public interface BoardDao {
 	 * @param reqVo
 	 * @return
 	 */
-	List<FragmentItem> loadFragmentList(UserVo user, FragmentListReqVO reqVo);
+	List<FragmentItem> loadFragmentList(LoginUser user, FragmentListReqVO reqVo);
+	
+	/**
+	 * Fragment uid 조회
+	 * @param fUid
+	 * @return
+	 */
+	FragmentItem loadFragment(LoginUser user, String fUid);
 	
 
 	/**
@@ -39,7 +46,7 @@ public interface BoardDao {
 	 * @param pageNo
 	 * @return
 	 */
-	List<CommentItem> loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType);
+	List<CommentItem> loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
 	 * 스크랩 처리
@@ -47,7 +54,7 @@ public interface BoardDao {
 	 * @param fragmentUid
 	 * @return null이면 실패, true면 스크랩, false면 스크랩 취소
 	 */
-	Boolean procScrap(UserVo user, String fragmentUid) throws Exception;
+	Boolean procScrap(LoginUser user, String fragmentUid) throws Exception;
 
 	/**
 	 * 공유 정보 추가
@@ -55,7 +62,7 @@ public interface BoardDao {
 	 * @param uid
 	 * @return
 	 */
-	ShareVo addShareInfo(UserVo user, String uid) throws Exception;
+	ShareVo addShareInfo(LoginUser user, String uid) throws Exception;
 	
 	/**
 	 * 감정 처리
@@ -63,7 +70,7 @@ public interface BoardDao {
 	 * @param emotionReqVo
 	 * @return
 	 */
-	List<EmotionItem> procEmotion(UserVo user, EmotionReqVo emotionReqVo) throws Exception;
+	List<EmotionItem> procEmotion(LoginUser user, EmotionDto emotionReqVo) throws Exception;
 	
 	/**
 	 * 댓글 저장
@@ -71,5 +78,5 @@ public interface BoardDao {
 	 * @param reqVo
 	 * @return
 	 */
-	CommentItem saveComment(UserVo user, CommentReqVo reqVo) throws Exception;
+	CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception;
 }

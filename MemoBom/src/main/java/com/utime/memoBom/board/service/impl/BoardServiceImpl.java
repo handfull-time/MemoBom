@@ -1,21 +1,28 @@
 package com.utime.memoBom.board.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
+import com.utime.memoBom.board.dto.BoardReqDto;
+import com.utime.memoBom.board.dto.EmotionDto;
+import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.service.BoardService;
-import com.utime.memoBom.board.vo.BoardReqVo;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
-import com.utime.memoBom.board.vo.EmotionReqVo;
+import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
+import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,10 +38,12 @@ class BoardServiceImpl implements BoardService {
 	
 	final TopicDao topicDao;
 	
+	final UserDao userDao;
+	
 	final KeyValueDao keyValueDao;
 	
 	@Override
-	public ReturnBasic saveFragment(UserVo user, UserDevice device, BoardReqVo reqVo) {
+	public ReturnBasic saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) {
 		
 		final ReturnBasic keyRes = KeyUtil.checkKey(keyValueDao, user, device, reqVo.getSeal());
 		if( keyRes.isError() ) {
@@ -46,7 +55,7 @@ class BoardServiceImpl implements BoardService {
 		
 		if( AppUtils.isEmpty(reqVo.getContent())) {
 			log.warn("냉무 ...");
-			return new ReturnBasic("E", "잘못된 요청 입니다.");
+			return new ReturnBasic("E", "내용이 없습니다.");
 		}
 		
 		final ReturnBasic result = new ReturnBasic();
@@ -62,18 +71,43 @@ class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public String createKey(HttpServletRequest request, UserVo user) {
+	public String createKey(HttpServletRequest request, LoginUser user) {
 
 		return KeyUtil.createKey(keyValueDao, request, user);
 	}
 
 	@Override
-	public ReturnBasic loadFragmentList(UserVo user, FragmentListReqVO reqVo) {
+	public FragmentListDto loadFragmentList(LoginUser user, FragmentListReqVO reqVo) {
 		
-		final ReturnBasic result = new ReturnBasic();
+		final FragmentListDto result = new FragmentListDto();
 		
 		try {
-			result.setData( boardDao.loadFragmentList(user, reqVo) );
+			List<FragmentItem> list = boardDao.loadFragmentList(user, reqVo);
+			result.setData( list );
+			
+			if( reqVo.getPageNo() == 1 ) {
+				final String search = " 검색";
+				if( AppUtils.isNotEmpty( reqVo.getUserUid() ) ) {
+					final UserVo vo = userDao.getUserFromUid( reqVo.getUserUid() );
+					result.setTitle( vo == null ? "Art":vo.getNickname() + search);
+				} else if( AppUtils.isNotEmpty( reqVo.getFragUid() ) ) {
+					final FragmentItem vo = boardDao.loadFragment(user, reqVo.getFragUid());
+					final String content = (vo == null)? "Fragment":vo.getContent();
+					result.setTitle( (content.length()>6? content.substring(0, 6):content) + search);
+				} else if( AppUtils.isNotEmpty( reqVo.getTopicUid() ) ) {
+					final TopicVo vo = topicDao.loadTopic(user, reqVo.getTopicUid());
+					final String name = (vo == null)? "Mosaic":vo.getName();
+					result.setTitle( (name.length()>6? name.substring(0, 6):name) + search);
+				} else if( AppUtils.isNotEmpty( reqVo.getCmtUid() ) ) {
+					result.setTitle( "댓글" + search  );
+				} else if( AppUtils.isNotEmpty( reqVo.getKeyword() ) ) {
+					result.setTitle( reqVo.getKeyword() + search );
+				} else if( AppUtils.isNotEmpty( reqVo.getHashtag() ) ) {
+					result.setTitle( reqVo.getHashtag() + search );
+				} else {
+					result.setTitle( "Fragment" );
+				}
+			}
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
@@ -83,7 +117,7 @@ class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public ReturnBasic loadCommentsList(UserVo user, String uid, int pageNo, EmojiSetType emojiSetType) {
+	public ReturnBasic loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
@@ -98,7 +132,7 @@ class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public ReturnBasic procEmotion(UserVo user, EmotionReqVo emotionReqVo) {
+	public ReturnBasic procEmotion(LoginUser user, EmotionDto emotionReqVo) {
 		final ReturnBasic result = new ReturnBasic();
 		
 		try {
@@ -112,7 +146,7 @@ class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public ReturnBasic procScrap(UserVo user, String fragmentUid) {
+	public ReturnBasic procScrap(LoginUser user, String fragmentUid) {
 		final ReturnBasic result = new ReturnBasic();
 		
 		try {
@@ -134,7 +168,7 @@ class BoardServiceImpl implements BoardService {
 	private String appName;
 	
 	@Override
-	public ShareVo loadShareInfo(UserVo user, String uid) throws Exception{
+	public ShareVo loadShareInfo(LoginUser user, String uid) throws Exception{
 		
 		final ShareVo result = boardDao.addShareInfo(user, uid);
 		
@@ -144,7 +178,7 @@ class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public ReturnBasic saveComment(UserVo user, CommentReqVo reqVo) {
+	public ReturnBasic saveComment(LoginUser user, CommentReqVo reqVo) {
 		
 		ReturnBasic result = new ReturnBasic();
 		

@@ -300,16 +300,15 @@
     function navigateByItem(it) {
       const target = normalizeTarget(it.target);
       const uid = encodeURIComponent(it.uid);
-      const base = /*[[@{/Fragment/Mosaic.html}]]*/ '/Fragment/Mosaic.html';
+      const base = /*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html';
 
 	  let url = null;
       if (target === 'fragment') {
-        url = `${base}?uid=${uid}`;
+        url = `${base}?fragUid=${uid}`;
       } else if (target === 'comment') {
-        url = `${base}?comment=${uid}`;
+        url = `${base}?cmtUid=${uid}`;
       }
 	  console.log('navigateByItem to', url);
-	  alert( url );
 	  
 	  if (url) {
       	window.location = url;

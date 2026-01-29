@@ -239,11 +239,8 @@
 			const elColorPicker = $("colorPicker");
 			const elColorText = $("colorText");
 
-			//const elNameStatus = $("nameStatus");
-			//const elGlobalMsg = $("globalMsg");
 			const elColorPreview = $("colorPreview");
 
-			//const btnCheckName = $("btnCheckName");
 			const btnSave = $("btnSave");
 			const btnSetEmotion = $("btnSetEmotion");
 			const btnSetReaction = $("btnSetReaction");
@@ -276,38 +273,6 @@
 			// 초기값 적용 (없으면 1)
 			let elEmojiSetType = /*[[${topic.emojiSetType}]]*/ 'EMOTION'; 
 			setEmojiSetType(elEmojiSetType);
-
-			
-
-			// ---- UI helpers ----
-/*			function showGlobal(type, text) {
-				elGlobalMsg.classList.remove("hidden");
-				elGlobalMsg.textContent = text;
-
-				// reset classes
-				elGlobalMsg.classList.remove(
-					"bg-red-50", "border-red-200", "text-red-700",
-					"bg-green-50", "border-green-200", "text-green-700",
-					"bg-slate-50", "border-slate-200", "text-slate-700"
-				);
-
-				if (type === "ok") elGlobalMsg.classList.add("bg-green-50", "border-green-200", "text-green-700");
-				else if (type === "err") elGlobalMsg.classList.add("bg-red-50", "border-red-200", "text-red-700");
-				else elGlobalMsg.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
-			}
-
-			function clearGlobal() {
-				elGlobalMsg.classList.add("hidden");
-				elGlobalMsg.textContent = "";
-			}
-*/
-			//function setNameStatus(type, text) {
-			//	elNameStatus.textContent = text || "";
-			//	elNameStatus.className = "mt-2 text-sm";
-			//	if (type === "ok") elNameStatus.classList.add("text-green-700");
-			//	else if (type === "err") elNameStatus.classList.add("text-red-700");
-			//	else elNameStatus.classList.add("text-slate-500");
-			//}
 
 			function isHexColor(v) {
 				return /^#[0-9a-fA-F]{6}$/.test((v || "").trim());
@@ -374,12 +339,15 @@
 				if (nameOk && lastCheckedName === name) return true;
 
 				checking = true;
-				// setNameStatus("info", "중복 확인 중...");
 				//btnCheckName.disabled = true;
+				const sendObj = {
+                    uid: /*[[${topic.uid}]]*/ null,
+                    name: name
+                };
 
 				const url = /*[[@{/Mosaic/SameName.json}]]*/ '/Mosaic/SameName.json';
 				try {
-					const data = await apiGetWithParam(url, {name:name});
+					const data = await apiGetWithParam(url, sendObj);
 
 					if (!data) {
 						showToast("오류", "중복 확인에 실패했습니다.", ToastType.ERROR);

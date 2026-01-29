@@ -5,10 +5,15 @@
 <th:block layout:fragment="title">Memo</th:block>
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: Header_Search('🔙', 'Fragment', '✍️')}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: Header_Search(
+		leftTitle=~{Fragments/icons :: favicon},
+		title='Fragment', 
+		rightTitle=~{Fragments/icons :: fragment_write}
+	) }"></th:block >
 </th:block>
 
 <th:block layout:fragment="content">
+
 	<!-- 리스트 -->
 	<div id="fragmentList" class="space-y-3"></div>
 
@@ -99,6 +104,16 @@
 
 				  <!-- 댓글 로딩 상태 -->
 				  <div class="commentState hidden mt-2 text-xs text-slate-400"></div>
+				  
+				  <!-- 댓글 더보기 버튼 (페이지네이션) -->
+				  <button type="button"
+				    class="btnMoreComments hidden mt-3 w-full flex items-center justify-center gap-2
+				           rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
+				           hover:bg-slate-50 active:bg-slate-100">
+				    <span class="iconMoreComments"></span>
+				    <span>댓글 더보기</span>
+				  </button>
+
 				</div>
 
 			</div>
@@ -150,6 +165,8 @@
 		// fragment별 댓글 페이지 상태 유지
 		const commentStateMap = new Map();
 		// uid -> { page:1, loading:false, done:false }
+		
+		const fragmentCardMap = new Map();
 
 		
 		(() => {
@@ -246,6 +263,13 @@
 </svg>`;
 			}
 
+			function svgMoreComments() {
+			  return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
+  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+			}
+
 			/* textarea 자동 확장 */
 			function autoGrowTextarea(ta) {
 			  if (!ta) return;
@@ -278,6 +302,27 @@
 			  node.scrollIntoView({ block: 'start', behavior: 'smooth' });
 
 			  wrap.classList.remove('hidden');
+			  
+			  // ✅ 댓글 더보기 버튼 세팅(열릴 때 1회 바인딩 + 초기 숨김)
+			  const moreBtn = node.querySelector(".btnMoreComments");
+			  const moreIcon = node.querySelector(".iconMoreComments");
+
+			  if (moreBtn && moreIcon) {
+			    moreIcon.innerHTML = svgMoreComments();
+
+			    // 처음 열 때는 로딩 전이므로 숨김(데이터가 있으면 loadNextComments에서 보여줌)
+			    moreBtn.classList.add("hidden");
+
+			    // 중복 바인딩 방지
+			    if (!moreBtn.dataset.bound) {
+			      moreBtn.dataset.bound = "1";
+			      moreBtn.addEventListener("click", async (e) => {
+			        e.stopPropagation();
+			        await loadNextComments(node, item);
+			      });
+			    }
+			  }
+
 
 			  // 열기 직후 textarea 높이 재계산 (hidden에서 계산된 값 보정)
 			  const ta = node.querySelector('.commentInput');
@@ -289,13 +334,9 @@
 			  }
 
 			  // 최초 상태 초기화
-			  const fuid = item.uid;
-			  if (!commentStateMap.has(fuid)) {
-			    commentStateMap.set(fuid, { page: 1, loading: false, done: false });
-			    listEl.innerHTML = '';
-			  }
-
-			  // 1페이지 로딩
+			  commentStateMap.set(item.uid, { page: 1, loading: false, done: false });
+			  node.querySelector('.commentList').innerHTML = '';
+			  
 			  await loadNextComments(node, item);
 			}
 
@@ -305,63 +346,93 @@
 			  const st = commentStateMap.get(fuid);
 			  if (!st || st.loading || st.done) return;
 
-			  const listEl = node.querySelector('.commentList');
-			  const stateEl = node.querySelector('.commentState');
+			  const listEl = node.querySelector(".commentList");
+			  const stateEl = node.querySelector(".commentState");
+			  const moreBtn = node.querySelector(".btnMoreComments");
 
 			  st.loading = true;
-			  if (stateEl) { stateEl.classList.remove('hidden'); stateEl.textContent = '댓글 불러오는 중…'; }
+
+			  // 로딩 UI
+			  if (stateEl) {
+			    stateEl.classList.remove("hidden");
+			    stateEl.textContent = "댓글 불러오는 중…";
+			  }
+			  if (moreBtn) {
+			    moreBtn.disabled = true;
+			    moreBtn.classList.add("opacity-60");
+			  }
 
 			  try {
-				const emojiSetType = item?.topic?.emojiSetType;
+			    const url = /*[[@{/Fragment/Comments.json}]]*/ "/Fragment/Comments.json";
 
-				const url = /*[[@{/Fragment/Comments.json}]]*/ '/Fragment/Comments.json';
-				const res = await apiGetWithParam(url, {
-				  uid: fuid,
-				  pageNo: st.page,
-				  emojiSetType: emojiSetType
-				});
+			    // ✅ 필요하면 emojiSetType도 같이 보냄(이미 요청하신 방식)
+			    const res = await apiGetWithParam(url, {
+			      uid: fuid,
+			      pageNo: st.page,
+			      emojiSetType: item?.topic?.emojiSetType
+			    });
 
 			    if (!res || res.code !== "0") {
-			      if (stateEl) stateEl.textContent = res?.message || '댓글 로딩 실패';
+			      if (stateEl) stateEl.textContent = res?.message || "댓글 로딩 실패";
 			      return;
 			    }
 
 			    const arr = Array.isArray(res.data) ? res.data : [];
+
+			    // ✅ 더 이상 없음 → done 처리 + 더보기 숨김
 			    if (arr.length === 0) {
 			      st.done = true;
-			      if (stateEl) stateEl.textContent = '';
-			      if (stateEl) stateEl.classList.add('hidden');
+			      if (stateEl) stateEl.classList.add("hidden");
+			      if (moreBtn) moreBtn.classList.add("hidden");
 			      return;
 			    }
 
 			    // append
-			    arr.forEach(c => listEl.appendChild(renderCommentItem(c, item.topic?.emojiSetType)));
+			    arr.forEach((c) => {
+			      listEl.appendChild(renderCommentItem(c, item.topic?.emojiSetType));
+			    });
 
+			    // 다음 페이지
 			    st.page += 1;
-			    if (stateEl) stateEl.classList.add('hidden');
+
+			    // ✅ 아직 더 있을 수 있음 → 더보기 표시
+			    if (moreBtn) moreBtn.classList.remove("hidden");
+			    if (stateEl) stateEl.classList.add("hidden");
 
 			  } catch (e) {
-			    if (stateEl) stateEl.textContent = '네트워크 오류';
+			    if (stateEl) stateEl.textContent = "네트워크 오류";
 			  } finally {
 			    st.loading = false;
+
+			    if (moreBtn) {
+			      moreBtn.disabled = false;
+			      moreBtn.classList.remove("opacity-60");
+			    }
 			  }
 			}
 
 			/* 댓글 무한 스크롤(댓글 영역이 펼쳐진 경우만) */
 			function loadMoreCommentsIfAnyOpened() {
-			  // 열려있는 카드만 찾기
-			  const openedWraps = document.querySelectorAll('.commentWrap:not(.hidden)');
-			  openedWraps.forEach(wrap => {
-			    const card = wrap.closest('article');
+			  const openedWraps = document.querySelectorAll(".commentWrap:not(.hidden)");
+
+			  openedWraps.forEach((wrap) => {
+			    const card = wrap.closest("article");
 			    if (!card) return;
 
-			    // card가 화면에 꽤 가까울 때만 로딩(대충)
-			    const rect = card.getBoundingClientRect();
-			    const nearView = rect.top < window.innerHeight && rect.bottom > 0;
-			    if (!nearView) return;
+			    const fuid = card.dataset.fragmentUid;
+			    if (!fuid) return;
 
-			    // item 참조가 필요하니, card에 data-uid로 item을 찾거나,
-			    // 간단히 card.dataset.fragmentUid에 매핑해두는 방식 추천.
+			    const ref = fragmentCardMap.get(fuid);
+			    if (!ref) return;
+
+			    // ✅ commentWrap 하단이 화면 아래쪽에 가까워지면 다음 페이지 로드
+			    const rect = wrap.getBoundingClientRect();
+			    const threshold = 180; // 여유값
+			    const nearBottom = rect.bottom < (window.innerHeight + threshold);
+
+			    if (nearBottom) {
+			      loadNextComments(ref.node, ref.item); // st.loading/done 체크는 내부에서 함
+			    }
 			  });
 			}
 
@@ -514,7 +585,7 @@
 			    const res = await apiPost(url, { uid, emotion, emojiSetType });
 
 			    if (!res || res.code !== "0") {
-			      showGlobal?.("err", (res && res.message) ? res.message : "이모션 처리 실패");
+				  showToast("오류", (res && res.message) ? res.message : "이모션 처리 실패", ToastType.ERROR);
 			      return;
 			    }
 
@@ -542,7 +613,7 @@
 
 			  } catch (e) {
 				console.error(e);
-			    showGlobal?.("err", "네트워크 오류로 이모션 처리 실패");
+				showToast("오류", "네트워크 오류로 이모션 처리 실패", ToastType.ERROR);
 			  } finally {
 			    btn.disabled = false;
 			    btn.classList.remove("opacity-60");
@@ -626,7 +697,7 @@
 						const res = await apiPost(url, { uid });
 
 						if (!res || res.code !== "0") {
-							showGlobal?.("err", (res && res.message) ? res.message : "스크랩 실패");
+							showToast("오류", (res && res.message) ? res.message : "스크랩 실패", ToastType.ERROR);
 							return;
 						}
 
@@ -636,7 +707,7 @@
 
 					} catch (err) {
 						console.error(err);
-						showGlobal?.("err", "네트워크 오류로 스크랩 실패");
+						showToast("오류", "네트워크 오류로 스크랩 실패", ToastType.ERROR);
 					} finally {
 						busy = false;
 					}
@@ -650,11 +721,15 @@
 				node.querySelector(".fragment-uid").textContent = safeText(item.uid, "");
 				node.querySelector(".emoji-set-type").textContent = safeText(item.topic?.emojiSetType, "");
 
+				// 새로 추가
+				node.dataset.fragmentUid = safeText(item.uid, "");
+				fragmentCardMap.set(node.dataset.fragmentUid, { node, item });
+
 				const pill = node.querySelector(".topic-pill");
 				pill.addEventListener("click", (e) => {
 				  e.stopPropagation();
 				  const topicUid = item.topic?.uid;
-				  location.href = `${window.contextPath}/Fragment/Mosaic.html?uid=${topicUid}`;
+				  location.href = `${window.contextPath}/Fragment/index.html?topicUid=${topicUid}`;
 				});
 
 				node.querySelector(".topic-emoji").textContent = safeText(item.topic?.imogi, "🧩");
@@ -674,7 +749,7 @@
                   if (userUid) {
 					// 여기에서 프로필로 가게 할까? 아니면 이사람의 작성글을 보여줄까?
 					  //location.href = `${window.contextPath}/User/Profile.html?uid=${userUid}`;
-					  location.href = `${window.contextPath}/Fragment/Mosaic.html?user=${userUid}`;
+					  location.href = `${window.contextPath}/Fragment/index.html?userUid=${userUid}`;
                   }
 				});
 				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
@@ -767,7 +842,7 @@
 			    const res = await apiPost(url, { uid, emotion, emojiSetType });
 
 			    if (!res || res.code !== "0") {
-			      showGlobal?.("err", res?.message || "댓글 이모션 실패");
+				  showToast("오류", res?.message || "댓글 이모션 실패", ToastType.ERROR);
 			      return;
 			    }
 
@@ -778,7 +853,8 @@
 			    applySum();
 
 			  } catch (e) {
-			    showGlobal?.("err", "네트워크 오류로 댓글 이모션 실패");
+			    console.error( e );
+				showToast("오류", "네트워크 오류로 댓글 이모션 실패", ToastType.ERROR);
 			  } finally {
 			    btn.disabled = false;
 			    btn.classList.remove('opacity-60');
@@ -821,7 +897,7 @@
 			      });
 
 			      if (!res || res.code !== "0" || !res.data) {
-			        showGlobal?.("err", res?.message || "댓글 저장 실패");
+					showToast("오류", res?.message || "댓글 저장 실패", ToastType.ERROR);
 			        return;
 			      }
 
@@ -835,7 +911,8 @@
 			      input.style.height = 'auto';
 
 			    } catch (err) {
-			      showGlobal?.("err", "네트워크 오류로 댓글 저장 실패");
+				  console.error( e );
+				  showToast("오류", "네트워크 오류로 댓글 저장 실패", ToastType.ERROR);
 			    } finally {
 			      btn.disabled = false;
 			      btn.classList.remove('opacity-60');
@@ -843,32 +920,13 @@
 			  });
 			}
 
-
 			async function contentLoad() {
 				if (loading || done) return;
 				loading = true;
 				hideState();
-				//const user = /*[[${accessUser}]]*/ {};
-				//const topic = /*[[${topic}]]*/ {};
-				//const commnentUid = /*[[${commentUid}]]*/ null;
 
-
-//				const sendObj = {
-//					userUid: user?.userUid,
-//					topicUid: topic?.topicUid,
-//					cmtUid: commnentUid,
-//					keyword: '',
-//					hashTag: '',
-//					pageNo: pageNo
-//				};
-				const sendObj = {
-					userUid: /*[[${accessUser}]]*/ null,
-					topicUid: /*[[${topic}]]*/ null,
-					cmtUid: /*[[${commentUid}]]*/ null,
-					keyword: '',
-					hashTag: '',
-					pageNo: pageNo
-				};
+				const sendObj = /*[[${param}]]*/ {};
+				sendObj.pageNo = pageNo;
 
 				try {
 					const url = /*[[@{/Fragment/Fragments.json}]]*/ "/Fragment/Fragments.json";
@@ -880,6 +938,13 @@
 					}
 
 					const list = res.data;
+					
+					if( pageNo === 1 ){
+						const header = document.getElementById("headerTitle");
+						if (header && res.title) {
+							header.textContent = res.title;
+						}
+					}
 
 					// 더 이상 데이터 없음
 					if (!list || list.length === 0) {
@@ -914,6 +979,7 @@
 					if (goingUp && top < 120) {
 						contentLoad();
 					}
+					
 					lastTop = top;
 				}, { passive: true });
 			}
@@ -925,8 +991,21 @@
 
 			window.addEventListener("DOMContentLoaded", init);
 
+			window.headerSearch = function(keyword) {
+				
+				if( !keyword || keyword.trim() === "" ){
+					return;
+				}
+				
+	            // Mosaic 검색 처리
+				const url = /*[[@{/Fragment/index.html}]]*/ "/Mosaic/index.html";
+				location.replace( url + "?keyword=" + encodeURIComponent(keyword) );
+			}
 			// header buttons
-			window.functionLeft = function() { history.back(); }
+			window.functionLeft = function() { 
+				location.replace(/*[[@{/}]]*/ '/'); 
+			}
+			
 			window.functionRight = function() {
 				location.href = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
 			}

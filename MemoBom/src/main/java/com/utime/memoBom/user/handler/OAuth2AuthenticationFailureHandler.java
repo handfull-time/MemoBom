@@ -8,7 +8,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.utime.memoBom.common.jwt.JwtProvider;
+import com.utime.memoBom.common.security.JwtProvider;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

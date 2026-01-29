@@ -90,7 +90,7 @@
 <th:block th:fragment="FooterWrite">
 	<div class="w-full h-full flex items-center justify-end px-3">
 		<button id="btnWrite" class="text-xl" onclick="onClickWrite()">
-			✍️
+			<th:block th:replace="~{Fragments/icons :: fragment_write}"></th:block >
 		</button>
 	</div>
 </th:block>

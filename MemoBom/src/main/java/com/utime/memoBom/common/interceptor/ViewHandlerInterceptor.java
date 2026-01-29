@@ -8,8 +8,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.utime.memoBom.common.security.CustomUserDetails;
 import com.utime.memoBom.common.vo.AppDefine;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,11 +36,11 @@ class ViewHandlerInterceptor implements AsyncHandlerInterceptor {
 		
 		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authentication != null) {
-			final Object obj = authentication.getPrincipal();
-			if( obj != null && obj instanceof UserVo ) {
-				model.addAttribute(AppDefine.KeyParamUser, obj );
-			}
+		if ( authentication != null ) {
+			 final Object principal = authentication.getPrincipal();
+			 if ( principal instanceof CustomUserDetails detail ) {
+				 model.addAttribute(AppDefine.KeyParamUser, detail.getUid() );
+			 }
         }
 	}
 	

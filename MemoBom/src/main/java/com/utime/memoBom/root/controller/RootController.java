@@ -29,13 +29,9 @@ public class RootController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String rootPage( HttpServletRequest request, ModelMap model, UserVo user ) {
+    public String rootPage() {
 		
-		if( user == null ) {
-			return "redirect:/Auth/Login.html";
-		}else {
-			return "redirect:/Fragment/index.html";
-		}
+		return "redirect:/Fragment/index.html";
     }
 
 	
