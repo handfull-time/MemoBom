@@ -6,6 +6,7 @@ import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -27,13 +28,37 @@ class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public ReturnBasic getMyWriteDataList(LoginUser user , String date) {
+	public ReturnBasic getMyCalendarDataList(LoginUser user , String date) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
 		result.setData( userDao.getMyWriteDataList(user, date) );
 		
 		return result;
+	}
+
+	@Override
+	public ReturnBasic getMyAlarmDataList(LoginUser user, MySearchDto searchVo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReturnBasic getMyFragmentsDataList(LoginUser user, MySearchDto searchVo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReturnBasic getMyCommentsDataList(LoginUser user, MySearchDto searchVo) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

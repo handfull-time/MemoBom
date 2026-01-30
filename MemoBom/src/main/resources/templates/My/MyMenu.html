@@ -42,6 +42,15 @@
 				<span class="font-medium">Mosaic</span>
 			</a>
 
+			<a th:href="@{/My/Comments.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/My/Comments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/Comments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Mosaic</span>
+			</a>
+
 			<div class="my-2 border-t border-gray-200"></div>
 
 			<a th:href="@{/My/Calendar.html}"

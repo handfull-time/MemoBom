@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -22,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MyController {
 
 	final UserService userService;
+	
+	
 	/**
 	 * MyPage 화면
 	 * @param request
@@ -39,20 +42,53 @@ public class MyController {
 	}
 	
 	@GetMapping(path = "Alarm.html")
-    public String myAlarm(Model model, LoginUser user ) {
+    public String myAlarm(Model model) {
 		return "My/MyAlarm";
     }
 	
+	@ResponseBody
+	@GetMapping(path = "Alarm.json")
+    public ReturnBasic myAlarm( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyAlarmDataList( user, searchVo );
+    }
+
 	@GetMapping(path = "Fragments.html")
-    public String myFragments(Model model, LoginUser user ) {
+    public String myFragments(Model model ) {
 		return "My/MyFragments";
     }
 	
+	@ResponseBody
+	@GetMapping(path = "Fragments.json")
+    public ReturnBasic myFragments( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyFragmentsDataList( user, searchVo );
+    }
+
 	@GetMapping(path = "Mosaic.html")
-    public String myMosaic(Model model, LoginUser user ) {
+    public String myMosaic(Model model) {
 		return "My/MyMosaic";
     }
 	
+	@ResponseBody
+	@GetMapping(path = "MyMosaic.json")
+    public ReturnBasic myMosaic( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyMosaicDataList( user, searchVo );
+    }
+
+	@GetMapping(path = "Comments.html")
+    public String myComments(Model model) {
+		return "My/MyComments";
+    }
+	
+	@ResponseBody
+	@GetMapping(path = "MyComments.json")
+    public ReturnBasic myComments( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyCommentsDataList( user, searchVo );
+    }
+
 	@GetMapping(path = "Calendar.html")
     public String myCalendar( Model model) {
 		return "My/MyCalendar";
@@ -60,9 +96,9 @@ public class MyController {
 	
 	@ResponseBody
 	@GetMapping(path = "MyCalendar.json")
-    public ReturnBasic myCalendar( LoginUser user , @RequestParam String date ) {
+    public ReturnBasic myCalendar( LoginUser user, @RequestParam String date ) {
 		
-		return userService.getMyWriteDataList( user, date );
+		return userService.getMyCalendarDataList( user, date );
     }
 	
 	

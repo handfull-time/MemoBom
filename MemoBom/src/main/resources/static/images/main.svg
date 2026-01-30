@@ -1,0 +1,58 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- 그라데이션 정의 -->
+  <defs>
+    <!-- 연한 옥색 바탕 (기존 유지) -->
+    <radialGradient id="rectGrad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#A8E6CF"/>
+      <stop offset="50%" stop-color="#B8E6CF"/>
+      <stop offset="100%" stop-color="#88D8B0"/>
+    </radialGradient>
+    
+    <!-- 꽃잎 1: 더 진한 복숭아 핑크 -->
+    <radialGradient id="petal1" cx="50%" cy="40%" r="40%">
+      <stop offset="0%" stop-color="#FF9ABF"/>
+      <stop offset="50%" stop-color="#FFB3CC"/>
+      <stop offset="100%" stop-color="#FF85A9"/>
+    </radialGradient>
+    
+    <!-- 꽃잎 2: 더 선명한 크림 옐로우 -->
+    <radialGradient id="petal2" cx="50%" cy="40%" r="40%">
+      <stop offset="0%" stop-color="#FFD966"/>
+      <stop offset="60%" stop-color="#FFE288"/>
+      <stop offset="100%" stop-color="#FFCC33"/>
+    </radialGradient>
+    
+    <!-- 꽃잎 3: 라벤더 블루 (가운데 컬러 조합 사용) -->
+	<radialGradient id="petal3" cx="50%" cy="40%" r="40%">
+	  <stop offset="4%" stop-color="#AA67C5"/>
+	  <stop offset="10%" stop-color="#D1D4DA"/>
+	  <stop offset="100%" stop-color="#AB47BC"/>
+	</radialGradient>
+  </defs>
+
+  <!-- 안쪽 네모 (지정된 크기) -->
+  <rect x="10" y="10" width="100" height="100" rx="22" ry="22" 
+        fill="url(#rectGrad)" stroke="#cccccc" stroke-width="2"/>
+
+  <!-- 연꽃 꽃잎 -->
+  <g id="petal" transform="translate(60,60)">
+    <path d="M0,-48 C-10,-38, -12,-22, 0,-10 C12,-22, 10,-38, 0,-48Z"/>
+  </g>
+
+  <!-- 12개 꽃잎 배치 -->
+  <use href="#petal" transform="rotate(0,60,60)" fill="url(#petal1)"/>
+  <use href="#petal" transform="rotate(30,60,60)" fill="url(#petal2)"/>
+  <use href="#petal" transform="rotate(60,60,60)" fill="url(#petal3)"/>
+  <use href="#petal" transform="rotate(90,60,60)" fill="url(#petal1)"/>
+  <use href="#petal" transform="rotate(120,60,60)" fill="url(#petal2)"/>
+  <use href="#petal" transform="rotate(150,60,60)" fill="url(#petal3)"/>
+  <use href="#petal" transform="rotate(180,60,60)" fill="url(#petal1)"/>
+  <use href="#petal" transform="rotate(210,60,60)" fill="url(#petal2)"/>
+  <use href="#petal" transform="rotate(240,60,60)" fill="url(#petal3)"/>
+  <use href="#petal" transform="rotate(270,60,60)" fill="url(#petal1)"/>
+  <use href="#petal" transform="rotate(300,60,60)" fill="url(#petal2)"/>
+  <use href="#petal" transform="rotate(330,60,60)" fill="url(#petal3)"/>
+
+  <!-- 꽃 중심 -->
+  <circle cx="60" cy="60" r="5" fill="#FFD54F"/>
+</svg>

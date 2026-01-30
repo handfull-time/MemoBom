@@ -397,4 +397,32 @@
 		        OR MYFL.USER_NO IS NOT NULL
 		    )
 	</select>
+	
+	<!--“userNo가 만든 토픽 OR userNo가 팔로우한 토픽”**을 조회하고, keyword 검색-->
+	<select id="listMyOrFollowTopic" parameterType="map" resultMap="TopicMap">
+		SELECT DISTINCT
+			<include refid="TopicColumnSql" /> 
+		FROM MB_TOPIC TP
+			LEFT JOIN MB_TOPIC_FOLLOW MYFL
+				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{user.userNo}
+		WHERE 1=1
+			AND TP.ENABLED = TRUE
+			
+			<!-- 내가 만든 토픽 OR 내가 팔로우한 토픽 -->
+			AND (
+				TP.OWNER_NO = #{userNo}
+				OR MYFL.USER_NO IS NOT NULL
+			)
+			
+			<!-- 검색 -->
+			<if test="keyword != null and !keyword.isEmpty()">
+				AND (
+					TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+					OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
+				)
+			</if>
+		ORDER BY TP.TOPIC_NO DESC
+		LIMIT 5 OFFSET ((#{pageNo} - 1) * 5)
+	</select>
+
 </mapper>

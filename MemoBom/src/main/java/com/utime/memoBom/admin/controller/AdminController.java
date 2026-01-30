@@ -37,9 +37,9 @@ public class AdminController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String boardMain( ModelMap model, UserVo user ) {
+    public String adminMain( ModelMap model, UserVo user ) {
 		
-		return "Board/BoardMain";
+		return "Admin/AdminMain";
     }
 
 }

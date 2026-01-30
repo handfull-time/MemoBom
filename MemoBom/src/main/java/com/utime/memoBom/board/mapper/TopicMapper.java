@@ -149,4 +149,14 @@ public interface TopicMapper {
 	 * @return
 	 */
 	TopicVo loadTopicFromUid(@Param("user") LoginUser user, @Param("uid")String topicUid);
+	
+	
+	/**
+	 * 내가 작성하거나 팔로우 한 topic 목록
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<TopicVo> listMyOrFollowTopic(@Param("user") LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);
 }

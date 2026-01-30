@@ -415,5 +415,75 @@
         ORDER BY c.COMMENT_NO DESC
         LIMIT 7 OFFSET (#{pageNo} - 1) * 7
     </select>
+    
+    <!--USER_NO가 작성한 MB_FRAGMENT 목록 조회-->
+    <select id="listMyFragments" parameterType="map" resultMap="FragmentItemMap">
+		SELECT
+			F.UID AS fragment_uid,
+			F.REG_DATE AS reg_date,
+			F.CONTENT AS content,
+	
+			T.UID AS topic_uid,
+	
+			U.UID AS user_uid,
+			U.ID AS user_id
+		FROM MB_FRAGMENT F
+			JOIN MB_TOPIC T
+				ON T.TOPIC_NO = F.TOPIC_NO
+			JOIN MB_USER U
+				ON U.USER_NO = F.USER_NO
+	  	WHERE 1=1
+	  		AND F.IS_DELETED = FALSE
+	  		AND F.USER_NO = #{user.userNo}
+	  		
+			<if test="keyword != null and !keyword.isEmpty()">
+				AND UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+			</if>
+			
+		ORDER BY F.REG_DATE DESC, F.FRAGMENT_NO DESC
+		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
+	</select>
+
+	<!--USER_NO가 작성한 comment 목록 조회-->
+    <select id="listMyComments" parameterType="map" resultType="map">
+		SELECT
+			C.COMMENT_NO,
+			C.REG_DATE AS reg_date,
+	
+			T.NAME AS topic_name,
+			T.IMOGI AS topic_imogi,
+			T.COLOR AS topic_color,
+	
+			CAST(F.UID AS VARCHAR) AS fragment_uid,
+	
+			CASE
+				WHEN LENGTH(CAST(F.CONTENT AS VARCHAR)) > 10
+				THEN SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 10) || '...'
+				ELSE CAST(F.CONTENT AS VARCHAR)
+			END AS fragment_preview,
+	
+			CAST(C.CONTENT AS VARCHAR) AS comment_content
+	
+		FROM MB_FRAGMENT_COMMENTS C
+			JOIN MB_FRAGMENT F
+				ON F.FRAGMENT_NO = C.FRAGMENT_NO
+			JOIN MB_TOPIC T
+				ON T.TOPIC_NO = F.TOPIC_NO
+	
+		WHERE 1=1
+		    AND C.USER_NO = #{user.userNo}
+		    AND F.IS_DELETED = FALSE
+		    AND T.ENABLED = TRUE
+		
+		    <if test="keyword != null and !keyword.isEmpty()">
+		      AND UPPER(CAST(C.CONTENT AS VARCHAR))
+		          LIKE CONCAT('%', UPPER(#{keyword}), '%')
+		    </if>
+		
+	  	ORDER BY C.REG_DATE DESC, C.COMMENT_NO DESC
+		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
+	</select>
+
+
 
 </mapper>
