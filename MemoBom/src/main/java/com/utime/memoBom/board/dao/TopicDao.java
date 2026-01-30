@@ -2,6 +2,8 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
@@ -81,5 +83,14 @@ public interface TopicDao {
 	 * @return
 	 */
 	TopicVo loadTopic(LoginUser user, String topicUid);
+	
+	/**
+	 * 내가 작성하거나 팔로우 한 topic 목록
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<TopicVo> listMyOrFollowTopic(LoginUser user, String keyword, int pageNo);
 
 }

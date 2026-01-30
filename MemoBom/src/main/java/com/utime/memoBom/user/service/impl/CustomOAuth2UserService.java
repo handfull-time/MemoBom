@@ -51,7 +51,7 @@ class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OA
         // 6. SecurityContext에 저장할 User 객체 반환
         // JWT 생성을 위해 attributes를 그대로 리턴하거나, DTO로 변환하여 리턴합니다.
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority( EJwtRole.User.name() )), // 기본 권한 설정  "ROLE_USER"
+                Collections.singleton(new SimpleGrantedAuthority( "ROLE_" + EJwtRole.User.name() )), // 기본 권한 설정  "ROLE_USER"
                 attributes,
                 userNameAttributeName
         );

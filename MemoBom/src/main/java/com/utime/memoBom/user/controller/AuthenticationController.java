@@ -1,24 +1,16 @@
 package com.utime.memoBom.user.controller;
 
-import java.io.IOException;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
-import com.utime.memoBom.common.vo.ReturnBasic;
-import com.utime.memoBom.user.service.AuthService;
-import com.utime.memoBom.user.vo.UserVo;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthenticationController {
 	
-	private final AuthService authService;
 //	
 	/**
 	 * 메타 처리
@@ -77,22 +68,5 @@ public class AuthenticationController {
         return "Auth/Login";
     }
 	
-	@PostMapping("Logout.json")
-    public ReturnBasic logout( HttpServletRequest request, HttpServletResponse response, LoginUser user) {
-		
-        return authService.logout(request, response, user);
-    }
-	
-	@GetMapping("Withdraw/Google")
-	public void startWithdrawGoogle(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
-	    final Cookie cookie = new Cookie(AppDefine.WithdrawMode, "true");
-	    cookie.setPath("/");
-	    cookie.setMaxAge(300); // 300초
-	    response.addCookie(cookie);
-
-	    // 2. 구글 로그인 페이지로 강제 이동 (재로그인 유도)
-	    response.sendRedirect(request.getContextPath() + "/oauth2/authorization/google");
-	}
 }
 

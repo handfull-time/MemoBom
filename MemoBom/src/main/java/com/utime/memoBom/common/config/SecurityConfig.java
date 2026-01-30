@@ -108,6 +108,7 @@ public class SecurityConfig {
         	    		, "/User/**"
         	    		, "/My/**"
         	    	).hasRole(EJwtRole.User.name())
+//        	    hasAuthority   hasRole
 
         	    // 2) 그 다음에 공개 경로(광범위)를 permitAll
         	    .requestMatchers(permitAllWhiteList).permitAll()

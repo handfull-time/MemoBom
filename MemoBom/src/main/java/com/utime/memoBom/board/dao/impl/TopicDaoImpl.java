@@ -119,4 +119,10 @@ class TopicDaoImpl implements TopicDao{
 		
 		return topicMapper.loadUserTopicList(user.userNo());
 	}
+	
+	@Override
+	public List<TopicVo> listMyOrFollowTopic(LoginUser user, String keyword, int pageNo) {
+		
+		return topicMapper.listMyOrFollowTopic( user, keyword, pageNo);
+	}
 }

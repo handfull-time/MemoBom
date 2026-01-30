@@ -2,11 +2,15 @@ package com.utime.memoBom.user.dao;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
+import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
+import com.utime.memoBom.user.vo.query.UserProfile;
 
 public interface UserDao {
 
@@ -65,4 +69,27 @@ public interface UserDao {
 	 * @return
 	 */
 	BasicUserVo getBasicUserFromUserNo(long userNo);
+	
+	/**
+	 * 사용자 이용 통계
+	 * @param userNo
+	 * @return
+	 */
+	UsageStatisticsVo getUserStatisticsRecord( long userNo );
+
+	/**
+	 * 개인 정보 수정
+	 * @param user
+	 * @param nickname
+	 * @param profileUrl
+	 * @return
+	 */
+	int updateUserInfo(LoginUser user, String nickname, MultipartFile profile) throws Exception;
+	
+	/**
+	 * 사용자 이미지 정보
+	 * @param uid
+	 * @return
+	 */
+	UserProfile getUserProfile(String uid);
 }

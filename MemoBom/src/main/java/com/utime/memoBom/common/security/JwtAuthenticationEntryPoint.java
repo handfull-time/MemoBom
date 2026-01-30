@@ -48,8 +48,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     	if (AppUtils.isAjaxRequest(request)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         } else {
-        	request.getSession().setAttribute(AppDefine.KeyBeforeUri, requestUri);
-            response.sendRedirect(request.getContextPath() + "/Auth/Login.html");
+        	final String contextPath = request.getContextPath();
+        	final String beforUri = requestUri.substring( contextPath.length() );
+        	request.getSession().setAttribute(AppDefine.KeyBeforeUri, beforUri);
+            response.sendRedirect(contextPath + "/Auth/Login.html");
         }
     }
     

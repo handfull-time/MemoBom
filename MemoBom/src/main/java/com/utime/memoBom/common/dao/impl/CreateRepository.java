@@ -13,9 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @RequiredArgsConstructor
 class CreateRepository {
+
 	private final CommonMapper common;
 	private final CreateMapper mapper;
-	
+
 	@PostConstruct
 	private void init() throws Exception{
 		int result = 0;
@@ -139,6 +140,10 @@ class CreateRepository {
 			result += common.createIndex("MB_ALARM_CREATE_AT_INDX", "MB_ALARM", "CREATE_AT");
 		}
 		
+		if( !common.existTable("MB_USER_PROFILE") ) {
+			log.info("MB_USER_PROFILE 생성");
+			result += mapper.createUserProfile();
+		}
 		
 		log.info("초기 작업 {}", result);
 	}

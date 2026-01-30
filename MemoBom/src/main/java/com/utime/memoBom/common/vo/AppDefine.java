@@ -36,6 +36,9 @@ public class AppDefine {
 	
 	public static final String KeyLoadScript = "loadScript";
 	
+	public static final String KeyUserImage = "/UserImage/";
+	
 	public static final String AssetVersion = String.valueOf(System.currentTimeMillis());
 	
+	public static final String KeyUserProfileImage = "userProfileImage";
 }

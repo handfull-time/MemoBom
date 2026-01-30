@@ -93,4 +93,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createAlarm();
+	
+	/**
+	 * 사용자 프로필 이미지
+	 * @return
+	 */
+	int createUserProfile();
 }

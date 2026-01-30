@@ -67,7 +67,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String roleName = (role == null) ? "User" : role.name();
+        String roleName = (role == null) ? EJwtRole.User.getDscr() : role.name();
         return Collections.singleton(new SimpleGrantedAuthority(ROLE_PREFIX + roleName));
     }
 

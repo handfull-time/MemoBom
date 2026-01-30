@@ -164,6 +164,17 @@ public class JwtProvider {
     }
     
     /**
+     * Access Token만 재발급합니다. (Refresh Token은 유지)
+     */
+    private void issueAccessCookieOnly(HttpServletRequest request,
+                                       HttpServletResponse response,
+                                       UserVo user,
+                                       String sid) {
+        final String access = this.generateToken(user, Map.of(CLM_SID, sid), ACCESS_EXP_MS);
+        this.addTokenCookie(request, response, COOKIE_ACCESS, access, ACCESS_EXP_MS);
+    }
+
+    /**
      * 사용자 토큰 쿠키 생성
      * @param request
      * @param response
@@ -209,10 +220,26 @@ public class JwtProvider {
      * Access, Paging, Refresh 토큰 쿠키를 모두 삭제(만료) 처리합니다.
      */
     public void procLogout(HttpServletRequest request, HttpServletResponse response) {
-        // 정의된 3가지 토큰에 대해 각각 삭제 명령을 내립니다.
-        deleteCookie(request, response, COOKIE_ACCESS);
-        deleteCookie(request, response, COOKIE_REFRESH);
+    	
+
+        final String refreshToken = getCookieValue(request, COOKIE_REFRESH);
         
+        this.deleteCookie(request, response, COOKIE_ACCESS);
+        this.deleteCookie(request, response, COOKIE_REFRESH);
+        
+        if (refreshToken == null) {
+            return;
+        }
+
+        final Claims claims = parseClaims(refreshToken);
+        if (claims == null) {
+            return;
+        }
+
+        final String sid = (String)claims.get(CLM_SID, String.class);
+        if (sid != null && ! sid.isEmpty()) {
+        	intervalMap.remove(sid);
+        }
         log.info("Logout Processed - All Cookies Cleared");
     }
 
@@ -331,6 +358,20 @@ public class JwtProvider {
 
     public ResUserVo reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {
         
+    	// 0. Access Token이 살아있으면 그대로 사용 (Refresh를 불필요하게 쓰지 않음)
+        final String accessToken = getCookieValue(request, COOKIE_ACCESS);
+        final Claims accessClaims = parseClaims(accessToken);
+        if (accessClaims != null) {
+            if (!validateRequestBinding(request, accessClaims)) {
+                return new ResUserVo("E", "유효성 검사 실패");
+            }
+            final ResUserVo accessRes = this.extractUser(accessClaims);
+            if (!"E".equals(accessRes.getCode())) {
+                return accessRes;
+            }
+            // access 토큰이 위변조/불일치 등으로 실패하면 refresh로 한 번 더 시도
+        }
+        
         // 1. Refresh Token 쿠키 확인
         final String refreshToken = getCookieValue(request, COOKIE_REFRESH);
         if (refreshToken == null) {
@@ -365,6 +406,19 @@ public class JwtProvider {
     }
     
     public UserVo getUserVoAccessToken(HttpServletRequest request) {
+        
+    	// Access Token 우선 사용
+        final String accessToken = getCookieValue(request, COOKIE_ACCESS);
+        final Claims accessClaims = parseClaims(accessToken);
+        if (accessClaims != null) {
+            if (!validateRequestBinding(request, accessClaims)) {
+                return null;
+            }
+            final ResUserVo res = this.extractUser(accessClaims);
+            if (!"E".equals(res.getCode())) {
+                return res.getUser();
+            }
+        }
         
         // 1. Refresh Token 쿠키 확인
         final String refreshToken = getCookieValue(request, COOKIE_REFRESH);

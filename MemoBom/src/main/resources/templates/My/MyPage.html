@@ -3,12 +3,911 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{My/MyLayout}">
 
-<body>
+<th:block layout:fragment="my_title">마이페이지</th:block>
+
 <th:block layout:fragment="my_content">
-	<div class="rounded-xl p-5 text-white shadow-lg bg-fuchsia-600 ring-4 ring-fuchsia-300/60 shadow-[0_0_40px_rgba(217,70,239,0.7)]">
-	  <div class="font-bold">My</div>
-	  <div class="text-sm opacity-90">내꺼...</div>
-	</div>
+  <div class="max-w-sm mx-auto px-4 pb-24">
+
+    <div id="myPageRoot"
+         th:attr="data-login-uid=${user},data-item-uid=${item.user.uid}">
+    </div>
+
+    <!-- iOS 카드 -->
+    <div class="mt-4 rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+
+      <!-- 프로필 -->
+      <div class="px-6 pb-4 pt-2 flex flex-col items-center">
+        <label id="profileLabel"
+               class="w-24 h-24 rounded-2xl bg-slate-100 ring-1 ring-slate-200 flex items-center justify-center overflow-hidden cursor-pointer">
+          <img id="profileImg"
+               th:src="${item.user.profileUrl}"
+               onerror="this.style.display='none'; document.getElementById('profileFallback').classList.remove('hidden');"
+               class="w-full h-full object-cover"
+               alt="profile"/>
+
+          <div id="profileFallback" class="hidden">
+            <svg class="w-12 h-12 text-slate-400" viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M20 20a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <input id="profileFile" type="file" accept="image/*" class="hidden"/>
+        </label>
+
+        <input id="nickname"
+               th:value="${item.user.nickname}"
+			   maxlength="32"
+			   class="mt-3 w-full text-center text-xl font-bold tracking-tight text-slate-900
+                      outline-none bg-transparent"
+               placeholder="닉네임"/>
+      </div>
+
+      <!-- 구분선 -->
+      <div class="h-[1px] bg-slate-200/70"></div>
+
+      <!-- 이용 통계: iOS 리스트 -->
+      <div class="px-4 py-4">
+        <div class="text-sm font-semibold text-slate-500 text-center mb-3">이용 통계</div>
+
+        <ul class="rounded-2xl bg-slate-50 ring-1 ring-slate-200/60 overflow-hidden">
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">Topic 생성</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.topicCreatedCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">Topic 팔로우</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.topicFollowCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">로그인</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.loginCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">Fragment 작성</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.fragmentWriteCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">댓글 작성</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.commentWriteCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">Fragment 감정 참여</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.fragmentEmotionCount}">0</span>
+          </li>
+          <div class="h-[1px] bg-slate-200/60"></div>
+          <li class="flex items-center justify-between px-4 py-3">
+            <span class="text-slate-700">댓글 감정 참여</span>
+            <span class="font-semibold text-slate-900" th:text="${item.statistics.commentEmotionCount}">0</span>
+          </li>
+        </ul>
+      </div>
+
+	  <!-- 하단 액션: 로그아웃(버튼) + 탈퇴(우측) -->
+	  <div class="px-4 pb-5 pt-2">
+	    <div class="flex items-center justify-between gap-3">
+	      <button id="btnLogout"
+	              type="button"
+	              class="flex-1 py-3 rounded-2xl text-base font-semibold
+	                     bg-slate-100 text-slate-900 hover:bg-slate-200
+	                     ring-1 ring-slate-200">
+	        로그아웃
+	      </button>
+
+	      <button id="btnWithdraw"
+	              type="button"
+	              class="shrink-0 px-2 py-2 text-sm font-medium text-rose-500 hover:text-rose-600">
+	        탈퇴
+	      </button>
+	    </div>
+	  </div>
+    </div>
+  </div>
 </th:block>
-</body>
+
+<th:block layout:fragment="my_script">
+<script>
+(function () {
+  const root = document.getElementById('myPageRoot');
+  const loginUid = root?.dataset?.loginUid || '';
+  const itemUid  = root?.dataset?.itemUid  || '';
+  const canEdit = (loginUid && itemUid && loginUid === itemUid);
+
+  const $nickname = document.getElementById('nickname');
+  const $file = document.getElementById('profileFile');
+  const $label = document.getElementById('profileLabel');
+  const $img = document.getElementById('profileImg');
+
+  let savingProfile = false;
+  let savingNickname = false;
+
+  let lastSavedNickname = ($nickname.value || '').trim();
+  let dirtyNickname = false;
+
+  /* =====================
+   * 권한 처리
+   * ===================== */
+  if (!canEdit) {
+    $nickname.setAttribute('readonly', 'readonly');
+    $nickname.classList.add('bg-slate-50', 'text-slate-500');
+    $label.classList.add('opacity-50', 'pointer-events-none');
+    return;
+  }
+
+  /* =====================
+   * 닉네임 변경 감지
+   * ===================== */
+  $nickname.addEventListener('input', () => {
+    const now = ($nickname.value || '').trim();
+    dirtyNickname = (now !== lastSavedNickname);
+  });
+
+  /* =====================
+   * 이미지 변경 → 즉시 서버 전송
+   * ===================== */
+  $file.addEventListener('change', async (e) => {
+    const f = e.target.files?.[0];
+    if (!f || savingProfile) return;
+
+    savingProfile = true;
+
+    // 미리보기
+    const previewUrl = URL.createObjectURL(f);
+    $img.style.display = '';
+    $img.src = previewUrl;
+    document.getElementById('profileFallback')?.classList.add('hidden');
+
+    try {
+      showLoading?.();
+
+      const resized = await resizeImageToBlob(f);
+      const fd = new FormData();
+      fd.append('uid', itemUid);
+      fd.append('profile', resized, 'profile.jpg');
+
+      const cp = window.contextPath || '';
+      const res = await fetch(cp + '/My/updateUser.json', {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
+      }).then(r => r.json());
+
+      if (res?.code !== '0') {
+        await alertP(res?.message || '프로필 이미지 저장 실패');
+        return;
+      }
+
+      // 성공 → input 초기화
+      $file.value = '';
+      showToast?.('', '프로필 이미지가 변경되었습니다.', ToastType.SUCCESS, 1200);
+
+    } catch (e) {
+      console.error(e);
+      await alertP('프로필 이미지 저장 중 오류가 발생했습니다.');
+    } finally {
+      hideLoading?.();
+      savingProfile = false;
+      URL.revokeObjectURL(previewUrl);
+    }
+  });
+
+  /* =====================
+   * 페이지 이탈 시 닉네임만 저장
+   * ===================== */
+  async function saveNicknameIfNeeded() {
+    if (!dirtyNickname || savingNickname) return;
+
+    const nickname = ($nickname.value || '').trim();
+    if (!nickname) return;
+
+    savingNickname = true;
+
+    try {
+      const fd = new FormData();
+      fd.append('uid', itemUid);
+      fd.append('nickname', nickname);
+
+      const cp = window.contextPath || '';
+      const res = await fetch(cp + '/My/updateUser.json', {
+        method: 'POST',
+        body: fd,
+        credentials: 'include'
+      }).then(r => r.json());
+
+      if (res?.code === '0') {
+        lastSavedNickname = nickname;
+        dirtyNickname = false;
+      }
+    } catch (e) {
+      console.warn('닉네임 자동 저장 실패', e);
+    } finally {
+      savingNickname = false;
+    }
+  }
+
+  /* =====================
+   * 이탈 훅
+   * ===================== */
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      saveNicknameIfNeeded();
+    }
+  });
+
+  window.addEventListener('pagehide', () => {
+    saveNicknameIfNeeded();
+  });
+
+  /* =====================
+   * 로그아웃 / 탈퇴 시에도 닉네임 저장 후 진행
+   * ===================== */
+  async function leaveAfterNicknameSave(next) {
+    await saveNicknameIfNeeded();
+    next();
+  }
+
+  document.getElementById('btnLogout')?.addEventListener('click', async () => {
+    await leaveAfterNicknameSave(async () => {
+      const ok = await confirmP('로그아웃 하시겠습니까?');
+      if (!ok) return;
+
+      try {
+        showLoading?.();
+        const cp = window.contextPath || '';
+        await apiPost(cp + '/My/Logout.json', {});
+        window.location.href = cp + '/Auth/Login.html';
+      } finally {
+        hideLoading?.();
+      }
+    });
+  });
+
+  document.getElementById('btnWithdraw')?.addEventListener('click', async () => {
+    await leaveAfterNicknameSave(async () => {
+      await alertP('탈퇴 시 입력했던 정보는 모두 삭제되며 복구할 수 없습니다.');
+      const email = await promptP('탈퇴 확인을 위해 이메일을 입력해 주세요.');
+      if (!email) return;
+
+      const cp = window.contextPath || '';
+      window.location.href = cp + '/My/Withdraw/Google?email=' + encodeURIComponent(email);
+    });
+  });
+
+  /* =====================
+   * 유틸: 이미지 리사이즈
+   * ===================== */
+  async function resizeImageToBlob(file) {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    await img.decode();
+
+    const max = 512;
+    const ratio = Math.min(max / img.width, max / img.height, 1);
+    const w = Math.round(img.width * ratio);
+    const h = Math.round(img.height * ratio);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.85));
+    URL.revokeObjectURL(img.src);
+    return blob;
+  }
+
+})();
+</script>
+</th:block>
+
+
+<th:block layout:fragment="my_script______">
+  <script>
+    (function () {
+      const root = document.getElementById('myPageRoot');
+      const loginUid = root?.dataset?.loginUid || '';
+      const itemUid  = root?.dataset?.itemUid  || '';
+      const canEdit = (loginUid && itemUid && loginUid === itemUid);
+
+      const $nickname = document.getElementById('nickname');
+      const $file = document.getElementById('profileFile');
+      const $label = document.getElementById('profileLabel');
+      const $img = document.getElementById('profileImg');
+
+      let saving = false;
+
+      let lastSavedNickname = ($nickname.value || '').trim();
+      let dirtyNickname = false;
+      let dirtyImage = false;
+
+      // 권한 없으면 수정 잠금
+      if (!canEdit) {
+        $nickname.setAttribute('readonly', 'readonly');
+        $nickname.classList.add('bg-slate-50', 'text-slate-500');
+        $label.classList.add('opacity-50', 'pointer-events-none');
+      }
+
+      // 닉네임 변경 감지
+      $nickname?.addEventListener('input', () => {
+        if (!canEdit) return;
+        const now = ($nickname.value || '').trim();
+        dirtyNickname = (now !== lastSavedNickname);
+      });
+
+      // 이미지 변경 감지 (⭐ 여기서 dirtyImage=true)
+      $file?.addEventListener('change', (e) => {
+        if (!canEdit) return;
+        const f = e.target.files?.[0];
+        if (!f) return;
+
+        dirtyImage = true;
+
+        // 미리보기
+        const url = URL.createObjectURL(f);
+        $img.style.display = '';
+        $img.src = url;
+        document.getElementById('profileFallback')?.classList.add('hidden');
+      });
+
+      async function resizeImageToBlob(file, { maxW = 512, maxH = 512, quality = 0.85 } = {}) {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+
+        const ratio = Math.min(maxW / img.width, maxH / img.height, 1);
+        const w = Math.round(img.width * ratio);
+        const h = Math.round(img.height * ratio);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+        URL.revokeObjectURL(img.src);
+        return blob;
+      }
+
+      // ⭐ 변경: 닉네임이 안 바뀌어도 이미지가 바뀌면 호출
+      async function updateMyInfo() {
+        if (!canEdit) return true;
+        if (saving) return false;
+
+        const needSave = dirtyNickname || dirtyImage;
+        if (!needSave) return true;
+
+        const nickname = ($nickname.value || '').trim();
+
+        // 닉네임을 빈 값으로 보내고 싶지 않다면 방어
+        if (!nickname) {
+          await alertP('닉네임을 입력해 주세요.');
+          return false;
+        }
+
+        saving = true;
+
+        const fd = new FormData();
+        fd.append('uid', itemUid);
+        fd.append('nickname', nickname);
+
+        const f = $file.files?.[0];
+
+        // ⭐ 이미지가 변경된 경우에만 profile 첨부
+        if (dirtyImage && f) {
+          const resizedBlob = await resizeImageToBlob(f, { maxW: 512, maxH: 512, quality: 0.85 });
+          fd.append('profile', resizedBlob, 'profile.jpg');
+        }
+
+        try {
+          showLoading?.();
+          const cp = window.contextPath || '';
+          const res = await fetch(cp + '/My/updateUser.json', {
+            method: 'POST',
+            body: fd,
+            credentials: 'include'
+          }).then(r => r.json());
+
+          if (res?.code !== '0') {
+            await alertP(res?.message || '저장에 실패했습니다.');
+            return false;
+          }
+
+          // ✅ 저장 성공 시 상태 리셋
+          lastSavedNickname = nickname;
+          dirtyNickname = false;
+          dirtyImage = false;
+
+          // ⭐ file input 비워서 다음 이탈 때 또 저장되는 것 방지
+          if ($file) $file.value = '';
+
+          showToast?.('', '저장되었습니다.', ToastType.SUCCESS, 1000);
+          return true;
+        } catch (e) {
+          console.error(e);
+          await alertP('요청 중 오류가 발생했습니다.');
+          return false;
+        } finally {
+          hideLoading?.();
+          saving = false;
+        }
+      }
+
+      async function leaveWithAutoSave(nextAction) {
+        const needSave = dirtyNickname || dirtyImage;
+        if (!needSave) return nextAction();
+
+        const saved = await updateMyInfo();
+        if (saved) return nextAction();
+
+        const go = await confirmP('저장에 실패했습니다.\n저장하지 않고 이동할까요?');
+        if (go) return nextAction();
+      }
+
+      // iOS에서 페이지 숨김 시점 자동 저장 시도
+      let autoSaveTriggered = false;
+      async function tryAutoSaveOnHide() {
+        if (autoSaveTriggered) return;
+        if (!(dirtyNickname || dirtyImage)) return;
+        autoSaveTriggered = true;
+        try { await updateMyInfo(); } finally { autoSaveTriggered = false; }
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') tryAutoSaveOnHide();
+      });
+      window.addEventListener('pagehide', () => tryAutoSaveOnHide());
+
+      // 로그아웃
+      document.getElementById('btnLogout')?.addEventListener('click', async () => {
+        await leaveWithAutoSave(async () => {
+          const ok = await confirmP('로그아웃 하시겠습니까?');
+          if (!ok) return;
+
+          try {
+            showLoading?.();
+            const cp = window.contextPath || '';
+            const res = await apiPost(cp + '/My/Logout.json', {});
+            if (res?.code && res.code !== '0') {
+              await alertP(res?.message || '로그아웃 실패');
+              return;
+            }
+            window.location.href = cp + '/Auth/Login.html';
+          } catch (e) {
+            console.error(e);
+            await alertP('로그아웃 처리 중 오류가 발생했습니다.');
+          } finally {
+            hideLoading?.();
+          }
+        });
+      });
+
+      // 탈퇴
+      async function withdrawFlow() {
+        await alertP('탈퇴 시 입력했던 정보는 모두 삭제되며 복구할 수 없습니다.');
+        const email = await promptP('탈퇴 확인을 위해 이메일을 입력해 주세요.');
+        if (email === false) return;
+
+        const v = String(email || '').trim();
+        if (!v) { await alertP('이메일을 입력해 주세요.'); return; }
+
+        const cp = window.contextPath || '';
+        window.location.href = cp + '/My/Withdraw/Google?email=' + encodeURIComponent(v);
+      }
+
+      document.getElementById('btnWithdraw')?.addEventListener('click', async () => {
+        await leaveWithAutoSave(withdrawFlow);
+      });
+
+    })();
+  </script>
+</th:block>
+
+
+<th:block layout:fragment="my_script_">
+  <script>
+    (function () {
+      const root = document.getElementById('myPageRoot');
+      const loginUid = root?.dataset?.loginUid || '';
+      const itemUid  = root?.dataset?.itemUid  || '';
+      const canEdit = (loginUid && itemUid && loginUid === itemUid);
+
+      const $nickname = document.getElementById('nickname');
+      const $file = document.getElementById('profileFile');
+      const $label = document.getElementById('profileLabel');
+      const $img = document.getElementById('profileImg');
+
+      let dirty = false;
+      let saving = false;
+      let lastSavedNickname = ($nickname.value || '').trim();
+      let lastSavedFileSig = ""; // 파일 변경 감지용
+
+      function setDirty(v) { dirty = v; }
+
+      // 권한 없으면 수정 잠금
+      if (!canEdit) {
+        $nickname.setAttribute('readonly', 'readonly');
+        $nickname.classList.add('bg-slate-50', 'text-slate-500');
+        $label.classList.add('opacity-50', 'pointer-events-none');
+      }
+
+      // 닉네임 변경 감지(입력 중에는 dirty만 올려두고 저장은 이탈 시점)
+      $nickname?.addEventListener('input', () => {
+        if (!canEdit) return;
+        const now = ($nickname.value || '').trim();
+        if (now !== lastSavedNickname) setDirty(true);
+      });
+
+      // 이미지 미리보기 + dirty
+      $file?.addEventListener('change', (e) => {
+        if (!canEdit) return;
+        const f = e.target.files?.[0];
+        if (!f) return;
+
+        // 파일 시그니처(간단)로 변경 추적
+        lastSavedFileSig = `${f.name}:${f.size}:${f.lastModified}`;
+        setDirty(true);
+
+        // 미리보기
+        const url = URL.createObjectURL(f);
+        $img.style.display = '';
+        $img.src = url;
+        document.getElementById('profileFallback')?.classList.add('hidden');
+      });
+
+      async function resizeImageToBlob(file, { maxW = 512, maxH = 512, quality = 0.85 } = {}) {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+
+        const ratio = Math.min(maxW / img.width, maxH / img.height, 1);
+        const w = Math.round(img.width * ratio);
+        const h = Math.round(img.height * ratio);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+        URL.revokeObjectURL(img.src);
+        return blob;
+      }
+
+      async function updateMyInfo() {
+        if (!canEdit) return true;
+        if (!dirty) return true;
+        if (saving) return false;
+
+        const nickname = ($nickname.value || '').trim();
+        if (!nickname) {
+          await alertP('닉네임을 입력해 주세요.');
+          return false;
+        }
+
+        saving = true;
+
+        const fd = new FormData();
+        fd.append('uid', itemUid);
+        fd.append('nickname', nickname);
+
+        const f = $file.files?.[0];
+        if (f) {
+          const resizedBlob = await resizeImageToBlob(f, { maxW: 512, maxH: 512, quality: 0.85 });
+          fd.append('profile', resizedBlob, 'profile.jpg');
+        }
+
+        try {
+          showLoading?.();
+          const cp = window.contextPath || '';
+          const res = await fetch(cp + '/My/updateUser.json', {
+            method: 'POST',
+            body: fd,
+            credentials: 'include'
+          }).then(r => r.json());
+
+          if (res?.code !== '0') {
+            await alertP(res?.message || '저장에 실패했습니다.');
+            return false;
+          }
+
+          // 저장 성공 상태 갱신
+          lastSavedNickname = nickname;
+          if (f) {
+            // 저장 후 파일 입력은 유지해도 되지만, “저장됨” 상태만 dirty=false 처리
+            // 필요하면 여기서 $file.value = '' 로 초기화 가능
+          }
+          dirty = false;
+
+          showToast?.('', '저장되었습니다.', ToastType.SUCCESS, 1000);
+          return true;
+        } catch (e) {
+          console.error(e);
+          await alertP('요청 중 오류가 발생했습니다.');
+          return false;
+        } finally {
+          hideLoading?.();
+          saving = false;
+        }
+      }
+
+      /**
+       * 이 페이지를 떠나는 액션(로그아웃/탈퇴/메뉴 이동 등)을 우리가 제어할 때:
+       * - 변경사항 있으면 저장 후 진행
+       */
+      async function leaveWithAutoSave(nextAction) {
+        if (!dirty) return nextAction();
+
+        // 저장 실패해도 나가야 하는 정책이면 confirm 추가 가능
+        const saved = await updateMyInfo();
+        if (saved) return nextAction();
+
+        // 저장 실패 시: 사용자에게 선택권
+        const go = await confirmP('저장에 실패했습니다.\n저장하지 않고 이동할까요?');
+        if (go) return nextAction();
+      }
+
+      // 🔸 iOS에서 “페이지 숨김/백그라운드” 시점에 자동 저장 시도
+      // (주의: fetch가 항상 보장되진 않음. 그래도 최대한 시도)
+      let autoSaveTriggered = false;
+
+      async function tryAutoSaveOnHide() {
+        if (autoSaveTriggered) return;
+        if (!dirty) return;
+        autoSaveTriggered = true;
+        try { await updateMyInfo(); } finally { autoSaveTriggered = false; }
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          tryAutoSaveOnHide();
+        }
+      });
+
+      window.addEventListener('pagehide', () => {
+        // pagehide는 bfcache 포함해서 iOS에서 더 잘 잡히는 편
+        tryAutoSaveOnHide();
+      });
+
+      // 로그아웃
+      document.getElementById('btnLogout')?.addEventListener('click', async () => {
+        await leaveWithAutoSave(async () => {
+          const ok = await confirmP('로그아웃 하시겠습니까?');
+          if (!ok) return;
+
+          try {
+            showLoading?.();
+            const cp = window.contextPath || '';
+            const res = await apiPost(cp + '/My/Logout.json', {});
+            if (res?.code && res.code !== '0') {
+              await alertP(res?.message || '로그아웃 실패');
+              return;
+            }
+            window.location.href = cp + '/Auth/Login.html';
+          } catch (e) {
+            console.error(e);
+            await alertP('로그아웃 처리 중 오류가 발생했습니다.');
+          } finally {
+            hideLoading?.();
+          }
+        });
+      });
+
+      // 탈퇴
+      async function withdrawFlow() {
+        await alertP('탈퇴 시 입력했던 정보는 모두 삭제되며 복구할 수 없습니다.');
+        const email = await promptP('탈퇴 확인을 위해 이메일을 입력해 주세요.');
+        if (email === false) return;
+
+        const v = String(email || '').trim();
+        if (!v) { await alertP('이메일을 입력해 주세요.'); return; }
+
+        const cp = window.contextPath || '';
+        window.location.href = cp + '/My/Withdraw/Google?email=' + encodeURIComponent(v);
+      }
+
+      document.getElementById('btnWithdraw')?.addEventListener('click', async () => {
+        await leaveWithAutoSave(withdrawFlow);
+      });
+
+    })();
+  </script>
+</th:block>
+
+
+<th:block layout:fragment="my_script__">
+  <script>
+    (function () {
+      const root = document.getElementById('myPageRoot');
+      const loginUid = root?.dataset?.loginUid || '';
+      const itemUid  = root?.dataset?.itemUid  || '';
+      const canEdit = (loginUid && itemUid && loginUid === itemUid);
+
+      const $nickname = document.getElementById('nickname');
+      const $file = document.getElementById('profileFile');
+      const $label = document.getElementById('profileLabel');
+      const $btnSave = document.getElementById('btnSave');
+      const $img = document.getElementById('profileImg');
+
+      let dirty = false;
+      let saving = false;
+      const originNickname = ($nickname.value || '').trim();
+
+      function setDirty(v) {
+        dirty = v;
+        if (!canEdit) return;
+        // 변경 있을 때만 저장 버튼 노출
+        $btnSave.classList.toggle('hidden', !dirty);
+        $btnSave.disabled = !dirty || saving;
+      }
+
+      // 권한 없으면 수정 잠금
+      if (!canEdit) {
+        $nickname.setAttribute('readonly', 'readonly');
+        $nickname.classList.add('bg-slate-50', 'text-slate-500');
+        $label.classList.add('opacity-50', 'pointer-events-none');
+        $btnSave?.remove(); // 아예 제거
+      }
+
+      // 변경 감지
+      $nickname?.addEventListener('input', () => {
+        const now = ($nickname.value || '').trim();
+        setDirty(now !== originNickname);
+      });
+
+      // 이미지 미리보기 + dirty
+      $file?.addEventListener('change', async (e) => {
+        const f = e.target.files?.[0];
+        if (!f) return;
+        const url = URL.createObjectURL(f);
+        $img.style.display = '';
+        $img.src = url;
+        document.getElementById('profileFallback')?.classList.add('hidden');
+        setDirty(true);
+      });
+
+      async function resizeImageToBlob(file, { maxW = 512, maxH = 512, quality = 0.85 } = {}) {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await img.decode();
+
+        const ratio = Math.min(maxW / img.width, maxH / img.height, 1);
+        const w = Math.round(img.width * ratio);
+        const h = Math.round(img.height * ratio);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+        URL.revokeObjectURL(img.src);
+        return blob;
+      }
+
+      async function updateMyInfo() {
+        if (!canEdit) return true;
+        if (!dirty) return true; // 바뀐 게 없으면 성공으로 간주
+        if (saving) return false;
+
+        const nickname = ($nickname.value || '').trim();
+        if (!nickname) {
+          await alertP('닉네임을 입력해 주세요.');
+          return false;
+        }
+
+        saving = true;
+        if ($btnSave) $btnSave.disabled = true;
+
+        const fd = new FormData();
+        fd.append('uid', itemUid);
+        fd.append('nickname', nickname);
+
+        const f = $file.files?.[0];
+        if (f) {
+          const resizedBlob = await resizeImageToBlob(f, { maxW: 512, maxH: 512, quality: 0.85 });
+          fd.append('profile', resizedBlob, 'profile.jpg');
+        }
+
+        try {
+          showLoading?.();
+          const cp = window.contextPath || '';
+          const res = await fetch(cp + '/My/updateUser.json', {
+            method: 'POST',
+            body: fd,
+            credentials: 'include'
+          }).then(r => r.json());
+
+          if (res?.code !== '0') {
+            await alertP(res?.message || '저장에 실패했습니다.');
+            return false;
+          }
+
+          // 저장 성공 처리
+          setDirty(false);
+          showToast?.('', '저장되었습니다.', ToastType.SUCCESS, 1200);
+          return true;
+        } catch (e) {
+          console.error(e);
+          await alertP('요청 중 오류가 발생했습니다.');
+          return false;
+        } finally {
+          hideLoading?.();
+          saving = false;
+          if ($btnSave) $btnSave.disabled = !dirty;
+        }
+      }
+
+      // 저장 버튼 클릭
+      $btnSave?.addEventListener('click', updateMyInfo);
+
+      // 페이지 이탈 시 자동 저장(수정사항 있으면)
+      window.addEventListener('beforeunload', (e) => {
+        // 브라우저 기본 confirm(모바일 사파리 제약) 최소한의 안전장치
+        if (dirty) {
+          e.preventDefault();
+          e.returnValue = '';
+        }
+      });
+
+      // SPA/링크 이동을 우리가 제어할 때: 터치 기반 “이탈” 흐름
+      async function tryLeave(action) {
+        if (!dirty) return action();
+
+        const ok = await confirmP('변경사항이 있습니다. 저장하고 나갈까요?');
+        if (!ok) return action(); // 저장 안 하고 나감
+
+        const saved = await updateMyInfo();
+        if (saved) action();
+      }
+
+      // 로그아웃
+      document.getElementById('btnLogout')?.addEventListener('click', async () => {
+        await tryLeave(async () => {
+          const ok = await confirmP('로그아웃 하시겠습니까?');
+          if (!ok) return;
+
+          try {
+            showLoading?.();
+            const cp = window.contextPath || '';
+            const res = await apiPost(cp + '/My/Logout.json', {});
+            if (res?.code && res.code !== '0') {
+              await alertP(res?.message || '로그아웃 실패');
+              return;
+            }
+            window.location.href = cp + '/';
+          } catch (e) {
+            console.error(e);
+            await alertP('로그아웃 처리 중 오류가 발생했습니다.');
+          } finally {
+            hideLoading?.();
+          }
+        });
+      });
+
+      // 탈퇴(우측 상단 버튼)
+      async function withdrawFlow() {
+        await alertP('탈퇴 시 입력했던 정보는 모두 삭제되며 복구할 수 없습니다.');
+        const email = await promptP('탈퇴 확인을 위해 이메일을 입력해 주세요.');
+        if (email === false) return;
+
+        const v = String(email || '').trim();
+        if (!v) { await alertP('이메일을 입력해 주세요.'); return; }
+
+        const cp = window.contextPath || '';
+        window.location.href = cp + '/My/Withdraw/Google?email=' + encodeURIComponent(v);
+      }
+
+      document.getElementById('btnWithdraw')?.addEventListener('click', async () => {
+        await tryLeave(withdrawFlow);
+      });
+
+    })();
+  </script>
+</th:block>
+
 </html>

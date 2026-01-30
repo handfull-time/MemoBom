@@ -156,6 +156,7 @@ public interface TopicMapper {
 	 * @param user
 	 * @param keyword
 	 * @param pageNo
+	 * @param uid
 	 * @return
 	 */
 	List<TopicVo> listMyOrFollowTopic(@Param("user") LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);

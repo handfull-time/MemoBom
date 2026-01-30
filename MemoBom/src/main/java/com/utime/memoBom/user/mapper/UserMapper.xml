@@ -167,55 +167,70 @@
 	</select>
 	
 	<!-- USER_NO 의 Topic 생성수. topic follow 수. 로그인 한 수. fragment 의 작성 수. 댓글 작성 수. fragment 의 emotion 참여 수. 댓글의 emotion 참여 수 -->
-	<select id="selectUserRecord" parameterType="long" resultType="com.utime.memoBom.user.vo.query.BasicUserVo"> 
+	<select id="selectUserRecord" parameterType="long" resultType="com.utime.memoBom.user.vo.query.UsageStatisticsVo"> 
 		SELECT
 		    <!--/* Topic 생성 수 */-->
 		    (SELECT COUNT(*)
 		       FROM MB_TOPIC TP
 		      WHERE TP.OWNER_NO = #{userNo}
 		        AND TP.ENABLED = TRUE
-		    ) AS TOPIC_CREATED_COUNT,
+		    ) AS "topicCreatedCount",
 		
 		    <!--/* Topic follow 수 */-->
 		    (SELECT COUNT(*)
 		       FROM MB_TOPIC_FOLLOW FL
 		      WHERE FL.USER_NO = #{userNo}
-		    ) AS TOPIC_FOLLOW_COUNT,
+		    ) AS "topicFollowCount",
 		
 		    <!--/* 로그인 한 수 */-->
 		    (SELECT COUNT(*)
 		       FROM MB_USER_LOGIN_RECORD LR
 		      WHERE LR.USER_NO = #{userNo}
-		    ) AS LOGIN_COUNT,
+		    ) AS "loginCount",
 		
 		    <!--/* Fragment 작성 수 */-->
 		    (SELECT COUNT(*)
 		       FROM MB_FRAGMENT F
 		      WHERE F.USER_NO = #{userNo}
 		        AND F.IS_DELETED = FALSE
-		    ) AS FRAGMENT_WRITE_COUNT,
+		    ) AS "fragmentWriteCount",
 		
 		    <!--/* 댓글 작성 수 */-->
 		    (SELECT COUNT(*)
 		       FROM MB_FRAGMENT_COMMENTS C
 		      WHERE C.USER_NO = #{userNo}
-		    ) AS COMMENT_WRITE_COUNT,
+		    ) AS "commentWriteCount",
 		
 		    <!--/* Fragment emotion 참여 수 (TARGET_TYPE = 1) */-->
 		    (SELECT COUNT(*)
 		       FROM MB_FRAGMENT_EMOTION_LOG E
 		      WHERE E.USER_NO = #{userNo}
 		        AND E.TARGET_TYPE = 1
-		    ) AS FRAGMENT_EMOTION_COUNT,
+		    ) AS "fragmentEmotionCount",
 		
 		    <!--/* 댓글 emotion 참여 수 (TARGET_TYPE = 2) */-->
 		    (SELECT COUNT(*)
 		       FROM MB_FRAGMENT_EMOTION_LOG E
 		      WHERE E.USER_NO = #{userNo}
 		        AND E.TARGET_TYPE = 2
-		    ) AS COMMENT_EMOTION_COUNT
+		    ) AS "commentEmotionCount"
 	    FROM DUAL
 	</select>
 
+ 	<!--nickName 변경-->
+ 	<update id="updateNicname" parameterType="map" >
+ 		UPDATE MB_USER SET
+ 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			, NICKNAME = #{nickname}
+ 		WHERE USER_NO = #{user.userNo}
+ 	</update>
 
+	<!--개인 이미지 정보 수정-->
+	<update id="updateProfile" parameterType="map" >
+ 		UPDATE MB_USER SET
+ 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			, PROFILE_IMG_PATH = #{profile}
+ 		WHERE USER_NO = #{user.userNo}
+ 	</update>
+ 	
 </mapper>

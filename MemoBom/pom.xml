@@ -153,6 +153,16 @@
 		  <version>0.9.6</version>
 		</dependency>
 		<!-- webpush end -->
+		
+		<dependency>
+		  <groupId>org.springframework.boot</groupId>
+		  <artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>com.github.ben-manes.caffeine</groupId>
+		  <artifactId>caffeine</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -9,6 +9,6 @@ import lombok.Data;
 public class MySearchDto {
 	/** 검색어 */
 	String keyword;
-	/**  */
+	/** 페이지 번호 */
 	int pageNo = 1;
 }

@@ -2,8 +2,11 @@ package com.utime.memoBom.user.service;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.user.dto.MyPageDto;
 import com.utime.memoBom.user.dto.MySearchDto;
+import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.UserProfile;
 
 public interface UserService {
 
@@ -13,6 +16,13 @@ public interface UserService {
 	 * @return
 	 */
 	UserVo getUserFromUid(String uid);
+	
+	/**
+	 * 내 개인 정보 및 통계
+	 * @param user
+	 * @return
+	 */
+	MyPageDto getMyPage(LoginUser user);
 
 	/**
 	 * 내 작성 데이터
@@ -53,5 +63,36 @@ public interface UserService {
 	 * @return
 	 */
 	ReturnBasic getMyCommentsDataList(LoginUser user, MySearchDto searchVo);
+
+	/**
+	 * 개인 정보 수정
+	 * @param user
+	 * @param data
+	 * @return
+	 */
+	ReturnBasic updateMyInfo(LoginUser user, UserUpdateDto data);
+
+	/**
+	 * 회원의 email이 일치하는지 검사.
+	 * @param user
+	 * @param email
+	 * @return
+	 */
+	ReturnBasic checkUser(LoginUser user, String email);
+	
+	/**
+	 * 사용자 이미지 정보
+	 * @param uid
+	 * @return
+	 */
+	UserProfile getUserProfile(String uid);
+
+	/**
+	 * Fragment 상세 정보
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
+	ReturnBasic getMyFragmentsDetail(LoginUser user, String uid);
 
 }

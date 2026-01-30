@@ -10,6 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -50,13 +51,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
     	
+    	
     	final ResUserVo tokenRes = jwtProvider.reissueAccessToken(request, response);
-    	if( tokenRes.isError() ) {
-//    		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    		SecurityContextHolder.clearContext();
-    		filterChain.doFilter(request, response);
-    		return;
-    	}
+    	if (tokenRes == null || tokenRes.isError() || tokenRes.getUser() == null) {
+
+            // ✅ 여기서 강제 로그아웃 처리(쿠키 삭제 + SecurityContext 정리 + (선택)세션 무효화)
+            forceLogout(request, response);
+
+            // 보통은 401로 끝내는 게 UX/보안상 깔끔합니다.
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	filterChain.doFilter(request, response);
+            return;
+        }
     	
 		log.info(request.getRequestURI());
 	    this.authenticateUser( tokenRes.getUser() );
@@ -75,7 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (user == null) return;
 
         // 이미 인증 정보가 있으면 덮어쓰지 않음
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if ( auth != null && auth instanceof CustomUserDetails ) {
             return;
         }
 
@@ -91,5 +98,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+    
+    private void forceLogout(HttpServletRequest request, HttpServletResponse response) {
+    	
+    	log.warn("✅ 여기서 강제 로그아웃 처리");
+        
+    	// 1) 토큰 쿠키 제거 (중요)
+        jwtProvider.procLogout(request, response);
+
+        // 2) SecurityContext 정리 + (세션 쓰면) 세션 무효화까지
+        new SecurityContextLogoutHandler().logout(
+                request,
+                response,
+                SecurityContextHolder.getContext().getAuthentication()
+        );
+
+        // 3) (중복이지만 안전) ThreadLocal 정리
+        SecurityContextHolder.clearContext();
     }
 }

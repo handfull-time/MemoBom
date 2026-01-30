@@ -10,6 +10,7 @@ import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
+import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
 
 /**
  * 사용자 처리
@@ -68,4 +69,24 @@ public interface UserMapper {
 	 * @return
 	 */
 	BasicUserVo getBasicUserFromUserNo(long userNo);
+	
+	/**
+	 * 사용자 이용 통계
+	 * @param userNo
+	 * @return
+	 */
+	UsageStatisticsVo selectUserRecord( long userNo );
+
+	/**
+	 * nickName 변경
+	 */
+	int updateNicname(@Param("user")LoginUser user, @Param("nickname")String nickname);
+
+	/**
+	 * 개인 이미지 정보 수정
+	 * @param user
+	 * @param profile
+	 * @return
+	 */
+	int updateProfile(@Param("user")LoginUser user, @Param("profile") String profile);
 }

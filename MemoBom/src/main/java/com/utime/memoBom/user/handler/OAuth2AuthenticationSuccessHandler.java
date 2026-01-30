@@ -5,11 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -114,9 +116,14 @@ class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessH
 			} catch (Exception e) {
 				log.error("", e);
 			} 
+            
+            new SecurityContextLogoutHandler().logout(request, response,
+    	            SecurityContextHolder.getContext().getAuthentication());
+
+    	    SecurityContextHolder.clearContext();
 
             // 다시 로그인 페이지로 이동
-            getRedirectStrategy().sendRedirect(request, response, "/Auth/Login.html");
+            getRedirectStrategy().sendRedirect(request, response, "/");
             return;
         }
        
