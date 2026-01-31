@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.common.security.JwtProvider;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.dto.MySearchDto;
+import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +35,8 @@ public class TestController {
     private final JwtProvider jwtProvider;
 
     private final UserDao userDao;
+    
+    final UserService userService;
 	
     @GetMapping("Login")
 	public String testLogin() throws Exception {
@@ -122,5 +127,17 @@ public class TestController {
 		// https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo?serviceKey=__key__&stdt=2026
 		return url;
 	}
+	
+	@ResponseBody
+	@GetMapping(path = "MyMosaic.json")
+    public ReturnBasic myMosaic( ) {
+		
+		final MySearchDto searchVo = new MySearchDto();
+		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
+		
+		return userService.getMyMosaicDataList( user, searchVo );
+    }
+	
+	
 }
 

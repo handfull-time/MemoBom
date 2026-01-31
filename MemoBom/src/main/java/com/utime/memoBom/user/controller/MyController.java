@@ -125,6 +125,18 @@ public class MyController {
 		return userService.getMyAlarmDataList( user, searchVo );
     }
 
+	@GetMapping(path = "Mosaic.html")
+    public String myMosaic(Model model) {
+		return "My/MyMosaic";
+    }
+	
+	@ResponseBody
+	@GetMapping(path = "MyMosaic.json")
+    public ReturnBasic myMosaic( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyMosaicDataList( user, searchVo );
+    }
+	
 	@GetMapping(path = "Fragments.html")
     public String myFragments(Model model ) {
 		return "My/MyFragments";
@@ -141,31 +153,6 @@ public class MyController {
     public ReturnBasic myFragments( LoginUser user, MySearchDto searchVo ) {
 		
 		return userService.getMyFragmentsDataList( user, searchVo );
-    }
-
-	/**
-	 * Fragment 상세 보기
-	 * @param model
-	 * @param user
-	 * @param uid Fragment uid
-	 * @return
-	 */
-	@GetMapping(path = "Fragments.view")
-    public String myFragmentsView( Model model, LoginUser user, @RequestParam String uid ) {
-		model.addAttribute("item", userService.getMyFragmentsDetail( user, uid ));
-		return "";
-    }
-
-	@GetMapping(path = "Mosaic.html")
-    public String myMosaic(Model model) {
-		return "My/MyMosaic";
-    }
-	
-	@ResponseBody
-	@GetMapping(path = "MyMosaic.json")
-    public ReturnBasic myMosaic( LoginUser user, MySearchDto searchVo ) {
-		
-		return userService.getMyMosaicDataList( user, searchVo );
     }
 
 	@GetMapping(path = "Comments.html")

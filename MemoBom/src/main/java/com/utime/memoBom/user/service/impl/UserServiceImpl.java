@@ -1,5 +1,6 @@
 package com.utime.memoBom.user.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -122,8 +123,37 @@ class UserServiceImpl implements UserService{
 		
 		final ReturnBasic result = new ReturnBasic();
 		
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic getMyFragmentsDetail(LoginUser user, String uid) {
+		
+		final ReturnBasic result = new ReturnBasic();
+
+// 이거 이상한데?? 왜 TOPIC을 처리 했지?		
+//		final TopicVo topic = topicDao.loadTopic( uid );
+//		if( topic == null ) {
+//			return result.setCodeMessage("E", "Mosaic 정보 없습니다.");
+//		}
+//		
+//		final MyTopicDto addItem = new MyTopicDto();
+//		BeanUtils.copyProperties(topic, addItem);
+//		addItem.setEditable( user.userNo() == topic.getOwnerNo() );
+//		
+//		result.setData(addItem);
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
 		final List<TopicVo> list = topicDao.listMyOrFollowTopic(user, searchVo.getKeyword(), searchVo.getPageNo());
-		final List<MyTopicDto> resList = List.of();
+		final List<MyTopicDto> resList = new ArrayList<>();
 		for( TopicVo src : list ) {
 			final MyTopicDto addItem = new MyTopicDto();
 			addItem.setUid(src.getUid());
@@ -137,33 +167,6 @@ class UserServiceImpl implements UserService{
 		}
 		
 		result.setData(resList);
-		
-		return result;
-	}
-	
-	@Override
-	public ReturnBasic getMyFragmentsDetail(LoginUser user, String uid) {
-		
-		final ReturnBasic result = new ReturnBasic();
-		
-		final TopicVo topic = topicDao.loadTopic( uid );
-		if( topic == null ) {
-			return result.setCodeMessage("E", "Mosaic 정보 없습니다.");
-		}
-		
-		final MyTopicDto addItem = new MyTopicDto();
-		BeanUtils.copyProperties(topic, addItem);
-		addItem.setEditable( user.userNo() == topic.getOwnerNo() );
-		
-		result.setData(addItem);
-		
-		return result;
-	}
-
-	@Override
-	public ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo) {
-		
-		final ReturnBasic result = new ReturnBasic();
 		
 		return result;
 	}

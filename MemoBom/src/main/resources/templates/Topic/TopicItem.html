@@ -16,11 +16,11 @@
 
 	   <!-- Page intro -->
 	   <div class="px-1">
-	     <h2 class="text-base font-semibold tracking-tight text-slate-900">새 Mosaic</h2>
+	     <h2 class="text-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새 Mosaic' : topic.name}]]</h2>
 	     <p class="mt-1 text-xs text-gray-500">이름과 스타일을 정하고, 옵션을 선택해 주세요.</p>
 	   </div>
 
-	   <!-- 기본 정보 -->
+   	   <!-- 기본 정보 -->
        <section class="bg-white rounded-2xl border border-red-200 p-4">
          <div class="flex items-center justify-between">
            <h3 class="text-sm font-semibold text-slate-900">기본 정보</h3>
@@ -37,7 +37,7 @@
            <div class="mt-2 flex items-center gap-2 relative">
              <!-- Emoji -->
              <div class="shrink-0">
-               <input type="hidden" id="imogi" value="" />
+               <input type="hidden" id="imogi" th:value="${topic?.imogi}" />
                <button type="button" id="emojiBtn"
                  class="w-12 h-12 rounded-2xl border border-slate-200 bg-white text-2xl leading-none active:scale-[0.98] transition"
 				 th:text="${topic?.imogi ?: '😊'}">
@@ -235,7 +235,6 @@
 			const elName = $("name");
 			const elDesc = $("description");
 			const elColor = $("color");
-			const elExternal = $("external");
 			const elColorPicker = $("colorPicker");
 			const elColorText = $("colorText");
 
@@ -245,8 +244,9 @@
 			const btnSetEmotion = $("btnSetEmotion");
 			const btnSetReaction = $("btnSetReaction");
 			
-			const elEmotion = $("emotion");
-			const elComments = $("comments");
+			//const elExternal = $("external");
+			//const elEmotion = $("emotion");
+			//const elComments = $("comments");
 			const elMaxLen = $("maxLen");
 				
 			// ---- emoji set selection ----
@@ -378,18 +378,18 @@
 
 			// ---- save ----
 			function buildPayload() {
-
+				 
 				return {
 					seal: /*[[${seal}]]*/ null,
 					uid: /*[[${topic.uid}]]*/ null,
 					name: (elName.value || "").trim(),
 					description: (elDesc.value || "").trim(),
 					color: (elColor.value || "").trim(),
-					external: !!elExternal.checked,
+					external: document.querySelector('pp-toggle[name="external"]')?.checked,
 					imogi: (elImogi.value || "").trim(),
 					emojiSetType: elEmojiSetType,
-					emotion: !!elEmotion.checked,
-					comments: !!elComments.checked,
+					emotion: document.querySelector('pp-toggle[name="emotion"]')?.checked,
+					comments: document.querySelector('pp-toggle[name="comments"]')?.checked,
 		            maxLen: parseInt(elMaxLen.value || "0", 10)
 				};
 			}
@@ -424,7 +424,7 @@
 					}
 
 					if (data.code === "0") {
-						await alertP("새 Mosaic이 저장되었습니다.");
+						await alertP("Mosaic이 저장되었습니다.");
 						location.replace(/*[[@{/Mosaic/index.html}]]*/ '/Mosaic/index.html');
 					} else {
 						showToast("오류", data.message || "저장 실패", ToastType.ERROR);

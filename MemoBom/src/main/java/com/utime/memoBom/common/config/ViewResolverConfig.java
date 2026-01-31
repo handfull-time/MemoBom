@@ -59,6 +59,10 @@ public class ViewResolverConfig implements WebMvcConfigurer {
     @Resource(name="ViewInterceptor")
 	private AsyncHandlerInterceptor viewInterceptor;
     
+    
+    @Resource(name="LogInterceptor")
+	private AsyncHandlerInterceptor logInterceptor;
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> excludeList = new ArrayList<>();
@@ -74,6 +78,10 @@ public class ViewResolverConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**") // 모든 경로 추가
                 .excludePathPatterns(excludeList) // 화이트리스트 제외
                 .excludePathPatterns("/**/*.json", "/**/*.js", "/**/*.css", "/images/**"); // 공통 정적 자원 제외
+        
+        registry.addInterceptor(this.logInterceptor)
+	        .addPathPatterns("/**/*.json", "/**/*.html") // 모든 경로 추가
+	        .excludePathPatterns("/**/*.js", "/**/*.css", "/UserImage/**", "/images/**"); // 공통 정적 자원 제외
     }
     
 	@Bean

@@ -16,6 +16,7 @@ public class WhiteAddressList {
 			, "/About/"
 			, "/oauth2/"
 			, "/login/"
+			, "/UserImage/"
 //			, "/Error/"
 			, "/error/"
 			, "/DbConsoleH2/"

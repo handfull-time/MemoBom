@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	
     	
     	final ResUserVo tokenRes = jwtProvider.reissueAccessToken(request, response);
-    	if (tokenRes == null || tokenRes.isError() || tokenRes.getUser() == null) {
+    	if (tokenRes == null || tokenRes.getUser() == null) {
 
             // ✅ 여기서 강제 로그아웃 처리(쿠키 삭제 + SecurityContext 정리 + (선택)세션 무효화)
             forceLogout(request, response);
@@ -69,8 +69,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	
     	filterChain.doFilter(request, response);
     }
-    
-//    private String rolePrefix = "ROLE_";
     
     /**
      * SecurityContext에 사용자 정보 저장

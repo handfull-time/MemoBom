@@ -99,4 +99,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createUserProfile();
+
+	/**
+	 * 피드백 생성
+	 * @return
+	 */
+	int createFeedback();
 }

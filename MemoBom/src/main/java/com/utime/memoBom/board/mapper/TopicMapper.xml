@@ -59,7 +59,7 @@
 			<if test="color != null and ! color.isEmpty()">, COLOR</if>
 			, EMOJI_SET_TYPE
 			, AI
-			<if test="color != null and ! color.isEmpty()">, PROMPT</if>
+			<if test="prompt != null and ! prompt.isEmpty()">, PROMPT</if>
 		) VALUES (
 			CURRENT_TIMESTAMP
 			, #{ownerNo}
@@ -410,7 +410,7 @@
 			
 			<!-- 내가 만든 토픽 OR 내가 팔로우한 토픽 -->
 			AND (
-				TP.OWNER_NO = #{userNo}
+				TP.OWNER_NO = #{user.userNo}
 				OR MYFL.USER_NO IS NOT NULL
 			)
 			

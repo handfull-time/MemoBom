@@ -145,6 +145,15 @@ class CreateRepository {
 			result += mapper.createUserProfile();
 		}
 		
+		if( !common.existTable("MB_FEEDBACK") ) {
+			log.info("MB_FEEDBACK 생성");
+			result += mapper.createFeedback();
+			
+			result += common.createIndex("MB_FEEDBACK_USER_NO_INDX", "MB_FEEDBACK", "USER_NO");	
+		}
+
+		
+		
 		log.info("초기 작업 {}", result);
 	}
 }

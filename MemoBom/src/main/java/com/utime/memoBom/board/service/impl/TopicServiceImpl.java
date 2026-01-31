@@ -3,6 +3,7 @@ package com.utime.memoBom.board.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
@@ -70,22 +71,15 @@ class TopicServiceImpl implements TopicService {
 			return result;
 		}
 		
-		final TopicVo topic = new TopicVo();
-		topic.setName( reqVo.getName().trim() );
-		topic.setUid( reqVo.getUid() );
-		topic.setDescription( reqVo.getDescription() );
-		topic.setColor(reqVo.getColor() );
-		topic.setExternal( reqVo.isExternal() );
-		topic.setImogi( reqVo.getImogi() );
-		topic.setEmojiSetType( reqVo.getEmojiSetType() );
-		topic.setEmotion( reqVo.isEmotion() );
-		topic.setAi( reqVo.isAi() );
-		topic.setPrompt( reqVo.getPrompt() );
-		topic.setMaxLen( reqVo.getMaxLen() );
-		
-		if( AppUtils.isEmpty(topic.getUid()) ) {
-			topic.setOwnerNo( user.userNo() );
+		final TopicVo topicDb = topicDao.loadTopic(reqVo.getUid());
+		if( topicDb != null && topicDb.getOwnerNo() != user.userNo() ) {
+			result.setCodeMessage("E", "같은 사용자만 수정 가능 합니다.");
+			return result;
 		}
+		
+		final TopicVo topic = new TopicVo();
+		BeanUtils.copyProperties(reqVo, topic);
+		topic.setOwnerNo( user.userNo() );
 		
 		try {
 			topicDao.saveTopic(topic);
@@ -105,17 +99,7 @@ class TopicServiceImpl implements TopicService {
 	private TopicResultVo convertTopicToTopicResultVo(TopicVo topic) {
 		
 		final TopicResultVo result = new TopicResultVo();
-		result.setUid( topic.getUid() );
-		result.setName( topic.getName() );
-		result.setDescription( topic.getDescription() );
-		result.setColor( topic.getColor() );
-		result.setExternal( topic.isExternal() );
-		result.setEmotion( topic.isEmotion() );
-		result.setComments( topic.isComments() );
-		result.setMaxLen( topic.getMaxLen() );
-		result.setImogi( topic.getImogi() );
-		result.setEmojiSetType( topic.getEmojiSetType() );
-		result.setEmojiSetType( topic.getEmojiSetType() );
+		BeanUtils.copyProperties(topic, result);
 		
 		result.setUser( userDao.getBasicUserFromUserNo( topic.getOwnerNo() ) );
 		

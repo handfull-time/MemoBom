@@ -24,6 +24,15 @@
 				<span class="font-medium">Alarm</span>
 			</a>
 
+			<a th:href="@{/My/Mosaic.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Mosaic</span>
+			</a>
+
 			<a th:href="@{/My/Fragments.html}"
 				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
 	                   ${path == '/My/Fragments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
@@ -31,15 +40,6 @@
 				<span class="w-1.5 h-1.5 rounded-full"
 					th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 				<span class="font-medium">Fragments</span>
-			</a>
-
-			<a th:href="@{/My/Mosaic.html}"
-				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-	                   ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-				onclick="MyMenu.closeIfMobile()">
-				<span class="w-1.5 h-1.5 rounded-full"
-					th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-				<span class="font-medium">Mosaic</span>
 			</a>
 
 			<a th:href="@{/My/Comments.html}"
@@ -72,6 +72,16 @@
 					th:classappend="${path == '/About/Opensource.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 				<span class="font-medium">Opensource</span>
 			</a>
+			
+			<a th:href="@{/About/Feedback.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/About/Feedback.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/Feedback.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Opensource</span>
+			</a>
+			
 
 			<a th:href="@{/About/index.html}"
 				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition

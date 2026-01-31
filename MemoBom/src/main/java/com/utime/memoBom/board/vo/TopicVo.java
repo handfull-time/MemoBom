@@ -1,10 +1,8 @@
 package com.utime.memoBom.board.vo;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 public class TopicVo {
 	/** 고유번호 */
 	long topicNo = -1L;
