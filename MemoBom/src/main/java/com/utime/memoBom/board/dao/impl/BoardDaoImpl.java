@@ -244,4 +244,10 @@ class BoardDaoImpl implements BoardDao {
 		
 		return result;
 	}
+	
+	@Override
+	public List<FragmentItem> listMyFragments(LoginUser user, String keyword, int pageNo) {
+		
+		return boardMapper.listMyFragments(user, keyword, pageNo);
+	}
 }

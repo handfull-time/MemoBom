@@ -73,6 +73,16 @@ public interface BoardDao {
 	List<EmotionItem> procEmotion(LoginUser user, EmotionDto emotionReqVo) throws Exception;
 	
 	/**
+	 * user 작성한 FRAGMENT 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<FragmentItem> listMyFragments(LoginUser user, String keyword, int pageNo);
+	
+	
+	/**
 	 * 댓글 저장
 	 * @param user
 	 * @param reqVo

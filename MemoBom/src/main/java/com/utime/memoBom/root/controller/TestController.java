@@ -138,6 +138,15 @@ public class TestController {
 		return userService.getMyMosaicDataList( user, searchVo );
     }
 	
+	@ResponseBody
+	@GetMapping(path = "Fragments.json")
+    public ReturnBasic myFragments() {
+		
+		final MySearchDto searchVo = new MySearchDto();
+		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
+		
+		return userService.getMyFragmentsDataList( user, searchVo );
+    }
 	
 }
 

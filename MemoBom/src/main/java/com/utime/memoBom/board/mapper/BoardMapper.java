@@ -129,6 +129,15 @@ public interface BoardMapper {
 	CommentItem selectCommentByNo(long commentNo);
 	
 	/**
+	 * user 작성한 FRAGMENT 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<FragmentItem> listMyFragments(@Param("user") LoginUser user, @Param("keyword") String keyword, @Param("pageNo") int pageNo);
+	
+	/**
 	 * 댓글 목록 얻기
 	 * @param user
 	 * @param uid

@@ -57,7 +57,6 @@
             <result property="name" column="topic_name" />
             <result property="color" column="topic_color" />
             <result property="imogi" column="topic_imogi" />
-            <result property="imogi" column="topic_imogi" />
             <result property="emojiSetType" column="emoji_set_type" 
             	typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
         </association>
@@ -424,9 +423,14 @@
 			F.CONTENT AS content,
 	
 			T.UID AS topic_uid,
+			T.NAME AS topic_name,
+	        T.COLOR AS topic_color,
+	        T.IMOGI AS topic_imogi,
+	        T.EMOJI_SET_TYPE AS emoji_set_type,
 	
 			U.UID AS user_uid,
-			U.ID AS user_id
+			U.NICKNAME AS user_nickname,
+	        U.PROFILE_IMG_PATH AS user_img_url
 		FROM MB_FRAGMENT F
 			JOIN MB_TOPIC T
 				ON T.TOPIC_NO = F.TOPIC_NO
@@ -450,9 +454,11 @@
 			C.COMMENT_NO,
 			C.REG_DATE AS reg_date,
 	
+			T.UID AS topic_uid,
 			T.NAME AS topic_name,
-			T.IMOGI AS topic_imogi,
-			T.COLOR AS topic_color,
+	        T.COLOR AS topic_color,
+	        T.IMOGI AS topic_imogi,
+	        T.EMOJI_SET_TYPE AS emoji_set_type,
 	
 			CAST(F.UID AS VARCHAR) AS fragment_uid,
 	

@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
+import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.dto.MyFragmentDto;
 import com.utime.memoBom.user.dto.MyPageDto;
 import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.dto.MyTopicDto;
@@ -123,6 +125,18 @@ class UserServiceImpl implements UserService{
 		
 		final ReturnBasic result = new ReturnBasic();
 		
+		final List<FragmentItem> list = boardDao.listMyFragments( user, searchVo.getKeyword(), searchVo.getPageNo());
+		final List<MyFragmentDto> fragList = new ArrayList<>();
+		
+		for( FragmentItem src : list) {
+			final MyFragmentDto target = new MyFragmentDto();
+			BeanUtils.copyProperties(src, target);
+			BeanUtils.copyProperties(src.getUser(), target.getUser());
+			BeanUtils.copyProperties(src.getTopic(), target.getTopic());
+			fragList.add(target);
+		}
+		
+		result.setData( fragList );
 		
 		return result;
 	}
@@ -170,6 +184,8 @@ class UserServiceImpl implements UserService{
 		
 		return result;
 	}
+	
+	
 
 	@Override
 	public ReturnBasic getMyCommentsDataList(LoginUser user, MySearchDto searchVo) {
