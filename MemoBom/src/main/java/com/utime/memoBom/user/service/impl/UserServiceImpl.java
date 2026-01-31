@@ -12,11 +12,13 @@ import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.dto.MyCommentDto;
 import com.utime.memoBom.user.dto.MyFragmentDto;
 import com.utime.memoBom.user.dto.MyPageDto;
 import com.utime.memoBom.user.dto.MySearchDto;
@@ -103,6 +105,14 @@ class UserServiceImpl implements UserService{
 	}
 	
 	@Override
+	@Cacheable(value = AppDefine.KeyUserProfileImage, key = "#uid")
+	public UserProfile getUserProfile(String uid) {
+		
+		return userDao.getUserProfile(uid);
+	}
+
+	
+	@Override
 	public ReturnBasic getMyCalendarDataList(LoginUser user , String date) {
 		
 		final ReturnBasic result = new ReturnBasic();
@@ -131,7 +141,6 @@ class UserServiceImpl implements UserService{
 		for( FragmentItem src : list) {
 			final MyFragmentDto target = new MyFragmentDto();
 			BeanUtils.copyProperties(src, target);
-			BeanUtils.copyProperties(src.getUser(), target.getUser());
 			BeanUtils.copyProperties(src.getTopic(), target.getTopic());
 			fragList.add(target);
 		}
@@ -141,26 +150,6 @@ class UserServiceImpl implements UserService{
 		return result;
 	}
 	
-	@Override
-	public ReturnBasic getMyFragmentsDetail(LoginUser user, String uid) {
-		
-		final ReturnBasic result = new ReturnBasic();
-
-// 이거 이상한데?? 왜 TOPIC을 처리 했지?		
-//		final TopicVo topic = topicDao.loadTopic( uid );
-//		if( topic == null ) {
-//			return result.setCodeMessage("E", "Mosaic 정보 없습니다.");
-//		}
-//		
-//		final MyTopicDto addItem = new MyTopicDto();
-//		BeanUtils.copyProperties(topic, addItem);
-//		addItem.setEditable( user.userNo() == topic.getOwnerNo() );
-//		
-//		result.setData(addItem);
-		
-		return result;
-	}
-
 	@Override
 	public ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo) {
 		
@@ -191,14 +180,46 @@ class UserServiceImpl implements UserService{
 	public ReturnBasic getMyCommentsDataList(LoginUser user, MySearchDto searchVo) {
 		
 		final ReturnBasic result = new ReturnBasic();
+
+		final List<MyCommentVo> list = boardDao.listMyComments( user, searchVo.getKeyword(), searchVo.getPageNo());
+		final List<MyCommentDto> commentList = new ArrayList<>();
+		
+		for( MyCommentVo src : list) {
+			final MyCommentDto target = new MyCommentDto();
+			BeanUtils.copyProperties(src, target);
+			
+			final MyFragmentDto fragment = target.getFragment();
+			fragment.setUid(src.getFragmentUid());
+			fragment.setContent(src.getFragmentPreview());
+			
+			BeanUtils.copyProperties(src.getTopic(), fragment.getTopic());
+			
+			commentList.add(target);
+		}
+		
+		result.setData( commentList );
 		
 		return result;
 	}
 	
 	@Override
-	@Cacheable(value = AppDefine.KeyUserProfileImage, key = "#uid")
-	public UserProfile getUserProfile(String uid) {
+	public ReturnBasic getMyScrapDataList(LoginUser user, MySearchDto searchVo) {
 		
-		return userDao.getUserProfile(uid);
+		final ReturnBasic result = new ReturnBasic();
+		
+		final List<FragmentItem> list = boardDao.listMyScrapFragments( user, searchVo.getKeyword(), searchVo.getPageNo());
+		final List<MyFragmentDto> fragList = new ArrayList<>();
+		
+		for( FragmentItem src : list) {
+			final MyFragmentDto target = new MyFragmentDto();
+			BeanUtils.copyProperties(src, target);
+			BeanUtils.copyProperties(src.getTopic(), target.getTopic());
+			fragList.add(target);
+		}
+		
+		result.setData( fragList );
+		
+		return result;
 	}
+	
 }

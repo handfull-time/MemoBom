@@ -17,6 +17,4 @@ public class MyFragmentDto {
 	String content;
 	/** topic 정보 */
 	MyTopicDto topic = new MyTopicDto();
-	/** 사용자 정보 */
-	UserDto user = new UserDto();
 }

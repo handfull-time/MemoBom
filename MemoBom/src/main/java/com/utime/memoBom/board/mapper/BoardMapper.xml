@@ -117,17 +117,17 @@
 	    SELECT
 	        <!-- 게시글 정보 -->
 	        f.FRAGMENT_NO    AS fragment_no,
-	        f.UID            AS fragment_uid,
+	        CAST(f.UID AS VARCHAR)            AS fragment_uid,
 	        f.CONTENT        AS content,
 	        f.REG_DATE       AS reg_date,
 	
 	        <!-- 작성자 정보 -->
-	        u.UID            AS user_uid,
+	        CAST(u.UID AS VARCHAR)            AS user_uid,
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	
 	        <!-- 토픽 정보 -->
-	        t.UID            AS topic_uid,
+	        CAST(t.UID AS VARCHAR) AS topic_uid,
 	        t.NAME           AS topic_name,
 	        t.COLOR          AS topic_color,
 	        t.IMOGI          AS topic_imogi,
@@ -376,11 +376,11 @@
 	<select id="selectCommentByNo" parameterType="long" resultMap="CommentItemMap">
         SELECT
         	c.COMMENT_NO AS comment_no, 
-            c.UID AS comment_uid,
+            CAST(c.UID AS VARCHAR) AS comment_uid,
             c.CONTENT AS content,
             c.REG_DATE AS reg_date,
             <!-- 작성자 정보 -->
-            u.UID AS user_uid,
+            CAST(u.UID AS VARCHAR) AS user_uid,
             u.NICKNAME AS user_nickname,
             u.PROFILE_IMG_PATH AS user_img_url
         FROM MB_FRAGMENT_COMMENTS c
@@ -396,11 +396,11 @@
 	<select id="loadCommentsList" parameterType="map" resultMap="CommentItemMap">
         SELECT
         	c.COMMENT_NO AS comment_no, 
-            c.UID AS comment_uid,
+            CAST(c.UID AS VARCHAR)  AS comment_uid,
             c.CONTENT AS content,
             c.REG_DATE AS reg_date,
             <!-- 작성자 정보 -->
-            u.UID AS user_uid,
+            CAST(u.UID AS VARCHAR)  AS user_uid,
             u.NICKNAME AS user_nickname,
             u.PROFILE_IMG_PATH AS user_img_url
         FROM MB_FRAGMENT_COMMENTS c
@@ -418,43 +418,56 @@
     <!--USER_NO가 작성한 MB_FRAGMENT 목록 조회-->
     <select id="listMyFragments" parameterType="map" resultMap="FragmentItemMap">
 		SELECT
-			F.UID AS fragment_uid,
+			CAST(F.UID AS VARCHAR) AS fragment_uid,
 			F.REG_DATE AS reg_date,
-			F.CONTENT AS content,
+			CAST(F.CONTENT AS VARCHAR) AS content,
 	
-			T.UID AS topic_uid,
+			CAST(T.UID AS VARCHAR) AS topic_uid,
 			T.NAME AS topic_name,
 	        T.COLOR AS topic_color,
 	        T.IMOGI AS topic_imogi,
-	        T.EMOJI_SET_TYPE AS emoji_set_type,
-	
-			U.UID AS user_uid,
-			U.NICKNAME AS user_nickname,
-	        U.PROFILE_IMG_PATH AS user_img_url
+	        T.EMOJI_SET_TYPE AS emoji_set_type
 		FROM MB_FRAGMENT F
 			JOIN MB_TOPIC T
 				ON T.TOPIC_NO = F.TOPIC_NO
-			JOIN MB_USER U
-				ON U.USER_NO = F.USER_NO
 	  	WHERE 1=1
 	  		AND F.IS_DELETED = FALSE
 	  		AND F.USER_NO = #{user.userNo}
 	  		
 			<if test="keyword != null and !keyword.isEmpty()">
-				AND UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE CONCAT('%', UPPER(#{keyword}), '%')
+				AND CAST(F.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
 			</if>
 			
 		ORDER BY F.REG_DATE DESC, F.FRAGMENT_NO DESC
 		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
 	</select>
 
+  <resultMap id="MyCommentMap" type="com.utime.memoBom.board.vo.query.MyCommentVo">
+        <id property="uid" column="comment_uid" />
+        <result property="content" column="content" />
+        <result property="regDate" column="reg_date" />
+        <result property="fragmentUid" column="fragment_Uid" />
+        <result property="fragmentPreview" column="fragment_preview" />
+        
+        <association property="topic" javaType="com.utime.memoBom.board.vo.query.BasicTopicVo">
+            <result property="uid" column="topic_uid" />
+            <result property="name" column="topic_name" />
+            <result property="color" column="topic_color" />
+            <result property="imogi" column="topic_imogi" />
+            <result property="emojiSetType" column="emoji_set_type" 
+            	typeHandler="com.utime.memoBom.board.typeHandler.EmojiSetTypeHandler"/>
+        </association>
+    </resultMap>
+
+
 	<!--USER_NO가 작성한 comment 목록 조회-->
-    <select id="listMyComments" parameterType="map" resultType="map">
+    <select id="listMyComments" parameterType="map" resultMap="MyCommentMap">
 		SELECT
-			C.COMMENT_NO,
+			CAST(C.UID AS VARCHAR) AS comment_uid,
+			C.CONTENT AS content,
 			C.REG_DATE AS reg_date,
 	
-			T.UID AS topic_uid,
+			CAST(T.UID AS VARCHAR) AS topic_uid,
 			T.NAME AS topic_name,
 	        T.COLOR AS topic_color,
 	        T.IMOGI AS topic_imogi,
@@ -466,10 +479,7 @@
 				WHEN LENGTH(CAST(F.CONTENT AS VARCHAR)) > 10
 				THEN SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 10) || '...'
 				ELSE CAST(F.CONTENT AS VARCHAR)
-			END AS fragment_preview,
-	
-			CAST(C.CONTENT AS VARCHAR) AS comment_content
-	
+			END AS fragment_preview
 		FROM MB_FRAGMENT_COMMENTS C
 			JOIN MB_FRAGMENT F
 				ON F.FRAGMENT_NO = C.FRAGMENT_NO
@@ -479,17 +489,47 @@
 		WHERE 1=1
 		    AND C.USER_NO = #{user.userNo}
 		    AND F.IS_DELETED = FALSE
+		    AND C.IS_DELETED = FALSE
 		    AND T.ENABLED = TRUE
 		
 		    <if test="keyword != null and !keyword.isEmpty()">
-		      AND UPPER(CAST(C.CONTENT AS VARCHAR))
-		          LIKE CONCAT('%', UPPER(#{keyword}), '%')
+		      AND CAST(C.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
 		    </if>
 		
 	  	ORDER BY C.REG_DATE DESC, C.COMMENT_NO DESC
 		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
 	</select>
 
+	<select id="listMyScrapFragments" parameterType="map" resultMap="FragmentItemMap">
+		SELECT
+			CAST(F.UID AS VARCHAR) AS fragment_uid,
+			F.REG_DATE AS reg_date,
+			F.CONTENT AS content,
+	
+			CAST(T.UID AS VARCHAR) AS topic_uid,
+			T.NAME AS topic_name,
+			T.COLOR AS topic_color,
+			T.IMOGI AS topic_imogi,
+			T.EMOJI_SET_TYPE AS emoji_set_type
+
+		FROM MB_FRAGMENT_SCRAP S
+			JOIN MB_FRAGMENT F
+			ON F.FRAGMENT_NO = S.FRAGMENT_NO
+			JOIN MB_TOPIC T
+			ON T.TOPIC_NO = F.TOPIC_NO
+
+		WHERE 1=1
+			AND S.USER_NO = #{user.userNo}
+			AND F.IS_DELETED = FALSE
+			AND T.ENABLED = TRUE
+			
+			<if test="keyword != null and !keyword.isEmpty()">
+		      AND CAST(F.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
+		    </if>
+
+		ORDER BY S.REG_DATE DESC, S.FRAGMENT_NO DESC
+		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
+	</select>
 
 
 </mapper>

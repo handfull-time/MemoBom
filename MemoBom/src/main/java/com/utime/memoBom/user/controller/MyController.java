@@ -161,10 +161,22 @@ public class MyController {
     }
 	
 	@ResponseBody
-	@GetMapping(path = "MyComments.json")
+	@GetMapping(path = "Comments.json")
     public ReturnBasic myComments( LoginUser user, MySearchDto searchVo ) {
 		
 		return userService.getMyCommentsDataList( user, searchVo );
+    }
+
+	@GetMapping(path = "Scrap.html")
+    public String myScrap(Model model) {
+		return "My/MyScrap";
+    }
+	
+	@ResponseBody
+	@GetMapping(path = "Scrap.json")
+    public ReturnBasic myScrap( LoginUser user, MySearchDto searchVo ) {
+		
+		return userService.getMyScrapDataList( user, searchVo );
     }
 
 	@GetMapping(path = "Calendar.html")

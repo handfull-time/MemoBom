@@ -13,6 +13,7 @@ import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
 
@@ -145,4 +146,22 @@ public interface BoardMapper {
 	 * @return
 	 */
 	List<CommentItem> loadCommentsList(@Param("uid") String uid, @Param("pageNo") int pageNo);
+	
+	/**
+	 * user 작성한 댓글 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<MyCommentVo> listMyComments(@Param("user") LoginUser user, @Param("keyword") String keyword, @Param("pageNo") int pageNo);
+	
+	/**
+	 * Fragment 목록
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<FragmentItem> listMyScrapFragments(@Param("user") LoginUser user, @Param("keyword") String keyword, @Param("pageNo") int pageNo);
 }

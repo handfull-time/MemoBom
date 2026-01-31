@@ -2,6 +2,8 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.vo.CommentItem;
@@ -11,6 +13,7 @@ import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.ShareVo;
+import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
 
@@ -89,4 +92,22 @@ public interface BoardDao {
 	 * @return
 	 */
 	CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception;
+	
+	/**
+	 * user 작성한 댓글 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<MyCommentVo> listMyComments(LoginUser user, String keyword, int pageNo);
+	
+	/**
+	 * user가 스크랩한 목록
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<FragmentItem> listMyScrapFragments(LoginUser user, String keyword, int pageNo);
 }

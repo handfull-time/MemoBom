@@ -52,7 +52,7 @@
 	<div
 	class="flex items-center justify-center cursor-pointer
 	     active:bg-gray-100 transition-colors duration-100"
-	  th:onclick="|location.href='@{/My/index.html}'|" >
+	  th:onclick="|location.href='@{${user != null ? '/My/index.html' : '/About/index.html'}}'|">
 	  <svg xmlns="http://www.w3.org/2000/svg"
 		       viewBox="0 0 24 24"
 		       width="24" height="24"

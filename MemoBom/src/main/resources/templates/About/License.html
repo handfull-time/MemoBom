@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{My/MyLayout}">
+
+	<th:block layout:fragment="my_title">License & Policies</th:block>
+
+	<th:block layout:fragment="my_content">
+	  <div class="w-full px-4 pb-24">
+
+	    <!-- 헤더 -->
+	    <div class="mt-4">
+	      <h1 class="text-xl font-extrabold tracking-tight text-slate-900">라이선스 · 정책</h1>
+	      <p class="mt-2 text-sm text-slate-600">
+	        본 프로젝트의 정책 문서와 라이선스 관련 안내를 확인할 수 있습니다.
+	      </p>
+	      <p class="mt-1 text-xs text-slate-500">
+	        링크는 외부 페이지로 이동합니다.
+	      </p>
+	    </div>
+
+	    <!-- 카드 목록 -->
+	    <div class="mt-4 space-y-3">
+
+	      <!-- 개인정보처리방침 -->
+	      <a href="https://springbom.duckdns.org/Policy/Privacy_Policy.html"
+	         target="_blank" rel="noopener noreferrer"
+	         class="block rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden
+	                active:scale-[0.99] transition">
+	        <div class="px-4 py-4 flex items-center gap-3">
+	          <div class="w-11 h-11 rounded-2xl bg-sky-50 ring-1 ring-sky-100 flex items-center justify-center">
+	            <!-- shield icon -->
+	            <svg class="w-6 h-6 text-sky-700" viewBox="0 0 24 24" fill="none">
+	              <path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"
+	                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+	              <path d="M9.5 12l1.8 1.8L14.8 10.3"
+	                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+	            </svg>
+	          </div>
+
+	          <div class="min-w-0 flex-1">
+	            <div class="text-[16px] font-extrabold text-slate-900 truncate">개인정보처리방침</div>
+	            <div class="mt-1 text-sm text-slate-600 truncate">
+	              Privacy Policy
+	            </div>
+	          </div>
+
+	          <div class="shrink-0 text-slate-400">
+	            <!-- chevron -->
+	            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+	              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	            </svg>
+	          </div>
+	        </div>
+	      </a>
+
+	      <!-- 서비스 약관 -->
+	      <a href="https://springbom.duckdns.org/Policy/Terms_of_Service.html"
+	         target="_blank" rel="noopener noreferrer"
+	         class="block rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden
+	                active:scale-[0.99] transition">
+	        <div class="px-4 py-4 flex items-center gap-3">
+	          <div class="w-11 h-11 rounded-2xl bg-amber-50 ring-1 ring-amber-100 flex items-center justify-center">
+	            <!-- doc icon -->
+	            <svg class="w-6 h-6 text-amber-800" viewBox="0 0 24 24" fill="none">
+	              <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-6z"
+	                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+	              <path d="M14 2v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+	              <path d="M8 13h8M8 17h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+	            </svg>
+	          </div>
+
+	          <div class="min-w-0 flex-1">
+	            <div class="text-[16px] font-extrabold text-slate-900 truncate">서비스 약관</div>
+	            <div class="mt-1 text-sm text-slate-600 truncate">
+	              Terms of Service
+	            </div>
+	          </div>
+
+	          <div class="shrink-0 text-slate-400">
+	            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+	              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	            </svg>
+	          </div>
+	        </div>
+	      </a>
+
+	      <!-- (선택) 오픈소스 라이선스 페이지로 연결 -->
+	      <a th:href="@{/About/Opensource.html}"
+	         class="block rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden
+	                active:scale-[0.99] transition">
+	        <div class="px-4 py-4 flex items-center gap-3">
+	          <div class="w-11 h-11 rounded-2xl bg-slate-100 ring-1 ring-slate-200 flex items-center justify-center">
+	            <!-- code icon -->
+	            <svg class="w-6 h-6 text-slate-700" viewBox="0 0 24 24" fill="none">
+	              <path d="M9 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	              <path d="M15 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	            </svg>
+	          </div>
+
+	          <div class="min-w-0 flex-1">
+	            <div class="text-[16px] font-extrabold text-slate-900 truncate">오픈소스 라이선스</div>
+	            <div class="mt-1 text-sm text-slate-600 truncate">
+	              Open Source License Notices
+	            </div>
+	          </div>
+
+	          <div class="shrink-0 text-slate-400">
+	            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+	              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+	            </svg>
+	          </div>
+	        </div>
+	      </a>
+
+	    </div>
+
+	    <!-- 하단 안내 -->
+	    <div class="mt-6 text-xs text-slate-500 leading-5">
+	      <div>※ 정책 내용은 서비스 운영에 따라 변경될 수 있으며, 변경 시 최신 문서가 우선합니다.</div>
+	    </div>
+
+	  </div>
+	</th:block>
+
+	<th:block layout:fragment="my_script">
+	<script>
+	(function(){
+	  // 이 페이지는 정적 링크 페이지라 api.js 호출은 없음.
+	  // 필요하면 외부 링크 클릭 시 Toast를 띄우는 정도만 추가 가능.
+	})();
+	</script>
+	</th:block>
+	
+</html>

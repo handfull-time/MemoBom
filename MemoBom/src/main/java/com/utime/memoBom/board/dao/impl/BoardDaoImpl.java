@@ -26,6 +26,7 @@ import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.UserDevice;
@@ -249,5 +250,17 @@ class BoardDaoImpl implements BoardDao {
 	public List<FragmentItem> listMyFragments(LoginUser user, String keyword, int pageNo) {
 		
 		return boardMapper.listMyFragments(user, keyword, pageNo);
+	}
+	
+	@Override
+	public List<MyCommentVo> listMyComments(LoginUser user, String keyword, int pageNo) {
+		
+		return boardMapper.listMyComments(user, keyword, pageNo);
+	}
+	
+	@Override
+	public List<FragmentItem> listMyScrapFragments(LoginUser user, String keyword, int pageNo) {
+		
+		return boardMapper.listMyScrapFragments(user, keyword, pageNo);
 	}
 }

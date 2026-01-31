@@ -88,11 +88,11 @@ public interface UserService {
 	UserProfile getUserProfile(String uid);
 
 	/**
-	 * Fragment 상세 정보
+	 * 회원이 스크랩 한 글 목록
 	 * @param user
-	 * @param uid
+	 * @param searchVo
 	 * @return
 	 */
-	ReturnBasic getMyFragmentsDetail(LoginUser user, String uid);
+	ReturnBasic getMyScrapDataList(LoginUser user, MySearchDto searchVo);
 
 }

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{My/MyLayout}">
+
+
+<th:block layout:fragment="my_title">MY Scrap</th:block>
+
+<body>
+<th:block layout:fragment="my_content">
+	  <div class="w-full px-4 pb-24">
+
+	    <!-- 검색 바 -->
+	    <div class="mt-3 sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md pt-2 pb-2">
+	      <div class="relative">
+	        <input id="keyword" type="search" autocomplete="off" placeholder="검색"
+	               class="w-full h-11 rounded-2xl bg-white ring-1 ring-slate-200
+	                      pl-4 pr-11 text-[15px] outline-none
+	                      focus:ring-2 focus:ring-sky-300"/>
+	        <button id="btnSearch" type="button"
+	                class="absolute right-2 top-1/2 -translate-y-1/2
+	                       w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"
+	                aria-label="검색">
+	          <svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none">
+	            <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+	          </svg>
+	        </button>
+	      </div>
+	    </div>
+
+	    <!-- 리스트 -->
+	    <div id="list" class="mt-3 space-y-3"></div>
+
+	    <!-- 상태 -->
+	    <div id="state" class="mt-4 text-center text-sm text-slate-500"></div>
+
+	    <!-- 센티넬 -->
+	    <div id="sentinel" class="h-10"></div>
+
+	    <!-- ===== 템플릿 ===== -->
+	    <template id="tplScrapItem">
+	      <div class="card relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
+	        <!-- 좌측 topic 컬러바 -->
+	        <div class="color-bar absolute left-0 top-0 h-full w-2"></div>
+
+	        <!-- 상단: topic row + 날짜 + 스크랩아이콘 + → -->
+	        <div class="px-4 pt-3 pb-2 flex items-center gap-2">
+	          <!-- topic 클릭 영역 -->
+	          <button type="button"
+	                  class="topic-hit flex items-center gap-2 min-w-0 flex-1 text-left">
+	            <span class="topic-emoji w-6 h-6 rounded-lg bg-slate-100 ring-1 ring-slate-200
+	                         flex items-center justify-center text-sm">🙂</span>
+	            <span class="topic-name text-sm font-semibold text-slate-800 truncate">Topic 이름</span>
+	          </button>
+
+	          <!-- 날짜 -->
+	          <span class="reg-date text-xs text-slate-500 shrink-0">2026-01-29 17:08</span>
+
+	          <!-- 스크랩 아이콘(해제) -->
+	          <button type="button"
+	                  class="btn-unscrap shrink-0 p-2 rounded-xl hover:bg-slate-100
+	                         ring-1 ring-slate-200"
+	                  aria-label="스크랩 해제">
+	            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
+	              <path d="M20 5 H80 V95 L50 70 L20 95 Z" fill="#FEF3C7" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
+	              <line x1="34" y1="30" x2="66" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+	              <line x1="34" y1="45" x2="66" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+	              <line x1="34" y1="60" x2="56" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+	            </svg>
+	          </button>
+
+	          <!-- → 링크(프래그먼트) -->
+	          <button type="button"
+	                  class="btn-frag-link shrink-0 p-2 rounded-xl hover:bg-slate-100
+	                         ring-1 ring-slate-200"
+	                  aria-label="프래그먼트로 이동">
+	            <svg xmlns="http://www.w3.org/2000/svg"
+	                 viewBox="0 0 24 24"
+	                 width="20" height="20"
+	                 fill="none"
+	                 stroke="currentColor"
+	                 stroke-width="1.8"
+	                 stroke-linecap="round"
+	                 stroke-linejoin="round">
+	              <path d="M6 12h10"/>
+	              <path d="M13.5 8.5l4 3.5-4 3.5"/>
+	            </svg>
+	          </button>
+	        </div>
+
+	        <!-- 구분선 -->
+	        <div class="mx-4 border-t border-dashed border-slate-200"></div>
+
+	        <!-- 본문 -->
+	        <div class="px-4 py-3">
+	          <div class="content text-[15px] leading-6 text-slate-900 line-clamp-3"></div>
+	        </div>
+	      </div>
+	    </template>
+
+	  </div>
+</th:block>
+
+<th:block layout:fragment="my_script">
+<script>
+	(function () {
+	  const cp = window.contextPath || '';
+	  const API_LIST = cp + '/My/Scrap.json';
+	  const API_UNSCRAP = cp + '/Fragment/Scrap.json';
+
+	  const $list = document.getElementById('list');
+	  const $state = document.getElementById('state');
+	  const $sentinel = document.getElementById('sentinel');
+	  const $keyword = document.getElementById('keyword');
+	  const $btnSearch = document.getElementById('btnSearch');
+	  const tpl = document.getElementById('tplScrapItem');
+
+	  let pageNo = 1;
+	  let loading = false;
+	  let ended = false;
+	  let currentKeyword = '';
+
+	  function setState(msg) { $state.textContent = msg || ''; }
+	  function setText(el, v) { if (el) el.textContent = (v ?? ''); }
+
+	  function createNode(item) {
+	    const frag = tpl.content.cloneNode(true);
+	    const root = frag.firstElementChild;
+
+	    root.dataset.fragUid = item.uid;
+	    root.dataset.topicUid = item.topic?.uid || '';
+
+	    root.querySelector('.color-bar').style.background = item.topic?.color || '#cbd5e1';
+
+	    setText(root.querySelector('.topic-emoji'), item.topic?.imogi || '🙂');
+	    setText(root.querySelector('.topic-name'), item.topic?.name || '');
+
+	    setText(root.querySelector('.reg-date'), item.regDate || '');
+	    setText(root.querySelector('.content'), item.content || '');
+
+	    return root;
+	  }
+
+	  async function fetchPage() {
+	    if (loading || ended) return;
+	    loading = true;
+	    setState('불러오는 중…');
+
+	    try {
+	      const res = await apiGetWithParam(API_LIST, {
+	        pageNo: pageNo,
+	        keyword: currentKeyword || ''
+	      });
+
+	      if (!res || res.code !== '0') {
+	        setState(res?.message || '조회에 실패했습니다.');
+	        ended = true;
+	        return;
+	      }
+
+	      const data = res.data;
+
+	      if (!data || (Array.isArray(data) && data.length === 0)) {
+	        ended = true;
+	        setState($list.children.length === 0 ? '데이터가 없습니다.' : '마지막입니다.');
+	        return;
+	      }
+
+	      const holder = document.createDocumentFragment();
+	      for (const it of data) holder.appendChild(createNode(it));
+	      $list.appendChild(holder);
+
+	      pageNo += 1;
+	      setState('');
+	    } catch (e) {
+	      console.error(e);
+	      setState('네트워크 오류가 발생했습니다.');
+	      ended = true;
+	    } finally {
+	      loading = false;
+	    }
+	  }
+
+	  // 스크랩 해제
+	  async function doUnscrap(card) {
+	    const fragUid = card?.dataset?.fragUid;
+	    if (!fragUid) return;
+
+	    const ok = await confirmP('스크랩을 해제할까요?');
+	    if (!ok) return;
+
+	    try {
+	      showLoading?.();
+	      const res = await apiPost(API_UNSCRAP, { uid: fragUid });
+
+	      if (!res || res.code !== '0') {
+	        await alertP(res?.message || '스크랩 해제에 실패했습니다.');
+	        return;
+	      }
+
+	      // 화면에서 제거
+	      card.remove();
+
+	      showToast?.('', '스크랩을 해제했습니다.', ToastType.SUCCESS, 1200);
+
+	      // 리스트가 비면 상태 메시지
+	      if ($list.children.length === 0 && ended) {
+	        setState('데이터가 없습니다.');
+	      }
+	    } catch (e) {
+	      console.error(e);
+	      await alertP('요청 중 오류가 발생했습니다.');
+	    } finally {
+	      hideLoading?.();
+	    }
+	  }
+
+	  // 이벤트 위임
+	  $list.addEventListener('click', (e) => {
+	    const card = e.target.closest('.card');
+	    if (!card) return;
+
+	    // 1) 스크랩 아이콘 클릭 → 해제
+	    const btnUnscrap = e.target.closest('button.btn-unscrap');
+	    if (btnUnscrap) {
+	      doUnscrap(card);
+	      return;
+	    }
+
+	    // 2) → 버튼: fragUid로 이동
+	    const btnFrag = e.target.closest('button.btn-frag-link');
+	    if (btnFrag) {
+	      const uid = card.dataset.fragUid;
+	      if (uid) location.href = cp + '/Fragment/index.html?fragUid=' + encodeURIComponent(uid);
+	      return;
+	    }
+
+	    // 3) topic 영역 클릭: topicUid로 이동
+	    const btnTopic = e.target.closest('button.topic-hit');
+	    if (btnTopic) {
+	      const topicUid = card.dataset.topicUid;
+	      if (topicUid) location.href = cp + '/Fragment/index.html?topicUid=' + encodeURIComponent(topicUid);
+	      return;
+	    }
+	  });
+
+	  // 검색
+	  async function resetAndLoad() {
+	    pageNo = 1;
+	    ended = false;
+	    loading = false;
+	    $list.innerHTML = '';
+	    setState('');
+	    await fetchPage();
+	  }
+
+	  $btnSearch.addEventListener('click', () => {
+	    currentKeyword = ($keyword.value || '').trim();
+	    resetAndLoad();
+	  });
+
+	  $keyword.addEventListener('keydown', (e) => {
+	    if (e.key === 'Enter') {
+	      currentKeyword = ($keyword.value || '').trim();
+	      resetAndLoad();
+	    }
+	  });
+
+	  // 무한 스크롤
+	  const io = new IntersectionObserver((entries) => {
+	    const ent = entries[0];
+	    if (ent.isIntersecting) fetchPage();
+	  }, { root: null, threshold: 0.1 });
+
+	  io.observe($sentinel);
+
+	  // 첫 로드
+	  fetchPage();
+	})();
+	</script>
+</th:block>
+
+</body>
+
+</html>

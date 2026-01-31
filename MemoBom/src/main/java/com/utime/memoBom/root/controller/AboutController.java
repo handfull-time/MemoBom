@@ -10,13 +10,16 @@ public class AboutController {
 	
 	@GetMapping(path = {"", "/", "index.html" })
     public String aboutPage() {
-		return "My/About";
+		return "About/About";
     }
 	
 	@GetMapping(path = "Opensource.html")
     public String opensource() {
-		return "My/Opensource";
+		return "About/Opensource";
     }
 	
+	@GetMapping(path = "License.html")
+    public String License() {
+		return "About/License";
+    }
 }
-

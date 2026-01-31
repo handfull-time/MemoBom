@@ -148,5 +148,24 @@ public class TestController {
 		return userService.getMyFragmentsDataList( user, searchVo );
     }
 	
+	@ResponseBody
+	@GetMapping(path = "MyComments.json")
+    public ReturnBasic myComments( ) {
+		final MySearchDto searchVo = new MySearchDto();
+		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
+		
+		return userService.getMyCommentsDataList( user, searchVo );
+    }
+	
+	@ResponseBody
+	@GetMapping(path = "Scrap.json")
+    public ReturnBasic myScrap( ) {
+		final MySearchDto searchVo = new MySearchDto();
+		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
+		
+		return userService.getMyScrapDataList( user, searchVo );
+    }
+
+	
 }
 
