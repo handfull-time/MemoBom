@@ -3,6 +3,25 @@
 <!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
 <mapper namespace="com.utime.memoBom.push.mapper.PushSubscriptionMapper">
 	
+	<resultMap id="PushSubMap" type="com.utime.memoBom.push.dto.PushSubscriptionDto">
+	    <id column="SUB_NO" property="subNo"/>
+	    <result column="REG_DATE" property="regDate"/>
+	    <result column="UPDATE_DATE" property="updateDate"/>
+	    <result column="USER_NO" property="userNo"/>
+	    <result column="END_POINT" property="endPoint"/>
+	    <result column="P256DH" property="p256dh"/>
+	    <result column="AUTH" property="auth"/>
+	
+	    <result column="IS_ACTIVE" property="isActive"/>
+	    <result column="DEVICE_ID" property="deviceId"/>
+	    <result column="USER_AGENT" property="userAgent"/>
+	    <result column="BROWSER" property="browser"/>
+	    <result column="OS" property="os"/>
+	    <result column="LAST_PUSH_DATE" property="lastPushDate"/>
+	    <result column="FAIL_COUNT" property="failCount"/>
+	    <result column="EXPIRATION_TIME" property="expirationTime"/>
+	</resultMap>
+  
 	<!-- endpont 매칭 조회 -->
 	<select id="findByEndpoint" parameterType="map" resultType="com.utime.memoBom.push.vo.PushSubscriptionEntity">
 		SELECT 

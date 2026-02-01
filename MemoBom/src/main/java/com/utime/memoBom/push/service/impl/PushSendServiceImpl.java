@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dao.PushSubscriptionDao;
@@ -51,7 +52,7 @@ class PushSendServiceImpl implements PushSendService {
     }
 
     @Override
-    public ReturnBasic upsert(UserVo user, PushSubscriptionDto dto) {
+    public ReturnBasic upsert(LoginUser user, PushSubscriptionDto dto) {
         
         PushSubscriptionEntity entity = repo.findByEndpoint(dto.endpoint);
         
@@ -59,7 +60,7 @@ class PushSendServiceImpl implements PushSendService {
         	entity = new PushSubscriptionEntity();
         }
 
-        entity.setUserNo(user.getUserNo());
+        entity.setUserNo(user.userNo());
         entity.setEndPoint(dto.endpoint);
         entity.setP256dh(dto.keys.p256dh);
         entity.setAuth(dto.keys.auth);
@@ -68,7 +69,7 @@ class PushSendServiceImpl implements PushSendService {
 			repo.save(entity);
 		} catch (Exception e) {
 			log.error("", e);
-			return new ReturnBasic("", e.getMessage());
+			return new ReturnBasic("E", e.getMessage());
 		}
 
     	return new ReturnBasic();

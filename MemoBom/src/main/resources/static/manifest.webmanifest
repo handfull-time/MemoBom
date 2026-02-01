@@ -1,7 +1,7 @@
 {
   "name": "MemoBom",
   "short_name": "Bom",
-  "start_url": "/?source=pwa",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",

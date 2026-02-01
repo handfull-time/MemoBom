@@ -10,30 +10,33 @@ self.addEventListener("activate", (event) => {
 
 // 푸시 수신
 self.addEventListener("push", (event) => {
-  let payload = { title: "알림", body: "새 소식이 있어요", url: "/Mem/" };
-
-  try {
-    if (event.data) payload = Object.assign(payload, event.data.json());
-  } catch (e) {
-    // text payload일 수도 있음
-    if (event.data) payload.body = event.data.text();
-  }
-
-  const title = payload.title || "알림";
-  const options = {
-    body: payload.body || "",
-    icon: "/Mem/icons/icon-192.png", // 아이콘 경로 맞춰주세요
-    badge: "/Mem/icons/icon-192.png",
-    data: { url: payload.url || "/Mem/" }
-  };
-
-  event.waitUntil(self.registration.showNotification(title, options));
+	console.info( 'push addEventListener', event);
+	
+	let payload = {};
+	try {
+	    if (event.data) payload = Object.assign(payload, event.data.json());
+	} catch (e) {
+		console.error(e);
+		return;
+	}
+	
+	const title = payload.title || "알림";
+	const options = {
+		body: payload.body || "",
+		icon: "/Mem/icons/icon-192.png", // 아이콘 경로 맞춰주세요
+		badge: "/Mem/icons/icon-192.png",
+		data: { url: payload.url || "/Mem/" }
+  	};
+	
+	event.waitUntil(self.registration.showNotification(title, options));
 });
 
 // 알림 클릭 시 이동
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const targetUrl = (event.notification?.data && event.notification.data.url) ? event.notification.data.url : "/Mem/";
+  console.info( 'push notificationclick', event);
+  
+  const targetUrl = (event.notification?.data && event.notification.data.url) ? event.notification.data.url : "/";
 
   event.waitUntil(
     (async () => {

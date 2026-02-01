@@ -1,6 +1,13 @@
 package com.utime.memoBom.push.dto;
 
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Web Push Subscription 정보를 담는 DTO.
@@ -35,9 +42,12 @@ import lombok.Data;
  *
  * @author openAI
  */
-@Data
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class PushSubscriptionDto {
 
+	long subNo;
+	
     /**
      * Push 메시지를 전달받을 엔드포인트 URL.
      *
@@ -95,4 +105,14 @@ public class PushSubscriptionDto {
          */
         public String auth;
     }
+    
+ // optional
+    private String isActive;
+    private String deviceId;
+    private String userAgent;
+    private String browser;
+    private String os;
+    private LocalDateTime lastPushDate;
+    private Integer failCount;
+    private Long expirationTime;
 }

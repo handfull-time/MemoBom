@@ -1,5 +1,6 @@
 package com.utime.memoBom.push.service;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
 import com.utime.memoBom.user.vo.UserVo;
@@ -15,7 +16,7 @@ public interface PushSendService {
 	 * @param dto
 	 * @return
 	 */
-	ReturnBasic upsert(UserVo user, PushSubscriptionDto dto);
+	ReturnBasic upsert(LoginUser user, PushSubscriptionDto dto);
 
 	/**
 	 * 구독 해제

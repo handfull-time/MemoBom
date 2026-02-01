@@ -194,6 +194,14 @@
 			, END_POINT VARCHAR(512) NOT NULL
 			, P256DH VARCHAR(128) NOT NULL
 			, AUTH VARCHAR(64) NOT NULL
+			, IS_ACTIVE BOOLEAN DEFAULT TRUE NOT NULL <!--구독이 만료/거절/410 Gone 등으로 죽었을 때 비활성화-->
+			, DEVICE_ID VARCHAR(64) <!--동일 USER_NO가 여러 기기(PC/폰)로 구독하는 경우 구분-->
+			, USER_AGENT VARCHAR(512) <!--문제 발생 시 분석( BROWSER / OS / USER_AGENT )-->
+			, BROWSER VARCHAR(32)
+			, OS VARCHAR(32)
+			, LAST_PUSH_DATE TIMESTAMP DEFAULT NULL <!--마지막 발송 시간-->
+			, FAIL_COUNT INT DEFAULT 0 NOT NULL  <!--실패 누적(예: 3회 이상이면 비활성)-->
+			, EXPIRATION_TIME BIGINT DEFAULT NULL <!--브라우저가 주는 만료시간이 있는 경우 저장(대개 null)-->
 			
 			, CONSTRAINT FK_MB_PUSH_SUB_USER_NO FOREIGN KEY (USER_NO) REFERENCES MB_USER(USER_NO)
 		);

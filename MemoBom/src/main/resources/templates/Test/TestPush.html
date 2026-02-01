@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutBase}">
+
+<th:block layout:fragment="title">제목</th:block>
+
+<th:block layout:fragment="css">
+	<style>
+
+	</style>
+</th:block>
+
+<th:block layout:fragment="header">
+	<th:block th:replace="~{Fragments/Header :: Header_Back('-_-;;;')}"></th:block>
+</th:block>
+
+<th:block layout:fragment="content">
+	<div id="pwaInstallModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9999;">
+		<div
+			style="max-width:420px; margin:12vh auto; background:#fff; border-radius:14px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.2);">
+			<div style="font-size:18px; font-weight:700; margin-bottom:8px;">앱으로 설치하면 더 편해요</div>
+			<div id="pwaInstallDesc" style="font-size:14px; line-height:1.5; color:#374151; margin-bottom:14px;">
+				홈 화면에 추가하면 앱처럼 빠르게 열고, 푸시 알림도 받을 수 있어요.
+			</div>
+
+			<div style="display:flex; gap:8px; justify-content:flex-end;">
+				<button id="pwaInstallLaterBtn"
+					style="padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer;">
+					나중에
+				</button>
+				<button id="pwaInstallGoBtn"
+					style="padding:10px 12px; border-radius:10px; border:0; background:#111827; color:#fff; cursor:pointer;">
+					설치하기
+				</button>
+			</div>
+		</div>
+	</div>
+
+</th:block>
+
+<th:block layout:fragment="footer">
+	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
+</th:block>
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		// ===== 설정값 =====
+		const PWA_PROMPT_COOLDOWN_DAYS = 7; // "나중에" 누르면 7일간 다시 안 띄움
+		const LS_KEY_DISMISSED_AT = "pwa_install_dismissed_at";
+
+		// 크롬계열 설치 프롬프트 이벤트 저장용
+		let deferredInstallPrompt = null;
+
+		// ===== 유틸: 날짜/로컬스토리지 =====
+		function daysBetween(ts1, ts2) {
+			return Math.floor((ts2 - ts1) / (1000 * 60 * 60 * 24));
+		}
+		function getDismissedAt() {
+			const v = localStorage.getItem(LS_KEY_DISMISSED_AT);
+			return v ? Number(v) : null;
+		}
+		function setDismissedNow() {
+			localStorage.setItem(LS_KEY_DISMISSED_AT, String(Date.now()));
+		}
+		function isCooldownActive() {
+			const dismissedAt = getDismissedAt();
+			if (!dismissedAt) return false;
+			return daysBetween(dismissedAt, Date.now()) < PWA_PROMPT_COOLDOWN_DAYS;
+		}
+
+		// ===== 설치 여부 판단 =====
+		function isRunningStandalone() {
+			// iOS Safari: navigator.standalone
+			// Android/Chrome: display-mode: standalone
+			return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+				|| (window.navigator && window.navigator.standalone === true);
+		}
+
+		function isIosSafari() {
+			const ua = navigator.userAgent;
+			const isIOS = /iP(hone|od|ad)/.test(ua);
+			const isWebkit = /WebKit/.test(ua);
+			const isCriOS = /CriOS/.test(ua); // iOS Chrome
+			const isFxiOS = /FxiOS/.test(ua); // iOS Firefox
+			// iOS에서 "Safari"는 대체로 CriOS/FxiOS 아닌 WebKit 기반 브라우저(사파리 포함)를 의미
+			return isIOS && isWebkit && !isCriOS && !isFxiOS;
+		}
+
+		// ===== 모달 제어 =====
+		function openInstallModal(descHtml, showInstallButton) {
+			const modal = document.getElementById("pwaInstallModal");
+			const desc = document.getElementById("pwaInstallDesc");
+			const goBtn = document.getElementById("pwaInstallGoBtn");
+
+			desc.innerHTML = descHtml;
+
+			goBtn.style.display = showInstallButton ? "inline-block" : "none";
+			modal.style.display = "block";
+		}
+
+		function closeInstallModal() {
+			document.getElementById("pwaInstallModal").style.display = "none";
+		}
+
+		// ===== 설치 버튼 동작 =====
+		async function triggerChromeInstallPrompt() {
+			if (!deferredInstallPrompt) return false;
+			deferredInstallPrompt.prompt();
+			const choice = await deferredInstallPrompt.userChoice; // { outcome: 'accepted' | 'dismissed' }
+			deferredInstallPrompt = null;
+			return choice && choice.outcome === "accepted";
+		}
+
+		// ===== 초기화 =====
+		window.addEventListener("beforeinstallprompt", (e) => {
+			// 크롬/엣지 계열에서 설치 조건 만족 시 발생
+			e.preventDefault();
+			deferredInstallPrompt = e;
+		});
+
+		// 설치 완료 이벤트(크롬계열)
+		window.addEventListener("appinstalled", () => {
+			closeInstallModal();
+			// 이후 다시 안내 뜨지 않게(선택)
+			setDismissedNow();
+		});
+
+		// 버튼 바인딩
+		window.addEventListener("DOMContentLoaded", () => {
+			document.getElementById("pwaInstallLaterBtn").addEventListener("click", () => {
+				setDismissedNow();
+				closeInstallModal();
+			});
+
+			document.getElementById("pwaInstallGoBtn").addEventListener("click", async () => {
+				// 크롬계열: 설치 프롬프트 띄우기
+				const ok = await triggerChromeInstallPrompt();
+				if (!ok) {
+					// 사용자가 설치 취소한 경우: 너무 자주 안 띄우도록 처리
+					setDismissedNow();
+					closeInstallModal();
+				}
+			});
+
+			// ===== 설치 안내 띄울지 결정 =====
+			maybeShowInstallPrompt();
+		});
+
+		function maybeShowInstallPrompt() {
+			// 1) 이미 앱(standalone)으로 실행 중이면 안내 X
+			if (isRunningStandalone()) return;
+
+			// 2) "나중에"를 최근에 눌렀다면 안내 X
+			if (isCooldownActive()) return;
+
+			// 3) iOS Safari 안내(홈 화면에 추가)
+			if (isIosSafari()) {
+				openInstallModal(
+					`iPhone/iPad에서는 <b>공유</b> 버튼(⬆️)을 누른 뒤<br/>
+		         <b>홈 화면에 추가</b>를 선택해 설치할 수 있어요.`,
+		        /* showInstallButton */ false
+				);
+				return;
+			}
+
+			// 4) 크롬/엣지 계열: beforeinstallprompt를 받았으면 설치 버튼 제공
+			if (deferredInstallPrompt) {
+				openInstallModal(
+					`설치하면 앱처럼 빠르게 열고,<br/>푸시 알림도 안정적으로 받을 수 있어요.`,
+		        /* showInstallButton */ true
+				);
+				return;
+			}
+
+			// 5) 그 외(설치 프롬프트를 못 받는 브라우저): 아예 안 띄우거나, 가벼운 안내만
+			// 필요하면 주석 해제:
+			// openInstallModal(`이 브라우저에서는 설치 안내가 제한될 수 있어요.`, false);
+		}
+
+	</script>
+</th:block>
+
+</html>
