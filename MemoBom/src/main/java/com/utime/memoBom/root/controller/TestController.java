@@ -77,8 +77,9 @@ public class TestController {
 		return "redirect:/";
 	}
 
-	@GetMapping("Push")
-	public String testPush() {
+	@GetMapping("Push.html")
+	public String testPush(Model model) {
+		model.addAttribute("assetVersion", AppDefine.AssetVersion );
 		return "Test/TestPush";
 	}
 

@@ -24,7 +24,7 @@ public class ShareController {
 	final BoardService boardServce;
 	final UserService userServce;
 	
-	@GetMapping("Share/{uid}")
+	@GetMapping("Share/{uid}.html")
 	public String getShareInfoView(ModelMap model, LoginUser user, @PathVariable() String uid) {
 		try {
 			final ShareVo vo = boardServce.loadShareInfo(user, uid);

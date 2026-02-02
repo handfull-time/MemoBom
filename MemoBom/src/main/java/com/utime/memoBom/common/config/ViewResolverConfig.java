@@ -75,7 +75,7 @@ public class ViewResolverConfig implements WebMvcConfigurer {
         }
 
         registry.addInterceptor(this.viewInterceptor)
-                .addPathPatterns("/**") // 모든 경로 추가
+                .addPathPatterns("/**/*.html") // 모든 경로 추가
                 .excludePathPatterns(excludeList) // 화이트리스트 제외
                 .excludePathPatterns("/**/*.json", "/**/*.js", "/**/*.css", "/images/**"); // 공통 정적 자원 제외
         

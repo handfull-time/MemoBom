@@ -48,7 +48,7 @@ async function requestNotificationPermission() {
 }
 
 async function loadVapidPublicKey() {
-    const url = window.contextPath + '/Push/vapid-public-key';
+    const url = window.contextPath + '/Push/vapid-public-key.json';
     
     // apiGet은 내부적으로 res.ok 확인, 401/403 처리, Content-Type별 파싱을 모두 수행합니다.
     const res = await apiGet(url);
@@ -62,7 +62,7 @@ async function loadVapidPublicKey() {
 /* 푸시 구독 + 서버 저장 */
 async function subscribePush() {
 	/* 🔹 서버에서 내려준 VAPID Public Key */
-	const vapidPublicKey = loadVapidPublicKey();
+	const vapidPublicKey = await loadVapidPublicKey();
 
 	if (!vapidPublicKey) {
 		console.error("VAPID public key not provided");
@@ -75,7 +75,6 @@ async function subscribePush() {
 	}
 
 	const reg = await navigator.serviceWorker.ready;
-
 	let subscription = await reg.pushManager.getSubscription();
 	if (!subscription) {
 		subscription = await reg.pushManager.subscribe({
@@ -89,7 +88,6 @@ async function subscribePush() {
 
 	/* 서버에 구독 정보 저장 (로그인 사용자) */
 	try {
-	    // apiPost는 내부적으로 JSON.stringify(subscription)를 수행하고 headers를 설정함
 	    await apiPost(subscribeApi, subscription);
 	    
 	    return { ok: true };

@@ -32,7 +32,7 @@ public class PushController {
     private final PushSendService pushSendService;
     
 
-    @GetMapping("vapid-public-key")
+    @GetMapping("vapid-public-key.json")
     public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
         return new ReturnBasic(AppDefine.ERROR_OK, vapidPublicKey);

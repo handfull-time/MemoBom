@@ -238,7 +238,7 @@ public class BoardController {
 		
 		final ShareVo share = boardServce.loadShareInfo(user, uid);
 
-		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid;
+		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid + ".html";
 		share.setUrl(fullUrl);
 		
 		final ReturnBasic result = new ReturnBasic();
