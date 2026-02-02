@@ -1,4 +1,4 @@
-/* /sw.js  (served as /Mem/sw.js) */
+/* /sw.js */
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -23,9 +23,9 @@ self.addEventListener("push", (event) => {
 	const title = payload.title || "알림";
 	const options = {
 		body: payload.body || "",
-		icon: "/Mem/icons/icon-192.png", // 아이콘 경로 맞춰주세요
-		badge: "/Mem/icons/icon-192.png",
-		data: { url: payload.url || "/Mem/" }
+		icon: window.contextPath + "/images/favicon/favicon_192.png",
+		badge: window.contextPath + "/images/favicon/favicon_192.png",
+		data: { url: payload.url }
   	};
 	
 	event.waitUntil(self.registration.showNotification(title, options));
