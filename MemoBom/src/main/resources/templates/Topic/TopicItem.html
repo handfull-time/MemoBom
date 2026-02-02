@@ -13,15 +13,6 @@
 
 <th:block layout:fragment="content">
 	<div class="mx-auto w-full px-4 py-4 space-y-4">
-		-- ${user} -- [${user}] -- [[${user}]] --  
-		<div th:if="${user != null}">
-		  로그인 상태
-		</div>
-		<div th:if="${user == null}">
-		  비로그인
-		</div>
-
-
 	   <!-- Page intro -->
 	   <div class="px-1">
 	     <h2 class="text-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새 Mosaic' : topic.name}]]</h2>

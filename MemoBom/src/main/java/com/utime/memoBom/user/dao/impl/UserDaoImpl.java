@@ -2,6 +2,7 @@ package com.utime.memoBom.user.dao.impl;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,18 @@ class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int addUser(UserVo user) throws Exception {
+		if( user == null ) {
+			throw new Exception("user is null ");
+		}
 		
-		return userMapper.insertUser( user );
+		final int result = userMapper.insertUser( user );
+		
+		if( result > 0 ) {
+			final UserVo dbUser = userMapper.selectUserFromUserNo(user.getUserNo());
+			BeanUtils.copyProperties(dbUser, user);
+		}
+		
+		return result;
 	}
 	
 	@Override

@@ -28,6 +28,16 @@ public interface UserMapper {
 	UserVo selectUserFromIdAndProvider(@Param("provider")String provider, @Param("id")String id);
 	
 	/**
+	 * 사용자 정보 조회
+	 */
+	UserVo selectUserFromUid(@Param("uid")String uid);
+	
+	/**
+	 * 사용자 정보 조회
+	 */
+	UserVo selectUserFromUserNo(@Param("userNo")long userNo);
+	
+	/**
 	 * 회원 추가
 	 * @param user
 	 * @return
@@ -50,11 +60,6 @@ public interface UserMapper {
 	 */
 	int removeUser(UserVo userVo);
 
-	/**
-	 * 사용자 정보 조회
-	 */
-	UserVo selectUserFromUid(@Param("uid")String uid);
-	
 	/** 
 	 * 내 작성 데이터
 	 * @param user
