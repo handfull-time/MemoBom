@@ -7,8 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.common.vo.EJwtRole;
+import com.utime.memoBom.user.dto.UserDto;
+import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -99,4 +100,15 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() { return enabled; }
+    
+    public UserDto getUserDto() {
+    	
+    	final UserDto result = new UserDto();
+    
+    	result.setNickname(this.nickname);
+    	result.setProfileUrl(this.profileUrl);
+    	result.setUid(this.uid);
+    	
+    	return result;
+    }
 }

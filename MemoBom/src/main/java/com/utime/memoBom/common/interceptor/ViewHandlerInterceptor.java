@@ -39,7 +39,7 @@ class ViewHandlerInterceptor implements AsyncHandlerInterceptor {
 		if ( authentication != null ) {
 			 final Object principal = authentication.getPrincipal();
 			 if ( principal instanceof CustomUserDetails detail ) {
-				 model.addAttribute(AppDefine.KeyParamUser, detail.getUid() );
+				 model.addAttribute(AppDefine.KeyParamUser, detail.getUserDto() );
 			 }
         }
 	}

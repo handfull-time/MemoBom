@@ -71,6 +71,21 @@
 
   <!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
   <div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
+
+    <!-- content 길이 progress (thin) -->
+    <div class="mb-2">
+      <div class="h-[3px] w-full rounded-full bg-slate-200/70 overflow-hidden">
+		<div id="contentProgress"
+		     class="h-full rounded-full"
+		     style="width:0%; background:#3b82f6;">
+		</div>
+      </div>
+      <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+        <span id="contentCounter">0 / 0</span>
+        <span id="contentHint" class="hidden text-rose-500 font-semibold">최대 길이에 가까워요</span>
+      </div>
+    </div>
+
     <input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
            class="w-full border-0 outline-none text-[13px] text-slate-600 bg-transparent" />
 
@@ -91,6 +106,70 @@
 </th:block>
 
 <th:block layout:fragment="script">
+
+<script th:inline="javascript">
+	
+	function lerp(a, b, t) { return a + (b - a) * t; }
+	function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+	// 파랑(#3b82f6) -> 빨강(#ef4444)로 단색 변화
+	function ratioToColor(ratio) {
+	  ratio = clamp01(ratio);
+
+	  // hex -> rgb
+	  const blue = { r: 0x3b, g: 0x82, b: 0xf6 }; // 59,130,246
+	  const red  = { r: 0xef, g: 0x44, b: 0x44 }; // 239,68,68
+
+	  const r = Math.round(lerp(blue.r, red.r, ratio));
+	  const g = Math.round(lerp(blue.g, red.g, ratio));
+	  const b = Math.round(lerp(blue.b, red.b, ratio));
+
+	  return `rgb(${r}, ${g}, ${b})`;
+	}
+
+	function updateContentProgress() {
+	  const ta = document.getElementById("content");
+	  const bar = document.getElementById("contentProgress");
+	  const counter = document.getElementById("contentCounter");
+	  const hint = document.getElementById("contentHint");
+
+	  if (!ta || !bar || !counter) return;
+
+	  const maxLenAttr = ta.getAttribute("maxlength");
+	  const maxLen = maxLenAttr ? Number(maxLenAttr) : 0;
+
+	  const len = (ta.value || "").length;
+
+	  if (!maxLen || maxLen <= 0) {
+	    bar.style.width = "0%";
+	    bar.style.background = "#3b82f6"; // 기본 파랑
+	    counter.textContent = `${len} / ∞`;
+	    hint?.classList.add("hidden");
+	    return;
+	  }
+
+	  const ratio = Math.min(1, len / maxLen);
+	  const pct = ratio * 100;
+
+	  bar.style.width = pct.toFixed(1) + "%";
+	  bar.style.background = ratioToColor(ratio); // ✅ 여기서 단색 변화
+	  counter.textContent = `${len} / ${maxLen}`;
+
+	  if (hint) hint.classList.toggle("hidden", ratio < 0.9);
+	}
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const ta = document.getElementById("content");
+    if (!ta) return;
+
+    // 입력할 때마다 업데이트
+    ta.addEventListener("input", updateContentProgress, { passive: true });
+
+    // 초기 1회
+    updateContentProgress();
+  });
+</script>
+
 
 <script th:inline="javascript">
   const topics = /*[[${topics}]]*/ [];

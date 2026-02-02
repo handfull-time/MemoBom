@@ -86,7 +86,24 @@
 		FROM MB_USER UR 
 		WHERE UR.ID = #{id} AND PROVIDER = #{provider} AND ENABLED = TRUE
 	</select>
-
+	
+	
+	<!--사용자 정보 조회-->
+	<select id="selectUserFromUid" parameterType="map" resultMap="UserVoMap">
+		SELECT 
+			<include refid="UserColumn" /> 
+		FROM MB_USER UR 
+		WHERE UR.UID = #{uid} AND ENABLED = TRUE
+	</select>
+	
+	<!--사용자 정보 조회-->
+	<select id="selectUserFromUserNo" parameterType="map" resultMap="UserVoMap">
+		SELECT 
+			<include refid="UserColumn" /> 
+		FROM MB_USER UR 
+		WHERE UR.USER_NO = #{userNo} AND ENABLED = TRUE
+	</select>
+	
 	<!--회원 정보 제거-->
 	<update id="removeUser" parameterType="com.utime.memoBom.user.vo.UserVo" >
 		UPDATE MB_USER SET 
@@ -97,14 +114,6 @@
 			, ID  = '${userNo}'
 		WHERE USER_NO = ${userNo}
 	</update>
-	
-	<!--사용자 정보 조회-->
-	<select id="selectUserFromUid" parameterType="map">
-		SELECT 
-			<include refid="UserColumn" /> 
-		FROM MB_USER UR 
-		WHERE UR.UID = #{uid} AND ENABLED = TRUE
-	</select>
 	
 	<!--내 작성 데이터-->
 	<select id="selectMyWriteDataList" parameterType="map" resultType="com.utime.memoBom.user.vo.MyWriterVo" >

@@ -77,6 +77,11 @@ public class TestController {
 		return "redirect:/";
 	}
 
+	@GetMapping("Push")
+	public String testPush() {
+		return "Test/TestPush";
+	}
+
 	@GetMapping("Layout")
 	public String testLayout() {
 		return "Test/TestLayout";
