@@ -51,7 +51,13 @@ async function loadVapidPublicKey() {
     const url = window.contextPath + '/Push/vapid-public-key';
     
     // apiGet은 내부적으로 res.ok 확인, 401/403 처리, Content-Type별 파싱을 모두 수행합니다.
-    return await apiGet(url);
+    const res = await apiGet(url);
+	const vapidPublicKey = res.message;
+	console.info( 'public key', vapidPublicKey);
+	
+	const bytesKey = urlBase64ToUint8Array(vapidPublicKey)
+	
+	return bytesKey;
 }
 /* 푸시 구독 + 서버 저장 */
 async function subscribePush() {
@@ -74,7 +80,7 @@ async function subscribePush() {
 	if (!subscription) {
 		subscription = await reg.pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+			applicationServerKey: vapidPublicKey
 		});
 	}
 

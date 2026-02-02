@@ -2,265 +2,143 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">제목</th:block>
+<th:block layout:fragment="title">push</th:block>
+<head>
+	<th:block layout:fragment="css">
+		<!-- PWA -->
+		<link rel="manifest" th:href="@{/manifest.webmanifest}" />
+		<meta name="theme-color" content="#0f172a" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="apple-mobile-web-app-title" content="MemoBom" />
+	</th:block>
+</head>
 
-<th:block layout:fragment="css">
-	<style>
+<body>
 
-	</style>
-</th:block>
+	<!-- 헤더 -->
+	<th:block layout:fragment="header">
+		<div class="h-12 flex items-center justify-between px-3">
+			<div class="font-bold text-slate-900">TestPush</div>
+			<div class="text-xs text-slate-500">PWA / Push</div>
+		</div>
+	</th:block>
 
-<th:block layout:fragment="header">
-	<link rel="manifest" th:href="@{/manifest.webmanifest}">
-	<th:block th:replace="~{Fragments/Header :: Header_Back('-_-;;;')}"></th:block>
-</th:block>
-
-<th:block layout:fragment="content">
-	<div id="pwaInstallModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:9999;">
-		<div
-			style="max-width:420px; margin:12vh auto; background:#fff; border-radius:14px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.2);">
-			<div style="font-size:18px; font-weight:700; margin-bottom:8px;">앱으로 설치하면 더 편해요</div>
-			<div id="pwaInstallDesc" style="font-size:14px; line-height:1.5; color:#374151; margin-bottom:14px;">
-				홈 화면에 추가하면 앱처럼 빠르게 열고, 푸시 알림도 받을 수 있어요.
+	<!-- 본문 -->
+	<th:block layout:fragment="content">
+		<div class="max-w-xl mx-auto space-y-3">
+			<div class="bg-white rounded-xl border border-gray-200 p-4">
+				<div class="font-semibold text-slate-900">PWA 설치/푸시 테스트</div>
+				<div class="text-sm text-slate-600 mt-2 leading-relaxed">
+					- 설치가 안 되어 있으면 진입 시 설치 안내 팝업이 뜹니다.<br/>
+					- 거부하면 다시 뜨지 않습니다(브라우저 localStorage 기준).
+				</div>
 			</div>
 
-			<div style="display:flex; gap:8px; justify-content:flex-end;">
-				<button id="pwaInstallLaterBtn"
-					style="padding:10px 12px; border-radius:10px; border:1px solid #e5e7eb; background:#fff; cursor:pointer;">
-					나중에
-				</button>
-				<button id="pwaInstallGoBtn"
-					style="padding:10px 12px; border-radius:10px; border:0; background:#111827; color:#fff; cursor:pointer;">
-					설치하기
-				</button>
+			<div class="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
+				<div class="font-semibold text-slate-900">Push</div>
+
+				<div class="flex gap-2">
+					<button type="button"
+							class="flex-1 px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800"
+							onclick="enablePush()">
+						푸시 알림 활성화
+					</button>
+					<button type="button"
+							class="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50"
+							onclick="localStorage.removeItem('pwa_install_dismissed_v1'); showToast('초기화', '설치 안내가 다시 노출됩니다.', ToastType.INFO, 1500)">
+						설치 팝업 초기화
+					</button>
+				</div>
+
+				<div class="text-xs text-slate-500">
+					※ iOS는 beforeinstallprompt가 동작하지 않을 수 있어, 이 경우는 “홈 화면에 추가” 안내 UX로 별도 처리하는 게 일반적입니다.
+				</div>
 			</div>
 		</div>
-	</div>
+	</th:block>
 
-</th:block>
+	<!-- 푸터 -->
+	<th:block layout:fragment="footer">
+		<div class="h-10 flex items-center justify-center text-xs text-slate-500">
+			MemoBom · TestPush
+		</div>
+	</th:block>
 
-<th:block layout:fragment="footer">
-	<th:block th:replace="~{Fragments/Footer :: BasicFooter}"></th:block>
-</th:block>
+	<!-- 스크립트 -->
+	<th:block layout:fragment="script">
+		<script type="text/javascript" th:src="@{/js/pwa.js(v=${assetVersion})}"></script>
 
-<th:block layout:fragment="script">
-	<script th:inline="javascript">
-	  if ("serviceWorker" in navigator) {
-	    window.addEventListener("load", async () => {
-	      try {
-			const jsAddress = /*[[@{/sw.js}]]*/ '/sw.js';
-	        await navigator.serviceWorker.register(jsAddress);
-	        console.log("SW registered");
-	      } catch (e) {
-	        console.error("SW register failed", e);
-	      }
-	    });
-	  }
-	</script>
+		<script th:inline="javascript">
+			(function () {
+				// ===== 설치 유도 1차 목표 =====
+				const DISMISS_KEY = "pwa_install_dismissed_v1";
+				let deferredPrompt = null;
 
-	<script>
-	/**
-	 * PWA 설치 안내 (LayoutBase 전용)
-	 * - 설치(standalone) 상태면 안내 안 함
-	 * - 거부하면 7일 후 다시 안내
-	 * - Chrome/Edge: beforeinstallprompt 이용해 "설치하기" 가능
-	 * - iOS Safari: 홈화면 추가 안내만 제공(설치 버튼 없음)
-	 */
-	(function () {
-	  // ====== 설정 ======
-	  const COOLDOWN_DAYS = 7;
-	  const LS_KEY_DISMISSED_AT = "pwa_install_dismissed_at_v1";
-	  const LS_KEY_INSTALLED = "pwa_installed_v1"; // 선택: installed 이벤트 기록
+				function isInstalled() {
+					// Android/Chrome/Edge
+					const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+					// iOS Safari
+					const iosStandalone = (window.navigator && window.navigator.standalone) === true;
+					return standalone || iosStandalone;
+				}
 
-	  // Chrome/Edge 설치 프롬프트 이벤트 저장
-	  let deferredPrompt = null;
+				function alreadyDismissed() {
+					return localStorage.getItem(DISMISS_KEY) === "1";
+				}
 
-	  // ====== AlertView 어댑터 ======
-	  // 프로젝트의 AlertView.confirm 시그니처가 다를 수 있어요.
-	  // 아래는 가장 흔한 형태 가정:
-	  // AlertView.confirm({ title, message, okText, cancelText, onOk, onCancel })
-	  // 만약 다르면 이 함수만 맞춰 바꾸면 나머지는 그대로 동작합니다.
-	  function showConfirm(opts) {
-	    if (window.AlertView && typeof window.AlertView.confirm === "function") {
-	      // 1) 객체형 시그니처
-	      try {
-	        return window.AlertView.confirm(opts);
-	      } catch (e) {
-	        // 2) (title, message, onOk, onCancel, okText, cancelText) 같은 다른 시그니처일 수도 있어 대비
-	        try {
-	          return window.AlertView.confirm(
-	            opts.title,
-	            opts.message,
-	            opts.onOk,
-	            opts.onCancel,
-	            opts.okText,
-	            opts.cancelText
-	          );
-	        } catch (e2) {
-	          // fallback
-	          const ok = confirm(opts.title + "\n\n" + stripHtml(opts.message));
-	          ok ? opts.onOk && opts.onOk() : opts.onCancel && opts.onCancel();
-	        }
-	      }
-	    } else {
-	      const ok = confirm(opts.title + "\n\n" + stripHtml(opts.message));
-	      ok ? opts.onOk && opts.onOk() : opts.onCancel && opts.onCancel();
-	    }
-	  }
+				function dismissForever() {
+					localStorage.setItem(DISMISS_KEY, "1");
+				}
 
-	  function stripHtml(html) {
-	    const div = document.createElement("div");
-	    div.innerHTML = html;
-	    return div.textContent || div.innerText || "";
-	  }
+				// beforeinstallprompt: 크롬 계열에서 설치 배너를 우리가 제어
+				window.addEventListener("beforeinstallprompt", (e) => {
+					e.preventDefault();
+					deferredPrompt = e;
 
-	  // ====== 유틸 ======
-	  function now() { return Date.now(); }
-	  function daysBetween(ts1, ts2) {
-	    return Math.floor((ts2 - ts1) / (1000 * 60 * 60 * 24));
-	  }
+					// 이미 설치됐거나, 사용자가 거부했던 이력이 있으면 더 이상 띄우지 않음
+					if (isInstalled() || alreadyDismissed()) return;
 
-	  function getDismissedAt() {
-	    const v = localStorage.getItem(LS_KEY_DISMISSED_AT);
-	    return v ? Number(v) : null;
-	  }
-	  function setDismissedNow() {
-	    localStorage.setItem(LS_KEY_DISMISSED_AT, String(now()));
-	  }
-	  function isCooldownActive() {
-	    const dismissedAt = getDismissedAt();
-	    if (!dismissedAt) return false;
-	    return daysBetween(dismissedAt, now()) < COOLDOWN_DAYS;
-	  }
+					// 레이아웃/알림 시스템(AlertView) 사용: confirmP
+					confirmP("앱을 설치하면 더 빠르게 이용할 수 있어요.\n지금 설치하시겠어요?")
+						.then(async (ok) => {
+							if (!ok) {
+								dismissForever();
+								showToast("안내", "설치 안내를 더 이상 표시하지 않습니다.", ToastType.INFO, 1500);
+								return;
+							}
 
-	  // ====== 설치/실행 상태 판단 ======
-	  function isRunningStandalone() {
-	    // Android/Chrome: display-mode: standalone
-	    // iOS Safari: navigator.standalone
-	    return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
-	      || (window.navigator && window.navigator.standalone === true)
-	      || (localStorage.getItem(LS_KEY_INSTALLED) === "Y"); // 설치 완료 이벤트 기록이 있는 경우 보조
-	  }
+							if (!deferredPrompt) return;
 
-	  function isIosSafari() {
-	    const ua = navigator.userAgent;
-	    const isIOS = /iP(hone|od|ad)/.test(ua);
-	    const isWebKit = /WebKit/.test(ua);
-	    const isCriOS = /CriOS/.test(ua);
-	    const isFxiOS = /FxiOS/.test(ua);
-	    // iOS에서 Safari(혹은 Safari 기반) 판정
-	    return isIOS && isWebKit && !isCriOS && !isFxiOS;
-	  }
+							deferredPrompt.prompt();
+							const choice = await deferredPrompt.userChoice; // { outcome: 'accepted'|'dismissed', platform: ... }
+							deferredPrompt = null;
 
-	  function canShowChromeInstall() {
-	    return !!deferredPrompt;
-	  }
+							if (choice && choice.outcome === "dismissed") {
+								dismissForever();
+								showToast("안내", "설치를 취소하셨어요. 다시 표시하지 않습니다.", ToastType.INFO, 1500);
+							} else {
+								showToast("완료", "설치가 진행됩니다.", ToastType.SUCCESS, 1500);
+							}
+						})
+						.catch((err) => console.error(err));
+				});
 
-	  // ====== 이벤트 ======
-	  // Chrome/Edge 등에서 설치 가능 조건 만족 시 발생
-	  window.addEventListener("beforeinstallprompt", function (e) {
-	    // 브라우저 기본 미니바 자동 안내를 막고, 우리가 원하는 타이밍에 띄움
-	    e.preventDefault();
-	    deferredPrompt = e;
-	  });
+				// 혹시 스탠드얼론으로 진입하면(설치됨) 안내 상태 정리
+				window.addEventListener("appinstalled", () => {
+					deferredPrompt = null;
+					showToast("완료", "앱이 설치되었습니다.", ToastType.SUCCESS, 1500);
+				});
 
-	  // 설치 완료 이벤트
-	  window.addEventListener("appinstalled", function () {
-	    localStorage.setItem(LS_KEY_INSTALLED, "Y");
-	    // 설치 완료 후에는 다시 뜨지 않게(선택)
-	    setDismissedNow();
-	    deferredPrompt = null;
-	  });
+				// 진입 시점에서 이미 설치된 상태면 아무것도 안 함
+				document.addEventListener("DOMContentLoaded", () => {
+					if (isInstalled()) return;
+					// beforeinstallprompt가 발생하기 전엔 강제로 prompt를 띄울 수 없어서,
+					// 여기서는 별도 안내를 띄우지 않습니다(요청하시면 iOS/desktop fallback 안내 UX도 넣어드릴게요).
+				});
+			})();
+		</script>
+	</th:block>
 
-	  // ====== 설치 프롬프트 트리거 (Chrome/Edge) ======
-	  async function triggerInstallPrompt() {
-	    if (!deferredPrompt) return false;
-	    deferredPrompt.prompt();
-	    const choice = await deferredPrompt.userChoice; // { outcome: 'accepted' | 'dismissed' }
-	    deferredPrompt = null;
-	    return choice && choice.outcome === "accepted";
-	  }
-
-	  // ====== 실제 안내 띄우기 ======
-	  function showInstallGuide() {
-	    // 이미 앱 모드면 안내 불필요
-	    if (isRunningStandalone()) return;
-	    // 쿨다운이면 패스
-	    if (isCooldownActive()) return;
-
-	    // iOS Safari: 홈 화면 추가 안내 (설치 버튼 X)
-	    if (isIosSafari()) {
-	      showConfirm({
-	        title: "앱으로 설치하면 더 편해요",
-	        message:
-	          "iPhone/iPad에서는 설치 버튼이 바로 제공되지 않을 수 있어요.<br><br>" +
-	          "Safari 하단(또는 상단)의 <b>공유</b> 버튼을 누른 뒤,<br>" +
-	          "<b>홈 화면에 추가</b>를 선택해 설치해 주세요.",
-	        okText: "확인",
-	        cancelText: "7일 후 다시",
-	        onOk: function () {
-	          // 확인 눌렀는데 그냥 닫는 용도면 아무 것도 안 함
-	          // (원하면 여기서 설치 방법 안내 페이지로 보내도 됨)
-	        },
-	        onCancel: function () {
-	          // "7일 후 다시" 누르면 쿨다운 적용
-	          setDismissedNow();
-	        }
-	      });
-	      return;
-	    }
-
-	    // Chrome/Edge 계열: 설치 프롬프트 가능하면 "설치하기" 제공
-	    if (canShowChromeInstall()) {
-	      showConfirm({
-	        title: "앱으로 설치할까요?",
-	        message:
-	          "설치하면 앱처럼 빠르게 실행되고,<br>" +
-	          "푸시 알림도 더 안정적으로 받을 수 있어요.",
-	        okText: "설치하기",
-	        cancelText: "7일 후 다시",
-	        onOk: async function () {
-	          const installed = await triggerInstallPrompt();
-	          if (!installed) {
-	            // 사용자가 브라우저 프롬프트에서 취소한 경우도 7일 쿨다운 처리
-	            setDismissedNow();
-	          }
-	        },
-	        onCancel: function () {
-	          setDismissedNow();
-	        }
-	      });
-	      return;
-	    }
-
-	    // 설치 프롬프트가 없는 브라우저는 굳이 안 띄우는 걸 추천.
-	    // 그래도 띄우고 싶다면 아래를 사용하세요.
-	    // showConfirm({
-	    //   title: "앱 설치 안내",
-	    //   message: "이 브라우저에서는 설치 안내가 제한될 수 있어요.",
-	    //   okText: "확인",
-	    //   cancelText: "7일 후 다시",
-	    //   onOk: function(){},
-	    //   onCancel: function(){ setDismissedNow(); }
-	    // });
-	  }
-
-	  // ====== 실행 타이밍 ======
-	  // LayoutBase 로드 후 1) SW 등록 이후, 2) beforeinstallprompt 세팅 이후가 이상적이라
-	  // DOMContentLoaded + 약간 지연으로 실행(레이아웃 영향 최소)
-	  document.addEventListener("DOMContentLoaded", function () {
-	    // 너무 빠르면 deferredPrompt가 아직 없을 수 있어서 약간 지연
-	    setTimeout(showInstallGuide, 800);
-	  });
-
-	  // 필요하면 전역으로도 열어둘 수 있음 (특정 메뉴에서 강제 호출)
-	  window.PWA_INSTALL_GUIDE = {
-	    show: showInstallGuide,
-	    resetCooldown: function () { localStorage.removeItem(LS_KEY_DISMISSED_AT); }
-	  };
-	})();
-	</script>
-
-</th:block>
-
+</body>
 </html>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
 import com.utime.memoBom.push.service.PushSendService;
@@ -32,35 +33,35 @@ public class PushController {
     
 
     @GetMapping("vapid-public-key")
-    public ResponseEntity<String> getVapidPublicKey() {
+    public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
-        return ResponseEntity.ok(vapidPublicKey);
+        return new ReturnBasic(AppDefine.ERROR_OK, vapidPublicKey);
     }
     
     // ✅ 로그인 사용자만 접근 (Security에서 보호)
     @PostMapping("subscription")
-    public ResponseEntity<?> upsert(LoginUser user, @RequestBody PushSubscriptionDto dto ) throws Exception {
+    public ResponseEntity<ReturnBasic> upsert(LoginUser user, @RequestBody PushSubscriptionDto dto ) throws Exception {
     	
         if (dto == null || dto.endpoint == null || dto.keys == null ||
             dto.keys.p256dh == null || dto.keys.auth == null) {
-            return ResponseEntity.badRequest().body("invalid subscription");
+            return ResponseEntity.internalServerError().body( new ReturnBasic("E", "invalid subscription") );
         }
-
+ 
         final ReturnBasic res = pushSendService.upsert( user, dto );
         
         if( res.isError() ) {
-        	return ResponseEntity.internalServerError().body(res.getCode() + "-" + res.getMessage());
+        	return ResponseEntity.internalServerError().body(res);
         }else {
-        	return ResponseEntity.ok().build();
+        	return ResponseEntity.ok().body(new ReturnBasic());
         }
     }
 
     @DeleteMapping("subscription")
-    public ResponseEntity<?> delete(UserVo user, @RequestParam String endpoint ) throws Exception {
+    public ResponseEntity<ReturnBasic> delete(UserVo user, @RequestParam String endpoint ) throws Exception {
         
     	pushSendService.deleteAllByUserIdAndEndpoint(user, endpoint);
         
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new ReturnBasic());
     }
     
 //    @PostMapping("unsubscribe")
