@@ -6,7 +6,6 @@ import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
@@ -62,14 +61,6 @@ public interface BoardService {
 	 * @return
 	 */
 	ReturnBasic procEmotion(LoginUser user, EmotionDto emotionReqVo);
-
-	/**
-	 * 공유 정보 로드
-	 * @param user
-	 * @param uid
-	 * @return
-	 */
-	ShareVo loadShareInfo(LoginUser user, String uid)throws Exception;
 
 	/**
 	 * 댓글 저장

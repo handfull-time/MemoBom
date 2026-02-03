@@ -112,6 +112,10 @@
 	                    </div>
 
 	                    <div class="flex items-center gap-2">
+							<button type="button" class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+								aria-label="share">
+								<span class="icon-share w-4 h-4"></span>
+							</button>
 	                        <button type="button" class="topic-user flex items-center gap-1.5 max-w-[100px]">
 	                            <img class="topic-user-img w-4 h-4 rounded-full border border-slate-200 object-cover" alt="P" />
 	                            <span class="topic-user-name text-[10px] text-slate-500 truncate font-medium">작성자</span>
@@ -134,6 +138,18 @@
 
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
+		
+	function svgShare() {
+	return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none">
+  <circle cx="48" cy="16" r="8" fill="#4B5563"/>
+  <circle cx="16" cy="32" r="8" fill="#4B5563"/>
+  <circle cx="48" cy="48" r="8" fill="#4B5563"/>
+  <line x1="22.7" y1="28.6" x2="41.3" y2="19.4" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
+  <line x1="22.7" y1="35.4" x2="41.3" y2="44.6" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
+</svg>`;
+	}
+
 	(() => {
 	  const $ = (id) => document.getElementById(id);
 
@@ -221,6 +237,8 @@
 	      const no = node.querySelector(".topic-no");
 	      const userImg = node.querySelector(".topic-user-img");
 	      const userName = node.querySelector(".topic-user-name");
+		  
+		  node.querySelector(".icon-share").innerHTML = svgShare();
 
 	      emoji.textContent = safeText(t.imogi, "😊");
 	      name.textContent = safeText(t.name, "(이름 없음)");
@@ -325,6 +343,51 @@
 	        const url = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
 	        location.href = url + "?topic=" + encodeURIComponent(uidVal);
 	      });
+		  
+		  node.querySelector(".btn-share").addEventListener("click", async (e) => {
+		    e.stopPropagation();
+
+		    const uid = (t.uid || "").trim();
+		    if (!uid) {
+		      showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
+		      return;
+		    }
+
+		    // 1) 지원 체크
+		    if (!navigator.share) {
+		      showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
+		      return;
+		    }
+
+		    try {
+		      // 2) 공유 데이터 조회
+		      const url = /*[[@{/TopicShare.json}]]*/ "/TopicShare.json";
+		      const res = await apiGetWithParam(url, { uid });
+
+		      if (!res || res.code !== "0" || !res.data) {
+		        showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
+		        return;
+		      }
+
+		      const payload = {
+		        title: res.data.title ?? "",
+		        text: res.data.text ?? "",
+		        url: res.data.url ?? ""
+		      };
+
+		      // (선택) Web Share API Level 2: 특정 타입 지원 확인
+		      // if (navigator.canShare && !navigator.canShare(payload)) { ... }
+
+		      // 3) 실제 공유
+		      await navigator.share(payload);
+
+		    } catch (err) {
+		      // 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
+		      // 필요하면 err.name === 'AbortError' 분기 가능
+		  	console.error(err);
+		      showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
+		    }
+		  });
 
 	      container.appendChild(node);
 	    });

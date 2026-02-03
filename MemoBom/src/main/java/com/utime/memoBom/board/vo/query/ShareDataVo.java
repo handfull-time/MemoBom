@@ -13,7 +13,9 @@ public class ShareDataVo {
 	long shareNo;
 	/** 고유 키 */
 	String uid;
-	/** 종류 */
+	/** 사용자 구분 값 */
+	long userNo;
+	/** 타겟 종류 */
 	EShareTargetType targetType;
 	/** 타겟 번호 */
 	long targetNo;

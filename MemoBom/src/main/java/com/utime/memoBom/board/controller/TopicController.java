@@ -170,21 +170,6 @@ public class TopicController {
 		model.addAttribute("keyword", keyword );
 		return "Topic/TopicMain";
     }
-	
-	@ResponseBody
-	@GetMapping("Share.json")
-	public ReturnBasic getShareInfo(HttpServletRequest request, LoginUser user, @RequestParam() String uid) throws Exception {
-		
-		final ShareVo share = topicServce.loadShareInfo(user, uid);
-
-		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid + ".html";
-		share.setUrl(fullUrl);
-		
-		final ReturnBasic result = new ReturnBasic();
-		result.setData(share);
-		return result;
-	}
-
 
 }
 

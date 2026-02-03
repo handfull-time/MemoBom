@@ -154,12 +154,12 @@
 		    </if>
 		    
 	    WHERE 1=1
-	      <!-- 기본 조건 -->
+	      -- 기본 조건
 	      AND f.IS_DELETED = FALSE
 	      AND u.ENABLED    = TRUE
 	      AND t.ENABLED    = TRUE
 	
-	      <!-- ✅ 토픽 공개/비공개 접근 조건 -->
+	      -- ✅ 토픽 공개/비공개 접근 조건
 	      AND (
 	            t.EXTERNAL = TRUE
 	            <if test="user != null">
@@ -257,31 +257,6 @@
         ) VALUES (
             #{userNo},
             (SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid})
-        )
-    </insert>
-    
-    <select id="selectFragmentContentPreview" resultType="com.utime.memoBom.board.vo.FragmentVo">
-	    SELECT
-	    	FRAGMENT_NO AS "fragmentNo"
-	        , CASE
-	            WHEN LENGTH(CAST(CONTENT AS VARCHAR)) > 64
-	            THEN SUBSTRING(CAST(CONTENT AS VARCHAR), 1, 64) || '...'
-	            ELSE CAST(CONTENT AS VARCHAR)
-	        END AS "content"
-	    FROM MB_FRAGMENT
-	    WHERE UID = #{uid} AND IS_DELETED = FALSE
-	</select>
-
-	<!--공유 정보 추가-->
-	<insert id="insertFragmentShareInfo" parameterType="map">
-        INSERT INTO MB_SHARE (
-            USER_NO
-            , TARGET_TYPE
-            , TARGET_NO
-        ) VALUES (
-			#{userNo}
-			, ${@com.utime.memoBom.board.vo.EShareTargetType@Board.getCode()} 
-            , #{fragmentNo}
         )
     </insert>
     

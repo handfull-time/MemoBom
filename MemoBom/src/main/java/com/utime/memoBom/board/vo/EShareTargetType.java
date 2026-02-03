@@ -2,7 +2,7 @@ package com.utime.memoBom.board.vo;
 
 public enum EShareTargetType {
 	Topic(0),
-	Board(1),
+	Fragment(1),
 	Comment(2);
 	
 	final int code;

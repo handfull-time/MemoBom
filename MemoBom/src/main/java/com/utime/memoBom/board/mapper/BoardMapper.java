@@ -77,27 +77,12 @@ public interface BoardMapper {
 	int insertScrap(@Param("userNo") long userNo, @Param("fUid") String fragmentUid);
 	
 	/**
-	 * 편린 내용 미리보기 조회
-	 * @param uid
-	 * @return
-	 */
-	FragmentVo selectFragmentContentPreview(@Param("uid") String uid);
-	
-	/**
 	 * 편린 감정 목록 조회
 	 * @param uid
 	 * @return
 	 */
 	List<EmotionItem> selectEmotionList(@Param("req") EmotionDto emotionReqVo);
 
-	/**
-	 * 공유 정보 삽입
-	 * @param userNo
-	 * @param uid
-	 * @return
-	 */
-	int insertFragmentShareInfo(@Param("userNo") long userNo, @Param("fragmentNo")long fragmentNo);
-	
 	/**
 	 * 감정 삽입 또는 업데이트
 	 * @param userNo

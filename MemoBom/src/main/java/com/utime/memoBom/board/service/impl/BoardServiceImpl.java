@@ -2,7 +2,6 @@ package com.utime.memoBom.board.service.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.BoardDao;
@@ -15,7 +14,6 @@ import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.security.LoginUser;
@@ -160,19 +158,6 @@ class BoardServiceImpl implements BoardService {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
 		}
-		
-		return result;
-	}
-	
-	@Value("${appName}")
-	private String appName;
-	
-	@Override
-	public ShareVo loadShareInfo(LoginUser user, String uid) throws Exception{
-		
-		final ShareVo result = boardDao.addShareInfo(user, uid);
-		
-		result.setTitle(this.appName + " - Shared");
 		
 		return result;
 	}

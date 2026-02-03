@@ -2,10 +2,7 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
@@ -94,12 +91,5 @@ public interface TopicDao {
 	 */
 	List<TopicVo> listMyOrFollowTopic(LoginUser user, String keyword, int pageNo);
 
-	/**
-	 * 쉐어 정보 추가
-	 * @param user
-	 * @param uid
-	 * @return
-	 */
-	ShareVo addShareInfo(LoginUser user, String uid);
 
 }

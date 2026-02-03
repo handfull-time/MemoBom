@@ -24,7 +24,6 @@ import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
@@ -201,23 +200,6 @@ class BoardDaoImpl implements BoardDao {
 	    	boardMapper.insertScrap(user.userNo(), fragmentUid);
 	    }
 		return !exists;
-	}
-	
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ShareVo addShareInfo(LoginUser user, String uid) throws Exception {
-		
-		final FragmentVo item = boardMapper.selectFragmentContentPreview(uid);
-		if( item == null ) {
-			throw new Exception("아이템이 없습니다.");
-		}
-		
-		final ShareVo share = new ShareVo();
-		share.setText( item.getContent() );
-		
-		boardMapper.insertFragmentShareInfo(user==null? 0:user.userNo(), item.getFragmentNo());
-		
-		return share;
 	}
 	
 	@Override

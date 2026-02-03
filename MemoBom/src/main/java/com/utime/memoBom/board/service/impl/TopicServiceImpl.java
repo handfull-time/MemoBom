@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
@@ -12,7 +11,6 @@ import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
@@ -165,15 +163,4 @@ class TopicServiceImpl implements TopicService {
 		return result;
 	}
 	
-	@Value("${appName}")
-	private String appName;
-	
-	@Override
-	public ShareVo loadShareInfo(LoginUser user, String uid) {
-		final ShareVo result = topicDao.addShareInfo(user, uid);
-		
-		result.setTitle(this.appName + " - Shared");
-		
-		return result;
-	}
 }

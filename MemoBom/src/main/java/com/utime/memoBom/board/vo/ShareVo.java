@@ -7,10 +7,8 @@ import lombok.Data;
  */
 @Data
 public class ShareVo {
-	/** 제목 */
-	String title;
 	/** 내용 */
 	String text;
 	/** URL */
-	String url;
+	String uid;
 }

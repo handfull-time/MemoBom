@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
+<mapper namespace="com.utime.memoBom.board.mapper.ShareMapper">
+	
+	<!--공유 데이터 추가.-->
+	<insert id="insertShareData" parameterType="com.utime.memoBom.board.vo.query.ShareDataVo"
+		useGeneratedKeys="true" keyProperty="shareNo" >
+        INSERT INTO MB_SHARE (
+            USER_NO
+            , TARGET_TYPE
+            , TARGET_NO
+        ) VALUES (
+			#{userNo}
+			, #{targetType, typeHandler=com.utime.memoBom.board.typeHandler.EShareTargetTypeTypeHandler} 
+            , #{targetNo}
+        )
+    </insert>
+    
+    <resultMap id="ShareMap" type="com.utime.memoBom.board.vo.query.ShareDataVo">
+    	<id column="SHARE_NO" property="shareNo"/>
+    	<result column="UID" property="uid"/>
+    	<result column="TARGET_TYPE" property="targetType" typeHandler="com.utime.memoBom.board.typeHandler.EShareTargetTypeTypeHandler" />
+    	<result column="TARGET_NO" property="targetNo"/>
+    </resultMap>
+    
+    <!--조회-->
+    <select id="selectShareData" parameterType="map" resultMap="ShareMap">
+    	SELECT 
+    		SHARE_NO
+    		, UID
+    		, TARGET_TYPE
+    		, TARGET_NO
+    	FROM MB_SHARE
+    	WHERE 1=1
+    		<if test="uid != null and ! uid.isEmpty()">
+				AND UID = #{uid}
+			</if>
+			<if test="shareNo > 0">
+				AND SHARE_NO = #{shareNo}
+			</if>
+    </select>
+    
+    <!--공유 대상 Topic 정보 조회-->
+    <select id="loadTopicInfo" parameterType="map" resultType="com.utime.memoBom.board.vo.query.ShareTargetInfo">
+    	SELECT
+    		TOPIC_NO AS "targetNo"
+    		, NAME AS "text"
+    	FROM MB_TOPIC
+    	WHERE UID = #{uid} AND ENABLED = TRUE
+    </select>
+
+    <!--공유 대상 Fragment 정보 조회-->
+    <select id="loadFragmentInfo" parameterType="map" resultType="com.utime.memoBom.board.vo.query.ShareTargetInfo">
+    	SELECT
+    		FRAGMENT_NO AS "targetNo"
+	        , CONTENT AS "text"
+    	FROM MB_FRAGMENT
+    	WHERE UID = #{uid} AND IS_DELETED = FALSE
+    </select>
+    
+</mapper>

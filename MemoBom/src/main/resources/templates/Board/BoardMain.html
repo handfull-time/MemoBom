@@ -652,7 +652,7 @@
 
 				  try {
 				    // 2) 공유 데이터 조회
-				    const url = /*[[@{/Fragment/Share.json}]]*/ "/Fragment/Share.json";
+				    const url = /*[[@{/FragmentShare.json}]]*/ "/FragmentShare.json";
 				    const res = await apiGetWithParam(url, { uid });
 
 				    if (!res || res.code !== "0" || !res.data) {

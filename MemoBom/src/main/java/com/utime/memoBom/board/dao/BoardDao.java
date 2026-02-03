@@ -2,8 +2,6 @@ package com.utime.memoBom.board.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.vo.CommentItem;
@@ -12,7 +10,6 @@ import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmotionItem;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
@@ -58,14 +55,6 @@ public interface BoardDao {
 	 * @return null이면 실패, true면 스크랩, false면 스크랩 취소
 	 */
 	Boolean procScrap(LoginUser user, String fragmentUid) throws Exception;
-
-	/**
-	 * 공유 정보 추가
-	 * @param user
-	 * @param uid
-	 * @return
-	 */
-	ShareVo addShareInfo(LoginUser user, String uid) throws Exception;
 	
 	/**
 	 * 감정 처리

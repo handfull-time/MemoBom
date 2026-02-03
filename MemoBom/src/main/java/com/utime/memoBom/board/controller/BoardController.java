@@ -225,25 +225,5 @@ public class BoardController {
 		reqVo.setTargetType(EEmotionTargetType.Comment);
 		return boardServce.procEmotion( user, reqVo );
     }
-	/**
-	 * 공유 정보 생성
-	 * @param user
-	 * @param uid
-	 * @return
-	 * @throws Exception 
-	 */
-	@ResponseBody
-	@GetMapping("Share.json")
-	public ReturnBasic getShareInfo(HttpServletRequest request, LoginUser user, @RequestParam() String uid) throws Exception {
-		
-		final ShareVo share = boardServce.loadShareInfo(user, uid);
-
-		final String fullUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath() + "/Share/" + uid + ".html";
-		share.setUrl(fullUrl);
-		
-		final ReturnBasic result = new ReturnBasic();
-		result.setData(share);
-		return result;
-	}
 }
 
