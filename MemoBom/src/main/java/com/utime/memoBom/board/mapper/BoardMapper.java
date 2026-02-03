@@ -81,7 +81,7 @@ public interface BoardMapper {
 	 * @param uid
 	 * @return
 	 */
-	String selectFragmentContentPreview(@Param("uid") String uid);
+	FragmentVo selectFragmentContentPreview(@Param("uid") String uid);
 	
 	/**
 	 * 편린 감정 목록 조회
@@ -96,7 +96,7 @@ public interface BoardMapper {
 	 * @param uid
 	 * @return
 	 */
-	int insertShareInfo(@Param("userNo") long userNo, @Param("fUid")String uid);
+	int insertFragmentShareInfo(@Param("userNo") long userNo, @Param("fragmentNo")long fragmentNo);
 	
 	/**
 	 * 감정 삽입 또는 업데이트

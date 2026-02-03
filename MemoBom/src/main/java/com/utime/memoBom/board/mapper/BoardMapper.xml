@@ -260,27 +260,28 @@
         )
     </insert>
     
-    <select id="selectFragmentContentPreview" resultType="string">
+    <select id="selectFragmentContentPreview" resultType="com.utime.memoBom.board.vo.FragmentVo">
 	    SELECT
-	        CASE
+	    	FRAGMENT_NO AS "fragmentNo"
+	        , CASE
 	            WHEN LENGTH(CAST(CONTENT AS VARCHAR)) > 64
 	            THEN SUBSTRING(CAST(CONTENT AS VARCHAR), 1, 64) || '...'
 	            ELSE CAST(CONTENT AS VARCHAR)
-	        END
+	        END AS "content"
 	    FROM MB_FRAGMENT
-	    WHERE UID = #{uid}
+	    WHERE UID = #{uid} AND IS_DELETED = FALSE
 	</select>
 
-	<!--공유 정보 삽입-->
-	<insert id="insertShareInfo" parameterType="map">
+	<!--공유 정보 추가-->
+	<insert id="insertFragmentShareInfo" parameterType="map">
         INSERT INTO MB_SHARE (
-            FRAGMENT_NO
-            , USER_NO
+            USER_NO
+            , TARGET_TYPE
+            , TARGET_NO
         ) VALUES (
-            (
-                SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{fUid}
-            )
-            , #{userNo}
+			#{userNo}
+			, ${@com.utime.memoBom.board.vo.EShareTargetType@Board.getCode()} 
+            , #{fragmentNo}
         )
     </insert>
     

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.mapper.TopicMapper;
 import com.utime.memoBom.board.vo.ETopicSortType;
+import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
@@ -124,5 +125,22 @@ class TopicDaoImpl implements TopicDao{
 	public List<TopicVo> listMyOrFollowTopic(LoginUser user, String keyword, int pageNo) {
 		
 		return topicMapper.listMyOrFollowTopic( user, keyword, pageNo);
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public ShareVo addShareInfo(LoginUser user, String uid) throws Exception {
+		
+		final TopicVo item = topicMapper.loadTopic(uid, 0L);
+		if( item == null ) {
+			throw new Exception("아이템이 없습니다.");
+		}
+		
+		final ShareVo share = new ShareVo();
+		share.setText( item.getName() );
+		
+		topicMapper.insertTopicShareInfo(user==null? 0:user.userNo(), item.getTopicNo());
+		
+		return share;
 	}
 }

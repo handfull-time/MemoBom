@@ -5,6 +5,7 @@ import java.util.List;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.vo.ETopicSortType;
+import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
@@ -77,5 +78,13 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic flow(LoginUser user, TopicDto reqVo);
+
+	/**
+	 * share 정보 생성
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
+	ShareVo loadShareInfo(LoginUser user, String uid);
 
 }

@@ -91,8 +91,8 @@ class CreateRepository {
 			log.info("MB_FRAGMENT_EMOTION_LOG 생성");
 			result += mapper.createFragmentEmotionLog();
 			
-			result += common.createIndex("MB_FRAGMENT_EMOTION_LOG_TARGET_INDX", "MB_FRAGMENT_EMOTION_LOG", "TARGET_TYPE, TARGET_NO");
 			result += common.createIndex("MB_FRAGMENT_EMOTION_LOG_USER_NO_INDX", "MB_FRAGMENT_EMOTION_LOG", "USER_NO");
+			result += common.createIndex("MB_FRAGMENT_EMOTION_LOG_TARGET_INDX", "MB_FRAGMENT_EMOTION_LOG", "TARGET_TYPE, TARGET_NO");
 		}
 
 		if( !common.existTable("MB_FRAGMENT_HASHTAG") ) {
@@ -121,9 +121,9 @@ class CreateRepository {
 			result += mapper.createShare();
 			
 			result += common.createIndex("MB_SHARE_USER_NO_INDX", "MB_SHARE", "USER_NO");
-			result += common.createIndex("MB_SHARE_FRAGMENT_NO_INDX", "MB_SHARE", "FRAGMENT_NO");
+			result += common.createIndex("MB_SHARE_TARGET_TYPE_NO_INDX", "MB_SHARE", "TARGET_TYPE, TARGET_NO");
 		}
-		
+
 		if( !common.existTable("MB_HOLIDAY") ) {
 			log.info("MB_HOLIDAY 생성");
 			result += mapper.createHoliday();

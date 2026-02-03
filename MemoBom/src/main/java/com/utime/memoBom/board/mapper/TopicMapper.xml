@@ -424,5 +424,19 @@
 		ORDER BY TP.TOPIC_NO DESC
 		LIMIT 5 OFFSET ((#{pageNo} - 1) * 5)
 	</select>
+	
+	<!--공유 데이터 추가.-->
+	<insert id="insertTopicShareInfo" parameterType="com.utime.memoBom.board.vo.query.ShareDataVo"
+		useGeneratedKeys="true" keyProperty="shareNo" >
+        INSERT INTO MB_SHARE (
+            USER_NO
+            , TARGET_TYPE
+            , TARGET_NO
+        ) VALUES (
+			#{userNo}
+			, ${@com.utime.memoBom.board.vo.EShareTargetType@Topic.getCode()} 
+            , #{topicNo}
+        )
+    </insert>
 
 </mapper>

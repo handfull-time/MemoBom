@@ -160,4 +160,12 @@ public interface TopicMapper {
 	 * @return
 	 */
 	List<TopicVo> listMyOrFollowTopic(@Param("user") LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);
+
+	/**
+	 * 공유 데이터 추가.
+	 * @param userNo
+	 * @param topicNo
+	 * @return
+	 */
+	int insertTopicShareInfo(@Param("userNo") long userNo, @Param("topicNo") long topicNo);
 }

@@ -207,10 +207,15 @@ class BoardDaoImpl implements BoardDao {
 	@Transactional(rollbackFor = Exception.class)
 	public ShareVo addShareInfo(LoginUser user, String uid) throws Exception {
 		
-		final ShareVo share = new ShareVo();
-		share.setText( boardMapper.selectFragmentContentPreview(uid) );
+		final FragmentVo item = boardMapper.selectFragmentContentPreview(uid);
+		if( item == null ) {
+			throw new Exception("아이템이 없습니다.");
+		}
 		
-		boardMapper.insertShareInfo(user==null? 0:user.userNo(), uid);
+		final ShareVo share = new ShareVo();
+		share.setText( item.getContent() );
+		
+		boardMapper.insertFragmentShareInfo(user==null? 0:user.userNo(), item.getFragmentNo());
 		
 		return share;
 	}
