@@ -106,6 +106,25 @@ public class AppUtils {
 	}
 
 	/**
+	 * 자동 봇인지 검사
+	 * @param userAgent
+	 * @return
+	 */
+	public static boolean isBot(String userAgent) {
+		if( userAgent == null )
+			return false;
+		
+		final String uaLower = userAgent.toLowerCase();
+        return  uaLower.contains("slackbot") ||
+                uaLower.contains("twitterbot") ||
+                uaLower.contains("facebookexternalhit") ||
+                uaLower.contains("discordbot") ||
+                uaLower.contains("whatsapp") ||
+                uaLower.contains("kakaotalk")
+        ;
+    }
+    
+	/**
 	 * DMS (Degree Minute Second) 형식의 위도 또는 경도 문자열을 Decimal Degree 형식으로 변환합니다.
 	 *
 	 * @param dmsString DMS 형식의 문자열 (예: "37 33' 59.78\" N", "126 58' 41.23\" E")

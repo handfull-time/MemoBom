@@ -59,9 +59,13 @@ public interface TopicService {
 	/**
 	 * topic 목록
 	 * @param user
+	 * @param sortType
+	 * @param page
+	 * @param keyword
+	 * @param uid
 	 * @return
 	 */
-	ReturnBasic listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword );
+	ReturnBasic listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword, String uid );
 
 	/**
 	 * Topic이 하나도 없나?

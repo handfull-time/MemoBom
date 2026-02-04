@@ -122,11 +122,11 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public ReturnBasic listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword) {
+	public ReturnBasic listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword, String uid) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( topicDao.listTopic( user, sortType, page, keyword ) );
+		result.setData( topicDao.listTopic( user, sortType, page, keyword, uid ) );
 		
 		return result;
 	}

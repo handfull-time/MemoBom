@@ -11,4 +11,6 @@ public class ShareVo {
 	String text;
 	/** URL */
 	String uid;
+	/** 종류 */
+	EShareTargetType targetType;
 }

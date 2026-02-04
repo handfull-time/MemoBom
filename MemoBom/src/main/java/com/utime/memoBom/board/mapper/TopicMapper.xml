@@ -103,7 +103,7 @@
 	 	TP.TOPIC_NO
 		, TP.ENABLED 
 		, TP.OWNER_NO
-		, TP.UID 
+		, CAST(TP.UID AS VARCHAR) AS UID 
 		, TP.EXTERNAL
 		, TP.EMOTION
 		, TP.COMMENTS
@@ -178,7 +178,7 @@
 		      TP.TOPIC_NO
 		    , TP.OWNER_NO
 		    , TP.EXTERNAL
-		    , TP.UID
+		    , CAST(TP.UID AS VARCHAR) AS UID
 		    , TP.NAME
 		    , TP.DESCRIPTION
 		    , TP.IMOGI
@@ -189,7 +189,7 @@
 		    , TP.ENABLED
 		    , TP.EMOJI_SET_TYPE
 		
-		    , USR.UID AS USER_UID
+		    , CAST(USR.UID AS VARCHAR) AS USER_UID
 		    , USR.NICKNAME
 		    , USR.PROFILE_IMG_PATH
 		
@@ -214,8 +214,8 @@
 		    LEFT JOIN MB_TOPIC_STATS ST
 		        ON ST.TOPIC_NO = TP.TOPIC_NO
 		
-		WHERE
-		    TP.ENABLED = TRUE
+		WHERE 1=1
+		    AND TP.ENABLED = TRUE
 		
 		    <!-- 기본은 공개 토픽만. 단, 로그인 유저가 follow 한 토픽이면 비공개도 노출 -->
 		    AND (
@@ -228,6 +228,10 @@
 		    <!-- 검색 -->
 		    <if test="keyword != null and keyword != ''">
 		        AND TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+		    </if>
+
+		    <if test="uid != null and uid != ''">
+		        AND TP.UID = #{uid}
 		    </if>
 		
 		<choose>

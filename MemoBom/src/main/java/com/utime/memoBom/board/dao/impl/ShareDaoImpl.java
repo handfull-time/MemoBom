@@ -21,14 +21,48 @@ class ShareDaoImpl implements ShareDao{
 	final ShareMapper shareMapper;
 	
 	@Override
+	public ShareVo loadShareInfo(LoginUser user, String uid, boolean isBot) {
+		
+		final ShareDataVo dbData = shareMapper.selectShareData(0, uid);
+		if( dbData == null ) {
+			log.info("데이터 없다. {}", uid );
+			return null;
+		}
+
+		ShareTargetInfo targetInfo;
+		EShareTargetType targetType = dbData.getTargetType();
+		if( targetType == EShareTargetType.Topic ) {
+			targetInfo = shareMapper.loadTopicInfo(dbData.getTargetNo(), null);
+		}else if( targetType == EShareTargetType.Fragment ) {
+			targetInfo = shareMapper.loadFragmentInfo(dbData.getTargetNo(), null);
+		}else {
+			return null;
+		}
+		
+		String txt = targetInfo.getText();
+		if( txt.length() > 64 ) {
+			txt = txt.substring(0, 60) + "...";
+		}
+		
+		
+		final ShareVo result = new ShareVo();
+		
+		result.setTargetType(targetType);
+		result.setText(txt);
+		result.setUid(targetInfo.getUid());
+		
+		return result;
+	}
+	
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ShareVo addShareInfo(LoginUser user, EShareTargetType targetType, String uid) throws Exception {
 		
 		ShareTargetInfo targetInfo;
 		if( targetType == EShareTargetType.Topic ) {
-			targetInfo = shareMapper.loadTopicInfo(uid);
+			targetInfo = shareMapper.loadTopicInfo(0, uid);
 		}else if( targetType == EShareTargetType.Fragment ) {
-			targetInfo = shareMapper.loadFragmentInfo(uid);
+			targetInfo = shareMapper.loadFragmentInfo(0, uid);
 		}else {
 			return null;
 		}

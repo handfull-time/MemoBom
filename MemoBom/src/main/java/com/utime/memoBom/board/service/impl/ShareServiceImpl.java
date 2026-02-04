@@ -26,9 +26,35 @@ class ShareServiceImpl implements ShareService{
 	final ShareDao shareDao;
 	
 	@Override
-	public ShareVo loadShareInfo(LoginUser user, String uid) {
-		// TODO Auto-generated method stub
-		return null;
+	public ShareDto loadShareInfo(LoginUser user, String uid, boolean isBot) {
+		
+    	final ShareVo vo = shareDao.loadShareInfo( user, uid, isBot );
+    	
+		final ShareDto result = new ShareDto(); 
+		result.setTitle(appName);
+
+		if( vo == null ) {
+			result.setText("공유 주소를 확인하세요.");
+    		return result;
+    	}
+		
+		result.setText( vo.getText() );
+		
+		final EShareTargetType targetType = vo.getTargetType();
+		
+		final String fullUrl;
+		
+		if( targetType == EShareTargetType.Topic ) {
+			fullUrl = "/Mosaic/index.html?uid=" + vo.getUid();
+		}else if( targetType == EShareTargetType.Fragment ) {
+			fullUrl = "/Fragment/index.html?fragUid=" + vo.getUid();
+		}else {
+			fullUrl = "";
+		}
+		
+		result.setUrl(fullUrl);
+		
+		return result;
 	}
 
 	@Override

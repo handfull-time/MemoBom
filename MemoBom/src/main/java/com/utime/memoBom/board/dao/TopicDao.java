@@ -51,7 +51,7 @@ public interface TopicDao {
 	 * @param page 1부터 시작
 	 * @return
 	 */
-	List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword );
+	List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword, String uid );
 
 	/**
 	 * Topic이 하나도 없나?

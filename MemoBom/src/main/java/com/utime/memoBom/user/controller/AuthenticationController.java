@@ -20,20 +20,23 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthenticationController {
 	
-//	
-	/**
-	 * 메타 처리
-	 * @param model
-	 * @param redirectUrl 이전 호출 됐던 URL
-	 * @return
-	 */
-	@GetMapping("NoneAuthMeta.html")
-    public String noneAuthMetaPage(ModelMap model, @RequestParam(required = false) String redirectUrl) {
-		
-		model.addAttribute("redirectUrl", redirectUrl);
-        
-		return "Auth/NoneAuthMeta";
-    }
+//	/**
+//	 * 메타 처리
+//	 * @param model
+//	 * @param redirectUrl 이전 호출 됐던 URL
+//	 * @return
+//	 */
+//	@GetMapping("NoneAuthMeta.html")
+//    public String noneAuthMetaPage(ModelMap model, 
+//    		@RequestParam(required = false) String redirectUrl) {
+//		
+//		model.addAttribute("redirectUrl", redirectUrl);
+//		model.addAttribute("title", title);
+//		model.addAttribute("description", title);
+//		model.addAttribute("url", title);
+//		
+//		return "Auth/NoneAuthMeta";
+//    }
 	
 	
 	/**

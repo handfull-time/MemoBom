@@ -4,15 +4,15 @@
 	  <!-- meta 네이버:카카오 지원 -->
 	  <meta property="og:type" content="website">
 	  <!-- 공유시 이동 url -->
-	  <meta property="og:url" th:content="${redirectUrl}">
+	  <meta property="og:url" th:content="${item.url}">
 	  <!-- 공유시 보여질 제목 -->
-	  <meta property="og:title" th:content="${title}">
+	  <meta property="og:title" th:content="${item.title}">
 	  <!-- 공유시 보여질 이미지 경로 -->
 	  <meta property="og:image" th:content="@{/images/favicon/android-icon-192x192.png}">
 	  <!-- 공유시 보여질 설명 -->
-	  <meta property="og:description" th:content="${description}">
+	  <meta property="og:description" th:content="${item.text}">
 	  <!-- 사이트 이름 -->
-	  <meta property="og:site_name" content="MemoBom">
+	  <meta property="og:site_name" th:content="${item.title}">
 
 	  <meta property="og:ignore_canonical" content="true">
 
@@ -20,16 +20,16 @@
 
 
 	  <!-- X -->
-	  <meta property="twitter:card" content="card"><!-- 다른 값으로  summary 를 사용 할 수 있다. -->
-	  <meta property="twitter:title" th:content="${title}">
-	  <meta property="twitter:description" th:content="${description}">
+	  <meta property="twitter:card" content="card">
+	  <meta property="twitter:title" th:content="${item.title}">
+	  <meta property="twitter:description" th:content="${item.text}">
 	  <meta property="twitter:image" th:content="@{/images/favicon/android-icon-192x192.png}">
-	  <meta property="twitter:url" th:content="${url}">
+	  <meta property="twitter:url" th:content="${item.url}">
 
 	  <!-- Mobile IOS -->
-	  <meta property="al:web:url" th:content="${url}">
+	  <meta property="al:web:url" th:content="${item.url}">
 </head>
 <body>
-    <p>미리보기 전용 페이지입니다.</p>
+    [[${item.text}]]
 </body>
 </html>

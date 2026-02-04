@@ -1,7 +1,7 @@
 package com.utime.memoBom.board.service;
 
+import com.utime.memoBom.board.dto.ShareDto;
 import com.utime.memoBom.board.vo.EShareTargetType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 
@@ -9,7 +9,14 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface ShareService {
 
-	ShareVo loadShareInfo(LoginUser user, String uid);
+	/**
+	 * Share 링크 정보
+	 * @param user
+	 * @param uid
+	 * @param isBot
+	 * @return
+	 */
+	ShareDto loadShareInfo(LoginUser user, String uid, boolean isBot);
 
 	/**
 	 * 공유 정보 생성

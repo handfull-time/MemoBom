@@ -117,12 +117,12 @@
 	    SELECT
 	        <!-- 게시글 정보 -->
 	        f.FRAGMENT_NO    AS fragment_no,
-	        CAST(f.UID AS VARCHAR)            AS fragment_uid,
+	        CAST(f.UID AS VARCHAR) AS fragment_uid,
 	        f.CONTENT        AS content,
 	        f.REG_DATE       AS reg_date,
 	
 	        <!-- 작성자 정보 -->
-	        CAST(u.UID AS VARCHAR)            AS user_uid,
+	        CAST(u.UID AS VARCHAR) AS user_uid,
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	

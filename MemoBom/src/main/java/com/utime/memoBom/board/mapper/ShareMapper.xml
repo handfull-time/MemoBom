@@ -28,7 +28,7 @@
     <select id="selectShareData" parameterType="map" resultMap="ShareMap">
     	SELECT 
     		SHARE_NO
-    		, UID
+    		, CAST(UID AS VARCHAR) AS UID
     		, TARGET_TYPE
     		, TARGET_NO
     	FROM MB_SHARE
@@ -46,8 +46,16 @@
     	SELECT
     		TOPIC_NO AS "targetNo"
     		, NAME AS "text"
+    		, CAST(UID AS VARCHAR) AS "uid"
     	FROM MB_TOPIC
-    	WHERE UID = #{uid} AND ENABLED = TRUE
+    	WHERE 1=1 
+    		AND ENABLED = TRUE
+    		<if test="uid != null and ! uid.isEmpty()">
+				AND UID = #{uid}
+			</if>
+			<if test="topicNo > 0">
+				AND TOPIC_NO = #{topicNo}
+			</if>
     </select>
 
     <!--공유 대상 Fragment 정보 조회-->
@@ -55,8 +63,16 @@
     	SELECT
     		FRAGMENT_NO AS "targetNo"
 	        , CONTENT AS "text"
+	        , CAST(UID AS VARCHAR) AS "uid"
     	FROM MB_FRAGMENT
-    	WHERE UID = #{uid} AND IS_DELETED = FALSE
+    	WHERE 1=1 
+    		AND IS_DELETED = FALSE
+    		<if test="uid != null and ! uid.isEmpty()">
+				AND UID = #{uid}
+			</if>
+			<if test="fragmentNo > 0">
+				AND FRAGMENT_NO = #{fragmentNo}
+			</if>
     </select>
     
 </mapper>

@@ -32,12 +32,12 @@ public interface ShareMapper {
 	 * @param uid
 	 * @return
 	 */
-	ShareTargetInfo loadTopicInfo(@Param("uid")String uid);
+	ShareTargetInfo loadTopicInfo(@Param("topicNo")long topicNo, @Param("uid")String uid);
 
 	/**
 	 * 공유 대상 Fragment 정보 조회
 	 * @param uid
 	 * @return
 	 */
-	ShareTargetInfo loadFragmentInfo(@Param("uid")String uid);
+	ShareTargetInfo loadFragmentInfo(@Param("fragmentNo")long fragmentNo, @Param("uid")String uid);
 }

@@ -71,7 +71,7 @@ class TopicDaoImpl implements TopicDao{
 	}
 	
 	@Override
-	public List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword) {
+	public List<TopicResultVo> listTopic(LoginUser user, ETopicSortType sortType, int page, String keyword, String uid) {
 		
 		final List<TopicResultVo> result;
 		
@@ -81,7 +81,7 @@ class TopicDaoImpl implements TopicDao{
 			keyword = null;
 		}
 		
-		result = topicMapper.listTopic(user, keyword, page, sortType);
+		result = topicMapper.listTopic(user, keyword, page, sortType, uid);
 		
 		return result;
 	}

@@ -11,4 +11,6 @@ public class ShareTargetInfo {
 	long targetNo;
 	/** 내용 */
 	String text;
+	/** 고유 id */
+	String uid;
 }

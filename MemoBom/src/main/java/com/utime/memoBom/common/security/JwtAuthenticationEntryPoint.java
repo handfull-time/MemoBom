@@ -25,7 +25,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     	
     	final String requestUri = request.getRequestURI();
     	
-    	if( this.isBot(request.getHeader(HttpHeaders.USER_AGENT))) {
+    	if( AppUtils.isBot(request.getHeader(HttpHeaders.USER_AGENT))) {
     		log.info("Bot 진입 : " + request.getHeader(HttpHeaders.USER_AGENT));
     		
     		String originalUrl = requestUri;
@@ -37,7 +37,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             // URL 인코딩
             final String redirectUrl = URLEncoder.encode(originalUrl, StandardCharsets.UTF_8.name());
 
-            response.sendRedirect(request.getContextPath() + "/Auth/NoneAuthMeta.html?redirectUrl=" + redirectUrl);
+//            response.sendRedirect(request.getContextPath() + "/Auth/NoneAuthMeta.html?redirectUrl=" + redirectUrl);
+            response.sendRedirect(request.getContextPath() + "/Error/AccessDenied.html?url=" + redirectUrl);
+            
     		return;
     	}
 
@@ -54,18 +56,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             response.sendRedirect(contextPath + "/Auth/Login.html");
         }
     }
-    
-    private boolean isBot(String userAgent) {
-        return userAgent != null && (
-                userAgent.contains("Slackbot") ||
-                userAgent.contains("Twitterbot") ||
-                userAgent.contains("facebookexternalhit") ||
-                userAgent.contains("Discordbot") ||
-                userAgent.contains("WhatsApp") ||
-                userAgent.contains("KAKAOTALK") // 카톡
-        );
-    }
-    
     
 
 }

@@ -39,11 +39,15 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String topicMain( UserVo user ) {
+    public String topicMain( ModelMap model, LoginUser user, 
+    		@RequestParam(required = false) String keyword,
+    		@RequestParam(required = false) String uid) {
 		
 		if(topicServce.isEmpty() && user != null ) {
 			return "redirect:/Mosaic/Ensemble.html";
 		}else {
+			model.addAttribute("keyword", keyword);
+			model.addAttribute("uid", uid);
 			return "Topic/TopicMain";
 		}
     }
@@ -126,31 +130,32 @@ public class TopicController {
 	public ReturnBasic listTopic( LoginUser user, 
 			@RequestParam() ETopicSortType sortType, 
 			@RequestParam(required = false, defaultValue = "1") int page, 
-			@RequestParam(required = false) String keyword ) {
+			@RequestParam(required = false) String keyword,
+			@RequestParam(required = false) String uid) {
 		
-		return topicServce.listTopic( user, sortType, page, keyword  );
+		return topicServce.listTopic( user, sortType, page, keyword, uid );
 	}
 	
-	/**
-	 * 토픽 정보 읽기
-	 * @param uid
-	 * @return
-	 */
-	@ResponseBody
-	@GetMapping("LoadMosaic.json")
-	public ReturnBasic loadTopic( @RequestParam() String uid ) {
-		
-		final ReturnBasic result = new ReturnBasic();
-		
-		TopicResultVo vo = topicServce.loadTopic( uid );
-		if( vo == null ) {
-			result.setCodeMessage("E", "Mosaic is not found.");
-		}else {
-			result.setData(vo);
-		}
-
-		return result;
-	}
+//	/**
+//	 * 토픽 정보 읽기
+//	 * @param uid
+//	 * @return
+//	 */
+//	@ResponseBody
+//	@GetMapping("LoadMosaic.json")
+//	public ReturnBasic loadTopic( @RequestParam() String uid ) {
+//		
+//		final ReturnBasic result = new ReturnBasic();
+//		
+//		TopicResultVo vo = topicServce.loadTopic( uid );
+//		if( vo == null ) {
+//			result.setCodeMessage("E", "Mosaic is not found.");
+//		}else {
+//			result.setData(vo);
+//		}
+//
+//		return result;
+//	}
 	
 	/**
 	 * 토픽 언 팔로우 / 팔로우
@@ -165,11 +170,11 @@ public class TopicController {
 		return topicServce.flow( user, reqVo );
 	}
 	
-	@GetMapping(path = "Mosaic.html", params = "keyword")
-    public String topicSearch( ModelMap model, LoginUser user, @RequestParam() String keyword) {
-		model.addAttribute("keyword", keyword );
-		return "Topic/TopicMain";
-    }
+//	@GetMapping(path = "Mosaic.html", params = "keyword")
+//    public String topicSearch( ModelMap model, LoginUser user, @RequestParam() String keyword) {
+//		model.addAttribute("keyword", keyword );
+//		return "Topic/TopicMain";
+//    }
 
 }
 
