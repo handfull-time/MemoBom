@@ -1,5 +1,6 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -75,13 +76,28 @@ class TopicDaoImpl implements TopicDao{
 		
 		final List<TopicResultVo> result;
 		
+		if( !AppUtils.isEmpty(uid) ) {
+			
+			result = new ArrayList<>();
+
+			final TopicResultVo vo = topicMapper.loadTopicResult(user, uid);
+			if( vo == null ) {
+				log.info("찾을 수 없음.");
+			}else {
+				result.add( vo );
+			}
+			
+			return result;
+		}
+		
+		
 		if( !AppUtils.isEmpty(keyword) ) {
 			keyword = keyword.trim();
 		}else {
 			keyword = null;
 		}
 		
-		result = topicMapper.listTopic(user, keyword, page, sortType, uid);
+		result = topicMapper.listTopic(user, keyword, page, sortType);
 		
 		return result;
 	}

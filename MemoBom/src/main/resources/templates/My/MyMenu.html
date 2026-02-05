@@ -2,8 +2,8 @@
 
 	<th:block th:with="path=${currentPath}">
 
+	<nav class="text-sm space-y-1">
 		<th:block th:if="${user ne null}">
-			<nav class="text-sm space-y-1">
 				<!-- 메뉴 항목들: 예시 (active 처리 포함) -->
 				<a th:href="@{/My/index.html}"
 					th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
@@ -96,6 +96,22 @@
 			<span class="w-1.5 h-1.5 rounded-full"
 				th:classappend="${path == '/About/License.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 			<span class="font-medium">License</span>
+		</a>
+		<a th:href="@{/About/Application.html}"
+			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+		           ${path == '/About/Application.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+			onclick="MyMenu.closeIfMobile()">
+			<span class="w-1.5 h-1.5 rounded-full"
+				th:classappend="${path == '/About/Application.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+			<span class="font-medium">Application</span>
+		</a>
+		<a th:href="@{/About/index.html}"
+			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+		               ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+			onclick="MyMenu.closeIfMobile()">
+			<span class="w-1.5 h-1.5 rounded-full"
+				th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+			<span class="font-medium">About</span>
 		</a>
 		</nav>
 

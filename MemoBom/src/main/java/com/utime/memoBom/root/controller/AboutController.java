@@ -22,4 +22,10 @@ public class AboutController {
     public String License() {
 		return "About/License";
     }
+
+	@GetMapping(path = "Application.html")
+    public String Application() {
+		return "About/Application";
+    }
+
 }

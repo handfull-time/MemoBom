@@ -142,6 +142,7 @@
 			<include refid="TopicColumnSql" /> 
 		FROM MB_TOPIC TP
 		WHERE 1=1
+			AND ENABLED = TRUE
 			<if test="uid != null and ! uid.isEmpty()">
 				AND UID = #{uid}
 			</if>
@@ -229,11 +230,6 @@
 		    <if test="keyword != null and keyword != ''">
 		        AND TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
 		    </if>
-
-		    <if test="uid != null and uid != ''">
-		        AND TP.UID = #{uid}
-		    </if>
-		
 		<choose>
 		    <when test="sortType != null and sortType.name() == 'fresh'">
 		        ORDER BY TP.REG_DATE DESC, TP.TOPIC_NO DESC
@@ -254,6 +250,52 @@
 		LIMIT 5 OFFSET ((#{page} - 1) * 5)
 	</select>
 
+	<!--토픽 정보 로딩-->
+	<select id="loadTopicResult" parameterType="map" resultMap="TopicResultMap">
+	    SELECT
+	          TP.TOPIC_NO
+	        , TP.OWNER_NO
+	        , TP.EXTERNAL
+	        , CAST(TP.UID AS VARCHAR) AS UID
+	        , TP.NAME
+	        , TP.DESCRIPTION
+	        , TP.IMOGI
+	        , TP.COLOR
+	        , TP.EMOTION
+	        , TP.COMMENTS
+	        , TP.MAX_LEN
+	        , TP.ENABLED
+	        , TP.EMOJI_SET_TYPE
+	
+	        , CAST(USR.UID AS VARCHAR) AS USER_UID
+	        , USR.NICKNAME
+	        , USR.PROFILE_IMG_PATH
+	
+	        , (MYFL.USER_NO IS NOT NULL) AS FLOW
+	
+	        , COALESCE(ST.FOLLOW_COUNT, 0) AS FLOW_COUNT
+	        , COALESCE(ST.FRAGMENT_COUNT, 0) AS FRAGMENT_COUNT
+	
+	    FROM MB_TOPIC TP
+	        JOIN MB_USER USR
+	            ON TP.OWNER_NO = USR.USER_NO
+	
+	        <!-- 로그인 사용자 (선택) -->
+	        LEFT JOIN MB_USER ME
+	            ON ME.UID = #{user.uid}
+	
+	        <!-- 내가 이 토픽을 팔로우했는지 -->
+	        LEFT JOIN MB_TOPIC_FOLLOW MYFL
+	            ON MYFL.TOPIC_NO = TP.TOPIC_NO
+	           AND MYFL.USER_NO  = ME.USER_NO
+	
+	        LEFT JOIN MB_TOPIC_STATS ST
+	            ON ST.TOPIC_NO = TP.TOPIC_NO
+	
+	    WHERE 1=1
+	    	AND TP.UID = #{uid}
+	    	AND TP.ENABLED = TRUE
+	</select>
 
 
 

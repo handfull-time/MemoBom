@@ -61,7 +61,14 @@ public interface TopicMapper {
 	 * @param sortType 인기 목록 : 'trending', 최신 목록: 'fresh'
 	 * @return
 	 */
-	List<TopicResultVo> listTopic( @Param("user") LoginUser user, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType,@Param("uid") String uid);
+	List<TopicResultVo> listTopic( @Param("user") LoginUser user, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType);
+
+	/**
+	 * uid 해당 토픽 읽기
+	 * @param uid
+	 * @return
+	 */
+	TopicResultVo loadTopicResult( @Param("user") LoginUser user, @Param("uid") String uid );
 
 	/**
 	 * Topic이 하나도 없나?
