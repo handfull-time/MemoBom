@@ -21,7 +21,7 @@
 	    <!-- 카드 목록 -->
 	    <div class="mt-4 space-y-3">
 	      <!-- 개인정보처리방침 -->
-	      <bottuon onclick="goPolicy()"
+	      <a th:href="@{/About/Privacy_Policy.html}"
 	         rel="noopener noreferrer"
 	         class="block rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden
 	                active:scale-[0.99] transition">
@@ -50,10 +50,10 @@
 	            </svg>
 	          </div>
 	        </div>
-	      </bottuon>
+	      </a>
 
 	      <!-- 서비스 약관 -->
-	      <button onclick="goTerms()" th:href="@{/About/PolicyViewer.html(type='terms')}"
+	      <a th:href="@{/About/Terms_of_Service.html}"
 	         rel="noopener noreferrer"
 	         class="block rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden
 	                active:scale-[0.99] transition">
@@ -81,7 +81,7 @@
 	            </svg>
 	          </div>
 	        </div>
-	      </button>
+	      </a>
 
 	      <!-- (선택) 오픈소스 라이선스 페이지로 연결 -->
 	      <a th:href="@{/About/Opensource.html}"

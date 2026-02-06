@@ -1,412 +1,443 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{My/MyLayout}">
+	layout:decorate="~{Common/LayoutBase}">
 
 <body>
-	<th:block layout:fragment="my_title">Open Source License Notice</th:block>
+	<!-- 헤더 -->
+	<th:block layout:fragment="header">
+		<th:block th:replace="~{Fragments/Header :: Header_Back('Open Source License Notice')}"></th:block>
+	</th:block>
 
-	<th:block layout:fragment="my_content">
-	  <div class="w-full px-4 pb-24">
+	<th:block layout:fragment="content">
+		<div class="w-full px-4 pb-24">
 
-	    <!-- 헤더 -->
-	    <div class="mt-4">
-	      <div class="flex items-center justify-between">
-	        <h1 class="text-xl font-extrabold tracking-tight text-slate-900">Open Source Licenses</h1>
+			<!-- 헤더 -->
+			<div class="mt-4">
+				<div class="flex items-center justify-between">
+					<h1 class="text-xl font-extrabold tracking-tight text-slate-900">Open Source Licenses</h1>
 
-	        <!-- 언어 토글 -->
-	        <div class="inline-flex rounded-2xl bg-slate-100 ring-1 ring-slate-200 p-1">
-	          <button id="btnKo" type="button"
-	                  class="px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm">
-	            한국어
-	          </button>
-	          <button id="btnEn" type="button"
-	                  class="px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900">
-	            English
-	          </button>
-	        </div>
-	      </div>
+					<!-- 언어 토글 -->
+					<div class="inline-flex rounded-2xl bg-slate-100 ring-1 ring-slate-200 p-1">
+						<button id="btnKo" type="button"
+							class="px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm">
+							한국어
+						</button>
+						<button id="btnEn" type="button"
+							class="px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900">
+							English
+						</button>
+					</div>
+				</div>
 
-	      <p class="mt-2 text-sm text-slate-600">
-	        This page lists open source software used in this project (direct Maven dependencies).
-	      </p>
-	    </div>
+				<p class="mt-2 text-sm text-slate-600">
+					This page lists open source software used in this project (direct Maven dependencies).
+				</p>
+			</div>
 
-	    <!-- 검색 -->
-	    <div class="mt-4 sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md pt-2 pb-2">
-	      <div class="relative">
-	        <input id="q" type="search" autocomplete="off" placeholder="Search libraries…"
-	               class="w-full h-11 rounded-2xl bg-white ring-1 ring-slate-200
+			<!-- 검색 -->
+			<div class="mt-4 sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md pt-2 pb-2">
+				<div class="relative">
+					<input id="q" type="search" autocomplete="off" placeholder="Search libraries…" class="w-full h-11 rounded-2xl bg-white ring-1 ring-slate-200
 	                      pl-4 pr-11 text-[15px] outline-none
-	                      focus:ring-2 focus:ring-sky-300"/>
-	        <div class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl
+	                      focus:ring-2 focus:ring-sky-300" />
+					<div class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-xl
 	                    flex items-center justify-center text-slate-500">
-	          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
-	            <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-	            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-	          </svg>
-	        </div>
-	      </div>
-	    </div>
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+							<path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+							<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+						</svg>
+					</div>
+				</div>
+			</div>
 
-	    <!-- 안내 카드 (한글/영문) -->
-	    <div class="mt-3 space-y-3">
-	      <div id="panelKo" class="rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm p-4">
-	        <h2 class="text-base font-bold text-slate-900">공지</h2>
-	        <ul class="mt-2 text-sm text-slate-700 space-y-1 list-disc pl-5">
-	          <li>본 페이지는 본 프로젝트에서 사용한 오픈소스 구성요소(직접 의존성)의 라이선스를 안내합니다.</li>
-	          <li>Spring Boot Starter 등은 여러 전이(Transitive) 의존성을 포함할 수 있으며, 최종 배포물에 포함되는 구성요소를 기준으로 추가 고지가 필요할 수 있습니다.</li>
-	          <li>각 라이선스 전문은 해당 프로젝트의 LICENSE/NOTICE를 따릅니다.</li>
-	        </ul>
-	      </div>
+			<!-- 안내 카드 (한글/영문) -->
+			<div class="mt-3 space-y-3">
+				<div id="panelKo" class="rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm p-4">
+					<h2 class="text-base font-bold text-slate-900">공지</h2>
+					<ul class="mt-2 text-sm text-slate-700 space-y-1 list-disc pl-5">
+						<li>본 페이지는 본 프로젝트에서 사용한 오픈소스 구성요소(직접 의존성)의 라이선스를 안내합니다.</li>
+						<li>Spring Boot Starter 등은 여러 전이(Transitive) 의존성을 포함할 수 있으며, 최종 배포물에 포함되는 구성요소를 기준으로 추가 고지가 필요할
+							수 있습니다.</li>
+						<li>각 라이선스 전문은 해당 프로젝트의 LICENSE/NOTICE를 따릅니다.</li>
+					</ul>
+				</div>
 
-	      <div id="panelEn" class="hidden rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm p-4">
-	        <h2 class="text-base font-bold text-slate-900">Notice</h2>
-	        <ul class="mt-2 text-sm text-slate-700 space-y-1 list-disc pl-5">
-	          <li>This page provides license notices for open source components used by this project (direct dependencies).</li>
-	          <li>Spring Boot Starters may pull in transitive dependencies; additional notices may be required based on what ships in your final distribution.</li>
-	          <li>Full license texts are governed by each project’s LICENSE/NOTICE files.</li>
-	        </ul>
-	      </div>
-	    </div>
+				<div id="panelEn" class="hidden rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm p-4">
+					<h2 class="text-base font-bold text-slate-900">Notice</h2>
+					<ul class="mt-2 text-sm text-slate-700 space-y-1 list-disc pl-5">
+						<li>This page provides license notices for open source components used by this project (direct
+							dependencies).</li>
+						<li>Spring Boot Starters may pull in transitive dependencies; additional notices may be required
+							based on what ships in your final distribution.</li>
+						<li>Full license texts are governed by each project’s LICENSE/NOTICE files.</li>
+					</ul>
+				</div>
+			</div>
 
-	    <!-- 라이브러리 목록 -->
-	    <div class="mt-4">
-	      <h2 class="text-base font-extrabold text-slate-900">Dependencies</h2>
+			<!-- 라이브러리 목록 -->
+			<div class="mt-4">
+				<h2 class="text-base font-extrabold text-slate-900">Dependencies</h2>
 
-	      <div id="list" class="mt-3 space-y-3">
-	        <!-- 카드: data-key로 검색 필터 -->
-	        <!-- Spring Boot starters -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm overflow-hidden"
-	             data-key="spring-boot-starter-web spring-boot-starter-jdbc spring-boot-starter-security spring-boot-starter-thymeleaf spring-boot-starter-websocket spring-boot-starter-aop spring-boot-starter-oauth2-client spring-boot-starter-cache spring-boot-starter-log4j2 spring-boot-devtools spring">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Spring Boot Starters (multiple)</div>
-	              <div class="text-xs text-slate-500 truncate">
-	                org.springframework.boot:spring-boot-starter-*
-	              </div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700 space-y-2">
-	            <div class="ko">
-	              Web/JDBC/Security/Thymeleaf/WebSocket/AOP/OAuth2/Cache/Log4j2/Devtools 스타터 등. Spring 프로젝트는 일반적으로 Apache License 2.0으로 배포됩니다.
-	            </div>
-	            <div class="en hidden">
-	              Starters for Web/JDBC/Security/Thymeleaf/WebSocket/AOP/OAuth2/Cache/Log4j2/Devtools. Spring projects are generally distributed under Apache License 2.0.
-	            </div>
-	          </div>
-	        </div>
+				<div id="list" class="mt-3 space-y-3">
+					<!-- 카드: data-key로 검색 필터 -->
+					<!-- Spring Boot starters -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm overflow-hidden"
+						data-key="spring-boot-starter-web spring-boot-starter-jdbc spring-boot-starter-security spring-boot-starter-thymeleaf spring-boot-starter-websocket spring-boot-starter-aop spring-boot-starter-oauth2-client spring-boot-starter-cache spring-boot-starter-log4j2 spring-boot-devtools spring">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Spring Boot Starters (multiple)
+								</div>
+								<div class="text-xs text-slate-500 truncate">
+									org.springframework.boot:spring-boot-starter-*
+								</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700 space-y-2">
+							<div class="ko">
+								Web/JDBC/Security/Thymeleaf/WebSocket/AOP/OAuth2/Cache/Log4j2/Devtools 스타터 등. Spring
+								프로젝트는 일반적으로 Apache License 2.0으로 배포됩니다.
+							</div>
+							<div class="en hidden">
+								Starters for Web/JDBC/Security/Thymeleaf/WebSocket/AOP/OAuth2/Cache/Log4j2/Devtools.
+								Spring projects are generally distributed under Apache License 2.0.
+							</div>
+						</div>
+					</div>
 
-	        <!-- Thymeleaf Layout Dialect -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="thymeleaf-layout-dialect nz.net.ultraq thymeleaf layout dialect">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Thymeleaf Layout Dialect</div>
-	              <div class="text-xs text-slate-500 truncate">nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">Thymeleaf 템플릿 레이아웃/데코레이터 기능을 제공하는 Dialect.</div>
-	            <div class="en hidden">A Thymeleaf dialect enabling layout/decorator templates.</div>
-	          </div>
-	        </div>
+					<!-- Thymeleaf Layout Dialect -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="thymeleaf-layout-dialect nz.net.ultraq thymeleaf layout dialect">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Thymeleaf Layout Dialect</div>
+								<div class="text-xs text-slate-500 truncate">
+									nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">Thymeleaf 템플릿 레이아웃/데코레이터 기능을 제공하는 Dialect.</div>
+							<div class="en hidden">A Thymeleaf dialect enabling layout/decorator templates.</div>
+						</div>
+					</div>
 
-	        <!-- MyBatis -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="mybatis-spring-boot-starter org.mybatis spring boot starter 3.0.4">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">MyBatis Spring Boot Starter</div>
-	              <div class="text-xs text-slate-500 truncate">org.mybatis.spring.boot:mybatis-spring-boot-starter (3.0.4)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">Spring Boot에서 MyBatis 연동을 단순화하는 스타터.</div>
-	            <div class="en hidden">Starter that simplifies integrating MyBatis into Spring Boot.</div>
-	          </div>
-	        </div>
+					<!-- MyBatis -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="mybatis-spring-boot-starter org.mybatis spring boot starter 3.0.4">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">MyBatis Spring Boot Starter</div>
+								<div class="text-xs text-slate-500 truncate">
+									org.mybatis.spring.boot:mybatis-spring-boot-starter (3.0.4)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">Spring Boot에서 MyBatis 연동을 단순화하는 스타터.</div>
+							<div class="en hidden">Starter that simplifies integrating MyBatis into Spring Boot.</div>
+						</div>
+					</div>
 
-	        <!-- JJWT -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="jjwt io.jsonwebtoken jwt 0.12.6">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">JJWT</div>
-	              <div class="text-xs text-slate-500 truncate">io.jsonwebtoken:jjwt (0.12.6)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">JWT 생성/검증 라이브러리.</div>
-	            <div class="en hidden">Library for creating and parsing JSON Web Tokens.</div>
-	          </div>
-	        </div>
+					<!-- JJWT -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="jjwt io.jsonwebtoken jwt 0.12.6">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">JJWT</div>
+								<div class="text-xs text-slate-500 truncate">io.jsonwebtoken:jjwt (0.12.6)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">JWT 생성/검증 라이브러리.</div>
+							<div class="en hidden">Library for creating and parsing JSON Web Tokens.</div>
+						</div>
+					</div>
 
-	        <!-- Lombok -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="lombok org.projectlombok">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Project Lombok</div>
-	              <div class="text-xs text-slate-500 truncate">org.projectlombok:lombok</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
-	              MIT
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">보일러플레이트 코드를 줄여주는 어노테이션 기반 도구.</div>
-	            <div class="en hidden">Annotation-based tool to reduce boilerplate code.</div>
-	          </div>
-	        </div>
+					<!-- Lombok -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="lombok org.projectlombok">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Project Lombok</div>
+								<div class="text-xs text-slate-500 truncate">org.projectlombok:lombok</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
+								MIT
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">보일러플레이트 코드를 줄여주는 어노테이션 기반 도구.</div>
+							<div class="en hidden">Annotation-based tool to reduce boilerplate code.</div>
+						</div>
+					</div>
 
-	        <!-- H2 -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="h2 com.h2database database">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">H2 Database</div>
-	              <div class="text-xs text-slate-500 truncate">com.h2database:h2</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 ring-1 ring-amber-200">
-	              MPL-2.0 / EPL-1.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">내장형(또는 서버 모드) 경량 DB. MPL 2.0 또는 EPL 1.0 듀얼 라이선스.</div>
-	            <div class="en hidden">Lightweight embedded (or server) database. Dual-licensed under MPL 2.0 or EPL 1.0.</div>
-	          </div>
-	        </div>
+					<!-- H2 -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="h2 com.h2database database">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">H2 Database</div>
+								<div class="text-xs text-slate-500 truncate">com.h2database:h2</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 ring-1 ring-amber-200">
+								MPL-2.0 / EPL-1.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">내장형(또는 서버 모드) 경량 DB. MPL 2.0 또는 EPL 1.0 듀얼 라이선스.</div>
+							<div class="en hidden">Lightweight embedded (or server) database. Dual-licensed under MPL
+								2.0 or EPL 1.0.</div>
+						</div>
+					</div>
 
-	        <!-- Log4j2 -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="log4j log4j-api log4j-core apache logging">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Apache Log4j 2</div>
-	              <div class="text-xs text-slate-500 truncate">org.apache.logging.log4j:log4j-api / log4j-core</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">로깅 프레임워크(Log4j2).</div>
-	            <div class="en hidden">Logging framework (Log4j 2).</div>
-	          </div>
-	        </div>
+					<!-- Log4j2 -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="log4j log4j-api log4j-core apache logging">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Apache Log4j 2</div>
+								<div class="text-xs text-slate-500 truncate">org.apache.logging.log4j:log4j-api /
+									log4j-core</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">로깅 프레임워크(Log4j2).</div>
+							<div class="en hidden">Logging framework (Log4j 2).</div>
+						</div>
+					</div>
 
-	        <!-- log4jdbc-log4j2 -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="log4jdbc log4j2 jdbc org.bgee 1.16">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">log4jdbc-log4j2</div>
-	              <div class="text-xs text-slate-500 truncate">org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1 (1.16)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">JDBC SQL 로깅/트레이싱 유틸리티.</div>
-	            <div class="en hidden">JDBC SQL logging/tracing utility.</div>
-	          </div>
-	        </div>
+					<!-- log4jdbc-log4j2 -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="log4jdbc log4j2 jdbc org.bgee 1.16">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">log4jdbc-log4j2</div>
+								<div class="text-xs text-slate-500 truncate">
+									org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1 (1.16)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">JDBC SQL 로깅/트레이싱 유틸리티.</div>
+							<div class="en hidden">JDBC SQL logging/tracing utility.</div>
+						</div>
+					</div>
 
-	        <!-- Commons Codec -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="commons-codec codec apache">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Apache Commons Codec</div>
-	              <div class="text-xs text-slate-500 truncate">commons-codec:commons-codec</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">Base64/Hex 등 인코딩·디코딩 유틸.</div>
-	            <div class="en hidden">Encoding/decoding utilities (Base64/Hex, etc.).</div>
-	          </div>
-	        </div>
+					<!-- Commons Codec -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="commons-codec codec apache">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Apache Commons Codec</div>
+								<div class="text-xs text-slate-500 truncate">commons-codec:commons-codec</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">Base64/Hex 등 인코딩·디코딩 유틸.</div>
+							<div class="en hidden">Encoding/decoding utilities (Base64/Hex, etc.).</div>
+						</div>
+					</div>
 
-	        <!-- web-push -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="web-push nl.martijndwars push 5.1.2 vapid">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">web-push</div>
-	              <div class="text-xs text-slate-500 truncate">nl.martijndwars:web-push (5.1.2)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
-	              MIT
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">Web Push(VAPID 등) 알림 전송용 라이브러리.</div>
-	            <div class="en hidden">Java library for sending Web Push notifications (VAPID, etc.).</div>
-	          </div>
-	        </div>
+					<!-- web-push -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="web-push nl.martijndwars push 5.1.2 vapid">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">web-push</div>
+								<div class="text-xs text-slate-500 truncate">nl.martijndwars:web-push (5.1.2)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
+								MIT
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">Web Push(VAPID 등) 알림 전송용 라이브러리.</div>
+							<div class="en hidden">Java library for sending Web Push notifications (VAPID, etc.).</div>
+						</div>
+					</div>
 
-	        <!-- Bouncy Castle -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="bouncycastle bcprov-jdk18on crypto 1.83">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Bouncy Castle Provider</div>
-	              <div class="text-xs text-slate-500 truncate">org.bouncycastle:bcprov-jdk18on (1.83)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 ring-1 ring-violet-200">
-	              Bouncy Castle Licence
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">암호화 알고리즘/프로바이더 구현.</div>
-	            <div class="en hidden">Cryptography provider and APIs.</div>
-	          </div>
-	        </div>
+					<!-- Bouncy Castle -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="bouncycastle bcprov-jdk18on crypto 1.83">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Bouncy Castle Provider</div>
+								<div class="text-xs text-slate-500 truncate">org.bouncycastle:bcprov-jdk18on (1.83)
+								</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 ring-1 ring-violet-200">
+								Bouncy Castle Licence
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">암호화 알고리즘/프로바이더 구현.</div>
+							<div class="en hidden">Cryptography provider and APIs.</div>
+						</div>
+					</div>
 
-	        <!-- HttpCore + HttpClient -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="httpcore httpclient apache httpcomponents 4.5.14">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Apache HttpComponents</div>
-	              <div class="text-xs text-slate-500 truncate">org.apache.httpcomponents:httpcore / httpclient (4.5.14)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">HTTP 통신용 라이브러리(클라이언트/코어).</div>
-	            <div class="en hidden">HTTP client/core libraries.</div>
-	          </div>
-	        </div>
+					<!-- HttpCore + HttpClient -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="httpcore httpclient apache httpcomponents 4.5.14">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Apache HttpComponents</div>
+								<div class="text-xs text-slate-500 truncate">org.apache.httpcomponents:httpcore /
+									httpclient (4.5.14)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">HTTP 통신용 라이브러리(클라이언트/코어).</div>
+							<div class="en hidden">HTTP client/core libraries.</div>
+						</div>
+					</div>
 
-	        <!-- jose4j -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="jose4j jwt jws jwe jwk org.bitbucket.b_c 0.9.6">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">JOSE4j</div>
-	              <div class="text-xs text-slate-500 truncate">org.bitbucket.b_c:jose4j (0.9.6)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">JOSE(JWS/JWE/JWK) 및 JWT 구현.</div>
-	            <div class="en hidden">Implementation of JOSE (JWS/JWE/JWK) and JWT.</div>
-	          </div>
-	        </div>
+					<!-- jose4j -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="jose4j jwt jws jwe jwk org.bitbucket.b_c 0.9.6">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">JOSE4j</div>
+								<div class="text-xs text-slate-500 truncate">org.bitbucket.b_c:jose4j (0.9.6)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">JOSE(JWS/JWE/JWK) 및 JWT 구현.</div>
+							<div class="en hidden">Implementation of JOSE (JWS/JWE/JWK) and JWT.</div>
+						</div>
+					</div>
 
-	        <!-- Caffeine -->
-	        <div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
-	             data-key="caffeine cache com.github.ben-manes 3.2.3">
-	          <div class="px-4 py-3 flex items-center justify-between">
-	            <div class="min-w-0">
-	              <div class="text-sm font-bold text-slate-900 truncate">Caffeine Cache</div>
-	              <div class="text-xs text-slate-500 truncate">com.github.ben-manes.caffeine:caffeine (3.2.3)</div>
-	            </div>
-	            <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-	              Apache-2.0
-	            </span>
-	          </div>
-	          <div class="px-4 pb-4 text-sm text-slate-700">
-	            <div class="ko">인메모리 캐시 구현(고성능 캐시).</div>
-	            <div class="en hidden">High-performance in-memory caching library.</div>
-	          </div>
-	        </div>
+					<!-- Caffeine -->
+					<div class="oss-card rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm"
+						data-key="caffeine cache com.github.ben-manes 3.2.3">
+						<div class="px-4 py-3 flex items-center justify-between">
+							<div class="min-w-0">
+								<div class="text-sm font-bold text-slate-900 truncate">Caffeine Cache</div>
+								<div class="text-xs text-slate-500 truncate">com.github.ben-manes.caffeine:caffeine
+									(3.2.3)</div>
+							</div>
+							<span
+								class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+								Apache-2.0
+							</span>
+						</div>
+						<div class="px-4 pb-4 text-sm text-slate-700">
+							<div class="ko">인메모리 캐시 구현(고성능 캐시).</div>
+							<div class="en hidden">High-performance in-memory caching library.</div>
+						</div>
+					</div>
 
-	      </div>
+				</div>
 
-	      <div id="empty" class="hidden mt-6 text-center text-sm text-slate-500">
-	        No results.
-	      </div>
-	    </div>
+				<div id="empty" class="hidden mt-6 text-center text-sm text-slate-500">
+					No results.
+				</div>
+			</div>
 
-	    <!-- 하단 -->
-	    <div class="mt-8 text-xs text-slate-500 leading-5">
-	      <div class="ko">
-	        라이선스 표기는 프로젝트/버전에 따라 달라질 수 있습니다. 배포 대상에 포함되는 라이브러리(전이 의존성 포함)를 기준으로 최종 고지를 확인하세요.
-	      </div>
-	      <div class="en hidden">
-	        License information may vary by version. Verify final notices based on the components included in your distribution (including transitive dependencies).
-	      </div>
-	    </div>
+			<!-- 하단 -->
+			<div class="mt-8 text-xs text-slate-500 leading-5">
+				<div class="ko">
+					라이선스 표기는 프로젝트/버전에 따라 달라질 수 있습니다. 배포 대상에 포함되는 라이브러리(전이 의존성 포함)를 기준으로 최종 고지를 확인하세요.
+				</div>
+				<div class="en hidden">
+					License information may vary by version. Verify final notices based on the components included in
+					your distribution (including transitive dependencies).
+				</div>
+			</div>
 
-	  </div>
+		</div>
 	</th:block>
 
-	<th:block layout:fragment="my_script">
-	<script>
-	(function () {
-	  const $ = (id) => document.getElementById(id);
-	  const btnKo = $("btnKo");
-	  const btnEn = $("btnEn");
-	  const panelKo = $("panelKo");
-	  const panelEn = $("panelEn");
-	  const q = $("q");
-	  const cards = Array.from(document.querySelectorAll(".oss-card"));
-	  const empty = $("empty");
+	<th:block layout:fragment="script">
+		<script>
+			(function () {
+				const $ = (id) => document.getElementById(id);
+				const btnKo = $("btnKo");
+				const btnEn = $("btnEn");
+				const panelKo = $("panelKo");
+				const panelEn = $("panelEn");
+				const q = $("q");
+				const cards = Array.from(document.querySelectorAll(".oss-card"));
+				const empty = $("empty");
 
-	  function setLang(lang) {
-	    const isKo = (lang === "ko");
+				function setLang(lang) {
+					const isKo = (lang === "ko");
 
-	    // toggle buttons
-	    btnKo.className = isKo
-	      ? 'px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm'
-	      : 'px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900';
+					// toggle buttons
+					btnKo.className = isKo
+						? 'px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm'
+						: 'px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900';
 
-	    btnEn.className = !isKo
-	      ? 'px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm'
-	      : 'px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900';
+					btnEn.className = !isKo
+						? 'px-3 py-1.5 text-sm font-semibold rounded-xl bg-white text-slate-900 shadow-sm'
+						: 'px-3 py-1.5 text-sm font-semibold rounded-xl text-slate-600 hover:text-slate-900';
 
-	    // panels
-	    panelKo.classList.toggle("hidden", !isKo);
-	    panelEn.classList.toggle("hidden", isKo);
+					// panels
+					panelKo.classList.toggle("hidden", !isKo);
+					panelEn.classList.toggle("hidden", isKo);
 
-	    // per-card copy
-	    document.querySelectorAll(".ko").forEach(el => el.classList.toggle("hidden", !isKo));
-	    document.querySelectorAll(".en").forEach(el => el.classList.toggle("hidden", isKo));
-	  }
+					// per-card copy
+					document.querySelectorAll(".ko").forEach(el => el.classList.toggle("hidden", !isKo));
+					document.querySelectorAll(".en").forEach(el => el.classList.toggle("hidden", isKo));
+				}
 
-	  function applyFilter() {
-	    const term = (q.value || "").trim().toLowerCase();
-	    let shown = 0;
+				function applyFilter() {
+					const term = (q.value || "").trim().toLowerCase();
+					let shown = 0;
 
-	    for (const c of cards) {
-	      const key = (c.dataset.key || "").toLowerCase();
-	      const hit = !term || key.includes(term);
-	      c.classList.toggle("hidden", !hit);
-	      if (hit) shown++;
-	    }
-	    empty.classList.toggle("hidden", shown !== 0);
-	  }
+					for (const c of cards) {
+						const key = (c.dataset.key || "").toLowerCase();
+						const hit = !term || key.includes(term);
+						c.classList.toggle("hidden", !hit);
+						if (hit) shown++;
+					}
+					empty.classList.toggle("hidden", shown !== 0);
+				}
 
-	  btnKo.addEventListener("click", () => setLang("ko"));
-	  btnEn.addEventListener("click", () => setLang("en"));
-	  q.addEventListener("input", applyFilter);
+				btnKo.addEventListener("click", () => setLang("ko"));
+				btnEn.addEventListener("click", () => setLang("en"));
+				q.addEventListener("input", applyFilter);
 
-	  // init
-	  setLang("ko");
-	})();
-	</script>
+				// init
+				setLang("ko");
+			})();
+		</script>
 	</th:block>
 
-	</html>
+</html>
