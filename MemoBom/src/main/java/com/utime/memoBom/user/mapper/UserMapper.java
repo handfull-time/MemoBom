@@ -94,4 +94,19 @@ public interface UserMapper {
 	 * @return
 	 */
 	int updateProfile(@Param("user")LoginUser user, @Param("profile") String profile);
+	
+	/**
+	 * 푸시 수신 상태
+	 * @param user
+	 * @return
+	 */
+	boolean selectPushStatus(@Param("user")LoginUser user);
+
+	/**
+	 * 푸시 수신 설정
+	 * @param user
+	 * @param enabled true:수신, false:미수신
+	 * @return
+	 */
+	int updatePushStatus(@Param("user")LoginUser user, @Param("enabled")boolean enabled);
 }

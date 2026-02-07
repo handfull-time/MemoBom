@@ -242,4 +242,20 @@
  		WHERE USER_NO = #{user.userNo}
  	</update>
  	
+ 	<!--푸시 수신 상태-->
+ 	<select id="selectPushStatus" parameterType="map" resultType="boolean">
+ 		SELECT
+ 			PUSH_ENABLED
+ 		FROM MB_USER
+ 		WHERE USER_NO = #{user.userNo}
+ 	</select>
+
+	<!--푸시 수신 설정-->
+	<update id="updatePushStatus" parameterType="map" >
+ 		UPDATE MB_USER SET
+ 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			, PUSH_ENABLED = #{enabled}
+ 		WHERE USER_NO = #{user.userNo}
+ 	</update>
+ 	
 </mapper>

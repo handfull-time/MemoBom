@@ -97,6 +97,7 @@ public class SecurityConfig {
         final RequestMatcher[] permitAllWhiteList = extended.toArray(RequestMatcher[]::new);
 	
         http.authorizeHttpRequests(auth -> auth
+        		.requestMatchers("/Push/Click.json").permitAll()
         	    // 1) 로그인 사용자만(또는 ROLE_USER) 필요한 “구체 경로”를 먼저
         	    .requestMatchers(
         	    		  "/Fragment/Tessera.html"
@@ -108,7 +109,6 @@ public class SecurityConfig {
         	    		, "/User/**"
         	    		, "/My/**"
         	    	).hasRole(EJwtRole.User.name())
-//        	    hasAuthority   hasRole
 
         	    // 2) 그 다음에 공개 경로(광범위)를 permitAll
         	    .requestMatchers(permitAllWhiteList).permitAll()

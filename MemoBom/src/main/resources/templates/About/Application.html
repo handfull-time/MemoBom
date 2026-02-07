@@ -2,216 +2,331 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{My/MyLayout}">
 
-	<th:block layout:fragment="my_content">
-
-		<div class="max-w-xl mx-auto space-y-3">
-
-			<!-- 상태 카드 -->
-			<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
-				<div class="px-5 py-4">
-					<div class="text-lg font-semibold text-slate-900">앱 설치</div>
-					<div class="mt-1 text-sm text-slate-600">
-						앱으로 설치하면 더 빠르게 이용할 수 있고, 알림/푸시 기능도 안정적으로 동작합니다.
-					</div>
-				</div>
-
-				<div class="h-[1px] bg-slate-200/70"></div>
-
-				<div class="px-5 py-4 space-y-3">
-					<div class="flex items-center justify-between">
-						<div class="text-sm text-slate-700">설치 상태</div>
-						<div id="pwaInstalledBadge"
-							class="text-xs font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-700">
-							확인 중...
-						</div>
-					</div>
-
-					<div class="flex items-center justify-between">
-						<div class="text-sm text-slate-700">설치 안내 다시 보기</div>
-						<button id="btnResetDismiss" type="button"
-							class="px-3 py-2 text-sm rounded-xl border border-gray-200 hover:bg-gray-50">
-							초기화
-						</button>
-					</div>
-
-					<!-- 설치 버튼 -->
-					<div class="pt-1">
-						<button id="btnInstallPwa" type="button"
-							class="w-full py-3 rounded-2xl text-base font-semibold
-									bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed">
-							설치하기
-						</button>
-						<div id="installHint" class="mt-2 text-xs text-slate-500 leading-relaxed">
-							브라우저가 설치를 지원하는 경우에만 “설치하기” 버튼이 활성화됩니다.
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- iOS 안내 -->
-			<div id="iosGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
-				<div class="px-5 py-4">
-					<div class="text-base font-semibold text-slate-900">iPhone/iPad 설치 방법</div>
-					<div class="mt-2 text-sm text-slate-600 leading-relaxed">
-						iOS Safari는 “설치하기 버튼” 대신 아래 순서로 홈 화면에 추가합니다.
-					</div>
-
-					<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
-						<li>Safari에서 이 페이지를 엽니다.</li>
-						<li>하단(또는 상단)의 <span class="font-semibold">공유</span> 버튼(□↑)을 누릅니다.</li>
-						<li><span class="font-semibold">홈 화면에 추가</span>를 선택합니다.</li>
-						<li>추가를 누르면 앱처럼 실행됩니다.</li>
-					</ol>
-
-					<div class="mt-3 text-xs text-slate-500">
-						※ iOS는 브라우저 정책상 설치 프롬프트 이벤트(beforeinstallprompt)가 제공되지 않습니다.
-					</div>
-				</div>
-			</div>
-
-			<!-- 안내/팁 -->
-			<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
-				<div class="px-5 py-4">
-					<div class="text-base font-semibold text-slate-900">참고</div>
-					<ul class="mt-2 text-sm text-slate-700 list-disc pl-5 space-y-1">
-						<li>이미 앱으로 설치된 경우에는 “설치하기”가 비활성화됩니다.</li>
-						<li>PC 크롬/엣지에서는 주소창 우측의 설치 아이콘으로도 설치할 수 있습니다.</li>
-						<li>설치 안내를 거부했더라도, 여기(Application 페이지)에서는 언제든 다시 설치를 시도할 수 있게 해두는 것이 UX에 좋습니다.</li>
-					</ul>
-				</div>
-			</div>
-
-		</div>
+<head>
+	<th:block layout:fragment="my_css">
+		<!-- PWA -->
+		<link rel="manifest" th:href="@{/manifest.webmanifest}" />
+		<meta name="theme-color" content="#0f172a" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="apple-mobile-web-app-title" content="MemoBom" />
 	</th:block>
+</head>
 
-	<th:block layout:fragment="my_script">
-		<script>
-			(function () {
-				const DISMISS_KEY = "pwa_install_dismissed_v1";
 
-				let deferredPrompt = null;
+<th:block layout:fragment="my_content">
 
-				const $badge = document.getElementById('pwaInstalledBadge');
-				const $btnInstall = document.getElementById('btnInstallPwa');
-				const $hint = document.getElementById('installHint');
-				const $iosGuide = document.getElementById('iosGuide');
-				const $btnReset = document.getElementById('btnResetDismiss');
+	<div class="max-w-xl mx-auto space-y-3">
 
-				function isInstalled() {
-					const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
-					const iosStandalone = (window.navigator && window.navigator.standalone) === true;
-					return standalone || iosStandalone;
-				}
+		<!-- 상태 카드 -->
+		<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-lg font-semibold text-slate-900">앱 설치</div>
+				<div class="mt-1 text-sm text-slate-600">
+					앱으로 설치하면 더 빠르게 이용할 수 있고, 알림/푸시 기능도 안정적으로 동작합니다.
+				</div>
+			</div>
 
-				function isIOS() {
-					return /iphone|ipad|ipod/i.test(navigator.userAgent);
-				}
+			<div class="h-[1px] bg-slate-200/70"></div>
 
-				function alreadyDismissed() {
-					try { return localStorage.getItem(DISMISS_KEY) === "1"; }
-					catch (e) { return false; }
-				}
+			<div class="px-5 py-4 space-y-3">
+				<div class="flex items-center justify-between">
+					<div class="text-sm text-slate-700">설치 상태</div>
+					<div id="pwaInstalledBadge"
+						class="text-xs font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-700">
+						확인 중...
+					</div>
+				</div>
 
-				function resetDismiss() {
-					try { localStorage.removeItem(DISMISS_KEY); }
-					catch (e) { /* ignore */ }
-				}
+				<div class="flex items-center justify-between">
+					<div class="text-sm text-slate-700">설치 안내 다시 보기</div>
+					<button id="btnResetDismiss" type="button"
+						class="px-3 py-2 text-sm rounded-xl border border-gray-200 hover:bg-gray-50">
+						초기화
+					</button>
+				</div>
 
-				function setBadge(text, isOk) {
-					$badge.textContent = text;
-					$badge.className =
-						"text-xs font-semibold px-2 py-1 rounded-lg " +
-						(isOk ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700");
-				}
+				<!-- 설치 버튼 -->
+				<div class="pt-1">
+					<button id="btnInstallPwa" type="button" class="w-full py-3 rounded-2xl text-base font-semibold
+									bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed">
+						설치하기
+					</button>
+					<div id="installHint" class="mt-2 text-xs text-slate-500 leading-relaxed">
+						브라우저가 설치를 지원하는 경우에만 “설치하기” 버튼이 활성화됩니다.
+					</div>
+				</div>
+			</div>
+		</div>
 
-				function setInstallEnabled(enabled) {
-					$btnInstall.disabled = !enabled;
-				}
+		<!-- iOS 안내 -->
+		<div id="iosGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-base font-semibold text-slate-900">iPhone/iPad 설치 방법</div>
+				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+					iOS Safari는 “설치하기 버튼” 대신 아래 순서로 홈 화면에 추가합니다.
+				</div>
 
-				// 초기 상태 표시
-				(function init() {
-					// iOS 안내 영역
-					if (isIOS() && !isInstalled()) $iosGuide.classList.remove('hidden');
+				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+					<li>Safari에서 이 페이지를 엽니다.</li>
+					<li>하단(또는 상단)의 <span class="font-semibold">공유</span> 버튼(□↑)을 누릅니다.</li>
+					<li><span class="font-semibold">홈 화면에 추가</span>를 선택합니다.</li>
+					<li>추가를 누르면 앱처럼 실행됩니다.</li>
+				</ol>
 
-					if (isInstalled()) {
-						setBadge("설치됨", true);
-						setInstallEnabled(false);
-						$hint.textContent = "이미 설치된 상태입니다.";
-					} else {
-						setBadge("미설치", false);
-						// 기본은 비활성(이벤트로 설치 가능해질 때 활성화)
-						setInstallEnabled(false);
-						$hint.textContent = "설치 가능 여부를 확인 중입니다...";
-					}
+				<div class="mt-3 text-xs text-slate-500">
+					※ iOS는 브라우저 정책상 설치 프롬프트 이벤트(beforeinstallprompt)가 제공되지 않습니다.
+				</div>
+			</div>
+		</div>
 
-					// “다시 안보기” 초기화 버튼
-					$btnReset?.addEventListener('click', async () => {
-						resetDismiss();
-						showToast?.("완료", "설치 안내 상태가 초기화되었습니다.", ToastType.SUCCESS, 1400);
-					});
+		<!-- Chromium(Chrome/Edge/Brave/Opera 등) 안내 -->
+		<div id="chromiumGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-base font-semibold text-slate-900">Chrome/Edge 설치 방법</div>
+				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+					Chrome/Edge(Chromium 계열)에서는 “설치하기” 버튼 또는 브라우저 메뉴로 설치할 수 있습니다.
+				</div>
 
-					// 거부 상태 표시(원하면 UI로 보여주기)
-					if (alreadyDismissed()) {
-						// 메인에서 팝업을 막는 용도라서, 여기서는 안내만
-						// (Application 페이지는 사용자가 자발적으로 들어온 곳이니까)
-						// 필요하면 문구를 바꾸세요.
-						// showToast?.("", "설치 안내가 '다시 안보기' 상태입니다. 여기서 설치는 언제든 가능합니다.", ToastType.INFO, 1500);
-					}
-				})();
+				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+					<li><b>모바일(Android)</b>: 우측 상단 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></li>
+					<li><b>PC</b>: 주소창 우측의 <b>설치 아이콘</b>(모니터+↓) 또는 메뉴 → <b>앱 설치</b></li>
+				</ol>
 
-				// beforeinstallprompt로 설치 가능해질 때 버튼 활성화
-				window.addEventListener("beforeinstallprompt", (e) => {
-					e.preventDefault();
-					deferredPrompt = e;
+				<div class="mt-3 text-xs text-slate-500">
+					※ 이 브라우저는 설치 가능할 때 <code>beforeinstallprompt</code> 이벤트가 발생할 수 있어, “설치하기” 버튼을 활성화할 수 있습니다.
+				</div>
+			</div>
+		</div>
 
-					if (!isInstalled()) {
-						setInstallEnabled(true);
-						$hint.textContent = "설치가 가능합니다. 버튼을 눌러 설치를 진행하세요.";
-					}
-				});
+		<!-- Firefox 안내 -->
+		<div id="firefoxGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-base font-semibold text-slate-900">Firefox 설치 방법</div>
+				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+					Firefox는 환경에 따라 “설치하기 버튼”이 동작하지 않을 수 있어, 브라우저 메뉴에서 설치를 진행합니다.
+				</div>
 
-				// 설치 버튼 클릭 → 브라우저 설치 프롬프트 실행
-				$btnInstall?.addEventListener('click', async () => {
-					if (isInstalled()) {
-						await alertP?.("이미 설치된 상태입니다.");
-						return;
-					}
+				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+					<li><b>Android Firefox</b>: 우측 상단 메뉴(⋮) → <b>설치</b> 또는 <b>홈 화면에 추가</b></li>
+					<li><b>PC Firefox</b>: 설치 지원이 제한적일 수 있습니다. 설치가 필요하면 Chrome/Edge 사용을 권장합니다.</li>
+				</ol>
 
-					// iOS는 여기서 프롬프트가 없으니 안내
-					if (isIOS() && !deferredPrompt) {
-						await alertP?.("iOS는 설치 버튼이 아닌 ‘홈 화면에 추가’로 설치합니다.\n아래 안내를 참고해 주세요.");
-						return;
-					}
+				<div class="mt-3 text-xs text-slate-500">
+					※ <code>beforeinstallprompt</code>는 일부 브라우저에서만 제공됩니다.
+				</div>
+			</div>
+		</div>
 
-					if (!deferredPrompt) {
-						await alertP?.("현재 브라우저에서는 설치 프롬프트를 사용할 수 없습니다.\n(PC라면 주소창의 설치 아이콘을 확인해 주세요)");
-						return;
-					}
+		<!-- macOS Safari 안내 -->
+		<div id="safariMacGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-base font-semibold text-slate-900">Mac Safari 설치 방법</div>
+				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+					macOS Sonoma 14 이상에서는 Safari에서 웹 앱으로 저장할 수 있습니다.
+				</div>
 
-					deferredPrompt.prompt();
-					const choice = await deferredPrompt.userChoice;
-					deferredPrompt = null;
+				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+					<li>Safari에서 이 페이지를 엽니다.</li>
+					<li>상단 메뉴에서 <b>파일(File) → Dock에 추가(Add to Dock)</b>를 선택합니다.</li>
+					<li>이름을 확인하고 <b>추가</b>를 누르면 앱처럼 실행됩니다.</li>
+				</ol>
 
-					if (choice?.outcome === "accepted") {
-						showToast?.("완료", "설치가 진행됩니다.", ToastType.SUCCESS, 1500);
-					} else {
-						// 사용자가 설치 UI에서 취소한 경우
-						// 메인 자동 팝업을 막고 싶다면 여기서 dismiss 키를 저장해도 됨
-						// (원하시면 이 정책을 “메인에서만 저장”으로 바꿔드릴게요)
-						try { localStorage.setItem(DISMISS_KEY, "1"); } catch(e){}
-						showToast?.("안내", "설치를 취소하셨습니다.", ToastType.INFO, 1500);
-					}
-				});
+				<div class="mt-3 text-xs text-slate-500">
+					※ “Dock에 추가”는 macOS Sonoma 14 이상에서 지원됩니다.
+				</div>
+			</div>
+		</div>
 
-				window.addEventListener("appinstalled", () => {
+
+		<!-- 안내/팁 -->
+		<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
+			<div class="px-5 py-4">
+				<div class="text-base font-semibold text-slate-900">참고</div>
+				<ul class="mt-2 text-sm text-slate-700 list-disc pl-5 space-y-1">
+					<li>이미 앱으로 설치된 경우에는 “설치하기”가 비활성화됩니다.</li>
+					<li>PC 크롬/엣지에서는 주소창 우측의 설치 아이콘으로도 설치할 수 있습니다.</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+</th:block>
+
+<th:block layout:fragment="my_script">
+	<script type="text/javascript" th:src="@{/js/pwa.js(v=${assetVersion})}"></script>
+	<script>
+
+		function isFirefox() {
+			return /firefox/i.test(navigator.userAgent) && !/seamonkey/i.test(navigator.userAgent);
+		}
+
+		// iOS의 Chrome/Edge/Firefox는 :contentReference[oaicite:4]{index=4}S 등이 섞임
+		function isSafari() {
+			const ua = navigator.userAgent;
+			const isAppleWebKit = /applewebkit/i.test(ua);
+			const isSafariToken = /safari/i.test(ua);
+			const isOtheriOSBrowser = /crios|fxios|edgios|opios|duckduckgo/i.test(ua);
+			const isChromeLike = /chrome|chromium|edg|opr|brave/i.test(ua);
+			return isAppleWebKit && isSafariToken && !isChromeLike && !isOtheriOSBrowser;
+		}
+
+		function isChromiumFamily() {
+			const ua = navigator.userAgent;
+			// Edge/Chrome/Opera/Brave 등
+			return /chrome|chromium|edg|opr|brave/i.test(ua) && !isFirefox();
+		}
+
+		function isMac() {
+			return /macintosh|mac os x/i.test(navigator.userAgent);
+		}
+
+
+		(function () {
+			const DISMISS_KEY = "pwa_install_dismissed_v1";
+
+			let deferredPrompt = null;
+
+			const $badge = document.getElementById('pwaInstalledBadge');
+			const $btnInstall = document.getElementById('btnInstallPwa');
+			const $hint = document.getElementById('installHint');
+			const $iosGuide = document.getElementById('iosGuide');
+			const $btnReset = document.getElementById('btnResetDismiss');
+
+			function isInstalled() {
+				const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+				const iosStandalone = (window.navigator && window.navigator.standalone) === true;
+				return standalone || iosStandalone;
+			}
+
+			function isIOS() {
+				return /iphone|ipad|ipod/i.test(navigator.userAgent);
+			}
+
+			function alreadyDismissed() {
+				try {return localStorage.getItem(DISMISS_KEY) === "1";}
+				catch (e) {return false;}
+			}
+
+			function resetDismiss() {
+				try {localStorage.removeItem(DISMISS_KEY);}
+				catch (e) { /* ignore */}
+			}
+
+			function setBadge(text, isOk) {
+				$badge.textContent = text;
+				$badge.className =
+					"text-xs font-semibold px-2 py-1 rounded-lg " +
+					(isOk ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700");
+			}
+
+			function setInstallEnabled(enabled) {
+				$btnInstall.disabled = !enabled;
+			}
+
+			// 초기 상태 표시
+			(function init() {
+				const $chromiumGuide = document.getElementById('chromiumGuide');
+				const $firefoxGuide = document.getElementById('firefoxGuide');
+				const $safariMacGuide = document.getElementById('safariMacGuide');
+
+				// 1) 설치된 경우 처리 (기존 그대로)
+				if (isInstalled()) {
 					setBadge("설치됨", true);
 					setInstallEnabled(false);
-					$hint.textContent = "설치가 완료되었습니다.";
-					showToast?.("완료", "앱이 설치되었습니다.", ToastType.SUCCESS, 1500);
-				});
+					$hint.textContent = "이미 설치된 상태입니다.";
+				} else {
+					setBadge("미설치", false);
+					setInstallEnabled(false);
+					$hint.textContent = "설치 방법을 확인 중입니다...";
+				}
 
+				// 2) 브라우저별 가이드 노출
+				// iOS: Safari/타 브라우저 모두 “공유 메뉴 → 홈 화면에 추가” 안내가 필요할 수 있음
+				if (isIOS() && !isInstalled()) {
+					$iosGuide.classList.remove('hidden');
+					// iOS는 beforeinstallprompt를 기대하지 말고 버튼 힌트도 바꿔줌
+					$hint.textContent = "iOS에서는 ‘공유 → 홈 화면에 추가’로 설치합니다.";
+				}
+
+				// macOS Safari: Dock에 추가 안내
+				if (isMac() && isSafari() && !isInstalled()) {
+					$safariMacGuide?.classList.remove('hidden');
+					$hint.textContent = "Mac Safari는 ‘파일 → Dock에 추가’로 웹 앱을 만들 수 있습니다.";
+				}
+
+				// Firefox: 메뉴 안내(설치 버튼은 계속 disabled일 수 있음)
+				if (isFirefox() && !isInstalled()) {
+					$firefoxGuide?.classList.remove('hidden');
+					$hint.textContent = "Firefox는 브라우저 메뉴에서 설치(또는 홈 화면에 추가)하세요.";
+				}
+
+				// Chromium 계열: beforeinstallprompt 기다렸다가 버튼 활성화
+				if (isChromiumFamily() && !isInstalled()) {
+					$chromiumGuide?.classList.remove('hidden');
+					$hint.textContent = "설치 가능 여부를 확인 중입니다...";
+				}
+
+				// “다시 안보기” 초기화 버튼(기존 그대로)
+				$btnReset?.addEventListener('click', async () => {
+					resetDismiss();
+					showToast?.("완료", "설치 안내 상태가 초기화되었습니다.", ToastType.SUCCESS, 1400);
+				});
 			})();
-		</script>
-	</th:block>
+
+			// beforeinstallprompt로 설치 가능해질 때 버튼 활성화
+			window.addEventListener("beforeinstallprompt", (e) => {
+				e.preventDefault();
+				deferredPrompt = e;
+
+				if (!isInstalled()) {
+					setInstallEnabled(true);
+					$hint.textContent = "설치가 가능합니다. 버튼을 눌러 설치를 진행하세요.";
+				}
+			});
+
+			// 설치 버튼 클릭 → 브라우저 설치 프롬프트 실행
+			$btnInstall?.addEventListener('click', async () => {
+				if (isInstalled()) {
+					await alertP?.("이미 설치된 상태입니다.");
+					return;
+				}
+
+				// iOS는 여기서 프롬프트가 없으니 안내
+				if (isIOS() && !deferredPrompt) {
+					await alertP?.("iOS는 설치 버튼이 아닌 ‘홈 화면에 추가’로 설치합니다.\n아래 안내를 참고해 주세요.");
+					return;
+				}
+
+				if (!deferredPrompt) {
+					await alertP?.("현재 브라우저에서는 설치 프롬프트를 사용할 수 없습니다.\n(PC라면 주소창의 설치 아이콘을 확인해 주세요)");
+					return;
+				}
+
+				deferredPrompt.prompt();
+				const choice = await deferredPrompt.userChoice;
+				deferredPrompt = null;
+
+				if (choice?.outcome === "accepted") {
+					showToast?.("완료", "설치가 진행됩니다.", ToastType.SUCCESS, 1500);
+				} else {
+					// 사용자가 설치 UI에서 취소한 경우
+					// 메인 자동 팝업을 막고 싶다면 여기서 dismiss 키를 저장해도 됨
+					// (원하시면 이 정책을 “메인에서만 저장”으로 바꿔드릴게요)
+					try {localStorage.setItem(DISMISS_KEY, "1");} catch (e) { }
+					showToast?.("안내", "설치를 취소하셨습니다.", ToastType.INFO, 1500);
+				}
+			});
+
+			window.addEventListener("appinstalled", () => {
+				setBadge("설치됨", true);
+				setInstallEnabled(false);
+				$hint.textContent = "설치가 완료되었습니다.";
+				showToast?.("완료", "앱이 설치되었습니다.", ToastType.SUCCESS, 1500);
+			});
+
+		})();
+	</script>
+</th:block>
 
 </html>

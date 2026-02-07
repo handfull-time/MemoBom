@@ -755,7 +755,7 @@
                   }
 				});
 				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
-				node.querySelector(".content").textContent = safeText(item.content, "");
+				node.querySelector(".content").innerHTML = safeText(item.content, "");
 
 				renderHashtags(node.querySelector(".hashtag-box"), item.hashtagList || []);
 				renderEmotions(node.querySelector(".emotion-row"), item);

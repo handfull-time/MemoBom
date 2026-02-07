@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
@@ -92,4 +93,19 @@ public interface UserDao {
 	 * @return
 	 */
 	UserProfile getUserProfile(String uid);
+	
+	/**
+	 * 푸시 수신 상태
+	 * @param user
+	 * @return
+	 */
+	Boolean getPushStatus(LoginUser user);
+
+	/**
+	 * 푸시 수신 설정
+	 * @param user
+	 * @param enabled true:수신, false:미수신
+	 * @return
+	 */
+	int setPushStatus(LoginUser user, boolean enabled)throws Exception;
 }

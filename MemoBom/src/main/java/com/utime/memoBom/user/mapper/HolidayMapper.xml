@@ -3,8 +3,6 @@
 <!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
 <mapper namespace="com.utime.memoBom.user.mapper.HolidayMapper">
 
-	<!-- insertHoliday(HolidayVo -->
-	
 	<insert id="insertHoliday" parameterType="com.utime.memoBom.user.vo.HolidayVo">
         MERGE INTO MB_HOLIDAY (
 			HOLI_TYPE,
@@ -19,15 +17,5 @@
 			#{dateName}
 		)
     </insert>
-	
-	<!--특정 연도의 공휴일 정보가 존재하는지 확인-->
-	<select id="hasHolidayList" parameterType="int" resultType="boolean">
-	    SELECT 
-	    	CASE COUNT(1) 
-	   			WHEN 0 THEN 0
-				ELSE 1
-	   		END AS RES
-	    FROM MB_HOLIDAY
-        WHERE EXTRACT(YEAR FROM LOC_DATE) = #{year}
-    </select>
+
 </mapper>

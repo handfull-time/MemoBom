@@ -12,13 +12,6 @@ public interface HolidayDao {
 	 * @return
 	 * @throws Exception
 	 */
-	int insertHolidayList(List<HolidayVo> holiList) throws Exception;
-	
-	/**
-	 * 특정 연도의 공휴일 데이터 존재 여부 확인
-	 * @param year
-	 * @return
-	 */
-	boolean hasHolidayList(int year);
+	int insertHolidayList( List<HolidayVo> holiList) throws Exception;
 
 }

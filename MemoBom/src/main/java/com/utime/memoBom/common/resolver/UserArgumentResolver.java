@@ -12,7 +12,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import com.utime.memoBom.common.security.CustomUserDetails;
 import com.utime.memoBom.common.security.LoginUser;
 
-@Component("UserArgument")
+@Component("UserArgumentResolver")
 public class UserArgumentResolver implements HandlerMethodArgumentResolver{
 
 	@Override

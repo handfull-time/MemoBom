@@ -1,7 +1,5 @@
 package com.utime.memoBom.push.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,12 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.push.dto.PushClickDto;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
 import com.utime.memoBom.push.service.PushSendService;
-import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("Push")
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class PushController {
     }
     
     // ✅ 로그인 사용자만 접근 (Security에서 보호)
-    @PostMapping("subscription")
+    @PostMapping("Subscription.json")
     public ResponseEntity<ReturnBasic> upsert(LoginUser user, @RequestBody PushSubscriptionDto dto ) throws Exception {
     	
         if (dto == null || dto.endpoint == null || dto.keys == null ||
@@ -56,20 +56,52 @@ public class PushController {
         }
     }
 
-    @DeleteMapping("subscription")
-    public ResponseEntity<ReturnBasic> delete(UserVo user, @RequestParam String endpoint ) throws Exception {
-        
+    @DeleteMapping("Subscription.json")
+    public ResponseEntity<ReturnBasic> delete(LoginUser user, @RequestParam String endpoint) throws Exception {
+    
     	pushSendService.deleteAllByUserIdAndEndpoint(user, endpoint);
         
-        return ResponseEntity.ok().body(new ReturnBasic());
+    	return ResponseEntity.ok().body(new ReturnBasic());
     }
     
-//    @PostMapping("unsubscribe")
-//    public ResponseEntity<?> unsubscribe(@RequestBody Map<String, String> body) {
-//        String endpoint = body.get("endpoint");
-//        pushSubMapper.deactivateByEndpoint(endpoint);
-//        return ResponseEntity.ok(Map.of("ok", true));
-//    }
+    /**
+     * 푸시 수신 상태
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("Status.json")
+    public ResponseEntity<ReturnBasic> getStatus(LoginUser user) throws Exception {
+        
+    	final ReturnBasic res = pushSendService.getPushStatus(user);
+        
+    	return ResponseEntity.ok().body( res );
+    }
+    
+    /**
+     * 푸시 수신 설정
+     * @param user
+     * @param enabled true:수신, false:거부
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("Status.json")
+    public ResponseEntity<ReturnBasic> setStatus(LoginUser user, @RequestParam boolean enabled) throws Exception {
+        
+    	final ReturnBasic res = pushSendService.setPushStatus(user, enabled);
+        
+    	return ResponseEntity.ok().body( res );
+    }
+    
+    /**
+     * 클릭 여부 확인. 통계용.
+     * @param dto
+     * @return
+     */
+    @PostMapping("Click.json")
+    public ResponseEntity<?> click(@RequestBody PushClickDto dto) {
+    	log.info(dto.getClickId());
+    	return ResponseEntity.ok().body( new ReturnBasic() );
+    }
     
 }
-

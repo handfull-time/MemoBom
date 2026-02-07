@@ -178,18 +178,12 @@ public class HolidayServiceImpl {
     
 	// 초 분 시 일 월 요일
     // 매년 1월 1일 01시 00분 00초에 실행
-    @Scheduled(cron = "0 0 1 1 12 *")
+    @Scheduled(cron = "0 0 1 1 * *")
     public void runHoliday() throws Exception {
     	
     	final Calendar cal = Calendar.getInstance(Locale.KOREAN);
-    	cal.add( Calendar.MONTH, 1);
+    	cal.add( Calendar.MONTH, 4);
     	final int year = cal.get( Calendar.YEAR );
-    	
-    	//이미 데이터가 존재하면 패스.
-    	if( holidayDao.hasHolidayList(year) ) {
-			log.info( year + "년 DataIO 정보가 이미 존재합니다.");
-			return;
-		}
     	
     	final List<HolidayVo> holiList = new ArrayList<>();
     	

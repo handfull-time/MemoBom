@@ -109,3 +109,7 @@ async function apiPost(url, body, opts) {
 		...opts,
 	});
 }
+
+async function apiDelete(url, opts) {
+	return apiRequest(url, {method: 'DELETE', ...(opts || {})});
+}

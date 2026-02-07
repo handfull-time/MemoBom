@@ -28,6 +28,8 @@ class CreateRepository {
 			result += mapper.createUser();
 		}
 		
+		common.addColumn("MB_USER", "PUSH_ENABLED", "BOOLEAN", "FALSE", false);
+		
 		if( !common.existTable("MB_USER_LOGIN_RECORD") ) {
 			log.info("MB_USER_LOGIN_RECORD 생성");
 			result += mapper.createLoginRecord();
@@ -113,7 +115,6 @@ class CreateRepository {
 			result += mapper.createPushSubscriptionTable();
 			
 			result += common.createIndex("MB_PUSH_SUB_USER_NO_INDX", "MB_PUSH_SUB", "USER_NO");
-			result += common.createUniqueIndex("MB_PUSH_SUB_END_POINT_INDX", "MB_PUSH_SUB", "END_POINT");
 		}
 		
 		if( !common.existTable("MB_SHARE") ) {

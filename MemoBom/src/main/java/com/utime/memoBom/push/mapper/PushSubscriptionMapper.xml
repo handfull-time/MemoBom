@@ -3,81 +3,128 @@
 <!--//네임스페이스에는 mapper 가 있는 풀 패키지명과 매퍼명을 등록 한다. -->
 <mapper namespace="com.utime.memoBom.push.mapper.PushSubscriptionMapper">
 	
-	<resultMap id="PushSubMap" type="com.utime.memoBom.push.dto.PushSubscriptionDto">
-	    <id column="SUB_NO" property="subNo"/>
-	    <result column="REG_DATE" property="regDate"/>
-	    <result column="UPDATE_DATE" property="updateDate"/>
-	    <result column="USER_NO" property="userNo"/>
-	    <result column="END_POINT" property="endPoint"/>
-	    <result column="P256DH" property="p256dh"/>
-	    <result column="AUTH" property="auth"/>
+	<insert id="insertPushSub" parameterType="com.utime.memoBom.push.vo.PushSubVo"
+	        useGeneratedKeys="true" keyProperty="subNo">
 	
-	    <result column="IS_ACTIVE" property="isActive"/>
-	    <result column="DEVICE_ID" property="deviceId"/>
-	    <result column="USER_AGENT" property="userAgent"/>
-	    <result column="BROWSER" property="browser"/>
-	    <result column="OS" property="os"/>
-	    <result column="LAST_PUSH_DATE" property="lastPushDate"/>
-	    <result column="FAIL_COUNT" property="failCount"/>
-	    <result column="EXPIRATION_TIME" property="expirationTime"/>
-	</resultMap>
-  
-	<!-- endpont 매칭 조회 -->
-	<select id="findByEndpoint" parameterType="map" resultType="com.utime.memoBom.push.vo.PushSubscriptionEntity">
-		SELECT 
-			SUB_NO
-			, USER_NO 
-			, END_POINT 
-			, P256DH
-			, AUTH
-		FROM MB_PUSH_SUB
-		WHERE END_POINT = #{endPoint}
-	</select>	
-
-	<!-- 구독 정보 추가 -->
-	<insert id="insertSubscription" parameterType="com.utime.memoBom.push.vo.PushSubscriptionEntity" 
-		useGeneratedKeys="true" keyProperty="subNo" >
-		INSERT INTO MB_PUSH_SUB (
-			UPDATE_DATE
-			, USER_NO
-			, END_POINT
-			, P256DH
-			, AUTH
-		) VALUES (
+	    INSERT INTO MB_PUSH_SUB (
+	        UPDATE_DATE
+	        , USER_NO
+	        , END_POINT
+	        , P256DH
+	        , AUTH
+	        , IS_ACTIVE
+	        , DEVICE_ID
+	        , USER_AGENT
+	        , BROWSER
+	        , OS
+	        , EXPIRATION_TIME
+	    ) VALUES (
 			CURRENT_TIMESTAMP
-			, #{userNo}
-			, #{endPoint}
-			, #{p256dh}
-			, #{auth}
-		)
+	        , #{userNo}
+	        , #{endPoint}
+	        , #{p256dh}
+	        , #{auth}
+	        , TRUE
+	        , <choose> <when test="deviceId != null"> #{deviceId} </when> <otherwise> NULL </otherwise> </choose>
+	        , <choose> <when test="userAgent != null"> #{userAgent} </when> <otherwise> NULL </otherwise> </choose>
+	        , <choose> <when test="browser != null"> #{browser} </when> <otherwise> NULL </otherwise> </choose>
+	        , <choose> <when test="os != null"> #{os} </when> <otherwise> NULL </otherwise> </choose>
+	        , <choose> <when test="expirationTime != null"> #{expirationTime} </when> <otherwise> NULL </otherwise> </choose>
+	    )
 	</insert>
+
 	
     <!-- 구독 정보 수정 -->
-	<update id="updateSubscription" parameterType="com.utime.memoBom.push.vo.PushSubscriptionEntity" >
+	<update id="updatePushSub" parameterType="com.utime.memoBom.push.vo.PushSubVo">
+	    UPDATE MB_PUSH_SUB
+	    <set>
+	        UPDATE_DATE = CURRENT_TIMESTAMP
+	        , P256DH = #{p256dh}
+	        , AUTH = #{auth}
+	
+	        <if test="deviceId != null">
+	            , DEVICE_ID = #{deviceId}
+	        </if>
+	
+	        <if test="userAgent != null">
+	            , USER_AGENT = #{userAgent}
+	        </if>
+	
+	        <if test="browser != null">
+	            , BROWSER = #{browser}
+	        </if>
+	
+	        <if test="os != null">
+	            , OS = #{os}
+	        </if>
+	
+	        <if test="expirationTime != null">
+	            , EXPIRATION_TIME = #{expirationTime}
+	        </if>
+	    </set>
+	    WHERE SUB_NO = #{subNo}
+	</update>
+	
+	<sql id="subColumns">
+	      SUB_NO
+	    , END_POINT
+	    , P256DH
+	    , AUTH
+	    , FAIL_COUNT
+	</sql>
+	
+	<!--회원 푸시 정보 조회-->
+	<select id="selectActivePushSubsByUser"
+	        parameterType="long"
+	        resultType="com.utime.memoBom.push.vo.query.PushSubInfoVo">
+	    SELECT
+	        <include refid="subColumns"/>
+		FROM MB_PUSH_SUB
+		WHERE 1=1
+			AND USER_NO = #{userNo}
+			AND IS_ACTIVE = TRUE
+		ORDER BY SUB_NO DESC
+	</select>
+	
+	<!--푸시 정보 조회-->
+	<select id="selectPushSubByEndpoint"
+	        parameterType="string"
+	        resultType="com.utime.memoBom.push.vo.query.PushSubInfoVo">
+	    SELECT
+	        <include refid="subColumns"/>
+	    FROM MB_PUSH_SUB
+	    WHERE END_POINT = #{endPoint}
+	</select>
+
+    <!-- 구독 정보 제거 -->
+	<delete id="removeSubscription" parameterType="String">
+		DELETE FROM MB_PUSH_SUB 
+		WHERE END_POINT = #{endPoint}
+	</delete>
+	
+	<!--발송 성공-->
+	<update id="markSuccess" parameterType="long">
 		UPDATE MB_PUSH_SUB SET
 			UPDATE_DATE = CURRENT_TIMESTAMP
-			, END_POINT
-			, P256DH
-			, AUTH
+			, LAST_PUSH_DATE = CURRENT_TIMESTAMP
+			, FAIL_COUNT = 0
+			, IS_ACTIVE = TRUE
 		WHERE SUB_NO = #{subNo}
 	</update>
 
-    <!-- 구독 정보 제거 -->
-	<delete id="removeSubscription" parameterType="com.utime.memoBom.push.vo.PushSubscriptionEntity" >
-		DELETE FROM MB_PUSH_SUB 
+	<update id="markFail" parameterType="long">
+		UPDATE MB_PUSH_SUB SET
+			UPDATE_DATE = CURRENT_TIMESTAMP
+			, FAIL_COUNT = FAIL_COUNT + 1
 		WHERE SUB_NO = #{subNo}
-	</delete>
+	</update>
 	
-	<!-- endpont 매칭 조회 -->
-	<select id="findAllByUser" parameterType="com.utime.memoBom.user.vo.UserVo" resultType="com.utime.memoBom.push.vo.PushSubscriptionEntity">
-		SELECT 
-			SUB_NO
-			, USER_NO 
-			, END_POINT 
-			, P256DH
-			, AUTH
-		FROM MB_PUSH_SUB
-		WHERE USER_NO = {userNo}
-		ORDER BY REG_DATE
-	</select>
+	<!--구독 정보 비활성화.-->
+	<update id="markInactive" parameterType="long">
+		UPDATE MB_PUSH_SUB SET
+			UPDATE_DATE = CURRENT_TIMESTAMP
+			, IS_ACTIVE = FALSE
+		WHERE SUB_NO = #{subNo}
+	</update>
+	
 </mapper>

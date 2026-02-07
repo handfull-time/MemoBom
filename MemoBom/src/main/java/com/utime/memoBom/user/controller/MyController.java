@@ -35,7 +35,6 @@ public class MyController {
 	final UserService userService;
 	final AuthService authService;
 
-	
 	/**
 	 * MyPage 화면
 	 * @param request
@@ -46,7 +45,7 @@ public class MyController {
     public String myMain( Model model, LoginUser user ) {
 		
 		if( user == null ) {
-			return "redirect:/Auth/Login.html";
+			return "redirect:/About/Application.html";
 		}else {
 			model.addAttribute("item", userService.getMyPage(user));
 			return "My/MyPage";

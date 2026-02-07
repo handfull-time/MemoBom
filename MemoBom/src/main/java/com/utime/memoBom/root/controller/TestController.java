@@ -1,9 +1,13 @@
 package com.utime.memoBom.root.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,6 +18,8 @@ import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.push.service.PushSendService;
+import com.utime.memoBom.push.vo.PushNotiDataVo;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.service.UserService;
@@ -36,7 +42,9 @@ public class TestController {
 
     private final UserDao userDao;
     
-    final UserService userService;
+    private final UserService userService;
+    
+    private final PushSendService pushSendService;
 	
     @GetMapping("Login")
 	public String testLogin() throws Exception {
@@ -134,14 +142,17 @@ public class TestController {
 		return url;
 	}
 	
+	private LoginUser getLoginUser() {
+		return new LoginUser(2L, "a383c637-2bc8-468c-b1a0-2c8b11660fa3", EJwtRole.User);
+	}
+	
 	@ResponseBody
 	@GetMapping(path = "MyMosaic.json")
     public ReturnBasic myMosaic( ) {
 		
 		final MySearchDto searchVo = new MySearchDto();
-		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
 		
-		return userService.getMyMosaicDataList( user, searchVo );
+		return userService.getMyMosaicDataList( getLoginUser(), searchVo );
     }
 	
 	@ResponseBody
@@ -149,29 +160,58 @@ public class TestController {
     public ReturnBasic myFragments() {
 		
 		final MySearchDto searchVo = new MySearchDto();
-		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
 		
-		return userService.getMyFragmentsDataList( user, searchVo );
+		return userService.getMyFragmentsDataList( getLoginUser(), searchVo );
     }
 	
 	@ResponseBody
 	@GetMapping(path = "MyComments.json")
     public ReturnBasic myComments( ) {
 		final MySearchDto searchVo = new MySearchDto();
-		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
 		
-		return userService.getMyCommentsDataList( user, searchVo );
+		return userService.getMyCommentsDataList( getLoginUser(), searchVo );
     }
 	
 	@ResponseBody
 	@GetMapping(path = "Scrap.json")
     public ReturnBasic myScrap( ) {
 		final MySearchDto searchVo = new MySearchDto();
-		final LoginUser user = new LoginUser(1L, "ab8595e3-0a68-4132-b6a4-0cae79883ac5", EJwtRole.User);
 		
-		return userService.getMyScrapDataList( user, searchVo );
+		return userService.getMyScrapDataList( getLoginUser(), searchVo );
     }
-
 	
+	@ResponseBody
+	@GetMapping("status.json")
+    public ResponseEntity<ReturnBasic> getStatus() throws Exception {
+        
+    	final ReturnBasic res = pushSendService.getPushStatus(getLoginUser());
+        
+    	return ResponseEntity.ok().body( res );
+    }
+    
+	@ResponseBody
+    @PostMapping("status.json")
+    public ResponseEntity<ReturnBasic> setStatus(@RequestParam boolean enabled) throws Exception {
+        
+    	final ReturnBasic res = pushSendService.setPushStatus(getLoginUser(), enabled);
+        
+    	return ResponseEntity.ok().body( res );
+    }
+	
+	@ResponseBody
+    @PostMapping("sendPush.json")
+    public ReturnBasic sendPush() throws Exception {
+		final PushNotiDataVo data = new PushNotiDataVo();
+		
+		data.setTitle("push go");
+		data.setMessage("제발 되라.");
+		data.setIcon("/MemoBom/images/profile-placeholder.svg");
+		data.getData().setClickId(UUID.randomUUID().toString());
+		data.getData().setUrl("/Fragment/index.html");
+		
+    	final ReturnBasic res = pushSendService.sendPush(getLoginUser(), data);
+        
+    	return res;
+    }
 }
 

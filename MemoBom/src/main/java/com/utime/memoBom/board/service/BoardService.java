@@ -35,7 +35,7 @@ public interface BoardService {
 	 * @param reqVo
 	 * @return
 	 */
-	FragmentListDto loadFragmentList(LoginUser user, FragmentListReqVO reqVo);
+	FragmentListDto loadFragmentList(HttpServletRequest request, LoginUser user, FragmentListReqVO reqVo);
 
 	/**
 	 * 뎃글 목록 얻기

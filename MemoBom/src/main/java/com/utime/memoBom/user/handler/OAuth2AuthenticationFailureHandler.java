@@ -37,7 +37,7 @@ class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureH
         // 2. 리다이렉트 URL 생성
         // 로그인 페이지(/Auth/Login)로 돌려보내되, URL 파라미터로 error 메시지를 붙입니다.
         // 한글이나 특수문자가 있을 수 있으므로 인코딩 처리를 권장합니다.
-        String targetUrl = UriComponentsBuilder.fromUriString("/Auth/Login.html") // 포파님이 만드신 로그인 페이지 경로
+        String targetUrl = UriComponentsBuilder.fromUriString("/Auth/Login.html") // 로그인 페이지 경로
                 .queryParam("error", "social_login_fail")
                 .queryParam("message", exception.getLocalizedMessage()) // 보안상 구체적인 메시지는 숨기고 "Login Failed" 등으로 고정해도 됩니다.
                 .encode(StandardCharsets.UTF_8)

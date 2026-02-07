@@ -3,7 +3,7 @@ package com.utime.memoBom.push.service;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.push.vo.PushNotiDataVo;
 
 /**
  * 푸시 서비스
@@ -24,7 +24,7 @@ public interface PushSendService {
 	 * @param endpoint
 	 * @return
 	 */
-	ReturnBasic deleteAllByUserIdAndEndpoint(UserVo user, String endpoint);
+	ReturnBasic deleteAllByUserIdAndEndpoint(LoginUser user, String endpoint);
 	
 	/**
 	 * 푸시 발송
@@ -32,6 +32,21 @@ public interface PushSendService {
 	 * @param obj
 	 * @return
 	 */
-	ReturnBasic sendPush(UserVo user, Object obj) throws Exception;
+	ReturnBasic sendPush(LoginUser user, PushNotiDataVo data) throws Exception;
+
+	/**
+	 * 푸시 수신 상태
+	 * @param user
+	 * @return
+	 */
+	ReturnBasic getPushStatus(LoginUser user);
+
+	/**
+	 * 푸시 수신 설정
+	 * @param user
+	 * @param enabled true:수신, false:미수신
+	 * @return
+	 */
+	ReturnBasic setPushStatus(LoginUser user, boolean enabled);
 
 }

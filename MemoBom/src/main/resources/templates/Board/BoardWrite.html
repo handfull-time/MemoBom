@@ -9,92 +9,77 @@
 </th:block>
 
 <th:block layout:fragment="content">
-	
-<!-- Topic Select Modal (compact) -->
-<div id="topicSelectModal"
-     th:if="${topics != null and #lists.size(topics) > 1}"
-     class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-3">
 
-  <div class="w-full max-w-sm rounded-2xl bg-white shadow-2xl">
-    <!-- 헤더 -->
-    <div class="px-4 pt-4 pb-3 border-b border-slate-100">
-      <div class="text-base font-extrabold text-slate-800">토픽 선택</div>
-      <div class="text-xs text-slate-500 mt-1">주제를 선택하면 바로 작성할 수 있어요.</div>
+	<!-- Topic Select Modal (compact) -->
+	<div id="topicSelectModal" th:if="${topics != null and #lists.size(topics) > 1}"
+		class="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-3">
 
-      <!-- 검색 -->
-      <div class="mt-3">
-        <input id="topicSearch" type="text"
-               placeholder="토픽 검색..."
-               class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm
+		<div class="w-full max-w-sm rounded-2xl bg-white shadow-2xl">
+			<!-- 헤더 -->
+			<div class="px-4 pt-4 pb-3 border-b border-slate-100">
+				<div class="text-base font-extrabold text-slate-800">토픽 선택</div>
+				<div class="text-xs text-slate-500 mt-1">주제를 선택하면 바로 작성할 수 있어요.</div>
+
+				<!-- 검색 -->
+				<div class="mt-3">
+					<input id="topicSearch" type="text" placeholder="토픽 검색..." class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm
                       outline-none focus:ring-2 focus:ring-slate-300/40" />
-      </div>
-    </div>
+				</div>
+			</div>
 
-    <!-- 리스트: 많을 때 대비 스크롤 -->
-    <div id="modalTopicList"
-         class="max-h-[46vh] overflow-y-auto px-2 py-2">
-      <button type="button"
-              th:each="t : ${topics}"
-              class="topic-row w-full flex items-center gap-2 rounded-xl px-3 py-2
-                     hover:bg-slate-50 transition text-left"
-              th:attr="data-uid=${t.uid},
+			<!-- 리스트: 많을 때 대비 스크롤 -->
+			<div id="modalTopicList" class="max-h-[46vh] overflow-y-auto px-2 py-2">
+				<button type="button" th:each="t : ${topics}" class="topic-row w-full flex items-center gap-2 rounded-xl px-3 py-2
+                     hover:bg-slate-50 transition text-left" th:attr="data-uid=${t.uid},
                        data-maxlen=${t.maxLen},
                        data-color=${t.color},
                        data-name=${t.name}">
-        <span class="text-lg w-6 text-center" th:text="${t.imogi}">🧩</span>
-        <span class="flex-1 text-sm font-semibold text-slate-800 truncate"
-              th:text="${t.name}">Topic</span>
+					<span class="text-lg w-6 text-center" th:text="${t.imogi}">🧩</span>
+					<span class="flex-1 text-sm font-semibold text-slate-800 truncate" th:text="${t.name}">Topic</span>
 
-        <span class="h-3 w-3 rounded-full border border-black/10 shrink-0"
-              th:style="'background:' + ${t.color}"></span>
-      </button>
+					<span class="h-3 w-3 rounded-full border border-black/10 shrink-0"
+						th:style="'background:' + ${t.color}"></span>
+				</button>
 
-      <!-- 검색 결과 없음 -->
-      <div id="topicEmpty"
-           class="hidden px-4 py-6 text-center text-sm text-slate-400">
-        검색 결과가 없습니다.
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
-<div class="flex flex-col min-h-[320px] h-[calc(100dvh-120px)] h-[calc(100vh-120px)]">
-
-  <!-- 본문: 남은 공간 전부 차지 -->
-  <textarea id="content"
-            name="content"
-            placeholder="내용을 입력해 주세요."
-            disabled
-            class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-[15px] box-border bg-transparent">
-  </textarea>
-
-  <!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
-  <div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
-
-    <!-- content 길이 progress (thin) -->
-    <div class="mb-2">
-      <div class="h-[3px] w-full rounded-full bg-slate-200/70 overflow-hidden">
-		<div id="contentProgress"
-		     class="h-full rounded-full"
-		     style="width:0%; background:#3b82f6;">
+				<!-- 검색 결과 없음 -->
+				<div id="topicEmpty" class="hidden px-4 py-6 text-center text-sm text-slate-400">
+					검색 결과가 없습니다.
+				</div>
+			</div>
 		</div>
-      </div>
-      <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
-        <span id="contentCounter">0 / 0</span>
-        <span id="contentHint" class="hidden text-rose-500 font-semibold">최대 길이에 가까워요</span>
-      </div>
-    </div>
+	</div>
 
-    <input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
-           class="w-full border-0 outline-none text-[13px] text-slate-600 bg-transparent" />
+	<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
+	<div class="flex flex-col min-h-[320px] h-[calc(100dvh-120px)] h-[calc(100vh-120px)]">
 
-    <div class="mt-1 text-[11px] text-slate-400">
-      쉼표(,) 또는 띄어쓰기로 여러 개 입력할 수 있어요.
-    </div>
-  </div>
+		<!-- 본문: 남은 공간 전부 차지 -->
+		<textarea id="content" name="content" placeholder="내용을 입력해 주세요." disabled
+			class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-[15px] box-border bg-transparent"></textarea>
 
-</div>
+		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
+		<div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
+
+			<!-- content 길이 progress (thin) -->
+			<div class="mb-2">
+				<div class="h-[3px] w-full rounded-full bg-slate-200/70 overflow-hidden">
+					<div id="contentProgress" class="h-full rounded-full" style="width:0%; background:#3b82f6;">
+					</div>
+				</div>
+				<div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+					<span id="contentCounter">0 / 0</span>
+					<span id="contentHint" class="hidden text-rose-500 font-semibold">최대 길이에 가까워요</span>
+				</div>
+			</div>
+
+			<input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
+				class="w-full border-0 outline-none text-[13px] text-slate-600 bg-transparent" />
+
+			<div class="mt-1 text-[11px] text-slate-400">
+				쉼표(,) 또는 띄어쓰기로 여러 개 입력할 수 있어요.
+			</div>
+		</div>
+
+	</div>
 
 </th:block>
 
@@ -107,142 +92,142 @@
 
 <th:block layout:fragment="script">
 
-<script th:inline="javascript">
-	
-	function lerp(a, b, t) { return a + (b - a) * t; }
-	function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+	<script th:inline="javascript">
 
-	// 파랑(#3b82f6) -> 빨강(#ef4444)로 단색 변화
-	function ratioToColor(ratio) {
-	  ratio = clamp01(ratio);
+		function lerp(a, b, t) {return a + (b - a) * t;}
+		function clamp01(x) {return Math.max(0, Math.min(1, x));}
 
-	  // hex -> rgb
-	  const blue = { r: 0x3b, g: 0x82, b: 0xf6 }; // 59,130,246
-	  const red  = { r: 0xef, g: 0x44, b: 0x44 }; // 239,68,68
+		// 파랑(#3b82f6) -> 빨강(#ef4444)로 단색 변화
+		function ratioToColor(ratio) {
+			ratio = clamp01(ratio);
 
-	  const r = Math.round(lerp(blue.r, red.r, ratio));
-	  const g = Math.round(lerp(blue.g, red.g, ratio));
-	  const b = Math.round(lerp(blue.b, red.b, ratio));
+			// hex -> rgb
+			const blue = {r: 0x3b, g: 0x82, b: 0xf6}; // 59,130,246
+			const red = {r: 0xef, g: 0x44, b: 0x44}; // 239,68,68
 
-	  return `rgb(${r}, ${g}, ${b})`;
-	}
+			const r = Math.round(lerp(blue.r, red.r, ratio));
+			const g = Math.round(lerp(blue.g, red.g, ratio));
+			const b = Math.round(lerp(blue.b, red.b, ratio));
 
-	function updateContentProgress() {
-	  const ta = document.getElementById("content");
-	  const bar = document.getElementById("contentProgress");
-	  const counter = document.getElementById("contentCounter");
-	  const hint = document.getElementById("contentHint");
+			return `rgb(${r}, ${g}, ${b})`;
+		}
 
-	  if (!ta || !bar || !counter) return;
+		function updateContentProgress() {
+			const ta = document.getElementById("content");
+			const bar = document.getElementById("contentProgress");
+			const counter = document.getElementById("contentCounter");
+			const hint = document.getElementById("contentHint");
 
-	  const maxLenAttr = ta.getAttribute("maxlength");
-	  const maxLen = maxLenAttr ? Number(maxLenAttr) : 0;
+			if (!ta || !bar || !counter) return;
 
-	  const len = (ta.value || "").length;
+			const maxLenAttr = ta.getAttribute("maxlength");
+			const maxLen = maxLenAttr ? Number(maxLenAttr) : 0;
 
-	  if (!maxLen || maxLen <= 0) {
-	    bar.style.width = "0%";
-	    bar.style.background = "#3b82f6"; // 기본 파랑
-	    counter.textContent = `${len} / ∞`;
-	    hint?.classList.add("hidden");
-	    return;
-	  }
+			const len = (ta.value || "").length;
 
-	  const ratio = Math.min(1, len / maxLen);
-	  const pct = ratio * 100;
+			if (!maxLen || maxLen <= 0) {
+				bar.style.width = "0%";
+				bar.style.background = "#3b82f6"; // 기본 파랑
+				counter.textContent = `${len} / ∞`;
+				hint?.classList.add("hidden");
+				return;
+			}
 
-	  bar.style.width = pct.toFixed(1) + "%";
-	  bar.style.background = ratioToColor(ratio); // ✅ 여기서 단색 변화
-	  counter.textContent = `${len} / ${maxLen}`;
+			const ratio = Math.min(1, len / maxLen);
+			const pct = ratio * 100;
 
-	  if (hint) hint.classList.toggle("hidden", ratio < 0.9);
-	}
+			bar.style.width = pct.toFixed(1) + "%";
+			bar.style.background = ratioToColor(ratio); // ✅ 여기서 단색 변화
+			counter.textContent = `${len} / ${maxLen}`;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const ta = document.getElementById("content");
-    if (!ta) return;
+			if (hint) hint.classList.toggle("hidden", ratio < 0.9);
+		}
 
-    // 입력할 때마다 업데이트
-    ta.addEventListener("input", updateContentProgress, { passive: true });
+		document.addEventListener("DOMContentLoaded", () => {
+			const ta = document.getElementById("content");
+			if (!ta) return;
 
-    // 초기 1회
-    updateContentProgress();
-  });
-</script>
+			// 입력할 때마다 업데이트
+			ta.addEventListener("input", updateContentProgress, {passive: true});
+
+			// 초기 1회
+			updateContentProgress();
+		});
+	</script>
 
 
-<script th:inline="javascript">
-  const topics = /*[[${topics}]]*/ [];
-  let selectedTopicUid = null;
+	<script th:inline="javascript">
+		const topics = /*[[${topics}]]*/[];
+		let selectedTopicUid = null;
 
-  function applyTopicToEditor(topic) {
-    const ta = document.getElementById("content");
-    selectedTopicUid = topic.uid;
+		function applyTopicToEditor(topic) {
+			const ta = document.getElementById("content");
+			selectedTopicUid = topic.uid;
 
-	const header = document.getElementById("headerTitle");
-	if (header && topic.name) {
-	    header.textContent = topic.name + " · 작은 조각";
-	}
-	  
-    const maxLen = Number(topic.maxLen || 0);
-    if (maxLen > 0) ta.setAttribute("maxlength", String(maxLen));
-    else ta.removeAttribute("maxlength");
+			const header = document.getElementById("headerTitle");
+			if (header && topic.name) {
+				header.textContent = topic.name + " · 작은 조각";
+			}
 
-    ta.removeAttribute("disabled");
-    ta.focus();
+			const maxLen = Number(topic.maxLen || 0);
+			if (maxLen > 0) ta.setAttribute("maxlength", String(maxLen));
+			else ta.removeAttribute("maxlength");
 
-    const modal = document.getElementById("topicSelectModal");
-    if (modal) modal.remove();
-  }
+			ta.removeAttribute("disabled");
+			ta.focus();
 
-  function initTopicModalCompact() {
-    // 1개면 자동
-    if (!Array.isArray(topics) || topics.length <= 1) {
-      if (topics?.length === 1) applyTopicToEditor(topics[0]);
-      return;
-    }
+			const modal = document.getElementById("topicSelectModal");
+			if (modal) modal.remove();
+		}
 
-    // 클릭 선택
-    document.querySelectorAll("#modalTopicList .topic-row").forEach(btn => {
-      btn.addEventListener("click", () => {
-        applyTopicToEditor({
-          uid: btn.dataset.uid,
-          maxLen: Number(btn.dataset.maxlen || 0),
-          color: btn.dataset.color,
-          name: btn.dataset.name
-        });
-      });
-    });
+		function initTopicModalCompact() {
+			// 1개면 자동
+			if (!Array.isArray(topics) || topics.length <= 1) {
+				if (topics?.length === 1) applyTopicToEditor(topics[0]);
+				return;
+			}
 
-    // 검색
-    const input = document.getElementById("topicSearch");
-    const empty = document.getElementById("topicEmpty");
-    const rows = Array.from(document.querySelectorAll("#modalTopicList .topic-row"));
+			// 클릭 선택
+			document.querySelectorAll("#modalTopicList .topic-row").forEach(btn => {
+				btn.addEventListener("click", () => {
+					applyTopicToEditor({
+						uid: btn.dataset.uid,
+						maxLen: Number(btn.dataset.maxlen || 0),
+						color: btn.dataset.color,
+						name: btn.dataset.name
+					});
+				});
+			});
 
-    const applyFilter = () => {
-      const q = (input.value || "").trim().toLowerCase();
-      let visible = 0;
+			// 검색
+			const input = document.getElementById("topicSearch");
+			const empty = document.getElementById("topicEmpty");
+			const rows = Array.from(document.querySelectorAll("#modalTopicList .topic-row"));
 
-      rows.forEach(r => {
-        const name = (r.dataset.name || "").toLowerCase();
-        const ok = !q || name.includes(q);
-        r.classList.toggle("hidden", !ok);
-        if (ok) visible++;
-      });
+			const applyFilter = () => {
+				const q = (input.value || "").trim().toLowerCase();
+				let visible = 0;
 
-      if (empty) empty.classList.toggle("hidden", visible !== 0);
-    };
+				rows.forEach(r => {
+					const name = (r.dataset.name || "").toLowerCase();
+					const ok = !q || name.includes(q);
+					r.classList.toggle("hidden", !ok);
+					if (ok) visible++;
+				});
 
-    input?.addEventListener("input", applyFilter, { passive: true });
-    // 진입 시 바로 포커스
-    input?.focus();
-  }
+				if (empty) empty.classList.toggle("hidden", visible !== 0);
+			};
 
-  document.addEventListener("DOMContentLoaded", initTopicModalCompact);
+			input?.addEventListener("input", applyFilter, {passive: true});
+			// 진입 시 바로 포커스
+			input?.focus();
+		}
 
-  // 저장 시 사용
-  // onClickWrite에서: topicUid: selectedTopicUid 로 전송하는 것 유지
-</script>
+		document.addEventListener("DOMContentLoaded", initTopicModalCompact);
+
+		// 저장 시 사용
+		// onClickWrite에서: topicUid: selectedTopicUid 로 전송하는 것 유지
+	</script>
 
 
 	<script th:inline="javascript">
@@ -272,8 +257,8 @@
 
 		async function onClickWrite() {
 			if (Array.isArray(topics) && topics.length > 1 && !selectedTopicUid) {
-			  await alertP( "토픽을 선택해 주세요.");
-			  return;
+				await alertP("토픽을 선택해 주세요.");
+				return;
 			}
 
 			const content = document.getElementById('content').value.trim();
@@ -304,26 +289,81 @@
 
 				if (data.code === "0") {
 					await alertP("The new fragment has been saved.");
+					allowLeave = true;
+					isDirty = false;
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {
-					console.info( data );
+					console.info(data);
 					showToast("오류", data.message, ToastType.WARNING, 1800);
 				}
 			} catch (e) {
-				console.error( e );
+				console.error(e);
 				showToast("에러", e.message, ToastType.ERROR, 1800);
 			} finally {
 				// btnSave가 없는 화면도 있을 수 있어 안전하게 처리
 				if (typeof btnSave !== 'undefined' && btnSave) btnSave.disabled = false;
 			}
 		}
+
+		(function () {
+		  const ta = document.getElementById('content');
+		  if (!ta) return;
+
+		  const initialValue = ta.value || '';
+		  let isDirty = false;
+
+		  // popstate 루프 방지
+		  let allowLeave = false;
+
+		  // 더티가 되는 순간에만 "가드용 히스토리 1칸"을 추가(딱 1회)
+		  let guardPushed = false;
+		  function ensureGuardHistoryOnce() {
+		    if (guardPushed) return;
+		    history.pushState({ __dirty_guard__: true }, '', location.href);
+		    guardPushed = true;
+		  }
+
+		  ta.addEventListener('input', () => {
+		    isDirty = (ta.value !== initialValue);
+		    if (isDirty) ensureGuardHistoryOnce();
+		  });
+
+		  // 새로고침/탭닫기/주소이동
+		  window.addEventListener('beforeunload', (e) => {
+		    if (!isDirty) return;
+		    e.preventDefault();
+		    e.returnValue = '';
+		  });
+
+		  window.addEventListener('popstate', async () => {
+		    // 프로그램적으로 나가는 중이면 간섭하지 않음
+		    if (allowLeave){
+				history.back();
+				return;
+			} 
+
+		    // 더티가 아니면 그냥 나가게 둠
+		    if (!isDirty) return;
+
+		    // ✅ 뒤로가기가 이미 발생했으니, 먼저 즉시 현재 페이지로 되돌려 "앱이 튀는 느낌"을 막음
+		    history.pushState({ __dirty_guard__: true }, '', location.href);
+		    guardPushed = true;
+
+		    const ok = await confirmP('작성 중인 내용이 있어요.\n정말 나가시겠어요?');
+
+		    if (ok) {
+		      // ✅ 이제는 진짜로 나가도 되게 플래그 설정 후 뒤로가기 재실행
+		      allowLeave = true;
+			  isDirty = false;
+		      history.back();
+		    }
+		    // 취소면 아무것도 안 하면 됨(이미 pushState로 현재 유지)
+		  });
+
+		})();
+
 	</script>
+
 </th:block>
 
 </html>
-<!--
-	토픽마다 placeholder 문구를 바꾸기 ("이 토픽에는 이런 내용을 써보세요")
-	maxLen 초과 직전 카운트 색상 경고(예: 90% 넘으면 주황 → 빨강)
-	마지막으로 선택한 토픽 localStorage에 기억해서 다음 작성 시 자동 선택
-	토픽 색을 textarea 포커스 링이나 하단 바에 살짝 반영해서 “지금 쓰는 토픽” 감각 주기
--->

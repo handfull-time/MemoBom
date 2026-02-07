@@ -3,52 +3,69 @@ package com.utime.memoBom.push.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import com.utime.memoBom.push.vo.PushSubscriptionEntity;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.push.vo.PushSubVo;
+import com.utime.memoBom.push.vo.query.PushSubInfoVo;
 
 /**
- * 최초 필수 테이블 관련 Mapper
+ * 푸시 관련 Mapper
  */
 @Mapper
 public interface PushSubscriptionMapper {
 	
 	/**
-	 * endpont 매칭 조회
-	 * @param endpoint
-	 * @return
-	 */
-	PushSubscriptionEntity findByEndpoint(@Param("endpoint") String endpoint);
-
-	/**
 	 * 구독 정보 추가
-	 * @param entity
+	 * @param vo
 	 * @return
 	 */
-	int insertSubscription(PushSubscriptionEntity entity);
-
+	int insertPushSub(PushSubVo vo );
+	
 	/**
 	 * 구독 정보 수정
-	 * @param entity
+	 * @param vo
 	 * @return
 	 */
-	int updateSubscription(PushSubscriptionEntity entity);
+	int updatePushSub(PushSubVo vo );
+	
+	/**
+	 * 회원 푸시 정보 조회
+	 * @param userNo
+	 * @return
+	 */
+	List<PushSubInfoVo> selectActivePushSubsByUser( long userNo );
+	
+	/**
+	 * 푸시 정보 조회
+	 * @param endPoint
+	 * @return
+	 */
+	PushSubInfoVo selectPushSubByEndpoint( String endPoint );
+	
+	/**
+	 * 구독 정보 제거
+	 * @param endPoint
+	 * @return
+	 */
+	int removeSubscription( String endPoint );
 
 	/**
-	 * 비활성 정보 제거
-	 * @param entity
+	 * 발송 성공
+	 * @param subNo
 	 * @return
 	 */
-	int removeSubscription(PushSubscriptionEntity entity);
+	int markSuccess(long subNo);
 
 	/**
-	 * 사용자 구독 정보 조회
-	 * @param user
+	 * 발송 실패
+	 * @param subNo
 	 * @return
 	 */
-	List<PushSubscriptionEntity> findAllByUser(UserVo user);
-	
-	
+	int markFail(long subNo);
 
+	/**
+	 * 구독 정보 비활성화.
+	 * @param subNo
+	 * @return
+	 */
+	int markInactive(long subNo);
 }

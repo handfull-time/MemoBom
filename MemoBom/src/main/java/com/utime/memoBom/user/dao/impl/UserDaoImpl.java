@@ -134,5 +134,18 @@ class UserDaoImpl implements UserDao {
 		
 		return profileMapper.selectUserProfile(uid);
 	}
+	
+	@Override
+	public Boolean getPushStatus(LoginUser user) {
+		
+		return userMapper.selectPushStatus(user);
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int setPushStatus(LoginUser user, boolean enabled) throws Exception {
+		
+		return userMapper.updatePushStatus(user, enabled);
+	}
 
 }

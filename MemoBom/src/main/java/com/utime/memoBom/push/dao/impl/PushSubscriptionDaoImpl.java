@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.push.dao.PushSubscriptionDao;
 import com.utime.memoBom.push.mapper.PushSubscriptionMapper;
-import com.utime.memoBom.push.vo.PushSubscriptionEntity;
-import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.push.vo.PushSendResVo;
+import com.utime.memoBom.push.vo.PushSubVo;
+import com.utime.memoBom.push.vo.query.PushSubInfoVo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,37 +23,57 @@ class PushSubscriptionDaoImpl implements PushSubscriptionDao{
 	private final PushSubscriptionMapper subMapper;
 	
 	@Override
-	public PushSubscriptionEntity findByEndpoint(String endpoint) {
-		return subMapper.findByEndpoint( endpoint );
-	}
-
-	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int save(PushSubscriptionEntity entity) throws Exception {
+	public int savePushSub(PushSubVo vo) throws Exception {
 		
-		int result = 0;
-		if( entity.getSubNo() < 0L ) {
-			result = subMapper.insertSubscription( entity );
-		}else {
-			result = subMapper.updateSubscription( entity );
-		}
+		final int result;
+		final PushSubInfoVo exist = subMapper.selectPushSubByEndpoint( vo.getEndPoint() );
+		
+	    if (exist == null) {
+	        result = subMapper.insertPushSub(vo);
+	    } else {
+	        vo.setSubNo(exist.getSubNo());
+	        result = subMapper.updatePushSub(vo);
+	    }
 		
 		return result;
 	}
-
+	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int removeSubscription(PushSubscriptionEntity entity) throws Exception {
+	public int removePushSub(String endPoint) throws Exception {
 		
-		return subMapper.removeSubscription( entity );
+		return subMapper.removeSubscription(endPoint);
 	}
-
-	@Override
-	public List<PushSubscriptionEntity> findAllByUser(UserVo user) {
-
-		return subMapper.findAllByUser(user);
-	}
-
 	
+	@Override
+	public List<PushSubInfoVo> findAllByUser(LoginUser user) {
+		
+		return subMapper.selectActivePushSubsByUser(user.userNo());
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int updatePushSubRes(List<PushSendResVo> resList) throws Exception {
+
+		int result = 0;
+		for( PushSendResVo item : resList ) {
+			final Boolean status = item.status();
+			
+			if( status == null ) {
+				result += subMapper.removeSubscription( item.sub().getEndPoint() );
+			}else if( status.booleanValue() ) {
+				result += subMapper.markSuccess(item.sub().getSubNo());
+			}else {
+				if( item.sub().getFailCount() > 5 ) {
+					result += subMapper.markInactive( item.sub().getSubNo() );	
+				}else {
+					result += subMapper.markFail(item.sub().getSubNo());
+				}
+			}
+		}
+
+		return result;
+	}
 
 }

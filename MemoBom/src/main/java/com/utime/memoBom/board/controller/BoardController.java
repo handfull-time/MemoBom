@@ -21,7 +21,6 @@ import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EEmotionTargetType;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
@@ -120,24 +119,7 @@ public class BoardController {
 		
 		return boardServce.saveFragment( user, device, reqVo );
 	}
-	
-//	/**
-//	 * 특정 주제의 게시글 보기
-//	 * @param model
-//	 * @param user 현재 로그인한 사용자
-//	 * @param topicUid 특정 주제의 글만 보기 (선택)
-//	 * @param userUid 특정 사용자의 글만 보기 (선택)
-//	 * @return
-//	 */
-//	@GetMapping(path = "Mosaic.html")
-//    public String boardTopicFromUid( ModelMap model, LoginUser user, 
-//    		BoardMainParamDto param) {
-//
-//		model.addAttribute("param", param);
-//
-//		return "Board/BoardMain";
-//    }
-	
+
 	/**
 	 * 편린 목록 조회
 	 * @param user
@@ -146,9 +128,9 @@ public class BoardController {
 	 */
 	@ResponseBody
 	@GetMapping(path = "Fragments.json")
-    public FragmentListDto loadFragmentList( LoginUser user, FragmentListReqVO reqVo ) {
+    public FragmentListDto loadFragmentList( HttpServletRequest request, LoginUser user, FragmentListReqVO reqVo ) {
 
-		return boardServce.loadFragmentList( user, reqVo );
+		return boardServce.loadFragmentList( request, user, reqVo );
     }
 	
 	/**

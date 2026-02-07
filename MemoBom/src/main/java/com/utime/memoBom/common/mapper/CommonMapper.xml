@@ -51,9 +51,9 @@
 
 	<!-- 컬럼 추가 -->
     <update id="addColumn">
-        ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}
+        ALTER TABLE ${tableName} ADD IF NOT EXISTS ${columnName} ${columnType}
         <if test="columnDefault != null">
-            DEFAULT #{columnDefault}
+            DEFAULT ${columnDefault}
         </if>
         <if test="isNullable != null and !isNullable">
             NOT NULL

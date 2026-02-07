@@ -1,10 +1,6 @@
 package com.utime.memoBom.common.mapper;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * 최초 필수 테이블 관련 Mapper

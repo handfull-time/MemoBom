@@ -41,7 +41,7 @@ public class ViewResolverConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
 	
-	@Resource(name="UserArgument")
+	@Resource(name="UserArgumentResolver")
 	private HandlerMethodArgumentResolver userArgument;
 	
 	@Resource(name="UserDeviceArgumentResolver")
@@ -76,7 +76,7 @@ public class ViewResolverConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(this.viewInterceptor)
                 .addPathPatterns("/**/*.html") // 모든 경로 추가
-                .excludePathPatterns(excludeList) // 화이트리스트 제외
+//                .excludePathPatterns(excludeList) // 화이트리스트 제외
                 .excludePathPatterns("/**/*.json", "/**/*.js", "/**/*.css", "/images/**"); // 공통 정적 자원 제외
         
         registry.addInterceptor(this.logInterceptor)

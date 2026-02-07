@@ -17,11 +17,5 @@ public interface HolidayMapper {
 	 * @throws Exception
 	 */
 	int insertHoliday(HolidayVo holiList);
-
-	/**
-	 * 특정 연도의 공휴일 정보가 존재하는지 확인
-	 * @param year
-	 * @return
-	 */
-	boolean hasHolidayList(int year);
+	
 }

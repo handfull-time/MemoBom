@@ -75,13 +75,19 @@ class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public FragmentListDto loadFragmentList(LoginUser user, FragmentListReqVO reqVo) {
+	public FragmentListDto loadFragmentList(HttpServletRequest request, LoginUser user, FragmentListReqVO reqVo) {
 		
 		final FragmentListDto result = new FragmentListDto();
 		
+		final String baseUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath();
+		
 		try {
-			List<FragmentItem> list = boardDao.loadFragmentList(user, reqVo);
+			final List<FragmentItem> list = boardDao.loadFragmentList(user, reqVo);
 			result.setData( list );
+			
+			for( FragmentItem item : list ) {
+				item.setContent( SimpleLinkRenderer.render(item.getContent(), baseUrl) );
+			}
 			
 			if( reqVo.getPageNo() == 1 ) {
 				final String search = " 검색";

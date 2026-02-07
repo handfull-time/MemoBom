@@ -164,17 +164,6 @@ public class JwtProvider {
     }
     
     /**
-     * Access Token만 재발급합니다. (Refresh Token은 유지)
-     */
-    private void issueAccessCookieOnly(HttpServletRequest request,
-                                       HttpServletResponse response,
-                                       UserVo user,
-                                       String sid) {
-        final String access = this.generateToken(user, Map.of(CLM_SID, sid), ACCESS_EXP_MS);
-        this.addTokenCookie(request, response, COOKIE_ACCESS, access, ACCESS_EXP_MS);
-    }
-
-    /**
      * 사용자 토큰 쿠키 생성
      * @param request
      * @param response
@@ -221,7 +210,6 @@ public class JwtProvider {
      */
     public void procLogout(HttpServletRequest request, HttpServletResponse response) {
     	
-
         final String refreshToken = getCookieValue(request, COOKIE_REFRESH);
         
         this.deleteCookie(request, response, COOKIE_ACCESS);

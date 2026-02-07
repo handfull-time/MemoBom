@@ -17,12 +17,6 @@ class HolidayDaoImpl implements HolidayDao {
 	private HolidayMapper holidayMapper;
 	
 	@Override
-	public boolean hasHolidayList(int year) {
-		
-		return holidayMapper.hasHolidayList(year);
-	}
-	
-	@Override
 	@Transactional(rollbackFor = {Exception.class})
 	public int insertHolidayList(List<HolidayVo> holiList) throws Exception {
 
