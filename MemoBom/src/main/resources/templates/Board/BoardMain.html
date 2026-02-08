@@ -9,7 +9,7 @@
 		leftTitle=~{Fragments/Icons :: favicon},
 		title='Fragment', 
 		rightTitle=~{Fragments/Icons :: fragment_write}
-	) }"></th:block >
+	) }"></th:block>
 </th:block>
 
 <th:block layout:fragment="content">
@@ -31,8 +31,8 @@
 						<div class="topic-pill inline-flex items-center gap-1.5
 						              rounded-full px-2.5 py-1 text-sm font-semibold
 						              bg-slate-100 max-w-full min-w-0">
-						    <span class="topic-emoji shrink-0">🧩</span>
-						    <span class="topic-name truncate max-w-[12rem]">Topic</span>
+							<span class="topic-emoji shrink-0">🧩</span>
+							<span class="topic-name truncate max-w-[12rem]">Topic</span>
 						</div>
 					</div>
 
@@ -61,17 +61,20 @@
 
 					<!-- actions (RIGHT) -->
 					<div class="action-row flex items-center gap-2 shrink-0">
-						<button type="button" class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+						<button type="button"
+							class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="share">
 							<span class="icon-share w-5 h-5"></span>
 						</button>
 
-						<button type="button" class="btn-scrap p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+						<button type="button"
+							class="btn-scrap p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="scrap">
 							<span class="icon-scrap w-5 h-5"></span>
 						</button>
 
-						<button type="button" class="btn-comment p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+						<button type="button"
+							class="btn-comment p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="comment">
 							<span class="icon-comment w-5 h-5"></span>
 						</button>
@@ -80,41 +83,35 @@
 
 				<!-- 댓글 영역 (토글로 열림/닫힘) -->
 				<div class="commentWrap hidden border-t border-slate-100 px-3 py-3">
-				  <!-- [2] 댓글 작성 -->
-				  <div class="commentComposer flex items-start gap-2">
-				    <!-- [2.1] 로그인 사용자 프로필 -->
-				    <img class="meImg w-8 h-8 rounded-full border border-slate-200 object-cover" alt="me"/>
+					<!-- [2] 댓글 작성 -->
+					<div class="commentComposer flex items-start gap-2">
+						<!-- [2.1] 로그인 사용자 프로필 -->
+						<img class="meImg w-8 h-8 rounded-full border border-slate-200 object-cover" alt="me" />
 
-				    <!-- [2.2] 입력(여러 줄 자동 확장) -->
-				    <textarea
-				      class="commentInput flex-1 resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed
-				             focus:outline-none focus:ring-2 focus:ring-slate-200"
-				      rows="1"
-				      placeholder="댓글을 입력해 주세요."></textarea>
+						<!-- [2.2] 입력(여러 줄 자동 확장) -->
+						<textarea class="commentInput flex-1 resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed
+				             focus:outline-none focus:ring-2 focus:ring-slate-200" rows="1" placeholder="댓글을 입력해 주세요."></textarea>
 
-				    <!-- [2.3] 저장 버튼 -->
-				    <button type="button"
-				      class="btnSaveComment shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl
-				             border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100"
-				      aria-label="save comment">
-				      <span class="iconSaveComment"></span>
-				    </button>
-				  </div>
+						<!-- [2.3] 저장 버튼 -->
+						<button type="button" class="btnSaveComment shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl
+				             border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100" aria-label="save comment">
+							<span class="iconSaveComment"></span>
+						</button>
+					</div>
 
-				  <!-- [3] 댓글 리스트 -->
-				  <div class="commentList mt-3 space-y-2"></div>
+					<!-- [3] 댓글 리스트 -->
+					<div class="commentList mt-3 space-y-2"></div>
 
-				  <!-- 댓글 로딩 상태 -->
-				  <div class="commentState hidden mt-2 text-xs text-slate-400"></div>
-				  
-				  <!-- 댓글 더보기 버튼 (페이지네이션) -->
-				  <button type="button"
-				    class="btnMoreComments hidden mt-3 w-full flex items-center justify-center gap-2
+					<!-- 댓글 로딩 상태 -->
+					<div class="commentState hidden mt-2 text-xs text-slate-400"></div>
+
+					<!-- 댓글 더보기 버튼 (페이지네이션) -->
+					<button type="button" class="btnMoreComments hidden mt-3 w-full flex items-center justify-center gap-2
 				           rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
 				           hover:bg-slate-50 active:bg-slate-100">
-				    <span class="iconMoreComments"></span>
-				    <span>댓글 더보기</span>
-				  </button>
+						<span class="iconMoreComments"></span>
+						<span>댓글 더보기</span>
+					</button>
 
 				</div>
 
@@ -125,34 +122,34 @@
 			<div class="hidden emoji-set-type"></div>
 		</article>
 	</template>
-	
+
 	<template id="tplCommentItem">
-	  <div class="rounded-xl border border-slate-200 bg-white px-3 py-2">
-	    <div class="flex items-start gap-2">
-	      <!-- [3.1] 프로필 -->
-	      <img class="cUserImg w-7 h-7 rounded-full border border-slate-200 object-cover" alt="u"/>
+		<div class="rounded-xl border border-slate-200 bg-white px-3 py-2">
+			<div class="flex items-start gap-2">
+				<!-- [3.1] 프로필 -->
+				<img class="cUserImg w-7 h-7 rounded-full border border-slate-200 object-cover" alt="u" />
 
-	      <div class="flex-1 min-w-0">
-	        <!-- 상단 라인: [3.5]닉네임 + [3.2]날짜 + [3.3][3.4]이모션 합 -->
-	        <div class="flex items-center gap-2">
-	          <div class="cNick text-sm font-semibold text-slate-800 truncate">닉네임</div>
-	          <div class="cDate text-[11px] text-slate-400 whitespace-nowrap">2026-01-01 13:11</div>
+				<div class="flex-1 min-w-0">
+					<!-- 상단 라인: [3.5]닉네임 + [3.2]날짜 + [3.3][3.4]이모션 합 -->
+					<div class="flex items-center gap-2">
+						<div class="cNick text-sm font-semibold text-slate-800 truncate">닉네임</div>
+						<div class="cDate text-[11px] text-slate-400 whitespace-nowrap">2026-01-01 13:11</div>
 
-	          <button type="button"
-	                  class="cEmoSummary ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
-	            <span class="cEmoIcon"></span>
-	            <span class="cEmoSum tabular-nums">0</span>
-	          </button>
-	        </div>
+						<button type="button"
+							class="cEmoSummary ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+							<span class="cEmoIcon"></span>
+							<span class="cEmoSum tabular-nums">0</span>
+						</button>
+					</div>
 
-	        <!-- [3.6] 내용 -->
-	        <div class="cContent mt-1 text-sm text-slate-800 whitespace-pre-wrap break-words"></div>
+					<!-- [3.6] 내용 -->
+					<div class="cContent mt-1 text-sm text-slate-800 whitespace-pre-wrap break-words"></div>
 
-	        <!-- [4.1] 이모션 패널(토글) -->
-	        <div class="cEmoPanel hidden mt-2 flex flex-wrap gap-2"></div>
-	      </div>
-	    </div>
-	  </div>
+					<!-- [4.1] 이모션 패널(토글) -->
+					<div class="cEmoPanel hidden mt-2 flex flex-wrap gap-2"></div>
+				</div>
+			</div>
+		</div>
 	</template>
 
 </th:block>
@@ -163,14 +160,14 @@
 
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
-		
+
 		// fragment별 댓글 페이지 상태 유지
 		const commentStateMap = new Map();
 		// uid -> { page:1, loading:false, done:false }
-		
+
 		const fragmentCardMap = new Map();
 
-		
+
 		(() => {
 			const $ = (id) => document.getElementById(id);
 			const elList = $("fragmentList");
@@ -217,10 +214,10 @@
 			function svgScrap(on) {
 				if (on) return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
-  <path d="M20 5 H80 V95 L50 70 L20 95 Z" fill="#FEF3C7" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
-  <line x1="34" y1="30" x2="66" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
-  <line x1="34" y1="45" x2="66" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
-  <line x1="34" y1="60" x2="56" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
+  <path d="M20 5 H80 V95 L50 70 L20 95 Z" fill="#374151" stroke="#111827" stroke-width="4" stroke-linejoin="round"/>
+  <line x1="34" y1="30" x2="66" y2="30" stroke="#E5E7EB" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="45" x2="66" y2="45" stroke="#E5E7EB" stroke-width="3" stroke-linecap="round"/>
+  <line x1="34" y1="60" x2="56" y2="60" stroke="#E5E7EB" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 				return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
@@ -241,9 +238,9 @@
   <line x1="40" y1="60" x2="75" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 			}
-			
+
 			function svgSaveComment() {
-			  return `
+				return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none">
   <path d="M5 6 Q5 4 7 4 H17 Q19 4 19 6 V13 Q19 15 17 15 H10 L7 18 V15 H7 Q5 15 5 13 Z"
         stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
@@ -251,9 +248,9 @@
         stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 			}
-			
+
 			function svgCommentEmotionIcon() {
-			  return `
+				return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
   <path d="M5 6 Q5 4 7 4 H17 Q19 4 19 6 V13 Q19 15 17 15 H10 L7 18 V15 H7 Q5 15 5 13 Z"
         stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
@@ -266,7 +263,7 @@
 			}
 
 			function svgMoreComments() {
-			  return `
+				return `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
   <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
@@ -274,168 +271,168 @@
 
 			/* textarea 자동 확장 */
 			function autoGrowTextarea(ta) {
-			  if (!ta) return;
-			  const grow = () => {
-			    ta.style.height = 'auto';
-			    ta.style.height = Math.min(160, ta.scrollHeight) + 'px'; // 너무 커지지 않게 상한
-			  };
-			  ta.addEventListener('input', grow);
-			  grow();
+				if (!ta) return;
+				const grow = () => {
+					ta.style.height = 'auto';
+					ta.style.height = Math.min(160, ta.scrollHeight) + 'px'; // 너무 커지지 않게 상한
+				};
+				ta.addEventListener('input', grow);
+				grow();
 			}
-			
+
 			/* 댓글 토글([1]) + 로딩 */
 			async function toggleCommentsForCard(node, item) {
-				
-			  const wrap = node.querySelector('.commentWrap');
-			  const listEl = node.querySelector('.commentList');
-			  const stateEl = node.querySelector('.commentState');
 
-			  if (!wrap || !listEl) return;
+				const wrap = node.querySelector('.commentWrap');
+				const listEl = node.querySelector('.commentList');
+				const stateEl = node.querySelector('.commentState');
 
-			  const opened = !wrap.classList.contains('hidden');
+				if (!wrap || !listEl) return;
 
-			  if (opened) {
-			    // 다시 누르면 숨김
-			    wrap.classList.add('hidden');
-			    return;
-			  }
+				const opened = !wrap.classList.contains('hidden');
 
-			  // 열기: 현재 fragment가 화면 맨 위로
-			  node.scrollIntoView({ block: 'start', behavior: 'smooth' });
+				if (opened) {
+					// 다시 누르면 숨김
+					wrap.classList.add('hidden');
+					return;
+				}
 
-			  wrap.classList.remove('hidden');
-			  
-			  // ✅ 댓글 더보기 버튼 세팅(열릴 때 1회 바인딩 + 초기 숨김)
-			  const moreBtn = node.querySelector(".btnMoreComments");
-			  const moreIcon = node.querySelector(".iconMoreComments");
+				// 열기: 현재 fragment가 화면 맨 위로
+				node.scrollIntoView({block: 'start', behavior: 'smooth'});
 
-			  if (moreBtn && moreIcon) {
-			    moreIcon.innerHTML = svgMoreComments();
+				wrap.classList.remove('hidden');
 
-			    // 처음 열 때는 로딩 전이므로 숨김(데이터가 있으면 loadNextComments에서 보여줌)
-			    moreBtn.classList.add("hidden");
+				// ✅ 댓글 더보기 버튼 세팅(열릴 때 1회 바인딩 + 초기 숨김)
+				const moreBtn = node.querySelector(".btnMoreComments");
+				const moreIcon = node.querySelector(".iconMoreComments");
 
-			    // 중복 바인딩 방지
-			    if (!moreBtn.dataset.bound) {
-			      moreBtn.dataset.bound = "1";
-			      moreBtn.addEventListener("click", async (e) => {
-			        e.stopPropagation();
-			        await loadNextComments(node, item);
-			      });
-			    }
-			  }
+				if (moreBtn && moreIcon) {
+					moreIcon.innerHTML = svgMoreComments();
+
+					// 처음 열 때는 로딩 전이므로 숨김(데이터가 있으면 loadNextComments에서 보여줌)
+					moreBtn.classList.add("hidden");
+
+					// 중복 바인딩 방지
+					if (!moreBtn.dataset.bound) {
+						moreBtn.dataset.bound = "1";
+						moreBtn.addEventListener("click", async (e) => {
+							e.stopPropagation();
+							await loadNextComments(node, item);
+						});
+					}
+				}
 
 
-			  // 열기 직후 textarea 높이 재계산 (hidden에서 계산된 값 보정)
-			  const ta = node.querySelector('.commentInput');
-			  if (ta) {
-			    requestAnimationFrame(() => {
-			      ta.style.height = 'auto';
-			      ta.style.height = Math.min(160, ta.scrollHeight) + 'px';
-			    });
-			  }
+				// 열기 직후 textarea 높이 재계산 (hidden에서 계산된 값 보정)
+				const ta = node.querySelector('.commentInput');
+				if (ta) {
+					requestAnimationFrame(() => {
+						ta.style.height = 'auto';
+						ta.style.height = Math.min(160, ta.scrollHeight) + 'px';
+					});
+				}
 
-			  // 최초 상태 초기화
-			  commentStateMap.set(item.uid, { page: 1, loading: false, done: false });
-			  node.querySelector('.commentList').innerHTML = '';
-			  
-			  await loadNextComments(node, item);
+				// 최초 상태 초기화
+				commentStateMap.set(item.uid, {page: 1, loading: false, done: false});
+				node.querySelector('.commentList').innerHTML = '';
+
+				await loadNextComments(node, item);
 			}
 
 			/* 댓글 조회([3]) + 페이징(프래그먼트별 page 유지)  */
 			async function loadNextComments(node, item) {
-			  const fuid = item.uid;
-			  const st = commentStateMap.get(fuid);
-			  if (!st || st.loading || st.done) return;
+				const fuid = item.uid;
+				const st = commentStateMap.get(fuid);
+				if (!st || st.loading || st.done) return;
 
-			  const listEl = node.querySelector(".commentList");
-			  const stateEl = node.querySelector(".commentState");
-			  const moreBtn = node.querySelector(".btnMoreComments");
+				const listEl = node.querySelector(".commentList");
+				const stateEl = node.querySelector(".commentState");
+				const moreBtn = node.querySelector(".btnMoreComments");
 
-			  st.loading = true;
+				st.loading = true;
 
-			  // 로딩 UI
-			  if (stateEl) {
-			    stateEl.classList.remove("hidden");
-			    stateEl.textContent = "댓글 불러오는 중…";
-			  }
-			  if (moreBtn) {
-			    moreBtn.disabled = true;
-			    moreBtn.classList.add("opacity-60");
-			  }
+				// 로딩 UI
+				if (stateEl) {
+					stateEl.classList.remove("hidden");
+					stateEl.textContent = "댓글 불러오는 중…";
+				}
+				if (moreBtn) {
+					moreBtn.disabled = true;
+					moreBtn.classList.add("opacity-60");
+				}
 
-			  try {
-			    const url = /*[[@{/Fragment/Comments.json}]]*/ "/Fragment/Comments.json";
+				try {
+					const url = /*[[@{/Fragment/Comments.json}]]*/ "/Fragment/Comments.json";
 
-			    // ✅ 필요하면 emojiSetType도 같이 보냄(이미 요청하신 방식)
-			    const res = await apiGetWithParam(url, {
-			      uid: fuid,
-			      pageNo: st.page,
-			      emojiSetType: item?.topic?.emojiSetType
-			    });
+					// ✅ 필요하면 emojiSetType도 같이 보냄(이미 요청하신 방식)
+					const res = await apiGetWithParam(url, {
+						uid: fuid,
+						pageNo: st.page,
+						emojiSetType: item?.topic?.emojiSetType
+					});
 
-			    if (!res || res.code !== "0") {
-			      if (stateEl) stateEl.textContent = res?.message || "댓글 로딩 실패";
-			      return;
-			    }
+					if (!res || res.code !== "0") {
+						if (stateEl) stateEl.textContent = res?.message || "댓글 로딩 실패";
+						return;
+					}
 
-			    const arr = Array.isArray(res.data) ? res.data : [];
+					const arr = Array.isArray(res.data) ? res.data : [];
 
-			    // ✅ 더 이상 없음 → done 처리 + 더보기 숨김
-			    if (arr.length === 0) {
-			      st.done = true;
-			      if (stateEl) stateEl.classList.add("hidden");
-			      if (moreBtn) moreBtn.classList.add("hidden");
-			      return;
-			    }
+					// ✅ 더 이상 없음 → done 처리 + 더보기 숨김
+					if (arr.length === 0) {
+						st.done = true;
+						if (stateEl) stateEl.classList.add("hidden");
+						if (moreBtn) moreBtn.classList.add("hidden");
+						return;
+					}
 
-			    // append
-			    arr.forEach((c) => {
-			      listEl.appendChild(renderCommentItem(c, item.topic?.emojiSetType));
-			    });
+					// append
+					arr.forEach((c) => {
+						listEl.appendChild(renderCommentItem(c, item.topic?.emojiSetType));
+					});
 
-			    // 다음 페이지
-			    st.page += 1;
+					// 다음 페이지
+					st.page += 1;
 
-			    // ✅ 아직 더 있을 수 있음 → 더보기 표시
-			    if (moreBtn) moreBtn.classList.remove("hidden");
-			    if (stateEl) stateEl.classList.add("hidden");
+					// ✅ 아직 더 있을 수 있음 → 더보기 표시
+					if (moreBtn) moreBtn.classList.remove("hidden");
+					if (stateEl) stateEl.classList.add("hidden");
 
-			  } catch (e) {
-			    if (stateEl) stateEl.textContent = "네트워크 오류";
-			  } finally {
-			    st.loading = false;
+				} catch (e) {
+					if (stateEl) stateEl.textContent = "네트워크 오류";
+				} finally {
+					st.loading = false;
 
-			    if (moreBtn) {
-			      moreBtn.disabled = false;
-			      moreBtn.classList.remove("opacity-60");
-			    }
-			  }
+					if (moreBtn) {
+						moreBtn.disabled = false;
+						moreBtn.classList.remove("opacity-60");
+					}
+				}
 			}
 
 			/* 댓글 무한 스크롤(댓글 영역이 펼쳐진 경우만) */
 			function loadMoreCommentsIfAnyOpened() {
-			  const openedWraps = document.querySelectorAll(".commentWrap:not(.hidden)");
+				const openedWraps = document.querySelectorAll(".commentWrap:not(.hidden)");
 
-			  openedWraps.forEach((wrap) => {
-			    const card = wrap.closest("article");
-			    if (!card) return;
+				openedWraps.forEach((wrap) => {
+					const card = wrap.closest("article");
+					if (!card) return;
 
-			    const fuid = card.dataset.fragmentUid;
-			    if (!fuid) return;
+					const fuid = card.dataset.fragmentUid;
+					if (!fuid) return;
 
-			    const ref = fragmentCardMap.get(fuid);
-			    if (!ref) return;
+					const ref = fragmentCardMap.get(fuid);
+					if (!ref) return;
 
-			    // ✅ commentWrap 하단이 화면 아래쪽에 가까워지면 다음 페이지 로드
-			    const rect = wrap.getBoundingClientRect();
-			    const threshold = 180; // 여유값
-			    const nearBottom = rect.bottom < (window.innerHeight + threshold);
+					// ✅ commentWrap 하단이 화면 아래쪽에 가까워지면 다음 페이지 로드
+					const rect = wrap.getBoundingClientRect();
+					const threshold = 180; // 여유값
+					const nearBottom = rect.bottom < (window.innerHeight + threshold);
 
-			    if (nearBottom) {
-			      loadNextComments(ref.node, ref.item); // st.loading/done 체크는 내부에서 함
-			    }
-			  });
+					if (nearBottom) {
+						loadNextComments(ref.node, ref.item); // st.loading/done 체크는 내부에서 함
+					}
+				});
 			}
 
 
@@ -459,70 +456,70 @@
 			}
 
 			function renderEmotions(row, item) {
-			  row.innerHTML = "";
-			  const list = item.emotionList || [];
+				row.innerHTML = "";
+				const list = item.emotionList || [];
 
-			  list.forEach((e) => {
-			    const code = String(e.emotion || "");
-			    const count = Number(e.count || 0);
+				list.forEach((e) => {
+					const code = String(e.emotion || "");
+					const count = Number(e.count || 0);
 
-			    const btn = document.createElement("button");
-			    btn.type = "button";
+					const btn = document.createElement("button");
+					btn.type = "button";
 
-			    // ✅ 숫자 없는 미니멀 버튼
-			    btn.className =
-			      "emotion-btn relative inline-flex items-center justify-center " +
-			      "w-8 h-8 rounded-full border border-slate-200 bg-white " +
-			      "hover:bg-slate-50 active:bg-slate-100";
+					// ✅ 숫자 없는 미니멀 버튼
+					btn.className =
+						"emotion-btn relative inline-flex items-center justify-center " +
+						"w-8 h-8 rounded-full border border-slate-200 bg-white " +
+						"hover:bg-slate-50 active:bg-slate-100";
 
-			    btn.dataset.emotion = code;
-			    btn.dataset.count = String(count);
+					btn.dataset.emotion = code;
+					btn.dataset.count = String(count);
 
-			    // emoji만
-			    btn.innerHTML = `
+					// emoji만
+					btn.innerHTML = `
 			      <span class="text-lg leading-none">${emotionEmoji(code)}</span>
 			    `;
 
-			    // 접근성(툴팁/숫자 숨겨도 의미 유지)
-			    btn.setAttribute("aria-label", `${code}${count > 0 ? " " + count : ""}`);
+					// 접근성(툴팁/숫자 숨겨도 의미 유지)
+					btn.setAttribute("aria-label", `${code}${count > 0 ? " " + count : ""}`);
 
-			    btn.addEventListener("click", async () => {
-			      await clickEmotion(btn, item);
-			    });
+					btn.addEventListener("click", async () => {
+						await clickEmotion(btn, item);
+					});
 
-			    row.appendChild(btn);
-			  });
+					row.appendChild(btn);
+				});
 			}
 
 			function bounce(el) {
-			  // Tailwind 커스텀 애니메이션 설정 없이 Web Animations API로 처리
-			  el.animate(
-			    [
-			      { transform: "scale(1)" },
-			      { transform: "scale(1.14)" },
-			      { transform: "scale(0.96)" },
-			      { transform: "scale(1)" }
-			    ],
-			    { duration: 220, easing: "cubic-bezier(.2,.9,.2,1)" }
-			  );
+				// Tailwind 커스텀 애니메이션 설정 없이 Web Animations API로 처리
+				el.animate(
+					[
+						{transform: "scale(1)"},
+						{transform: "scale(1.14)"},
+						{transform: "scale(0.96)"},
+						{transform: "scale(1)"}
+					],
+					{duration: 220, easing: "cubic-bezier(.2,.9,.2,1)"}
+				);
 			}
 
 			function showEmotionTooltip(btn, count) {
-			  // ✅ 0이면 아예 표시하지 않음
-			  if (!count || count <= 0) return;
+				// ✅ 0이면 아예 표시하지 않음
+				if (!count || count <= 0) return;
 
-			  // 같은 카드(또는 같은 row) 내 기존 툴팁 제거
-			  const root = btn.closest("article") || btn.closest(".emotion-row") || document;
-			  root.querySelectorAll(".emotion-tooltip").forEach(el => el.remove());
+				// 같은 카드(또는 같은 row) 내 기존 툴팁 제거
+				const root = btn.closest("article") || btn.closest(".emotion-row") || document;
+				root.querySelectorAll(".emotion-tooltip").forEach(el => el.remove());
 
-			  const tip = document.createElement("div");
-			  tip.className =
-			    "emotion-tooltip absolute -top-9 left-1/2 -translate-x-1/2 " +
-			    "whitespace-nowrap rounded-full border border-slate-200 bg-white " +
-			    "px-2 py-1 text-xs text-slate-700 shadow-md pointer-events-none";
+				const tip = document.createElement("div");
+				tip.className =
+					"emotion-tooltip absolute -top-9 left-1/2 -translate-x-1/2 " +
+					"whitespace-nowrap rounded-full border border-slate-200 bg-white " +
+					"px-2 py-1 text-xs text-slate-700 shadow-md pointer-events-none";
 
-			  // 말풍선 꼬리
-			  tip.innerHTML = `
+				// 말풍선 꼬리
+				tip.innerHTML = `
 			    <div class="flex items-center gap-1">
 			      <span class="font-semibold tabular-nums">${Number(count).toLocaleString()}</span>
 			    </div>
@@ -530,27 +527,27 @@
 			                bg-white border-r border-b border-slate-200"></div>
 			  `;
 
-			  btn.appendChild(tip);
+				btn.appendChild(tip);
 
-			  // 등장 애니메이션
-			  tip.animate(
-			    [
-			      { opacity: 0, transform: "translate(-50%, 6px) scale(0.98)" },
-			      { opacity: 1, transform: "translate(-50%, 0px) scale(1)" }
-			    ],
-			    { duration: 140, easing: "ease-out" }
-			  );
+				// 등장 애니메이션
+				tip.animate(
+					[
+						{opacity: 0, transform: "translate(-50%, 6px) scale(0.98)"},
+						{opacity: 1, transform: "translate(-50%, 0px) scale(1)"}
+					],
+					{duration: 140, easing: "ease-out"}
+				);
 
-			  // 1.2초 후 자동 제거
-			  window.setTimeout(() => {
-			    tip.animate(
-			      [
-			        { opacity: 1, transform: "translate(-50%, 0px) scale(1)" },
-			        { opacity: 0, transform: "translate(-50%, 6px) scale(0.98)" }
-			      ],
-			      { duration: 120, easing: "ease-in" }
-			    ).onfinish = () => tip.remove();
-			  }, 1200);
+				// 1.2초 후 자동 제거
+				window.setTimeout(() => {
+					tip.animate(
+						[
+							{opacity: 1, transform: "translate(-50%, 0px) scale(1)"},
+							{opacity: 0, transform: "translate(-50%, 6px) scale(0.98)"}
+						],
+						{duration: 120, easing: "ease-in"}
+					).onfinish = () => tip.remove();
+				}, 1200);
 			}
 
 			function emotionEmoji(code) {
@@ -570,56 +567,56 @@
 			}
 
 			async function clickEmotion(btn, item) {
-			  const uid = (item.uid || "").trim();
-			  const emotion = (btn.dataset.emotion || "").trim();
-			  const emojiSetType = safeText(item.topic?.emojiSetType, "");
+				const uid = (item.uid || "").trim();
+				const emotion = (btn.dataset.emotion || "").trim();
+				const emojiSetType = safeText(item.topic?.emojiSetType, "");
 
-			  if (!uid || !emotion || !emojiSetType) return;
+				if (!uid || !emotion || !emojiSetType) return;
 
-			  // ✅ 즉시 손맛(바운스)
-			  bounce(btn);
+				// ✅ 즉시 손맛(바운스)
+				bounce(btn);
 
-			  btn.disabled = true;
-			  btn.classList.add("opacity-60");
+				btn.disabled = true;
+				btn.classList.add("opacity-60");
 
-			  try {
-			    const url = /*[[@{/Fragment/EmotionFragment.json}]]*/ "/Fragment/EmotionFragment.json";
-			    const res = await apiPost(url, { uid, emotion, emojiSetType });
+				try {
+					const url = /*[[@{/Fragment/EmotionFragment.json}]]*/ "/Fragment/EmotionFragment.json";
+					const res = await apiPost(url, {uid, emotion, emojiSetType});
 
-			    if (!res || res.code !== "0") {
-				  showToast("오류", (res && res.message) ? res.message : "이모션 처리 실패", ToastType.ERROR);
-			      return;
-			    }
+					if (!res || res.code !== "0") {
+						showToast("오류", (res && res.message) ? res.message : "이모션 처리 실패", ToastType.ERROR);
+						return;
+					}
 
-			    // ✅ 서버가 emotionList 전체를 내려줌 → 교체
-			    const newList = Array.isArray(res.data) ? res.data : [];
-			    item.emotionList = newList;
+					// ✅ 서버가 emotionList 전체를 내려줌 → 교체
+					const newList = Array.isArray(res.data) ? res.data : [];
+					item.emotionList = newList;
 
-			    // 해당 카드의 row를 다시 렌더
-			    const row = btn.closest(".emotion-row");
-			    if (row) {
-			      renderEmotions(row, item);
+					// 해당 카드의 row를 다시 렌더
+					const row = btn.closest(".emotion-row");
+					if (row) {
+						renderEmotions(row, item);
 
-			      // ✅ 업데이트된 버튼을 찾아서 툴팁 표시(0이면 안 뜸)
-			      const newBtn = row.querySelector(`button.emotion-btn[data-emotion="${CSS.escape(emotion)}"]`);
-			      if (newBtn) {
-			        const cntObj = newList.find(x => String(x.emotion) === emotion);
-			        const updatedCount = Number(cntObj?.count || 0);
+						// ✅ 업데이트된 버튼을 찾아서 툴팁 표시(0이면 안 뜸)
+						const newBtn = row.querySelector(`button.emotion-btn[data-emotion="${CSS.escape(emotion)}"]`);
+						if (newBtn) {
+							const cntObj = newList.find(x => String(x.emotion) === emotion);
+							const updatedCount = Number(cntObj?.count || 0);
 
-			        // 바운스는 한 번 더(원하면 제거 가능)
-			        bounce(newBtn);
+							// 바운스는 한 번 더(원하면 제거 가능)
+							bounce(newBtn);
 
-			        showEmotionTooltip(newBtn, updatedCount);
-			      }
-			    }
+							showEmotionTooltip(newBtn, updatedCount);
+						}
+					}
 
-			  } catch (e) {
-				console.error(e);
-				showToast("오류", "네트워크 오류로 이모션 처리 실패", ToastType.ERROR);
-			  } finally {
-			    btn.disabled = false;
-			    btn.classList.remove("opacity-60");
-			  }
+				} catch (e) {
+					console.error(e);
+					showToast("오류", "네트워크 오류로 이모션 처리 실패", ToastType.ERROR);
+				} finally {
+					btn.disabled = false;
+					btn.classList.remove("opacity-60");
+				}
 			}
 
 
@@ -628,7 +625,25 @@
 
 				// icons
 				node.querySelector(".icon-share").innerHTML = svgShare();
-				node.querySelector(".icon-comment").innerHTML = svgComment();
+				//node.querySelector(".icon-comment").innerHTML = svgComment();
+				// ✅ 댓글 허용 여부
+				const useComments = !!item?.topic?.comments;
+				const btnComment = node.querySelector(".btn-comment");
+				const iconComment = node.querySelector(".icon-comment");
+
+				if (!useComments) {
+					// 버튼 자체 숨김(권장)
+					btnComment?.classList.add("hidden");
+				} else {
+					// 표시 + 아이콘 + 클릭 바인딩
+					btnComment?.classList.remove("hidden");
+					if (iconComment) iconComment.innerHTML = svgComment();
+
+					btnComment?.addEventListener("click", async (e) => {
+						e.stopPropagation();
+						await toggleCommentsForCard(node, item);
+					});
+				}
 
 				// scrap icon initial
 				const iconScrap = node.querySelector(".icon-scrap");
@@ -636,56 +651,49 @@
 
 				// share (일단 placeholder)
 				node.querySelector(".btn-share").addEventListener("click", async (e) => {
-				  e.stopPropagation();
+					e.stopPropagation();
 
-				  const uid = node.querySelector(".fragment-uid")?.textContent?.trim();
-				  if (!uid) {
-				    showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
-				    return;
-				  }
+					const uid = node.querySelector(".fragment-uid")?.textContent?.trim();
+					if (!uid) {
+						showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
+						return;
+					}
 
-				  // 1) 지원 체크
-				  if (!navigator.share) {
-				    showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
-				    return;
-				  }
+					// 1) 지원 체크
+					if (!navigator.share) {
+						showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
+						return;
+					}
 
-				  try {
-				    // 2) 공유 데이터 조회
-				    const url = /*[[@{/FragmentShare.json}]]*/ "/FragmentShare.json";
-				    const res = await apiGetWithParam(url, { uid });
+					try {
+						// 2) 공유 데이터 조회
+						const url = /*[[@{/FragmentShare.json}]]*/ "/FragmentShare.json";
+						const res = await apiGetWithParam(url, {uid});
 
-				    if (!res || res.code !== "0" || !res.data) {
-				      showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
-				      return;
-				    }
+						if (!res || res.code !== "0" || !res.data) {
+							showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
+							return;
+						}
 
-				    const payload = {
-				      title: res.data.title ?? "",
-				      text: res.data.text ?? "",
-				      url: res.data.url ?? ""
-				    };
+						const payload = {
+							title: res.data.title ?? "",
+							text: res.data.text ?? "",
+							url: res.data.url ?? ""
+						};
 
-				    // (선택) Web Share API Level 2: 특정 타입 지원 확인
-				    // if (navigator.canShare && !navigator.canShare(payload)) { ... }
+						// (선택) Web Share API Level 2: 특정 타입 지원 확인
+						// if (navigator.canShare && !navigator.canShare(payload)) { ... }
 
-				    // 3) 실제 공유
-				    await navigator.share(payload);
+						// 3) 실제 공유
+						await navigator.share(payload);
 
-				  } catch (err) {
-				    // 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
-				    // 필요하면 err.name === 'AbortError' 분기 가능
-					console.error(err);
-				    showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
-				  }
+					} catch (err) {
+						// 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
+						// 필요하면 err.name === 'AbortError' 분기 가능
+						console.error(err);
+						showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
+					}
 				});
-
-				// comment (placeholder)
-				node.querySelector(".btn-comment").addEventListener("click", async (e) => {
-				  e.stopPropagation();
-				  await toggleCommentsForCard(node, item);
-				});
-
 
 				// scrap toggle
 				let busy = false;
@@ -696,7 +704,7 @@
 					busy = true;
 					try {
 						const url = /*[[@{/Fragment/Scrap.json}]]*/ "/Fragment/Scrap.json";
-						const res = await apiPost(url, { uid });
+						const res = await apiPost(url, {uid});
 
 						if (!res || res.code !== "0") {
 							showToast("오류", (res && res.message) ? res.message : "스크랩 실패", ToastType.ERROR);
@@ -725,13 +733,13 @@
 
 				// 새로 추가
 				node.dataset.fragmentUid = safeText(item.uid, "");
-				fragmentCardMap.set(node.dataset.fragmentUid, { node, item });
+				fragmentCardMap.set(node.dataset.fragmentUid, {node, item});
 
 				const pill = node.querySelector(".topic-pill");
 				pill.addEventListener("click", (e) => {
-				  e.stopPropagation();
-				  const topicUid = item.topic?.uid;
-				  location.href = `${window.contextPath}/Fragment/index.html?topicUid=${topicUid}`;
+					e.stopPropagation();
+					const topicUid = item.topic?.uid;
+					location.href = `${window.contextPath}/Fragment/index.html?topicUid=${topicUid}`;
 				});
 
 				node.querySelector(".topic-emoji").textContent = safeText(item.topic?.imogi, "🧩");
@@ -742,184 +750,195 @@
 				const profileUrl = safeText(item.user?.profileUrl, "");
 				if (profileUrl) userImg.src = profileUrl; else userImg.removeAttribute("src");
 				userImg.alt = item.user?.nickname;
-				
+
 				const userNameEl = node.querySelector(".user-name");
 				userNameEl.textContent = safeText(item.user?.nickname, "Unknown");
 				userNameEl.addEventListener("click", (e) => {
-                  e.stopPropagation();
-                  const userUid = item.user?.uid;
-                  if (userUid) {
-					// 여기에서 프로필로 가게 할까? 아니면 이사람의 작성글을 보여줄까?
-					  //location.href = `${window.contextPath}/User/Profile.html?uid=${userUid}`;
-					  location.href = `${window.contextPath}/Fragment/index.html?userUid=${userUid}`;
-                  }
+					e.stopPropagation();
+					const userUid = item.user?.uid;
+					if (userUid) {
+						// 여기에서 프로필로 가게 할까? 아니면 이사람의 작성글을 보여줄까?
+						//location.href = `${window.contextPath}/User/Profile.html?uid=${userUid}`;
+						location.href = `${window.contextPath}/Fragment/index.html?userUid=${userUid}`;
+					}
 				});
 				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
 				node.querySelector(".content").innerHTML = safeText(item.content, "");
 
 				renderHashtags(node.querySelector(".hashtag-box"), item.hashtagList || []);
-				renderEmotions(node.querySelector(".emotion-row"), item);
+				// ✅ emotion 설정 반영
+				const emotionRow = node.querySelector(".emotion-row");
+				const useEmotion = !!item?.topic?.emotion;
+
+				if (!useEmotion) {
+					// 숨김
+					emotionRow?.classList.add("hidden");
+				} else {
+					// 표시 + 렌더
+					emotionRow?.classList.remove("hidden");
+					renderEmotions(emotionRow, item);
+				}
 
 				bindActions(node, item);
-				
+
 				bindCommentComposer(node, item, item.user?.profileUrl);
 
 				return node;
 			}
-			
+
 			function sumEmotion(emotionList) {
-			  if (!Array.isArray(emotionList)) return 0;
-			  return emotionList.reduce((acc, x) => acc + (Number(x.count) || 0), 0);
+				if (!Array.isArray(emotionList)) return 0;
+				return emotionList.reduce((acc, x) => acc + (Number(x.count) || 0), 0);
 			}
 
 			function renderCommentItem(comment, emojiSetType) {
-			  const tpl = document.getElementById('tplCommentItem');
-			  const node = tpl.content.firstElementChild.cloneNode(true);
+				const tpl = document.getElementById('tplCommentItem');
+				const node = tpl.content.firstElementChild.cloneNode(true);
 
-			  // 프로필/닉/날짜/내용
-			  const img = node.querySelector('.cUserImg');
-			  const nick = node.querySelector('.cNick');
-			  const date = node.querySelector('.cDate');
-			  const cont = node.querySelector('.cContent');
+				// 프로필/닉/날짜/내용
+				const img = node.querySelector('.cUserImg');
+				const nick = node.querySelector('.cNick');
+				const date = node.querySelector('.cDate');
+				const cont = node.querySelector('.cContent');
 
-			  const u = comment.user || {};
-			  if (img && u.profileUrl) img.src = u.profileUrl;
-			  nick.textContent = u.nickname || 'User';
-			  date.textContent = comment.regDate || '';
-			  cont.textContent = comment.content || '';
+				const u = comment.user || {};
+				if (img && u.profileUrl) img.src = u.profileUrl;
+				nick.textContent = u.nickname || 'User';
+				date.textContent = comment.regDate || '';
+				cont.textContent = comment.content || '';
 
-			  // [3.3][3.4]
-			  const btnSum = node.querySelector('.cEmoSummary');
-			  const icon = node.querySelector('.cEmoIcon');
-			  const sumEl = node.querySelector('.cEmoSum');
-			  const panel = node.querySelector('.cEmoPanel');
+				// [3.3][3.4]
+				const btnSum = node.querySelector('.cEmoSummary');
+				const icon = node.querySelector('.cEmoIcon');
+				const sumEl = node.querySelector('.cEmoSum');
+				const panel = node.querySelector('.cEmoPanel');
 
-			  icon.innerHTML = svgCommentEmotionIcon();
-			  const applySum = () => { sumEl.textContent = String(sumEmotion(comment.emotionList || [])); };
-			  applySum();
+				icon.innerHTML = svgCommentEmotionIcon();
+				const applySum = () => {sumEl.textContent = String(sumEmotion(comment.emotionList || []));};
+				applySum();
 
-			  // 패널에 이모션 버튼 렌더(원글과 동일한 렌더 전략)
-			  const renderPanel = () => {
-			    panel.innerHTML = '';
-			    (comment.emotionList || []).forEach(e => {
-			      const code = String(e.emotion || '');
-			      const btn = document.createElement('button');
-			      btn.type = 'button';
-			      btn.className = "emotion-btn relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50";
-			      btn.dataset.emotion = code;
-			      btn.innerHTML = `<span class="text-lg">${emotionEmoji(code)}</span>`;
+				// 패널에 이모션 버튼 렌더(원글과 동일한 렌더 전략)
+				const renderPanel = () => {
+					panel.innerHTML = '';
+					(comment.emotionList || []).forEach(e => {
+						const code = String(e.emotion || '');
+						const btn = document.createElement('button');
+						btn.type = 'button';
+						btn.className = "emotion-btn relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50";
+						btn.dataset.emotion = code;
+						btn.innerHTML = `<span class="text-lg">${emotionEmoji(code)}</span>`;
 
-			      btn.addEventListener('click', async (ev) => {
-			        ev.stopPropagation();
-			        await clickCommentEmotion(btn, comment, emojiSetType, applySum, renderPanel);
-			      });
+						btn.addEventListener('click', async (ev) => {
+							ev.stopPropagation();
+							await clickCommentEmotion(btn, comment, emojiSetType, applySum, renderPanel);
+						});
 
-			      panel.appendChild(btn);
-			    });
-			  };
-			  renderPanel();
+						panel.appendChild(btn);
+					});
+				};
+				renderPanel();
 
-			  // 토글
-			  btnSum.addEventListener('click', (e) => {
-			    e.stopPropagation();
-			    panel.classList.toggle('hidden');
-			  });
+				// 토글
+				btnSum.addEventListener('click', (e) => {
+					e.stopPropagation();
+					panel.classList.toggle('hidden');
+				});
 
-			  return node;
+				return node;
 			}
 
 			async function clickCommentEmotion(btn, comment, emojiSetType, applySum, rerenderPanel) {
-			  const uid = (comment.uid || '').trim();
-			  const emotion = (btn.dataset.emotion || '').trim();
-			  if (!uid || !emotion) return;
+				const uid = (comment.uid || '').trim();
+				const emotion = (btn.dataset.emotion || '').trim();
+				if (!uid || !emotion) return;
 
-			  // 원글과 동일한 액션(바운스/툴팁) 재사용 가능
-			  // bounce(btn);
+				// 원글과 동일한 액션(바운스/툴팁) 재사용 가능
+				// bounce(btn);
 
-			  btn.disabled = true;
-			  btn.classList.add('opacity-60');
+				btn.disabled = true;
+				btn.classList.add('opacity-60');
 
-			  try {
-			    const url = /*[[@{/Fragment/EmotionComment.json}]]*/ '/Fragment/EmotionComment.json';
-			    const res = await apiPost(url, { uid, emotion, emojiSetType });
+				try {
+					const url = /*[[@{/Fragment/EmotionComment.json}]]*/ '/Fragment/EmotionComment.json';
+					const res = await apiPost(url, {uid, emotion, emojiSetType});
 
-			    if (!res || res.code !== "0") {
-				  showToast("오류", res?.message || "댓글 이모션 실패", ToastType.ERROR);
-			      return;
-			    }
+					if (!res || res.code !== "0") {
+						showToast("오류", res?.message || "댓글 이모션 실패", ToastType.ERROR);
+						return;
+					}
 
-			    const newList = Array.isArray(res.data) ? res.data : [];
-			    comment.emotionList = newList;
+					const newList = Array.isArray(res.data) ? res.data : [];
+					comment.emotionList = newList;
 
-			    rerenderPanel();
-			    applySum();
+					rerenderPanel();
+					applySum();
 
-			  } catch (e) {
-			    console.error( e );
-				showToast("오류", "네트워크 오류로 댓글 이모션 실패", ToastType.ERROR);
-			  } finally {
-			    btn.disabled = false;
-			    btn.classList.remove('opacity-60');
-			  }
+				} catch (e) {
+					console.error(e);
+					showToast("오류", "네트워크 오류로 댓글 이모션 실패", ToastType.ERROR);
+				} finally {
+					btn.disabled = false;
+					btn.classList.remove('opacity-60');
+				}
 			}
 
-			
+
 			async function bindCommentComposer(node, item, loginUserProfileUrl) {
-			  const wrap = node.querySelector('.commentWrap');
-			  const meImg = node.querySelector('.meImg');
-			  const input = node.querySelector('.commentInput');
-			  const btn = node.querySelector('.btnSaveComment');
-			  const icon = node.querySelector('.iconSaveComment');
+				const wrap = node.querySelector('.commentWrap');
+				const meImg = node.querySelector('.meImg');
+				const input = node.querySelector('.commentInput');
+				const btn = node.querySelector('.btnSaveComment');
+				const icon = node.querySelector('.iconSaveComment');
 
-			  if (!wrap || !input || !btn || !icon) return;
+				if (!wrap || !input || !btn || !icon) return;
 
-			  if (meImg && loginUserProfileUrl) meImg.src = loginUserProfileUrl;
-			  icon.innerHTML = svgSaveComment();
+				if (meImg && loginUserProfileUrl) meImg.src = loginUserProfileUrl;
+				icon.innerHTML = svgSaveComment();
 
-			  autoGrowTextarea(input);
+				autoGrowTextarea(input);
 
-			  btn.addEventListener('click', async (e) => {
-			    e.stopPropagation();
+				btn.addEventListener('click', async (e) => {
+					e.stopPropagation();
 
-			    const content = (input.value || '').trim();
-			    if (!content) {
-			      showToast?.("댓글", "댓글을 입력해 주세요.", ToastType?.INFO ?? "info", 1200);
-			      return;
-			    }
+					const content = (input.value || '').trim();
+					if (!content) {
+						showToast?.("댓글", "댓글을 입력해 주세요.", ToastType?.INFO ?? "info", 1200);
+						return;
+					}
 
-			    btn.disabled = true;
-			    btn.classList.add('opacity-60');
+					btn.disabled = true;
+					btn.classList.add('opacity-60');
 
-			    try {
-			      const url = /*[[@{/Fragment/SaveComment.json}]]*/ '/Fragment/SaveComment.json';
-			      const res = await apiPost(url, {
-			        uid: item.uid,
-			        content,
-			        emojiSetType: item.topic?.emojiSetType
-			      });
+					try {
+						const url = /*[[@{/Fragment/SaveComment.json}]]*/ '/Fragment/SaveComment.json';
+						const res = await apiPost(url, {
+							uid: item.uid,
+							content,
+							emojiSetType: item.topic?.emojiSetType
+						});
 
-			      if (!res || res.code !== "0" || !res.data) {
-					showToast("오류", res?.message || "댓글 저장 실패", ToastType.ERROR);
-			        return;
-			      }
+						if (!res || res.code !== "0" || !res.data) {
+							showToast("오류", res?.message || "댓글 저장 실패", ToastType.ERROR);
+							return;
+						}
 
-			      // 성공: 가장 위에 추가
-			      const listEl = node.querySelector('.commentList');
-			      if (listEl) {
-			        listEl.prepend(renderCommentItem(res.data, item.topic?.emojiSetType));
-			      }
+						// 성공: 가장 위에 추가
+						const listEl = node.querySelector('.commentList');
+						if (listEl) {
+							listEl.prepend(renderCommentItem(res.data, item.topic?.emojiSetType));
+						}
 
-			      input.value = '';
-			      input.style.height = 'auto';
+						input.value = '';
+						input.style.height = 'auto';
 
-			    } catch (err) {
-				  console.error( e );
-				  showToast("오류", "네트워크 오류로 댓글 저장 실패", ToastType.ERROR);
-			    } finally {
-			      btn.disabled = false;
-			      btn.classList.remove('opacity-60');
-			    }
-			  });
+					} catch (err) {
+						console.error(e);
+						showToast("오류", "네트워크 오류로 댓글 저장 실패", ToastType.ERROR);
+					} finally {
+						btn.disabled = false;
+						btn.classList.remove('opacity-60');
+					}
+				});
 			}
 
 			async function contentLoad() {
@@ -940,8 +959,8 @@
 					}
 
 					const list = res.data;
-					
-					if( pageNo === 1 ){
+
+					if (pageNo === 1) {
 						const header = document.getElementById("headerTitle");
 						if (header && res.title) {
 							header.textContent = res.title;
@@ -981,9 +1000,9 @@
 					if (goingUp && top < 120) {
 						contentLoad();
 					}
-					
+
 					lastTop = top;
-				}, { passive: true });
+				}, {passive: true});
 			}
 
 			async function init() {
@@ -993,22 +1012,22 @@
 
 			window.addEventListener("DOMContentLoaded", init);
 
-			window.headerSearch = function(keyword) {
-				
-				if( !keyword || keyword.trim() === "" ){
+			window.headerSearch = function (keyword) {
+
+				if (!keyword || keyword.trim() === "") {
 					return;
 				}
-				
-	            // Mosaic 검색 처리
+
+				// Mosaic 검색 처리
 				const url = /*[[@{/Fragment/index.html}]]*/ "/Mosaic/index.html";
-				location.replace( url + "?keyword=" + encodeURIComponent(keyword) );
+				location.replace(url + "?keyword=" + encodeURIComponent(keyword));
 			}
 			// header buttons
-			window.functionLeft = function() { 
-				location.replace(/*[[@{/}]]*/ '/'); 
+			window.functionLeft = function () {
+				location.replace(/*[[@{/}]]*/ '/');
 			}
-			
-			window.functionRight = function() {
+
+			window.functionRight = function () {
 				location.href = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
 			}
 		})();

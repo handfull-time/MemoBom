@@ -29,6 +29,8 @@ spring:
     console:
       enabled: true
       path: /DbConsoleH2
+      settings:
+        web-allow-others: true
   mvc:
     pathmatch:
       matching-strategy: ant-path-matcher

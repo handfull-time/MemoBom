@@ -1,35 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-	  <!-- meta 네이버:카카오 지원 -->
-	  <meta property="og:type" content="website">
-	  <!-- 공유시 이동 url -->
-	  <meta property="og:url" th:content="${item.url}">
-	  <!-- 공유시 보여질 제목 -->
-	  <meta property="og:title" th:content="${item.title}">
-	  <!-- 공유시 보여질 이미지 경로 -->
-	  <meta property="og:image" th:content="@{/images/favicon/android-icon-192x192.png}">
-	  <!-- 공유시 보여질 설명 -->
-	  <meta property="og:description" th:content="${item.text}">
-	  <!-- 사이트 이름 -->
-	  <meta property="og:site_name" th:content="${item.title}">
+	<!-- meta 네이버:카카오 지원 -->
+	<meta property="og:type" content="website">
+	<!-- 공유시 이동 url -->
+	<meta property="og:url" th:content="${item.url}">
+	<!-- 공유시 보여질 제목 -->
+	<meta property="og:title" th:content="${item.title}">
+	<!-- 공유시 보여질 이미지 경로 -->
+	<meta property="og:image" th:content="@{/images/favicon/favicon_192.png}">
+	<!-- 공유시 보여질 설명 -->
+	<meta property="og:description" th:content="${item.text}">
+	<!-- 사이트 이름 -->
+	<meta property="og:site_name" th:content="${item.title}">
 
-	  <meta property="og:ignore_canonical" content="true">
+	<meta property="og:ignore_canonical" content="true">
 
-	  <meta property="og:article:section" content="MemoBom / Spring">
+	<meta property="og:article:section" content="MemoBom / Spring">
 
 
-	  <!-- X -->
-	  <meta property="twitter:card" content="card">
-	  <meta property="twitter:title" th:content="${item.title}">
-	  <meta property="twitter:description" th:content="${item.text}">
-	  <meta property="twitter:image" th:content="@{/images/favicon/android-icon-192x192.png}">
-	  <meta property="twitter:url" th:content="${item.url}">
+	<!-- X -->
+	<meta property="twitter:card" content="card">
+	<meta property="twitter:title" th:content="${item.title}">
+	<meta property="twitter:description" th:content="${item.text}">
+	<meta property="twitter:image" th:content="@{/images/favicon/favicon_192.png}">
+	<meta property="twitter:url" th:content="${item.url}">
 
-	  <!-- Mobile IOS -->
-	  <meta property="al:web:url" th:content="${item.url}">
+	<!-- Mobile IOS -->
+	<meta property="al:web:url" th:content="${item.url}">
+
+	<noscript>
+		<meta http-equiv="refresh" th:content="'0;url=' + ${item.url}">
+	</noscript>
+
 </head>
+
 <body>
-    [[${item.text}]]
+	<script th:inline="javascript">
+		(function () {
+			// 일부 인앱/프리뷰는 'bot html'을 그대로 보여줄 수 있으니
+			// 사람에게는 즉시 실제 페이지로 보냄.
+			var url = /*[[${item.url}]]*/ "";
+
+			if (!url) return;
+
+			// history를 더럽히지 않으려면 replace
+			try {location.replace(url);} catch (e) {location.href = url;}
+		})();
+	</script>
+
+	[[${item.text}]]
 </body>
+
 </html>
