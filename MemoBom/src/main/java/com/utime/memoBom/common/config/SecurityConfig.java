@@ -105,6 +105,7 @@ public class SecurityConfig {
         	    		, "/Mosaic/Ensemble.html"
         	    		, "/Mosaic/Save.json"
         	    		, "/Mosaic/Flow.json"
+        	    		, "/Lotus/Login.html"
         	    		, "/Push/**"
         	    		, "/User/**"
         	    		, "/My/**"

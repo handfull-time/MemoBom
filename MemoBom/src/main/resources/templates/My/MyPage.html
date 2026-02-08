@@ -106,6 +106,14 @@
 					</li>
 				</ul>
 			</div>
+			
+			<th:block th:if="isAdmin">
+				<div class="h-[1px] bg-slate-200/70"></div>
+				<a th:href="@{/Admin/index.html}"
+				   class="shrink-0 px-2 py-2 text-sm font-medium text-blue-500 hover:text-blue-600">
+				    AdminPage
+				</a>
+			</th:block>
 
 			<!-- 하단 액션: 로그아웃(버튼) + 탈퇴(우측) -->
 			<div class="px-4 pb-5 pt-2">
@@ -250,16 +258,17 @@
 			}
 
 			/* =====================
-			 * 이탈 훅
+			 * 닉네임 포커스 아웃 시 저장 ⭕
 			 * ===================== */
-			document.addEventListener('visibilitychange', () => {
-				if (document.visibilityState === 'hidden') {
-					saveNicknameIfNeeded();
-				}
+			$nickname.addEventListener('blur', async () => {
+			    await saveNicknameIfNeeded();
 			});
 
-			window.addEventListener('pagehide', () => {
-				saveNicknameIfNeeded();
+			$nickname.addEventListener('keydown', (e) => {
+			    if (e.key === 'Enter') {
+			        e.preventDefault();
+			        $nickname.blur(); // blur → 저장 트리거
+			    }
 			});
 
 			/* =====================

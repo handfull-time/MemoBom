@@ -1,7 +1,11 @@
 package com.utime.memoBom.user.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.service.AuthService;
 import com.utime.memoBom.user.service.UserService;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,6 +40,21 @@ public class MyController {
 	final UserService userService;
 	final AuthService authService;
 
+	@Value("${env.admin.userNo}")
+	private String adminUserNo;
+	
+	private Set<Long> adminUserNoSet;
+	
+	@PostConstruct
+	private void init() {
+
+		this.adminUserNoSet = Arrays.stream(adminUserNo.split(","))
+		        .map(String::trim)
+		        .filter(s -> s.matches("\\d+"))
+		        .map(Long::valueOf)
+		        .collect(Collectors.toSet());
+	}
+	
 	/**
 	 * MyPage 화면
 	 * @param request
@@ -48,6 +68,8 @@ public class MyController {
 			return "redirect:/About/Application.html";
 		}else {
 			model.addAttribute("item", userService.getMyPage(user));
+			model.addAttribute("isAdmin", adminUserNoSet.contains(user.userNo()) );
+			
 			return "My/MyPage";
 		}
 	}

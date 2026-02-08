@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.utime.memoBom.admin.service.impl.GeminiClient;
+import com.utime.memoBom.admin.vo.gemini.GeminiResponse;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.security.LoginUser;
@@ -213,5 +215,38 @@ public class TestController {
         
     	return res;
     }
-}
+	
+	private final GeminiClient gc; 
+	
+	@ResponseBody
+	@GetMapping("Gemini.json")
+    public ReturnBasic questionGemini() throws Exception {
+		
+		final GeminiResponse response = gc.call("hi~!");
+		String jsonText =
+			    response.getCandidates().get(0)
+			            .getContent().getParts().get(0).getText();
+		
+		
+		return new ReturnBasic("", jsonText);
+	}
 
+}
+//
+//
+//
+//curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" \
+//-H 'Content-Type: application/json' \
+//-H 'X-goog-api-key: AIzaSyAA5mtwxTKqhvy-7DvPmUXxqAhee9zMH_I' \
+//-X POST \
+//-d '{
+//  "contents": [
+//    {
+//      "parts": [
+//        {
+//          "text": "Explain how AI works in a few words"
+//        }
+//      ]
+//    }
+//  ]
+//}'

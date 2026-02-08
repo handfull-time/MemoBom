@@ -2,8 +2,8 @@
 
 	<th:block th:with="path=${currentPath}">
 
-	<nav class="text-sm space-y-1">
-		<th:block th:if="${user ne null}">
+		<nav class="text-sm space-y-1">
+			<th:block th:if="${user ne null}">
 				<!-- 메뉴 항목들: 예시 (active 처리 포함) -->
 				<a th:href="@{/My/index.html}"
 					th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
@@ -68,7 +68,7 @@
 						th:classappend="${path == '/My/Calendar.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 					<span class="font-medium">Calendar</span>
 				</a>
-
+<!--
 				<div class="my-2 border-t border-gray-200"></div>
 
 				<a th:href="@{/About/Feedback.html}"
@@ -79,50 +79,41 @@
 						th:classappend="${path == '/About/Feedback.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 					<span class="font-medium">Feedback</span>
 				</a>
-		</th:block>
-		
-		<th:block th:if="${user eq null}">
-			<a th:href="@{/Auth/Login.html}"
-				class="flex items-center gap-2 px-3 py-2 rounded-xl transition text-slate-700 hover:bg-gray-100"
-				onclick="MyMenu.closeIfMobile()">
-				<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-				<span class="font-medium">Login</span>
-			</a>
-		</th:block>
+-->
+			</th:block>
 
-		<a th:href="@{/About/index.html}"
-			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-	                   ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-			onclick="MyMenu.closeIfMobile()">
-			<span class="w-1.5 h-1.5 rounded-full"
-				th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-			<span class="font-medium">About</span>
-		</a>
-		<a th:href="@{/About/License.html}"
-			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-		           ${path == '/About/License.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-			onclick="MyMenu.closeIfMobile()">
-			<span class="w-1.5 h-1.5 rounded-full"
-				th:classappend="${path == '/About/License.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-			<span class="font-medium">License</span>
-		</a>
-		<a th:href="@{/About/Application.html}"
-			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			<th:block th:if="${user eq null}">
+				<a th:href="@{/Auth/Login.html}"
+					class="flex items-center gap-2 px-3 py-2 rounded-xl transition text-slate-700 hover:bg-gray-100"
+					onclick="MyMenu.closeIfMobile()">
+					<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+					<span class="font-medium">Login</span>
+				</a>
+			</th:block>
+
+			<a th:href="@{/About/Application.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
 		           ${path == '/About/Application.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-			onclick="MyMenu.closeIfMobile()">
-			<span class="w-1.5 h-1.5 rounded-full"
-				th:classappend="${path == '/About/Application.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-			<span class="font-medium">Application</span>
-		</a>
-		<a th:href="@{/About/index.html}"
-			th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/Application.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Application</span>
+			</a>
+			<a th:href="@{/About/License.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+		           ${path == '/About/License.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/License.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">License</span>
+			</a>
+			<a th:href="@{/About/index.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
 		               ${path == '/About/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-			onclick="MyMenu.closeIfMobile()">
-			<span class="w-1.5 h-1.5 rounded-full"
-				th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-			<span class="font-medium">About</span>
-		</a>
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/About/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">About</span>
+			</a>
 		</nav>
-
 	</th:block>
 </th:block>

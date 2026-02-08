@@ -1,12 +1,14 @@
 package com.utime.memoBom.admin.vo.gemini;
 
-import lombok.Data;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class GeminiRequest {
-
     private List<Content> contents;
+
+    // 옵션: JSON 응답 강제하고 싶으면 사용
     private GenerationConfig generationConfig;
 
     @Data
@@ -21,8 +23,10 @@ public class GeminiRequest {
 
     @Data
     public static class GenerationConfig {
-        private String responseMimeType; // application/json
-        private int temperature = 0;
-        private int maxOutputTokens = 1024;
+        // v1beta에서 보통 camelCase
+        private String responseMimeType; // "application/json"
+        private Integer temperature;
+        private Integer maxOutputTokens;
     }
 }
+
