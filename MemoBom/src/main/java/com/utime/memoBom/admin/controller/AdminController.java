@@ -24,7 +24,7 @@ public class AdminController {
     public String adminLogin( HttpServletRequest request, HttpServletResponse response, ModelMap model, LoginUser user ) throws Exception {
 
 		if( ! this.adminService.adminLogin(request, response, user).isError() ) {
-			return "Admin/AdminMain";
+			return "redirect:/Lotus/index.html";
 		}else {
 			return "redirect:/";
 		}

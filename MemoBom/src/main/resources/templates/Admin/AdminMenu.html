@@ -3,25 +3,105 @@
 	<th:block th:with="path=${currentPath}">
 
 		<nav class="text-sm space-y-1">
-			<!-- 메뉴 항목들: 예시 (active 처리 포함) -->
-			<a th:href="@{/Admin/index.html}"
-				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-	                   ${path == '/Admin/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-				onclick="AdminMenu.closeIfMobile()">
+
+			<!-- Dashboard -->
+			<a th:href="@{/Lotus/index.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
 				<span class="w-1.5 h-1.5 rounded-full"
-					th:classappend="${path == '/Admin/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-				<span class="font-medium">Admin</span>
+					th:classappend="${path == '/Lotus/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Dashboard</span>
 			</a>
 
-			<div class="admin-2 border-t border-gray-200"></div>
+			<div class="my-2 border-t border-gray-200"></div>
 
-			<a th:href="@{/Admin/Total.html}"
-				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-			           ${path == '/Admin/Alarm.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-				onclick="AdminMenu.closeIfMobile()">
+			<!-- Users -->
+			<a th:href="@{/Lotus/Users.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Users.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
 				<span class="w-1.5 h-1.5 rounded-full"
-					th:classappend="${path == '/Admin/Alarm.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-				<span class="font-medium">Alarm</span>
+					th:classappend="${path == '/Lotus/Users.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Users</span>
+			</a>
+
+			<!-- Topics -->
+			<a th:href="@{/Lotus/Topics.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Topics.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Topics.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Topics</span>
+			</a>
+
+			<!-- Fragments -->
+			<a th:href="@{/Lotus/Fragments.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Fragments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Fragments</span>
+			</a>
+
+			<!-- Comments -->
+			<a th:href="@{/Lotus/Comments.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Comments.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Comments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Comments</span>
+			</a>
+
+			<div class="my-2 border-t border-gray-200"></div>
+
+			<!-- Emotions -->
+			<a th:href="@{/Lotus/Emotions.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Emotions.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Emotions.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Emotions</span>
+			</a>
+
+			<!-- Scrap -->
+			<a th:href="@{/Lotus/Scrap.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Scrap.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Scrap.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Scrap</span>
+			</a>
+
+			<!-- Shares -->
+			<a th:href="@{/Lotus/Shares.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Shares.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Shares.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Shares</span>
+			</a>
+
+			<!-- Push -->
+			<a th:href="@{/Lotus/Push.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Push.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Push.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Push</span>
+			</a>
+
+			<div class="my-2 border-t border-gray-200"></div>
+
+			<!-- Settings (optional) -->
+			<a th:href="@{/Lotus/Settings.html}"
+				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/Lotus/Settings.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				onclick="MyMenu.closeIfMobile()">
+				<span class="w-1.5 h-1.5 rounded-full"
+					th:classappend="${path == '/Lotus/Settings.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+				<span class="font-medium">Settings</span>
 			</a>
 
 		</nav>

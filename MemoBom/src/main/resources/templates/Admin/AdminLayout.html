@@ -7,7 +7,7 @@
 
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: admin_header}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: AdminHeader}"></th:block>
 </th:block>
 
 <th:block layout:fragment="css">
@@ -20,7 +20,7 @@
 
 			<!-- PC: 좌측 고정 메뉴 (md 이상에서만 보임) -->
 			<aside class="hidden md:block w-56 shrink-0 border-r border-gray-200 bg-white">
-				<div class="p-3 text-sm font-semibold text-gray-700">메뉴</div>
+				<div class="p-3 text-sm font-semibold text-gray-700">관리자</div>
 				<div class="px-2 pb-3">
 					<th:block th:replace="~{Admin/AdminMenu :: Menu}"></th:block>
 				</div>
@@ -28,21 +28,21 @@
 
 			<!-- Right contents -->
 			<section class="flex-1 min-w-0 bg-slate-50 p-3">
-				<th:block layout:fragment="admin_content"></th:block>
+				<th:block layout:fragment="my_content"></th:block>
 			</section>
 		</div>
 
 		<!-- Mobile: 드로어(오버레이) -->
-		<div id="adminMenuDrawer" class="fixed inset-0 z-[9999] hidden md:hidden">
+		<div id="myMenuDrawer" class="fixed inset-0 z-[9999] hidden md:hidden">
 			<!-- backdrop -->
 			<div class="absolute inset-0 bg-black/40" onclick="AdminMenu.close()"></div>
 
 			<!-- panel -->
-			<div class="absolute left-0 top-0 h-full w-[80%] max-w-xs bg-white shadow-xl border-r border-gray-200
-	                translate-x-0">
+			<div
+				class="absolute left-0 top-0 h-full w-[40%] max-w-xs bg-white shadow-xl border-r border-gray-200 translate-x-0">
 				<div class="h-12 flex items-center justify-between px-3 border-b border-gray-200">
-					<div class="font-semibold">메뉴</div>
-					<button type="button" class="p-2 rounded-lg hover:bg-gray-100" onclick="AdminMenu.close()"
+					<div class="font-semibold">관리자</div>
+					<button type="button" class="p-2 rounded-lg hover:bg-gray-100" onclick="MyMenu.close()"
 						aria-label="닫기">
 						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
 							<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"
