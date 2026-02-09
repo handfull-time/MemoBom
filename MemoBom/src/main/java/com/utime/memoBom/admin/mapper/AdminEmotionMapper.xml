@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!-- 토픽별 리액션 집계
+SELECT T.TOPIC_UID, T.NAME,
+       COUNT(*) AS TOTAL,
+       SUM(CASE WHEN E.TYPE='LIKE' THEN 1 ELSE 0 END) AS LIKE_CNT
+FROM MB_EMOTION E
+JOIN MB_FRAGMENT F ON F.FRAG_UID = E.FRAG_UID
+JOIN MB_TOPIC T ON T.TOPIC_UID = F.TOPIC_UID
+WHERE E.REG_DATE >= :fromDate
+GROUP BY T.TOPIC_UID, T.NAME
+ORDER BY TOTAL DESC;
+-->
+<!-- 사용자별 리액션 과다
+SELECT USER_NO, COUNT(*) cnt
+FROM MB_EMOTION
+WHERE REG_DATE >= :fromDate
+GROUP BY USER_NO
+HAVING COUNT(*) >= :minCnt
+ORDER BY cnt DESC;-->
+
+<!-- 특정 글 리액션 삭제(관리자)
+DELETE FROM MB_EMOTION WHERE FRAG_UID = :fragUid;-->
+
+
+</mapper>

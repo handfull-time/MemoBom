@@ -289,8 +289,7 @@
 
 				if (data.code === "0") {
 					await alertP("The new fragment has been saved.");
-					allowLeave = true;
-					isDirty = false;
+					window.__disableDirtyGuard__?.();
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {
 					console.info(data);
@@ -306,61 +305,91 @@
 		}
 
 		(function () {
-		  const ta = document.getElementById('content');
-		  if (!ta) return;
+			const ta = document.getElementById('content');
+			if (!ta) return;
 
-		  const initialValue = ta.value || '';
-		  let isDirty = false;
+			const initialValue = ta.value || '';
+			let isDirty = false;
 
-		  // popstate 루프 방지
-		  let allowLeave = false;
+			// 프로그램적으로 나갈 때 사용
+			let allowLeave = false;
 
-		  // 더티가 되는 순간에만 "가드용 히스토리 1칸"을 추가(딱 1회)
-		  let guardPushed = false;
-		  function ensureGuardHistoryOnce() {
-		    if (guardPushed) return;
-		    history.pushState({ __dirty_guard__: true }, '', location.href);
-		    guardPushed = true;
-		  }
+			// guard 히스토리 1칸(딱 1회)
+			let guardPushed = false;
 
-		  ta.addEventListener('input', () => {
-		    isDirty = (ta.value !== initialValue);
-		    if (isDirty) ensureGuardHistoryOnce();
-		  });
+			// 내부적으로 guard를 되돌릴 때 popstate가 1번 발생하므로 무시 플래그
+			let suppressNextPop = false;
 
-		  // 새로고침/탭닫기/주소이동
-		  window.addEventListener('beforeunload', (e) => {
-		    if (!isDirty) return;
-		    e.preventDefault();
-		    e.returnValue = '';
-		  });
+			function ensureGuardHistoryOnce() {
+				if (guardPushed) return;
+				history.pushState({__dirty_guard__: true}, '', location.href);
+				guardPushed = true;
+			}
 
-		  window.addEventListener('popstate', async () => {
-		    // 프로그램적으로 나가는 중이면 간섭하지 않음
-		    if (allowLeave){
+			function popGuardIfExists() {
+				if (!guardPushed) return;
+				// pushState로 추가한 1칸만 제거(뒤로 1번). 같은 URL의 이전 state로 돌아가므로 페이지 이탈 아님.
+				suppressNextPop = true;
 				history.back();
-				return;
-			} 
+				guardPushed = false;
+			}
 
-		    // 더티가 아니면 그냥 나가게 둠
-		    if (!isDirty) return;
+			// beforeunload 핸들러는 변수로 잡아둬서, 저장 성공 시 제거 가능하게
+			function onBeforeUnload(e) {
+				if (!isDirty) return;
+				e.preventDefault();
+				e.returnValue = '';
+			}
+			window.addEventListener('beforeunload', onBeforeUnload);
 
-		    // ✅ 뒤로가기가 이미 발생했으니, 먼저 즉시 현재 페이지로 되돌려 "앱이 튀는 느낌"을 막음
-		    history.pushState({ __dirty_guard__: true }, '', location.href);
-		    guardPushed = true;
+			ta.addEventListener('input', () => {
+				const nextDirty = (ta.value !== initialValue);
 
-		    const ok = await confirmP('작성 중인 내용이 있어요.\n정말 나가시겠어요?');
+				// dirty -> true 로 바뀌는 순간에만 guard 추가
+				if (!isDirty && nextDirty) ensureGuardHistoryOnce();
 
-		    if (ok) {
-		      // ✅ 이제는 진짜로 나가도 되게 플래그 설정 후 뒤로가기 재실행
-		      allowLeave = true;
-			  isDirty = false;
-		      history.back();
-		    }
-		    // 취소면 아무것도 안 하면 됨(이미 pushState로 현재 유지)
-		  });
+				// dirty -> false 로 돌아오면 guard 제거 (뒤로가기가 2번 필요했던 문제 해결)
+				if (isDirty && !nextDirty) popGuardIfExists();
 
+				isDirty = nextDirty;
+			});
+
+			window.addEventListener('popstate', async () => {
+				// 우리가 guard 제거하려고 history.back() 했을 때 발생한 popstate는 무시
+				if (suppressNextPop) {
+					suppressNextPop = false;
+					return;
+				}
+
+				// 프로그램 이동 중이면 가로채지 않음 (※ 여기서 history.back() 추가 호출하면 2번 필요 현상 생김)
+				if (allowLeave) return;
+
+				// 더티가 아니면 그냥 나가게 둠
+				if (!isDirty) return;
+
+				// 사용자가 뒤로가기를 눌렀으니, 다시 현재로 붙잡아두고 확인
+				history.pushState({__dirty_guard__: true}, '', location.href);
+				guardPushed = true;
+
+				const ok = await confirmP('작성 중인 내용이 있어요.\n정말 나가시겠어요?');
+
+				if (ok) {
+					allowLeave = true;
+					isDirty = false;
+					window.removeEventListener('beforeunload', onBeforeUnload);
+					history.back(); // 이제 1번이면 나감
+				}
+				// 취소면 현재 유지 (이미 pushState로 되돌림)
+			});
+
+			// ✅ 저장 성공 후 이동 전에 호출할 “안전 종료” 함수 노출
+			window.__disableDirtyGuard__ = () => {
+				allowLeave = true;
+				isDirty = false;
+				window.removeEventListener('beforeunload', onBeforeUnload);
+			};
 		})();
+
 
 	</script>
 

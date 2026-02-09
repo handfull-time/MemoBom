@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+<!--
+SELECT C.COMMENT_UID, C.REG_DATE, C.FRAG_UID, F.TOPIC_UID,
+       C.USER_NO, U.NICKNAME,
+       C.CONTENT, C.DELETED
+FROM MB_COMMENT C
+JOIN MB_USER U ON U.USER_NO = C.USER_NO
+JOIN MB_FRAGMENT F ON F.FRAG_UID = C.FRAG_UID
+WHERE (:fragUid IS NULL OR C.FRAG_UID = :fragUid)
+  AND (:userNo IS NULL OR C.USER_NO = :userNo)
+  AND (:q IS NULL OR C.CONTENT LIKE '%'||:q||'%')
+ORDER BY C.REG_DATE DESC
+OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY;
+
+
+
+UPDATE MB_COMMENT
+SET DELETED = :deleted, UPDATED_AT=CURRENT_TIMESTAMP
+WHERE COMMENT_UID = :commentUid;
+-->
+</mapper>

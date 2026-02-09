@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!-- 글 목록(관리자용)
+SELECT F.FRAG_UID, F.REG_DATE, F.USER_NO, U.NICKNAME,
+       F.TOPIC_UID, T.NAME AS TOPIC_NAME,
+       SUBSTR(F.CONTENT, 1, 120) AS PREVIEW,
+       F.DELETED,
+       (SELECT COUNT(*) FROM MB_COMMENT C WHERE C.FRAG_UID = F.FRAG_UID) AS COMMENT_CNT,
+       (SELECT COUNT(*) FROM MB_EMOTION E WHERE E.FRAG_UID = F.FRAG_UID) AS EMOTION_CNT,
+       (SELECT COUNT(*) FROM MB_SCRAP S WHERE S.FRAG_UID = F.FRAG_UID) AS SCRAP_CNT
+FROM MB_FRAGMENT F
+JOIN MB_USER U ON U.USER_NO = F.USER_NO
+JOIN MB_TOPIC T ON T.TOPIC_UID = F.TOPIC_UID
+WHERE (:from IS NULL OR F.REG_DATE >= :from)
+  AND (:to   IS NULL OR F.REG_DATE <  :to)
+  AND (:topicUid IS NULL OR F.TOPIC_UID = :topicUid)
+  AND (:userNo IS NULL OR F.USER_NO = :userNo)
+  AND (:q IS NULL OR F.CONTENT LIKE '%'||:q||'%')
+ORDER BY F.REG_DATE DESC
+OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY;
+-->
+<!-- 글 상세
+SELECT F.*, U.NICKNAME, U.UID AS USER_UID, T.NAME AS TOPIC_NAME
+FROM MB_FRAGMENT F
+JOIN MB_USER U ON U.USER_NO = F.USER_NO
+JOIN MB_TOPIC T ON T.TOPIC_UID = F.TOPIC_UID
+WHERE F.FRAG_UID = :fragUid;
+-->
+<!-- 글 소프트 삭제/복구
+UPDATE MB_FRAGMENT
+SET DELETED = :deleted, UPDATED_AT = CURRENT_TIMESTAMP
+WHERE FRAG_UID = :fragUid;
+-->
+</mapper>

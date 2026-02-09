@@ -7,18 +7,18 @@
 			<a th:href="@{/Admin/index.html}"
 				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
 	                   ${path == '/Admin/index.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-				onclick="MyMenu.closeIfMobile()">
+				onclick="AdminMenu.closeIfMobile()">
 				<span class="w-1.5 h-1.5 rounded-full"
 					th:classappend="${path == '/Admin/index.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-				<span class="font-medium">My</span>
+				<span class="font-medium">Admin</span>
 			</a>
 
-			<div class="my-2 border-t border-gray-200"></div>
+			<div class="admin-2 border-t border-gray-200"></div>
 
-			<a th:href="@{/Admin/Alarm.html}"
+			<a th:href="@{/Admin/Total.html}"
 				th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
 			           ${path == '/Admin/Alarm.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
-				onclick="MyMenu.closeIfMobile()">
+				onclick="AdminMenu.closeIfMobile()">
 				<span class="w-1.5 h-1.5 rounded-full"
 					th:classappend="${path == '/Admin/Alarm.html' ? 'bg-white' : 'bg-slate-300'}"></span>
 				<span class="font-medium">Alarm</span>

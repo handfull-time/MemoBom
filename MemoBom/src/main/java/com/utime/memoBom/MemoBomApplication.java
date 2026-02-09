@@ -113,6 +113,9 @@ google.client-secret=
 	    props.setProperty("google.client-id", empty);
 	    props.setProperty("google.client-secret", empty);
 	    props.setProperty("korean.dataio.key.SpcdeInfoService", empty);
+	    props.setProperty("env.gemini.key", empty);
+	    props.setProperty("env.gemini.version", empty);
+	    props.setProperty("env.admin.userNo", empty); // 어드민 처리 할 회원 번호 콤마 구분.
 	    
 	    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             props.store(writer, "Request for property creation.");

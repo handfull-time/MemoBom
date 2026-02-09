@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminPushMapper">
+
+<!--
+SELECT SUB_NO, USER_NO, ENDPOINT, DEVICE_ID, BROWSER, OS,
+       ACTIVE, FAIL_COUNT, LAST_PUSH_DATE, CREATE_AT, UPDATED_AT
+FROM MB_PUSH_SUB
+WHERE (:userNo IS NULL OR USER_NO = :userNo)
+  AND (:active IS NULL OR ACTIVE = :active)
+ORDER BY SUB_NO DESC
+OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY;
+
+구독 비활성화/삭제
+UPDATE MB_PUSH_SUB SET ACTIVE=0, UPDATED_AT=CURRENT_TIMESTAMP WHERE SUB_NO=:subNo;
+DELETE FROM MB_PUSH_SUB WHERE SUB_NO=:subNo;
+
+failCount 기준 일괄 비활성(예: 10회 이상)
+UPDATE MB_PUSH_SUB
+SET ACTIVE=0, UPDATED_AT=CURRENT_TIMESTAMP
+WHERE ACTIVE=1 AND FAIL_COUNT >= :minFail;
+
+-->
+</mapper>

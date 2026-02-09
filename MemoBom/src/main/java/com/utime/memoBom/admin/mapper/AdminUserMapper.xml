@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!-- 사용자 목록
+SELECT USER_NO, UID, NICKNAME, PROFILE_URL, CREATE_AT, STATUS, PUSH_ENABLED
+FROM MB_USER
+WHERE (:q IS NULL OR UID LIKE '%'||:q||'%' OR NICKNAME LIKE '%'||:q||'%')
+ORDER BY USER_NO DESC
+OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY;
+-->
+<!-- 사용자 상세(기본)
+SELECT USER_NO, UID, NICKNAME, PROFILE_URL, CREATE_AT, STATUS, PUSH_ENABLED
+FROM MB_USER
+WHERE USER_NO = :userNo;
+-->
+<!-- 사용자 정지/복구
+UPDATE MB_USER
+SET STATUS = :status, UPDATED_AT = CURRENT_TIMESTAMP
+WHERE USER_NO = :userNo;
+-->
+<!-- 사용자 푸시 수신 토글
+UPDATE MB_USER
+SET PUSH_ENABLED = :enabled, UPDATED_AT = CURRENT_TIMESTAMP
+WHERE USER_NO = :userNo;
+-->
+
+</mapper>

@@ -62,11 +62,19 @@ class TopicDaoImpl implements TopicDao{
 	@Override
 	public TopicVo loadTopic(String uid) {
 		
+		if( AppUtils.isEmpty(uid) ) {
+			return null;
+		}
+		
 		return topicMapper.loadTopic(uid, -1L);
 	}
 	
 	@Override
 	public TopicVo loadTopic(long topicNo) {
+		
+		if( topicNo < 1L ) {
+			return null;
+		}
 		
 		return topicMapper.loadTopic(null, topicNo);
 	}

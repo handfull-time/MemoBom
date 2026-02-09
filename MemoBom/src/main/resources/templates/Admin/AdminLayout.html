@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 <header>
-	<th:block layout:fragment="my_title"></th:block>
+	<th:block layout:fragment="admin_title"></th:block>
 </header>
 
 
@@ -22,7 +22,7 @@
 			<aside class="hidden md:block w-56 shrink-0 border-r border-gray-200 bg-white">
 				<div class="p-3 text-sm font-semibold text-gray-700">메뉴</div>
 				<div class="px-2 pb-3">
-					<th:block th:replace="~{My/MyMenu :: Menu}"></th:block>
+					<th:block th:replace="~{Admin/AdminMenu :: Menu}"></th:block>
 				</div>
 			</aside>
 
