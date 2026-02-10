@@ -62,6 +62,7 @@
 		, NICKNAME 
 		, PROFILE_IMG_PATH 
 		, DESCRIPTION
+		, FONT_SIZE
 	</sql>
 	
 	<resultMap id="UserVoMap" type="com.utime.memoBom.user.vo.UserVo">
@@ -75,8 +76,9 @@
 		<result column="ID" property="id"/>
 		<result column="EMAIL" property="email" typeHandler="com.utime.memoBom.common.typeHandler.SeedEncryptTypeHandler"/>
 		<result column="NICKNAME" property="nickname"/>
-		<result column="DESCRIPTION" property="note"/>
 		<result column="PROFILE_IMG_PATH" property="profileUrl"/>
+		<result column="DESCRIPTION" property="note"/>
+		<result column="FONT_SIZE" property="fontSize"/>
 	</resultMap>
 	
 	<!-- id 조회 -->	
@@ -112,7 +114,7 @@
 			, ROLE = '-'
 			, PROVIDER = '-'
 			, ID  = '${userNo}'
-		WHERE USER_NO = ${userNo}
+		WHERE USER_NO = ${userNo} AND ENABLED = TRUE
 	</update>
 	
 	<!--내 작성 데이터-->
@@ -171,6 +173,7 @@
 			UID AS "uid"
 			, NICKNAME AS "nickname"
 			, PROFILE_IMG_PATH AS "profileUrl"
+			, FONT_SIZE AS "fontSize"
 		FROM MB_USER
 		WHERE USER_NO = #{userNo} AND ENABLED = TRUE
 	</select>
@@ -231,7 +234,7 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, NICKNAME = #{nickname}
- 		WHERE USER_NO = #{user.userNo}
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
  	</update>
 
 	<!--개인 이미지 정보 수정-->
@@ -239,7 +242,7 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, PROFILE_IMG_PATH = #{profile}
- 		WHERE USER_NO = #{user.userNo}
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
  	</update>
  	
  	<!--푸시 수신 상태-->
@@ -247,7 +250,7 @@
  		SELECT
  			PUSH_ENABLED
  		FROM MB_USER
- 		WHERE USER_NO = #{user.userNo}
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
  	</select>
 
 	<!--푸시 수신 설정-->
@@ -255,7 +258,7 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, PUSH_ENABLED = #{enabled}
- 		WHERE USER_NO = #{user.userNo}
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
  	</update>
  	
 </mapper>

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.user.dto.UserDto;
+import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.UserVo;
 
 import lombok.Getter;
@@ -35,10 +36,11 @@ public class CustomUserDetails implements UserDetails {
     private final String email;
     private final String nickname;
     private final String profileUrl;
+    private final EFontSize fontSize;
 
     private CustomUserDetails(long userNo, boolean enabled, EJwtRole role,
                               String provider, String uid, String id, String email,
-                              String nickname, String profileUrl) {
+                              String nickname, String profileUrl, EFontSize fontSize) {
         this.userNo = userNo;
         this.enabled = enabled;
         this.role = role;
@@ -49,6 +51,7 @@ public class CustomUserDetails implements UserDetails {
         this.email = email;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
+        this.fontSize = fontSize;
     }
 
     public static CustomUserDetails from(UserVo vo) {
@@ -62,7 +65,8 @@ public class CustomUserDetails implements UserDetails {
                 vo.getId(),
                 vo.getEmail(),
                 vo.getNickname(),
-                vo.getProfileUrl()
+                vo.getProfileUrl(),
+                vo.getFontSize()
         );
     }
 
@@ -108,6 +112,7 @@ public class CustomUserDetails implements UserDetails {
     	result.setNickname(this.nickname);
     	result.setProfileUrl(this.profileUrl);
     	result.setUid(this.uid);
+    	result.setFontSize(this.fontSize);
     	
     	return result;
     }

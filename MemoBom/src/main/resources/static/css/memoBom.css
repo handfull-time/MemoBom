@@ -1,0 +1,36 @@
+:root {
+  --font-base: 16px;
+  --font-title: 18px;
+  --font-small: 14px;
+}
+
+/* 사용자 설정별 */
+body[data-font-size="XS"] {
+  --font-base: 13px;
+  --font-title: 15px;
+  --font-small: 12px;
+}
+
+body[data-font-size="SM"] {
+  --font-base: 14px;
+  --font-title: 16px;
+  --font-small: 13px;
+}
+
+body[data-font-size="MD"] {
+  --font-base: 16px;
+  --font-title: 18px;
+  --font-small: 14px;
+}
+
+body[data-font-size="LG"] {
+  --font-base: 18px;
+  --font-title: 20px;
+  --font-small: 16px;
+}
+
+body[data-font-size="XL"] {
+  --font-base: 20px;
+  --font-title: 22px;
+  --font-small: 18px;
+}

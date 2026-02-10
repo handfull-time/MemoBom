@@ -1,5 +1,7 @@
 package com.utime.memoBom.user.vo.query;
 
+import com.utime.memoBom.user.vo.EFontSize;
+
 import lombok.Data;
 
 /**
@@ -13,4 +15,6 @@ public class BasicUserVo {
 	String nickname;
 	/** 이미지 URL */
 	String profileUrl;
+	/** 글자 크기 */
+	EFontSize fontSize;
 }
