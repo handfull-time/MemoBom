@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!-- 글별 스크랩 Top
+SELECT S.FRAG_UID, COUNT(*) AS cnt
+FROM MB_SCRAP S
+WHERE S.REG_DATE >= :fromDate
+GROUP BY S.FRAG_UID
+ORDER BY cnt DESC
+FETCH FIRST :limit ROWS ONLY;
+-->
+<!--특정 글 스크랩 삭제
+DELETE FROM MB_SCRAP WHERE FRAG_UID = :fragUid;
+-->
+
+</mapper>

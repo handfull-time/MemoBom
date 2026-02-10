@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+<!-- 일자별 신규 가입-->
+<!--SELECT TO_CHAR(CREATE_AT, 'YYYY-MM-DD') AS d, COUNT(*) cnt
+FROM MB_USER
+WHERE CREATE_AT >= :fromDate
+GROUP BY TO_CHAR(CREATE_AT, 'YYYY-MM-DD')
+ORDER BY d;
+-->
+<!-- 일자별 신규 글
+SELECT TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS d, COUNT(*) cnt
+FROM MB_FRAGMENT
+WHERE REG_DATE >= :fromDate
+GROUP BY TO_CHAR(REG_DATE, 'YYYY-MM-DD')
+ORDER BY d;
+-->
+<!-- 일자별 신규 댓글
+SELECT TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS d, COUNT(*) cnt
+FROM MB_COMMENT
+WHERE REG_DATE >= :fromDate
+GROUP BY TO_CHAR(REG_DATE, 'YYYY-MM-DD')
+ORDER BY d;-->
+
+<!-- 토픽별 글 수 Top
+SELECT T.TOPIC_UID, T.NAME, COUNT(*) AS cnt
+FROM MB_FRAGMENT F
+JOIN MB_TOPIC T ON T.TOPIC_UID = F.TOPIC_UID
+WHERE F.REG_DATE >= :fromDate
+GROUP BY T.TOPIC_UID, T.NAME
+ORDER BY cnt DESC
+FETCH FIRST :limit ROWS ONLY;-->
+
+<!-- 푸시 실패 상위 디바이스/사용자(있다면)
+SELECT USER_NO, DEVICE_ID, FAIL_COUNT, LAST_PUSH_DATE
+FROM MB_PUSH_SUB
+WHERE ACTIVE = 1
+ORDER BY FAIL_COUNT DESC, LAST_PUSH_DATE ASC
+FETCH FIRST :limit ROWS ONLY;-->
+
+</mapper>

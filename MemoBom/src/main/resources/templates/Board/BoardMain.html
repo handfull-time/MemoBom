@@ -309,10 +309,12 @@
 				node.scrollIntoView({block: 'start', behavior: 'smooth'});
 
 				wrap.classList.remove('hidden');
-
-				// ✅ 비로그인 + 최초 오픈 시 안내
+				// ✅ 비로그인: 댓글 작성 영역 숨김(목록만 보기)
+				const composer = node.querySelector('.commentComposer');
 				if (!IS_LOGIN) {
-				    toastLoginRequired();
+				  composer?.classList.add('hidden');
+				} else {
+				  composer?.classList.remove('hidden');
 				}
 
 				// ✅ 댓글 더보기 버튼 세팅(열릴 때 1회 바인딩 + 초기 숨김)
@@ -917,32 +919,6 @@
 				const icon = node.querySelector('.iconSaveComment');
 
 				if (!wrap || !input || !btn || !icon) return;
-
-				// ✅ 비로그인: 작성 UI 막기 + 토스트 안내
-//				if (!IS_LOGIN) {
-//					// 프로필은 기본 이미지로 두거나 숨겨도 됨
-//					if (meImg) meImg.classList.add("opacity-50");
-//
-//					input.value = "";
-//					input.placeholder = "로그인 후 댓글을 작성할 수 있어요.";
-//					input.setAttribute("readonly", "readonly");
-//					btn.setAttribute("disabled", "disabled");
-//					btn.classList.add("opacity-50", "cursor-not-allowed");
-//
-//					// input 누르면 안내 토스트
-//					const notify = (e) => {
-//						e.stopPropagation();
-//						toastLoginRequired();
-//					};
-//					input.addEventListener("focus", notify);
-//					input.addEventListener("click", notify);
-//					btn.addEventListener("click", notify);
-//
-//					// 이 경우 저장 로직 바인딩은 하지 않고 종료
-//					icon.innerHTML = svgSaveComment();
-//					autoGrowTextarea(input); // readonly라도 높이는 잡아주면 UI 자연스러움
-//					return;
-//				}
 
 				if (meImg && loginUserProfileUrl) meImg.src = loginUserProfileUrl;
 				icon.innerHTML = svgSaveComment();

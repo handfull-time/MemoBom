@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!--SELECT SHARE_UID, TARGET_TYPE, TARGET_UID, USER_NO,
+       CREATE_AT, LAST_ACCESS_AT, ACCESS_CNT, BOT_ACCESS_CNT, ACTIVE
+FROM MB_SHARE
+WHERE (:targetType IS NULL OR TARGET_TYPE = :targetType)
+  AND (:userNo IS NULL OR USER_NO = :userNo)
+  AND (:from IS NULL OR CREATE_AT >= :from)
+  AND (:to IS NULL OR CREATE_AT < :to)
+ORDER BY CREATE_AT DESC
+OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY;
+
+UPDATE MB_SHARE
+SET ACTIVE = :active, UPDATED_AT=CURRENT_TIMESTAMP
+WHERE SHARE_UID = :shareUid;
+
+-->
+
+</mapper>

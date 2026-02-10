@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+
+<!-- 토픽 목록(+글 수)
+SELECT T.TOPIC_UID, T.NAME, T.COLOR, T.EXTERNAL, T.EMOTION, T.COMMENTS,
+       T.MAX_LEN, T.EMOJI_SET_TYPE, T.EDITABLE, T.ACTIVE,
+       (SELECT COUNT(*) FROM MB_FRAGMENT F WHERE F.TOPIC_UID = T.TOPIC_UID) AS FRAG_CNT
+FROM MB_TOPIC T
+WHERE (:q IS NULL OR T.NAME LIKE '%'||:q||'%')
+ORDER BY T.SORT_NO ASC, T.NAME ASC;
+-->
+<!-- 토픽 설정 저장
+UPDATE MB_TOPIC
+SET NAME=:name, COLOR=:color,
+    EXTERNAL=:external, EMOTION=:emotion, COMMENTS=:comments,
+    MAX_LEN=:maxLen, EMOJI_SET_TYPE=:emojiSetType, EDITABLE=:editable,
+    ACTIVE=:active,
+    UPDATED_AT=CURRENT_TIMESTAMP
+WHERE TOPIC_UID=:topicUid;
+
+-->
+</mapper>

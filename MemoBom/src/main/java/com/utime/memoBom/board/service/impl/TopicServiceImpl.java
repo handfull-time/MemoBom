@@ -71,12 +71,10 @@ class TopicServiceImpl implements TopicService {
 			return result;
 		}
 		
-		if( AppUtils.isNotEmpty(reqVo.getUid()) ) {
-			final TopicVo topicDb = topicDao.loadTopic(reqVo.getUid());
-			if( topicDb != null && topicDb.getOwnerNo() != user.userNo() ) {
-				result.setCodeMessage("E", "같은 사용자만 수정 가능 합니다.");
-				return result;
-			}
+		final TopicVo topicDb = topicDao.loadTopic(reqVo.getUid());
+		if( topicDb != null && topicDb.getOwnerNo() != user.userNo() ) {
+			result.setCodeMessage("E", "같은 사용자만 수정 가능 합니다.");
+			return result;
 		}
 		
 		final TopicVo topic = new TopicVo();
