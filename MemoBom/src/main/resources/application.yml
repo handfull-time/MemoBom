@@ -63,4 +63,10 @@ app:
       subject: "mailto:utimezgd@gmail.com" # 관리자 연락처 필수
       public-key: ${env.push.public}
       private-key: ${env.push.private}
-
+  schema-sync:
+    enabled: true
+    mapper-locations: "classpath:**/mapper/CreateMapper.xml"
+    allow-drop-column: false          # 위험: 컬럼 삭제
+    allow-tighten-nullability: false  # 위험: NULL -> NOT NULL 강화
+    allow-type-shrink: false          # 위험: VARCHAR(128) -> VARCHAR(32) 같은 축소
+    log-ddl: true
