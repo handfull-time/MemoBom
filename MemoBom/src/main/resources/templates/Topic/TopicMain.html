@@ -283,6 +283,10 @@
 	          showState("err", "uid가 없어 Flow를 처리할 수 없습니다.");
 	          return;
 	        }
+			
+			const ask = "[" + t.name + "] 팔로우" + (isFlow ? " 해지할까요?" : "할까요?");
+			const ok = await confirmP(ask);
+			if (!ok) return;
 
 	        busy = true;
 	        btn.disabled = true;
