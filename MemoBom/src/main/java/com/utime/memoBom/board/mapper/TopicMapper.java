@@ -168,4 +168,12 @@ public interface TopicMapper {
 	 */
 	List<TopicVo> listMyOrFollowTopic(@Param("user") LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);
 
+	/**
+	 * user를 제외한 topic follow 목록
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	List<Long> selectTopicFollowList(@Param("user") LoginUser user, @Param("uid") String topicUid);
+
 }

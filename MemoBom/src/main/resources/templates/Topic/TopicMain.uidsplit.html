@@ -31,7 +31,19 @@
 		</div>
 	</th:block>
 
-	<th:block th:if="${keyword == null}">
+	<th:block th:if="${keyword == null and uid != null}">
+		<!-- 단일 Mosaic(Topic UID 지정) -->
+		<section class="space-y-2">
+			<div class="px-2 pt-2">
+				<h2 class="text-2xl font-extrabold tracking-tight">Mosaic</h2>
+				<p class="text-xs text-slate-500 mt-1">선택한 Mosaic입니다.</p>
+			</div>
+
+			<div id="singleList" class="space-y-2"></div>
+		</section>
+	</th:block>
+
+	<th:block th:if="${keyword == null and uid == null}">
 		<!-- 상단 섹션: 인기 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
@@ -67,7 +79,7 @@
 		</section>
 	</th:block>
 
-	<!-- 상태 메시지 -->
+<!-- 상태 메시지 -->
 	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
 
 	<!-- topic row template -->
@@ -147,6 +159,7 @@
 			const $ = (id) => document.getElementById(id);
 
 			const elTrending = $("trendingList");
+			const elSingle = $("singleList");
 			const elFresh = $("freshList");
 			const elSearch = $("searchList");
 			const elState = $("stateBox");
@@ -413,13 +426,13 @@
 				try {
 					const baseUrl = /*[[@{/Mosaic/List.json}]]*/ "/Mosaic/List.json";
 					const params = {
-						uid: /*[[${uid}]]*/ null,
+						uid: (sortType === ETopicSortType.uid ? topicUid : null),
 						sortType: sortType,
 						page: String(st.page),
 					};
 
 					if (sortType === ETopicSortType.search && keyword) {
-						params.set("keyword", keyword);
+						params.keyword = keyword;
 					}
 
 					const res = await apiGetWithParam(baseUrl, params);
@@ -441,6 +454,7 @@
 					if (sortType === ETopicSortType.trending) renderList(elTrending, list, !isFirst);
 					if (sortType === ETopicSortType.fresh) renderList(elFresh, list, !isFirst);
 					if (sortType === ETopicSortType.search) renderList(elSearch, list, !isFirst);
+					if (sortType === ETopicSortType.uid) renderList(elSingle, list, !isFirst);
 
 					// ✅ 다음 호출을 위해 page 증가
 					st.page += 1;
@@ -458,24 +472,6 @@
 			}
 
 			async function init() {
-				// uid가 있으면: 특정 토픽 1개만 보이도록 (인기/새로운 섹션 숨김)
-				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
-				if (uidMode) {
-					// "새로운 Mosaic" 섹션은 숨기고, 상단 섹션을 단일 토픽 표시용으로 재사용
-					document.getElementById('sectionFresh')?.classList.add('hidden');
-					document.getElementById('dividerTrendingFresh')?.classList.add('hidden');
-					btnMoreFresh?.classList.add('hidden');
-
-					// 제목을 "Mosaic"으로 바꿈(인기/새로운 노출 제거)
-					const h2 = document.querySelector('#sectionTrending h2');
-					const p = document.querySelector('#sectionTrending p');
-					if (h2) h2.textContent = 'Mosaic';
-					if (p) p.textContent = '선택한 Mosaic입니다.';
-
-					// 단일 모드에서는 더보기 버튼 숨김
-					btnMoreTrending?.classList.add('hidden');
-				}
-
 				// 초기 버튼 상태
 				setMoreButtonState(ETopicSortType.trending, btnMoreTrending);
 				setMoreButtonState(ETopicSortType.fresh, btnMoreFresh);
@@ -487,15 +483,22 @@
 				btnMoreSearch?.addEventListener("click", () => fetchPage(ETopicSortType.search));
 
 				// 첫 로딩
+				if (keyword) {
+					fetchPage(ETopicSortType.search);
+					return;
+				}
+
+				// uid가 있으면: 단일 Mosaic 화면(1개만)
+				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
 				if (uidMode) {
 					fetchPage(ETopicSortType.uid);
 					paging[ETopicSortType.uid].ended = true; // 단일 모드 1회만
-				} else if (keyword) {
-					fetchPage(ETopicSortType.search);
-				} else {
-					fetchPage(ETopicSortType.trending);
-					fetchPage(ETopicSortType.fresh);
+					return;
 				}
+
+				// 기본: 인기 + 새로운
+				fetchPage(ETopicSortType.trending);
+				fetchPage(ETopicSortType.fresh);
 			}
 
 			window.addEventListener("DOMContentLoaded", init);

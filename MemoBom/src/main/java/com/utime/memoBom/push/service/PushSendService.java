@@ -3,7 +3,7 @@ package com.utime.memoBom.push.service;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
-import com.utime.memoBom.push.vo.PushNotiDataVo;
+import com.utime.memoBom.push.vo.PushSendDataVo;
 
 /**
  * 푸시 서비스
@@ -32,7 +32,7 @@ public interface PushSendService {
 	 * @param obj
 	 * @return
 	 */
-	ReturnBasic sendPush(LoginUser user, PushNotiDataVo data) throws Exception;
+	ReturnBasic sendPush(LoginUser user, PushSendDataVo data) throws Exception;
 
 	/**
 	 * 푸시 수신 상태
@@ -48,5 +48,20 @@ public interface PushSendService {
 	 * @return
 	 */
 	ReturnBasic setPushStatus(LoginUser user, boolean enabled);
+
+	/**
+	 * 푸시 메시지 클릭 처리
+	 * @param clickId
+	 * @return
+	 */
+	ReturnBasic procClickEvent(String clickId);
+
+	/**
+	 * 새로운 fragment 생성 알림
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	int sendMessageNewFragment(LoginUser user, String topicUid);
 
 }

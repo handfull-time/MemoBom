@@ -48,7 +48,9 @@ public class TopicController {
 		}else {
 			model.addAttribute("keyword", keyword);
 			model.addAttribute("uid", uid);
-			return "Topic/TopicMain";
+//			return "Topic/TopicMain";
+			return "Topic/TopicMain.uidsplit";
+			
 		}
     }
 	
@@ -88,13 +90,15 @@ public class TopicController {
 	@GetMapping("Item.html")
 	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam("uid") String uid ) {
 		
-		final TopicResultVo topic = topicServce.loadTopic( uid );
-		if( topic == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "사라진 주제입니다.") );
+		final ReturnBasic topicRes = topicServce.loadTopic( user, uid );
+		if( topicRes.isError() ) {
+			model.addAttribute("res", topicRes );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
 		}
+		
+		final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 		
 		model.addAttribute("topic", topic);
 		

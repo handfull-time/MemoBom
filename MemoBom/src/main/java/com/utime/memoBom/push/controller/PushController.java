@@ -99,9 +99,9 @@ public class PushController {
      * @return
      */
     @PostMapping("Click.json")
-    public ResponseEntity<?> click(@RequestBody PushClickDto dto) {
-    	log.info(dto.getClickId());
-    	return ResponseEntity.ok().body( new ReturnBasic() );
+    public ResponseEntity<ReturnBasic> click(@RequestBody PushClickDto dto) {
+    	
+    	return ResponseEntity.ok().body( pushSendService.procClickEvent( dto.getClickId() ) );
     }
     
 }

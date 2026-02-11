@@ -91,5 +91,12 @@ public interface TopicDao {
 	 */
 	List<TopicVo> listMyOrFollowTopic(LoginUser user, String keyword, int pageNo);
 
+	/**
+	 * topic follow 한 사용자 목록
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	List<LoginUser> getTopicFollowList(LoginUser user, String topicUid);
 
 }
