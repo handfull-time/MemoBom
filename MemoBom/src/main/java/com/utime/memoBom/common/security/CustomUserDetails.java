@@ -107,13 +107,6 @@ public class CustomUserDetails implements UserDetails {
     
     public UserDto getUserDto() {
     	
-    	final UserDto result = new UserDto();
-    
-    	result.setNickname(this.nickname);
-    	result.setProfileUrl(this.profileUrl);
-    	result.setUid(this.uid);
-    	result.setFontSize(this.fontSize);
-    	
-    	return result;
+    	return new UserDto( this.uid, this.nickname, this.profileUrl, this.fontSize );
     }
 }

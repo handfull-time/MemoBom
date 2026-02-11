@@ -65,23 +65,24 @@
 						<button type="button"
 							class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="share">
-							<span class="icon-share w-5 h-5"></span>
+							<img th:src="@{/images/share.svg}" alt="share" class="w-5 h-5 pointer-events-none"/>
 						</button>
 
 						<button type="button"
 							class="btn-scrap p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="scrap">
-							<span class="icon-scrap w-5 h-5 block">
-								<img th:src="@{/images/fragment/scrap_off.svg}"
-								     alt="scrap"
-								     class="w-5 h-5 pointer-events-none"/>
-							</span>
+							<img th:src="@{/images/fragment/scrap_off.svg}"
+							     alt="scrap"
+							     class="icon-scrap-img block w-5 h-5 pointer-events-none"/>
 						</button>
 
 						<button type="button"
 							class="btn-comment p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="comment">
-							<span class="icon-comment w-5 h-5"></span>
+							<img th:src="@{/images/fragment/comments.svg}"
+							     alt="comments"
+							     class="w-5 h-5 pointer-events-none"/>
+								
 						</button>
 					</div>
 				</div>
@@ -100,7 +101,9 @@
 						<!-- [2.3] 저장 버튼 -->
 						<button type="button" class="btnSaveComment shrink-0 inline-flex items-center justify-center w-10 h-10 rounded-xl
 				             border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100" aria-label="save comment">
-							<span class="iconSaveComment"></span>
+							<img th:src="@{/images/fragment/comment_write.svg}"
+							     alt="save comment"
+							     class="w-10 h-10 pointer-events-none"/>
 						</button>
 					</div>
 
@@ -114,7 +117,9 @@
 					<button type="button" class="btnMoreComments hidden mt-3 w-full flex items-center justify-center gap-2
 				           rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
 				           hover:bg-slate-50 active:bg-slate-100">
-						<span class="iconMoreComments"></span>
+						   <img th:src="@{/images/fragment/more_comments.svg}"
+   							     alt="more comments"
+   							     class="w-6 h-6 pointer-events-none"/>
 						<span>댓글 더보기</span>
 					</button>
 
@@ -142,7 +147,9 @@
 
 						<button type="button"
 							class="cEmoSummary ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
-							<span class="cEmoIcon"></span>
+							<img th:src="@{/images/fragment/comment_emotion.svg}"
+   							     alt="emotion comments"
+   							     class="pointer-events-none"/>
 							<span class="cEmoSum tabular-nums">0</span>
 						</button>
 					</div>
@@ -214,60 +221,10 @@
 			}
 
 			// --- inline SVGs (요청한 것 그대로) ---
-			function svgShare() {
-				return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none">
-  <circle cx="48" cy="16" r="8" fill="#4B5563"/>
-  <circle cx="16" cy="32" r="8" fill="#4B5563"/>
-  <circle cx="48" cy="48" r="8" fill="#4B5563"/>
-  <line x1="22.7" y1="28.6" x2="41.3" y2="19.4" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
-  <line x1="22.7" y1="35.4" x2="41.3" y2="44.6" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
-</svg>`;
-			}
+			
 			function svgScrap(on) {
 				if (on) return /*[[@{/images/fragment/scrap_on.svg}]]*/ '/images/fragment/scrap_on.svg';;
 				return /*[[@{/images/fragment/scrap_off.svg}]]*/ '/images/fragment/scrap_off.svg';
-			}
-			function svgComment() {
-				return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="20" height="20">
-  <path d="M20 10 H100 Q110 10 110 20 V65 Q110 75 100 75 H65 L55 90 L50 75 H20 Q10 75 10 65 V20 Q10 10 20 10 Z"
-    fill="#F9FAFB" stroke="#4B5563" stroke-width="4" stroke-linejoin="round"/>
-  <line x1="25" y1="25" x2="25" y2="65" stroke="#4B5563" stroke-width="4" stroke-linecap="round"/>
-  <line x1="40" y1="30" x2="90" y2="30" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
-  <line x1="40" y1="45" x2="90" y2="45" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
-  <line x1="40" y1="60" x2="75" y2="60" stroke="#4B5563" stroke-width="3" stroke-linecap="round"/>
-</svg>`;
-			}
-
-			function svgSaveComment() {
-				return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none">
-  <path d="M5 6 Q5 4 7 4 H17 Q19 4 19 6 V13 Q19 15 17 15 H10 L7 18 V15 H7 Q5 15 5 13 Z"
-        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M9.2 10.5 L11.2 12.5 L14.8 9"
-        stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
-			}
-
-			function svgCommentEmotionIcon() {
-				return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
-  <path d="M5 6 Q5 4 7 4 H17 Q19 4 19 6 V13 Q19 15 17 15 H10 L7 18 V15 H7 Q5 15 5 13 Z"
-        stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="12" cy="10" r="3.2" stroke="currentColor" stroke-width="1.2"/>
-  <circle cx="11" cy="9.5" r="0.35" fill="currentColor"/>
-  <circle cx="13" cy="9.5" r="0.35" fill="currentColor"/>
-  <path d="M10.9 10.9 Q12 11.6 13.1 10.9"
-        stroke="currentColor" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
-			}
-
-			function svgMoreComments() {
-				return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none">
-  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
 			}
 
 			/* textarea 자동 확장 */
@@ -312,10 +269,8 @@
 
 				// ✅ 댓글 더보기 버튼 세팅(열릴 때 1회 바인딩 + 초기 숨김)
 				const moreBtn = node.querySelector(".btnMoreComments");
-				const moreIcon = node.querySelector(".iconMoreComments");
 
-				if (moreBtn && moreIcon) {
-					moreIcon.innerHTML = svgMoreComments();
+				if (moreBtn ) {
 
 					// 처음 열 때는 로딩 전이므로 숨김(데이터가 있으면 loadNextComments에서 보여줌)
 					moreBtn.classList.add("hidden");
@@ -637,12 +592,9 @@
 				const uid = node.querySelector(".fragment-uid").textContent.trim();
 
 				// icons
-				node.querySelector(".icon-share").innerHTML = svgShare();
-				//node.querySelector(".icon-comment").innerHTML = svgComment();
 				// ✅ 댓글 허용 여부
 				const useComments = !!item?.topic?.comments;
 				const btnComment = node.querySelector(".btn-comment");
-				const iconComment = node.querySelector(".icon-comment");
 
 				if (!useComments) {
 					// 버튼 자체 숨김(권장)
@@ -650,7 +602,6 @@
 				} else {
 					// 표시 + 아이콘 + 클릭 바인딩
 					btnComment?.classList.remove("hidden");
-					if (iconComment) iconComment.innerHTML = svgComment();
 
 					btnComment?.addEventListener("click", async (e) => {
 						e.stopPropagation();
@@ -659,7 +610,7 @@
 				}
 
 				// scrap icon initial
-				const iconScrap = node.querySelector(".icon-scrap img");
+				const iconScrap = node.querySelector(".icon-scrap-img");
 				iconScrap.src = svgScrap(!!item.scrap);
 
 				// share (일단 placeholder)
@@ -830,11 +781,9 @@
 
 				// [3.3][3.4]
 				const btnSum = node.querySelector('.cEmoSummary');
-				const icon = node.querySelector('.cEmoIcon');
 				const sumEl = node.querySelector('.cEmoSum');
 				const panel = node.querySelector('.cEmoPanel');
 
-				icon.innerHTML = svgCommentEmotionIcon();
 				const applySum = () => {sumEl.textContent = String(sumEmotion(comment.emotionList || []));};
 				applySum();
 
@@ -909,12 +858,10 @@
 				const meImg = node.querySelector('.meImg');
 				const input = node.querySelector('.commentInput');
 				const btn = node.querySelector('.btnSaveComment');
-				const icon = node.querySelector('.iconSaveComment');
 
-				if (!wrap || !input || !btn || !icon) return;
+				if (!wrap || !input || !btn ) return;
 
 				if (meImg && loginUserProfileUrl) meImg.src = loginUserProfileUrl;
-				icon.innerHTML = svgSaveComment();
 
 				autoGrowTextarea(input);
 

@@ -28,6 +28,7 @@ import com.utime.memoBom.user.dto.UserDto;
 import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UserProfile;
 
 import lombok.RequiredArgsConstructor;
@@ -56,10 +57,10 @@ class UserServiceImpl implements UserService{
 		
 		final MyPageDto result = new MyPageDto();
 		
-		final UserDto userDto = new UserDto();
+		final BasicUserVo userVo = userDao.getBasicUserFromUserNo(user.userNo());
+		final UserDto userDto = new UserDto( userVo.getUid(), userVo.getNickname(), userVo.getProfileUrl(), userVo.getFontSize() );
+
 		final UsageStatisticsDto statistics = new UsageStatisticsDto();
-		
-		BeanUtils.copyProperties(userDao.getBasicUserFromUserNo(user.userNo()), userDto);
 		BeanUtils.copyProperties(userDao.getUserStatisticsRecord(user.userNo()), statistics);
 		
 		result.setUser( userDto );

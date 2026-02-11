@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app.schema-sync")
 public class SchemaSyncProperties {
     private boolean enabled = true;
-    private String mapperLocations = "classpath*:mapper/**/*.xml";
+    private String mapperLocations = "classpath*:mapper/**/CreateMapper.xml";
 
     private boolean allowDropColumn = false;
     private boolean allowTightenNullability = false;

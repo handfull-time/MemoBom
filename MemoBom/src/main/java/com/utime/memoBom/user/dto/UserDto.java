@@ -2,19 +2,16 @@ package com.utime.memoBom.user.dto;
 
 import com.utime.memoBom.user.vo.EFontSize;
 
-import lombok.Data;
-
 /**
  * 사용자 정보 DTO
  */
-@Data
-public class UserDto {
+public record UserDto (
 	/** 고유 아이디 */
-	String uid;
+	String uid,
 	/** 별명 */
-	String nickname;
+	String nickname,
 	/** 프로필 이미지 URL */
-	String profileUrl;
+	String profileUrl,
 	/** FONT 크기 */
-	EFontSize fontSize;
-}
+	EFontSize fontSize
+) {};
