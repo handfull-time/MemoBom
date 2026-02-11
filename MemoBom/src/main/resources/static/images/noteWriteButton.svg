@@ -4,53 +4,52 @@
       <stop offset="0" stop-color="#FFFFFF"/>
       <stop offset="1" stop-color="#F6F7FB"/>
     </linearGradient>
+
     <filter id="softShadow" x="-20%" y="-40%" width="140%" height="180%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0B1220" flood-opacity="0.18"/>
+      <feDropShadow dx="0" dy="2.6" stdDeviation="2.8" flood-color="#0B1220" flood-opacity="0.22"/>
     </filter>
   </defs>
 
   <!-- Note card -->
   <g filter="url(#softShadow)">
     <rect x="10" y="10" width="340" height="80" rx="14"
-          fill="url(#paperShade)" stroke="#D6DAE6" stroke-width="2"/>
+          fill="url(#paperShade)" stroke="#AEB6CC" stroke-width="3"/>
   </g>
 
-  <!-- Left binding strip (darker) -->
+  <!-- Left binding strip -->
   <rect x="22" y="18" width="36" height="64" rx="10"
-        fill="#E2E6F4" stroke="#B8C0E0" stroke-width="2"/>
+        fill="#E2E6F4" stroke="#8F9AC0" stroke-width="3"/>
 
   <!-- Spiral holes -->
-  <g fill="#B0B8DA">
+  <g fill="#7E89B3">
     <circle cx="40" cy="28" r="4.5"/>
     <circle cx="40" cy="44" r="4.5"/>
     <circle cx="40" cy="60" r="4.5"/>
     <circle cx="40" cy="76" r="4.5"/>
   </g>
 
-  <!-- Paper lines (darker) -->
-  <g stroke="#C3CAE6" stroke-width="3" stroke-linecap="round">
+  <!-- Paper lines -->
+  <g stroke="#8E99C2" stroke-width="4" stroke-linecap="round">
     <line x1="74" y1="34" x2="230" y2="34"/>
     <line x1="74" y1="50" x2="250" y2="50"/>
     <line x1="74" y1="66" x2="210" y2="66"/>
   </g>
 
-  <!-- Pencil icon (moved up by 2px) -->
-  <g transform="translate(0,-2)">
+  <!-- Pencil icon (moved up more to center) -->
+  <g transform="translate(0,-10)">
     <!-- pencil body -->
     <path d="M288 70 L321 37 C324 34 329 34 332 37 L337 42 C340 45 340 50 337 53 L304 86 Z"
-          fill="#FFD66B" stroke="#C8A046" stroke-width="2" />
+          fill="#FFD66B" stroke="#8F6C16" stroke-width="3" />
     <!-- pencil stripe -->
-    <path d="M315 43 L325 53" stroke="#E9B84A" stroke-width="6" stroke-linecap="round"/>
+    <path d="M315 43 L325 53" stroke="#D39B22" stroke-width="7" stroke-linecap="round"/>
     <!-- pencil tip -->
-    <path d="M288 70 L304 86 L282 92 Z" fill="#F2C7A8" stroke="#C48F73" stroke-width="2"/>
-    <path d="M282 92 L289 85" stroke="#2B2F3A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M288 70 L304 86 L282 92 Z" fill="#F2C7A8" stroke="#8A5C45" stroke-width="3"/>
+    <path d="M282 92 L289 85" stroke="#111319" stroke-width="4" stroke-linecap="round"/>
     <!-- pencil eraser -->
-    <path d="M329 33 L341 45 L336 50 L324 38 Z" fill="#FF9DB2" stroke="#C46A7C" stroke-width="2"/>
+    <path d="M329 33 L341 45 L336 50 L324 38 Z" fill="#FF9DB2" stroke="#8F3F52" stroke-width="3"/>
     <!-- pencil metal band -->
-    <path d="M323 39 L335 51" stroke="#B8C0D6" stroke-width="5" stroke-linecap="round"/>
+    <path d="M323 39 L335 51" stroke="#7E879F" stroke-width="6" stroke-linecap="round"/>
   </g>
 
-  <!-- Corner fold -->
-  <path d="M332 18 Q348 18 348 34 L332 34 Z"
-        fill="#E9EDFA" stroke="#D6DAE6" stroke-width="2"/>
+  <!-- Corner fold removed -->
 </svg>
