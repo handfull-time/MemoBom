@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 	<title th:text="'MemoBom' + (${pageTitle} != null ? ' - ' + ${pageTitle} : '')">MemoBom</title>
 
-	<!--<script type="text/javascript" th:src="@{/js/tailwind/tailwind.min.js}"></script>-->
-	<!--<script src="https://cdn.tailwindcss.com"></script>-->
-	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
 	<script th:inline="javascript">
-	  	window.contextPath = (/*[[@{/}]]*/ '').replace(/\/$/, "");
+		window.contextPath = (/*[[@{/}]]*/ '').replace(/\/$/, "");
 		console.info('contextPath', window.contextPath);
 	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<link rel="stylesheet" th:href="@{/css/memoBom.css}">
+
 	<th:block layout:fragment="css"></th:block>
 
 	<style>
@@ -27,7 +29,8 @@
 	</style>
 </head>
 
-<body class="bg-gray-100 text-slate-900 overflow-hidden">
+<body class="bg-gray-100 text-slate-900 overflow-hidden"
+	th:classappend="' font-' + ${user == null ? 'md' : #strings.toLowerCase(user.fontSize)}">
 
 	<div class="w-full mx-auto h-[100dvh] flex flex-col bg-white shadow-lg overflow-hidden relative">
 

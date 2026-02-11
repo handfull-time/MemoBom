@@ -38,4 +38,6 @@ public class UserVo {
 	String note;
 	/** 이미지 URL */
 	String profileUrl;
+	/** 글자 크기 */
+	EFontSize fontSize;
 }

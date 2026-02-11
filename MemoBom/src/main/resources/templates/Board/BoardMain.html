@@ -19,6 +19,7 @@
 
 	<!-- 상태/로딩 -->
 	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
+	<div id="pageSentinel" class="h-1"></div>
 
 	<!-- fragment card template -->
 	<template id="tplFragmentCard">
@@ -1009,25 +1010,53 @@
 				}
 			}
 
-			// 스크롤 위로 올릴 때 자동 로딩(요청사항)
-			function bindAutoLoadOnScrollUp() {
-				let lastTop = 0;
-				window.addEventListener("scroll", () => {
-					const top = window.scrollY || document.documentElement.scrollTop || 0;
-					const goingUp = top < lastTop;
+			function getScrollContainer() {
+			  // LayoutBase 기준 실제 스크롤 컨테이너는 main(overflow-y-auto)
+			  return document.querySelector("main") || window;
+			}
 
-					// 위로 스크롤 + 상단 근처면 로딩
-					if (goingUp && top < 120) {
-						contentLoad();
-					}
+			function bindAutoLoadOnScrollBottom() {
+			  const sentinel = document.getElementById("pageSentinel");
+			  if (!sentinel) return;
 
-					lastTop = top;
-				}, {passive: true});
+			  const scroller = getScrollContainer();
+
+			  // 1) IntersectionObserver 우선 적용 (가장 안정적)
+			  if ("IntersectionObserver" in window && scroller !== window) {
+			    const io = new IntersectionObserver(
+			      (entries) => {
+			        const e = entries[0];
+			        if (e && e.isIntersecting) contentLoad();
+			      },
+			      {
+			        root: scroller,          // ★ main 스크롤을 기준으로 관찰
+			        rootMargin: "250px 0px", // 바닥 250px 전에 미리 로딩
+			        threshold: 0.01
+			      }
+			    );
+			    io.observe(sentinel);
+			    return;
+			  }
+
+			  // 2) fallback: scroll 이벤트 (root가 window인 경우 포함)
+			  const target = (scroller === window) ? window : scroller;
+			  target.addEventListener("scroll", () => {
+			    const el = (scroller === window) ? document.documentElement : scroller;
+
+			    const scrollTop = (scroller === window) ? (window.scrollY || el.scrollTop || 0) : el.scrollTop;
+			    const clientH   = (scroller === window) ? window.innerHeight : el.clientHeight;
+			    const scrollH   = el.scrollHeight;
+
+			    // 하단 200px 근처면 다음 페이지 로딩
+			    if (scrollTop + clientH >= scrollH - 200) {
+			      contentLoad();
+			    }
+			  }, { passive: true });
 			}
 
 			async function init() {
-				await contentLoad();      // 1페이지
-				bindAutoLoadOnScrollUp(); // 위로 올리면 추가 로딩
+			  await contentLoad();             // 1페이지
+			  bindAutoLoadOnScrollBottom();    // ★ 하단에서 다음 페이지 로딩
 			}
 
 			window.addEventListener("DOMContentLoaded", init);
