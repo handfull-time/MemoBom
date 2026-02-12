@@ -1,5 +1,7 @@
 package com.utime.memoBom.user.service.impl;
 
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -33,6 +35,12 @@ public class HolidayServiceImpl {
 	
 	@Value("${korean.dataio.key.SpcdeInfoService}")
 	private String serviceKey;
+	
+	@Value("${env.proxy.address:localhost}")
+	private String ProxyAddress;
+
+	@Value("${env.proxy.port:8008}")
+	private int ProxyPort;
 	
 	@Autowired
 	private HolidayDao holidayDao;
@@ -122,7 +130,7 @@ public class HolidayServiceImpl {
         return result;
     }
     
-    public List<HolidayVo> getHolidayInfo(int year, String target) throws Exception {
+    public List<HolidayVo> getHolidayInfo(HttpClient httpClient, int year, String target) throws Exception {
 
         final URI uri = UriComponentsBuilder
                 .fromUriString("http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/" + target)
@@ -134,10 +142,6 @@ public class HolidayServiceImpl {
                 .build(true)
                 .toUri();
 
-        final HttpClient client = HttpClient.newBuilder()
-        		.connectTimeout(Duration.ofSeconds(5))
-        		.build();
-
         final HttpRequest request = HttpRequest.newBuilder(uri)
                 .GET()
                 .timeout(Duration.ofSeconds(10))
@@ -146,7 +150,7 @@ public class HolidayServiceImpl {
 
         String resData;
         try {
-            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            final HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             log.info("Response code: " + response.statusCode());
             
             resData = response.body();
@@ -185,10 +189,22 @@ public class HolidayServiceImpl {
     	cal.add( Calendar.MONTH, 4);
     	final int year = cal.get( Calendar.YEAR );
     	
+    	// 실행 옵션 -DuseProxy=true
+    	final String isProxy = System.getProperty("useProxy"); 
+
+    	final HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10));
+
+	    if ("true".equals(isProxy)) {
+	        builder.proxy(ProxySelector.of(new InetSocketAddress(ProxyAddress, ProxyPort)));
+	    }
+
+	    final HttpClient httpClient = builder.build();
+    	
     	final List<HolidayVo> holiList = new ArrayList<>();
     	
     	for( String tgarget : TargetUrl ) {
-    		final List<HolidayVo> itemList = this.getHolidayInfo( year, tgarget);
+    		final List<HolidayVo> itemList = this.getHolidayInfo(httpClient, year, tgarget);
     		holiList.addAll( itemList );
     	}
     	
@@ -199,6 +215,11 @@ public class HolidayServiceImpl {
     
     @PostConstruct
 	private void init() throws Exception{
+
+    	if( System.getProperty("useProxy") != null ) {
+    		return;
+    	}
+
     	new Thread( new Runnable() {
     		
     		@Override
