@@ -56,6 +56,16 @@
 		<th:block th:replace="~{Common/LoadingOverlay :: LoadingOverlay}"></th:block>
 		<th:block th:replace="~{Common/ModalView :: ModalView}"></th:block>
 		<script type="text/javascript" th:src="@{/js/MyToast.js(v=${assetVersion})}"></script>
+		<script th:inline="javascript">
+	
+			// 로그인 사용자 (비로그인: null)
+			const LOGIN_USER = /*[[${user}]]*/ null;
+			const IS_LOGIN = !!(LOGIN_USER && LOGIN_USER.uid);
+	
+			function toastLoginRequired() {
+				showToast?.("로그인 필요", "로그인 후 이용해 주세요.", ToastType?.INFO ?? "info", 1800);
+			}
+		</script>
 	</th:block>
 
 	<th:block layout:fragment="script"></th:block>

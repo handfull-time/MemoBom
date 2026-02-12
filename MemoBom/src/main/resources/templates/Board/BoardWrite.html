@@ -258,7 +258,7 @@
 
 		async function onClickWrite() {
 			if (Array.isArray(topics) && topics.length > 1 && !selectedTopicUid) {
-				await alertP("토픽을 선택해 주세요.");
+				await alertP("Mosaic을 선택해 주세요.");
 				return;
 			}
 
@@ -289,7 +289,7 @@
 				}
 
 				if (data.code === "0") {
-					await alertP("The new fragment has been saved.");
+					await alertP("작은 조각이 추가됐습니다.");
 					window.__disableDirtyGuard__?.();
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {

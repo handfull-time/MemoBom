@@ -13,13 +13,11 @@ import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +46,7 @@ public class TopicController {
 		}else {
 			model.addAttribute("keyword", keyword);
 			model.addAttribute("uid", uid);
-//			return "Topic/TopicMain";
-			return "Topic/TopicMain.uidsplit";
-			
+			return "Topic/TopicMain";
 		}
     }
 	

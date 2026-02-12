@@ -31,7 +31,19 @@
 		</div>
 	</th:block>
 
-	<th:block th:if="${keyword == null}">
+	<th:block th:if="${keyword == null and uid != null}">
+		<!-- 단일 Mosaic(Topic UID 지정) -->
+		<section class="space-y-2">
+			<div class="px-2 pt-2">
+				<h2 class="text-2xl font-extrabold tracking-tight">Mosaic</h2>
+				<p class="text-xs text-slate-500 mt-1">선택한 Mosaic입니다.</p>
+			</div>
+
+			<div id="singleList" class="space-y-2"></div>
+		</section>
+	</th:block>
+
+	<th:block th:if="${keyword == null and uid == null}">
 		<!-- 상단 섹션: 인기 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
@@ -66,9 +78,6 @@
 			</div>
 		</section>
 	</th:block>
-
-	<!-- 상태 메시지 -->
-	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
 
 	<!-- topic row template -->
 	<template id="tplTopicRow">
@@ -109,7 +118,6 @@
 								<span class="topic-memo text-slate-600 font-semibold">0</span>
 							</div>
 							<span class="topic-uid hidden"></span>
-							<span class="topic-no hidden"></span>
 						</div>
 
 						<div class="flex items-center gap-2">
@@ -144,12 +152,13 @@
 	<script th:inline="javascript">
 
 		(() => {
+
 			const $ = (id) => document.getElementById(id);
 
 			const elTrending = $("trendingList");
+			const elSingle = $("singleList");
 			const elFresh = $("freshList");
 			const elSearch = $("searchList");
-			const elState = $("stateBox");
 			const tpl = $("tplTopicRow");
 
 			const btnMoreTrending = $("btnMoreTrending");
@@ -174,27 +183,6 @@
 
 			const keyword = /*[[${keyword}]]*/ null;
 			const topicUid = /*[[${uid}]]*/ null;
-
-			function showState(type, text) {
-				elState.classList.remove("hidden");
-				elState.textContent = text;
-
-				elState.classList.remove(
-					"bg-red-50", "border-red-200", "text-red-700",
-					"bg-green-50", "border-green-200", "text-green-700",
-					"bg-slate-50", "border-slate-200", "text-slate-700"
-				);
-
-				if (type === "err") elState.classList.add("bg-red-50", "border-red-200", "text-red-700");
-				else if (type === "ok") elState.classList.add("bg-green-50", "border-green-200", "text-green-700");
-				else elState.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
-			}
-
-			function hideState() {
-				if (!elState) return;
-				elState.classList.add("hidden");
-				elState.textContent = "";
-			}
 
 			function safeText(v, fallback = "") {
 				if (v === null || v === undefined) return fallback;
@@ -227,10 +215,9 @@
 					const desc = node.querySelector(".topic-desc");
 					const flow = node.querySelector(".topic-flow");
 					const memo = node.querySelector(".topic-memo");
-					const btn = node.querySelector(".btn-follow");
+					const btn_follow = node.querySelector(".btn-follow");
 					const flowImg = node.querySelector(".flow-img");
 					const uid = node.querySelector(".topic-uid");
-					const no = node.querySelector(".topic-no");
 					const userImg = node.querySelector(".topic-user-img");
 					const userName = node.querySelector(".topic-user-name");
 
@@ -240,7 +227,6 @@
 					flow.textContent = Number(t.flowCount || 0).toLocaleString();
 					memo.textContent = Number(t.fragmentCount || 0).toLocaleString();
 					uid.textContent = safeText(t.uid, "");
-					no.textContent = String(t.topicNo ?? "");
 
 					const userUid = (t.user && t.user.uid) ? String(t.user.uid).trim() : "";
 					const nick = (t.user && t.user.nickname) ? String(t.user.nickname).trim() : "";
@@ -268,13 +254,18 @@
 					}
 					applyFlowUI();
 
-					btn.addEventListener("click", async (e) => {
+					btn_follow.addEventListener("click", async (e) => {
 						e.stopPropagation();
 						if (busy) return;
 
+						if (!IS_LOGIN) {
+							toastLoginRequired();
+							return;
+						}
+
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showState("err", "uid가 없어 Flow를 처리할 수 없습니다.");
+							showToast("경고", "uid가 없어 Flow를 처리할 수 없습니다.", ToastType.WARNING, 1500);
 							return;
 						}
 
@@ -283,20 +274,22 @@
 						if (!ok) return;
 
 						busy = true;
-						btn.disabled = true;
+						btn_follow.disabled = true;
 
 						try {
 							const url = /*[[@{/Mosaic/Flow.json}]]*/ "/Mosaic/Flow.json";
 							const res = await apiPost(url, {uid: uidVal});
 
 							if (!res || res.code !== "0") {
-								showState("err", (res && res.message) ? res.message : "처리에 실패했습니다.");
+								showToast("오류", (res && res.message) ? res.message : "처리에 실패했습니다.", ToastType.ERROR, 1800);
 								return;
 							}
 
 							const before = isFlow;
 							isFlow = !isFlow;
 							applyFlowUI();
+							
+							showToast("안내", "[" + t.name + "] 팔로우" + (before ? " 해지했습니다." : "했습니다."), ToastType.SUCCESS);
 
 							const cur = Number(t.flowCount || 0);
 							if (!before && isFlow) t.flowCount = cur + 1;
@@ -304,17 +297,20 @@
 							flow.textContent = Number(t.flowCount || 0).toLocaleString();
 
 						} catch (err) {
-							showState("err", "네트워크 오류로 처리하지 못했습니다.");
+							showToast("오류", "네트워크 오류로 처리하지 못했습니다.", ToastType.ERROR, 1500);
 						} finally {
 							busy = false;
-							btn.disabled = false;
+							btn_follow.disabled = false;
 						}
 					});
 
 					name.addEventListener("click", (e) => {
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
-						if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
 						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
 						location.href = url + "?topicUid=" + encodeURIComponent(uidVal);
 					});
@@ -322,22 +318,53 @@
 					emoji.addEventListener("click", (e) => {
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
-						if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
 						const url = /*[[@{/Mosaic/Item.html}]]*/ "/Mosaic/Item.html";
 						location.href = url + "?uid=" + encodeURIComponent(uidVal);
 					});
 
 					node.querySelector(".topic-user").addEventListener("click", (e) => {
 						e.stopPropagation();
-						if (!userUid) return showState("err", "사용자 UID가 없습니다.");
+						if (!userUid){
+							showToast("안내", "사용자 UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						} 
 						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
 						location.href = url + "?userUid=" + encodeURIComponent(userUid);
 					});
 
-					node.querySelector(".fragment-write").addEventListener("click", (e) => {
+					node.querySelector(".fragment-write").addEventListener("click", async (e) => {
 						e.stopPropagation();
+						
+						if (!IS_LOGIN) {
+							toastLoginRequired();
+							return;
+						}
+						
 						const uidVal = (t.uid || "").trim();
-						if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
+						
+						if( !isFlow ){
+							const flowIcon = /*[[@{/images/topic/topic_flow_cancel.svg}]]*/ '/images/topic/topic_flow_cancel.svg';
+
+							showToast(
+							  "안내",
+							  `<div class="flex items-center gap-2">
+							     <img src="${flowIcon}" class="w-5 h-5" alt="flow">
+							     <span>를 이용해 팔로우를 먼저 해 주세요.</span>
+							   </div>`,
+							  ToastType.SUCCESS,
+							  2000
+							);
+							return;
+						}
+						
 						const url = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
 						location.href = url + "?topic=" + encodeURIComponent(uidVal);
 					});
@@ -347,13 +374,13 @@
 
 						const uid = (t.uid || "").trim();
 						if (!uid) {
-							showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 
 						// 1) 지원 체크
 						if (!navigator.share) {
-							showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
+							showToast("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType.INFO, 1800);
 							return;
 						}
 
@@ -363,7 +390,7 @@
 							const res = await apiGetWithParam(url, {uid});
 
 							if (!res || res.code !== "0" || !res.data) {
-								showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
+								showToast("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType.ERROR, 1800);
 								return;
 							}
 
@@ -383,7 +410,7 @@
 							// 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
 							// 필요하면 err.name === 'AbortError' 분기 가능
 							console.error(err);
-							showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
+							showToast("공유", "공유를 완료하지 못했습니다.", ToastType.INFO, 1500);
 						}
 					});
 
@@ -403,7 +430,6 @@
 				if (st.loading || st.ended) return;
 
 				st.loading = true;
-				hideState();
 
 				// 버튼 상태 갱신
 				if (sortType === ETopicSortType.trending) setMoreButtonState(sortType, btnMoreTrending);
@@ -413,19 +439,19 @@
 				try {
 					const baseUrl = /*[[@{/Mosaic/List.json}]]*/ "/Mosaic/List.json";
 					const params = {
-						uid: /*[[${uid}]]*/ null,
+						uid: (sortType === ETopicSortType.uid ? topicUid : null),
 						sortType: sortType,
 						page: String(st.page),
 					};
 
 					if (sortType === ETopicSortType.search && keyword) {
-						params.set("keyword", keyword);
+						params.keyword = keyword;
 					}
 
 					const res = await apiGetWithParam(baseUrl, params);
 
 					if (!res || res.code !== "0") {
-						showState("err", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.");
+						showToast("에러", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.", ToastType.ERROR, 1500); 
 						return;
 					}
 
@@ -441,13 +467,14 @@
 					if (sortType === ETopicSortType.trending) renderList(elTrending, list, !isFirst);
 					if (sortType === ETopicSortType.fresh) renderList(elFresh, list, !isFirst);
 					if (sortType === ETopicSortType.search) renderList(elSearch, list, !isFirst);
+					if (sortType === ETopicSortType.uid) renderList(elSingle, list, !isFirst);
 
 					// ✅ 다음 호출을 위해 page 증가
 					st.page += 1;
 
 				} catch (e) {
 					console.error(e);
-					showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
+					showToast("오류", "네트워크 오류로 목록을 불러오지 못했습니다.", ToastType.ERROR, 1500); 
 				} finally {
 					st.loading = false;
 
@@ -458,24 +485,6 @@
 			}
 
 			async function init() {
-				// uid가 있으면: 특정 토픽 1개만 보이도록 (인기/새로운 섹션 숨김)
-				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
-				if (uidMode) {
-					// "새로운 Mosaic" 섹션은 숨기고, 상단 섹션을 단일 토픽 표시용으로 재사용
-					document.getElementById('sectionFresh')?.classList.add('hidden');
-					document.getElementById('dividerTrendingFresh')?.classList.add('hidden');
-					btnMoreFresh?.classList.add('hidden');
-
-					// 제목을 "Mosaic"으로 바꿈(인기/새로운 노출 제거)
-					const h2 = document.querySelector('#sectionTrending h2');
-					const p = document.querySelector('#sectionTrending p');
-					if (h2) h2.textContent = 'Mosaic';
-					if (p) p.textContent = '선택한 Mosaic입니다.';
-
-					// 단일 모드에서는 더보기 버튼 숨김
-					btnMoreTrending?.classList.add('hidden');
-				}
-
 				// 초기 버튼 상태
 				setMoreButtonState(ETopicSortType.trending, btnMoreTrending);
 				setMoreButtonState(ETopicSortType.fresh, btnMoreFresh);
@@ -487,15 +496,22 @@
 				btnMoreSearch?.addEventListener("click", () => fetchPage(ETopicSortType.search));
 
 				// 첫 로딩
+				if (keyword) {
+					fetchPage(ETopicSortType.search);
+					return;
+				}
+
+				// uid가 있으면: 단일 Mosaic 화면(1개만)
+				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
 				if (uidMode) {
 					fetchPage(ETopicSortType.uid);
 					paging[ETopicSortType.uid].ended = true; // 단일 모드 1회만
-				} else if (keyword) {
-					fetchPage(ETopicSortType.search);
-				} else {
-					fetchPage(ETopicSortType.trending);
-					fetchPage(ETopicSortType.fresh);
+					return;
 				}
+
+				// 기본: 인기 + 새로운
+				fetchPage(ETopicSortType.trending);
+				fetchPage(ETopicSortType.fresh);
 			}
 
 			window.addEventListener("DOMContentLoaded", init);

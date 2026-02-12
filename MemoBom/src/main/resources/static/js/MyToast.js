@@ -153,7 +153,7 @@ function showToast(
 	// message
 	const messageElement = document.createElement("div");
 	messageElement.className = "mt-1 text-sm text-gray-800 leading-relaxed drop-shadow-sm";
-	messageElement.innerText = message ?? "";
+	messageElement.innerHTML = message ?? "";
 
 	// buttons
 	const buttonContainer = document.createElement("div");
