@@ -78,7 +78,7 @@
 		<result column="NICKNAME" property="nickname"/>
 		<result column="PROFILE_IMG_PATH" property="profileUrl"/>
 		<result column="DESCRIPTION" property="note"/>
-		<result column="FONT_SIZE" property="fontSize"/>
+		<result column="FONT_SIZE" property="fontSize" typeHandler="com.utime.memoBom.user.typeHandler.EFontSizeTypeHandler"/>
 	</resultMap>
 	
 	<!-- id 조회 -->	
@@ -167,13 +167,20 @@
 		ORDER BY X.REG_DATE ASC
 	</select>
 	
+	<resultMap id="BasicUserVoMap" type="com.utime.memoBom.user.vo.query.BasicUserVo">
+		<id column="UID" property="uid"/>
+		<result column="NICKNAME" property="nickname"/>
+		<result column="PROFILE_IMG_PATH" property="profileUrl"/>
+		<result column="FONT_SIZE" property="fontSize" typeHandler="com.utime.memoBom.user.typeHandler.EFontSizeTypeHandler"/>
+	</resultMap>
+	
 	<!--단순 사용자 정보 조회-->
-	<select id="getBasicUserFromUserNo" parameterType="long" resultType="com.utime.memoBom.user.vo.query.BasicUserVo">
+	<select id="getBasicUserFromUserNo" parameterType="long" resultMap="BasicUserVoMap">
 		SELECT 
-			UID AS "uid"
-			, NICKNAME AS "nickname"
-			, PROFILE_IMG_PATH AS "profileUrl"
-			, FONT_SIZE AS "fontSize"
+			UID 
+			, NICKNAME 
+			, PROFILE_IMG_PATH 
+			, FONT_SIZE 
 		FROM MB_USER
 		WHERE USER_NO = #{userNo} AND ENABLED = TRUE
 	</select>

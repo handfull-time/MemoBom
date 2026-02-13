@@ -20,6 +20,7 @@ import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.push.service.PushSendService;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.vo.UserVo;
 
@@ -39,6 +40,8 @@ class BoardServiceImpl implements BoardService {
 	final UserDao userDao;
 	
 	final KeyValueDao keyValueDao;
+	
+	final PushSendService pushService; 
 	
 	@Override
 	public ReturnBasic saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) {
@@ -60,6 +63,7 @@ class BoardServiceImpl implements BoardService {
 		
 		try {
 			boardDao.saveFragment(user, device, reqVo);
+			pushService.sendMessageNewFragment( user, reqVo.getTopicUid() ); 
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");

@@ -342,13 +342,11 @@
     	SELECT
 	        <include refid="TopicColumnSql" /> 
 	    FROM MB_TOPIC TP
-	        JOIN MB_USER USR
-	            ON TP.OWNER_NO = USR.USER_NO
 	        JOIN MB_TOPIC_FOLLOW MYFL
-	            ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{userNo}
+	            ON MYFL.TOPIC_NO = TP.TOPIC_NO 
 	    WHERE 1=1
 	    	AND TP.ENABLED = TRUE
-	    	AND USR.USER_NO = #{userNo}
+	    	AND MYFL.USER_NO = #{userNo}
 	    ORDER BY TP.NAME
     </select>
     
@@ -428,19 +426,16 @@
 		SELECT
 		    <include refid="TopicColumnSql" /> 
 		FROM MB_TOPIC TP
-		    JOIN MB_USER USR
-		        ON TP.OWNER_NO = USR.USER_NO
-		
+			 LEFT JOIN MB_USER ME
+		        ON ME.USER_NO = #{user.userNo}
 		    LEFT JOIN MB_TOPIC_FOLLOW MYFL
-		        ON MYFL.TOPIC_NO = TP.TOPIC_NO
-		       AND MYFL.USER_NO  = #{user.userNo}
+		        ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO  = ME.USER_NO
 		WHERE 1=1
 		    AND TP.UID = #{uid}
 		    AND TP.ENABLED = TRUE
+	        AND MYFL.USER_NO  = #{user.userNo}
 		    AND (
-		        TP.EXTERNAL = TRUE
-		        OR TP.OWNER_NO = #{user.userNo}
-		        OR MYFL.USER_NO IS NOT NULL
+		        TP.EXTERNAL = TRUE OR MYFL.USER_NO IS NOT NULL
 		    )
 	</select>
 	
@@ -484,5 +479,22 @@
             , #{topicNo}
         )
     </insert>
+    
+    <!--user를 제외한 topic follow 목록-->
+    <select id="selectTopicFollowList" resultType="long" >
+    	SELECT 
+    		MYFL.USER_NO
+    	FROM MB_TOPIC_FOLLOW MYFL
+	        INNER JOIN MB_TOPIC TP
+	            ON MYFL.TOPIC_NO = TP.TOPIC_NO 
+	        INNER JOIN MB_USER UR
+	        	ON MYFL.USER_NO = UR.USER_NO
+    	WHERE 1=1
+    		AND MYFL.USER_NO != #{user.userNo}
+    		AND UR.PUSH_ENABLED = TRUE
+    		AND UR.ENABLED = TRUE
+    		AND TP.ENABLED = TRUE
+    		AND TP.UID = #{uid}
+    </select>
 
 </mapper>

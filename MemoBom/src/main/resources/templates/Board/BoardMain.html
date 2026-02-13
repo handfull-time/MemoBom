@@ -173,14 +173,6 @@
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
 
-		// 로그인 사용자 (비로그인: null)
-		const LOGIN_USER = /*[[${user}]]*/ null;
-		const IS_LOGIN = !!(LOGIN_USER && LOGIN_USER.uid);
-
-		function toastLoginRequired() {
-			showToast?.("로그인 필요", "로그인 후 이용해 주세요.", ToastType?.INFO ?? "info", 1800);
-		}
-
 		// fragment별 댓글 페이지 상태 유지
 		const commentStateMap = new Map();
 		// uid -> { page:1, loading:false, done:false }

@@ -107,18 +107,23 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public TopicResultVo loadTopic(String uid) {
-		
+//	TopicResultVo loadTopic(String uid);
+	public ReturnBasic loadTopic(LoginUser user, String uid) {
+	
+		final ReturnBasic result = new ReturnBasic();
 		if( AppUtils.isEmpty(uid) ) {
-			return null;
+			result.setCodeMessage("E", "Mosaic ID가 없습니다.");
+			return result;
 		} 
 		
-		final TopicVo topic = topicDao.loadTopic(uid);
+		final TopicVo topic = topicDao.loadTopic(user, uid);
 		if( topic == null ) {
-			return null;
+			result.setCodeMessage("E", "Mosaic을 찾을 수 없습니다.");
+			return result;
 		}
 		
-		return this.convertTopicToTopicResultVo(topic);
+		result.setData( this.convertTopicToTopicResultVo(topic) );
+		return result;
 	}
 	
 	@Override

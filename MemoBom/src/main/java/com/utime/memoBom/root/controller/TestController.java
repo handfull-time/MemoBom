@@ -22,7 +22,7 @@ import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.service.PushSendService;
-import com.utime.memoBom.push.vo.PushNotiDataVo;
+import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.service.UserService;
@@ -116,7 +116,7 @@ public class TestController {
 	@GetMapping("Topic")
 	public String topic(Model model) {
 
-		model.addAttribute("topic", topicService.loadTopic(null));
+		model.addAttribute("topic", topicService.loadTopic(getLoginUser(), null));
 		model.addAttribute("user", new UserVo());
 		
 		return "Topic/TopicItem";
@@ -204,13 +204,12 @@ public class TestController {
 	@ResponseBody
     @PostMapping("sendPush.json")
     public ReturnBasic sendPush() throws Exception {
-		final PushNotiDataVo data = new PushNotiDataVo();
 		
-		data.setTitle("push go");
-		data.setMessage("제발 되라.");
-		data.setIcon("/MemoBom/images/profile-placeholder.svg");
-		data.getData().setClickId(UUID.randomUUID().toString());
-		data.getData().setUrl("/Fragment/index.html");
+		final PushSendDataVo data = new PushSendDataVo();
+		data.setTitle("Mosaic");
+		data.setMessage("모자익 좋아요.");
+		data.setImageUrl("/MemoBom/images/profile-placeholder.svg");
+		data.setLinkUrl("/Mosaic/index.html");
 		
     	final ReturnBasic res = pushSendService.sendPush(getLoginUser(), data);
         

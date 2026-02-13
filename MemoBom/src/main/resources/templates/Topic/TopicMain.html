@@ -9,125 +9,137 @@
 			leftTitle=~{Fragments/Icons :: favicon},
 			title='Mosaic', 
 			rightTitle=~{Fragments/Icons :: topic_write}
-		) }"></th:block >
+		) }"></th:block>
 </th:block>
 
 <th:block layout:fragment="content">
 
 	<th:block th:if="${keyword != null}">
-	  <div class="px-2 pt-2">
-	    <h2 class="text-lg font-extrabold tracking-tight">
-	      검색 결과: "<span th:text="${keyword}">키워드</span>"
-	    </h2>
-	  </div>
+		<div class="px-2 pt-2">
+			<h2 class="text-lg font-extrabold tracking-tight">
+				검색 결과: "<span th:text="${keyword}">키워드</span>"
+			</h2>
+		</div>
 
-	  <div id="searchList" class="space-y-2"></div>
+		<div id="searchList" class="space-y-2"></div>
 
-	  <div class="px-2 mt-2">
-	    <button id="btnMoreSearch" type="button"
-	      class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
+		<div class="px-2 mt-2">
+			<button id="btnMoreSearch" type="button" class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
 	             hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
-	      더 보기
-	    </button>
-	  </div>
-	</th:block>
-	
-	<th:block th:if="${keyword == null}">
-	<!-- 상단 섹션: 인기 -->
-	<section class="space-y-2">
-		<div class="px-2 pt-2">
-			<h2 class="text-2xl font-extrabold tracking-tight">인기 Mosaic</h2>
-			<p class="text-xs text-slate-500 mt-1">요즘 뜨는 Mosaic을 모아봤어요.</p>
+				더 보기
+			</button>
 		</div>
-
-		<div id="trendingList" class="space-y-2"></div>
-		<div class="px-2">
-		    <button id="btnMoreTrending" type="button"
-		      class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
-		             hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
-		      더 보기
-		    </button>
-		  </div>
-	</section>
-
-	<div class="h-4"></div>
-
-	<!-- 하단 섹션: 새로운 -->
-	<section class="space-y-2">
-		<div class="px-2 pt-2">
-			<h2 class="text-2xl font-extrabold tracking-tight">새로운 Mosaic</h2>
-			<p class="text-xs text-slate-500 mt-1">최근 생성된 Mosaic이에요.</p>
-		</div>
-
-		<div id="freshList" class="space-y-2"></div>
-		<div class="px-2">
-		    <button id="btnMoreFresh" type="button"
-		      class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
-		             hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
-		      더 보기
-		    </button>
-		  </div>
-	</section>
 	</th:block>
-	
-	<!-- 상태 메시지 -->
-	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
+
+	<th:block th:if="${keyword == null and uid != null}">
+		<!-- 단일 Mosaic(Topic UID 지정) -->
+		<section class="space-y-2">
+			<div class="px-2 pt-2">
+				<h2 class="text-2xl font-extrabold tracking-tight">Mosaic</h2>
+				<p class="text-xs text-slate-500 mt-1">선택한 Mosaic입니다.</p>
+			</div>
+
+			<div id="singleList" class="space-y-2"></div>
+		</section>
+	</th:block>
+
+	<th:block th:if="${keyword == null and uid == null}">
+		<!-- 상단 섹션: 인기 -->
+		<section class="space-y-2">
+			<div class="px-2 pt-2">
+				<h2 class="text-2xl font-extrabold tracking-tight">인기 Mosaic</h2>
+				<p class="text-xs text-slate-500 mt-1">요즘 뜨는 Mosaic을 모아봤어요.</p>
+			</div>
+
+			<div id="trendingList" class="space-y-2"></div>
+			<div class="px-2">
+				<button id="btnMoreTrending" type="button" class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
+		             hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
+					더 보기
+				</button>
+			</div>
+		</section>
+
+		<div class="h-4"></div>
+
+		<!-- 하단 섹션: 새로운 -->
+		<section class="space-y-2">
+			<div class="px-2 pt-2">
+				<h2 class="text-2xl font-extrabold tracking-tight">새로운 Mosaic</h2>
+				<p class="text-xs text-slate-500 mt-1">최근 생성된 Mosaic이에요.</p>
+			</div>
+
+			<div id="freshList" class="space-y-2"></div>
+			<div class="px-2">
+				<button id="btnMoreFresh" type="button" class="w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
+		             hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
+					더 보기
+				</button>
+			</div>
+		</section>
+	</th:block>
 
 	<!-- topic row template -->
 	<template id="tplTopicRow">
-	    <div class="topic-row bg-white rounded-xl border border-slate-200 p-1.5 shadow-sm transition-all active:bg-slate-50">
-	        <div class="flex items-center gap-1.5">
-	            <div class="shrink-0">
-	                <div class="emoji-badge w-10 h-10 rounded-lg flex items-center justify-center text-xl cursor-pointer border border-slate-200 bg-slate-50 shadow-sm">
-	                    😊
-	                </div>
-	            </div>
+		<div
+			class="topic-row bg-white rounded-xl border border-slate-200 p-1.5 shadow-sm transition-all active:bg-slate-50">
+			<div class="flex items-center gap-1.5">
+				<div class="shrink-0">
+					<div
+						class="emoji-badge w-10 h-10 rounded-lg flex items-center justify-center text-xl cursor-pointer border border-slate-200 bg-slate-50 shadow-sm">
+						😊
+					</div>
+				</div>
 
-	            <div class="min-w-0 flex-1">
-	                <div class="flex items-center justify-between gap-2">
-	                    <span class="topic-name block font-bold text-base text-slate-900 truncate cursor-pointer hover:text-indigo-600 transition-colors">
-	                        MosaicName
-	                    </span>
-	                    <button type="button" id="btn-flow" class="btn-follow shrink-0 h-7 flex items-center justify-center rounded-lg hover:opacity-80 transition-opacity">
-	                        <img src="" alt="Flow" class="flow-img h-full w-auto object-contain" />
-	                    </button>
-	                </div>
+				<div class="min-w-0 flex-1">
+					<div class="flex items-center justify-between gap-2">
+						<span
+							class="topic-name block font-bold text-base text-slate-900 truncate cursor-pointer hover:text-indigo-600 transition-colors">
+							MosaicName
+						</span>
+						<button type="button" id="btn-flow"
+							class="btn-follow shrink-0 h-7 flex items-center justify-center rounded-lg hover:opacity-80 transition-opacity">
+							<img src="" alt="Flow" class="flow-img h-full w-auto object-contain" />
+						</button>
+					</div>
 
-	                <div class="topic-desc text-xs text-slate-500 mt-0.5 line-clamp-1">
-	                    설명문이 들어갑니다.
-	                </div>
+					<div class="topic-desc text-xs text-slate-500 mt-0.5 line-clamp-1">
+						설명문이 들어갑니다.
+					</div>
 
-	                <div class="flex items-center justify-between mt-1.5 pt-1.5 border-t border-slate-50">
-	                    <div class="flex items-center gap-3 text-[12px] font-medium text-slate-400">
-	                        <div class="flex items-center gap-0.5">
-	                            <span class="opacity-70">👥</span>
-	                            <span class="topic-flow text-slate-600 font-semibold">0</span>
-	                        </div>
-	                        <div class="flex items-center gap-0.5">
-	                            <span class="opacity-70">📝</span>
-	                            <span class="topic-memo text-slate-600 font-semibold">0</span>
-	                        </div>
-	                        <span class="topic-uid hidden"></span>
-	                        <span class="topic-no hidden"></span>
-	                    </div>
+					<div class="flex items-center justify-between mt-1.5 pt-1.5 border-t border-slate-50">
+						<div class="flex items-center gap-3 text-[12px] font-medium text-slate-400">
+							<div class="flex items-center gap-0.5">
+								<span class="opacity-70">👥</span>
+								<span class="topic-flow text-slate-600 font-semibold">0</span>
+							</div>
+							<div class="flex items-center gap-0.5">
+								<span class="opacity-70">📝</span>
+								<span class="topic-memo text-slate-600 font-semibold">0</span>
+							</div>
+							<span class="topic-uid hidden"></span>
+						</div>
 
-	                    <div class="flex items-center gap-2">
-							<button type="button" class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+						<div class="flex items-center gap-2">
+							<button type="button"
+								class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 								aria-label="share">
-								<img th:src="@{/images/share.svg}" alt="share" class="w-4 h-4 pointer-events-none"/>
+								<img th:src="@{/images/share.svg}" alt="share" class="w-4 h-4 pointer-events-none" />
 							</button>
-	                        <button type="button" class="topic-user flex items-center gap-1.5 max-w-[100px]">
-	                            <img class="topic-user-img w-5 h-5 rounded-full border border-slate-200 object-cover" alt="P" />
-	                            <span class="topic-user-name text-[12px] text-slate-500 truncate font-medium">작성자</span>
-	                        </button>
-	                        <div class="fragment-write-container border-l border-slate-100 pl-2">
-	                            <img th:src="@{/images/fragment/writeFragment.svg}" alt="write" class="fragment-write h-6 w-auto cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
+							<button type="button" class="topic-user flex items-center gap-1.5 max-w-[100px]">
+								<img class="topic-user-img w-5 h-5 rounded-full border border-slate-200 object-cover"
+									alt="P" />
+								<span class="topic-user-name text-[12px] text-slate-500 truncate font-medium">작성자</span>
+							</button>
+							<div class="fragment-write-container border-l border-slate-100 pl-2">
+								<img th:src="@{/images/fragment/writeFragment.svg}" alt="write"
+									class="fragment-write h-6 w-auto cursor-pointer opacity-70 hover:opacity-100 transition-opacity" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</template>
 
 </th:block>
@@ -138,364 +150,395 @@
 
 <th:block layout:fragment="script">
 	<script th:inline="javascript">
-		
-	(() => {
-	  const $ = (id) => document.getElementById(id);
 
-	  const elTrending = $("trendingList");
-	  const elFresh = $("freshList");
-	  const elSearch = $("searchList");
-	  const elState = $("stateBox");
-	  const tpl = $("tplTopicRow");
+		(() => {
 
-	  const btnMoreTrending = $("btnMoreTrending");
-	  const btnMoreFresh = $("btnMoreFresh");
-	  const btnMoreSearch = $("btnMoreSearch");
+			const $ = (id) => document.getElementById(id);
 
-	  // ✅ sortType (백엔드 enum과 동일)
-	  const ETopicSortType = Object.freeze({
-	    trending: "trending",
-	    fresh: "fresh",
-	    search: "search",
-	  });
+			const elTrending = $("trendingList");
+			const elSingle = $("singleList");
+			const elFresh = $("freshList");
+			const elSearch = $("searchList");
+			const tpl = $("tplTopicRow");
 
-	  // ✅ sortType별 페이징 상태
-	  const paging = {
-	    [ETopicSortType.trending]: { page: 1, loading: false, ended: false },
-	    [ETopicSortType.fresh]: { page: 1, loading: false, ended: false },
-	    [ETopicSortType.search]: { page: 1, loading: false, ended: false },
-	  };
+			const btnMoreTrending = $("btnMoreTrending");
+			const btnMoreFresh = $("btnMoreFresh");
+			const btnMoreSearch = $("btnMoreSearch");
 
-	  const keyword = /*[[${keyword}]]*/ null;
+			// ✅ sortType (백엔드 enum과 동일)
+			const ETopicSortType = Object.freeze({
+				trending: "trending",
+				fresh: "fresh",
+				search: "search",
+				uid: "uid",
+			});
 
-	  function showState(type, text) {
-	    elState.classList.remove("hidden");
-	    elState.textContent = text;
+			// ✅ sortType별 페이징 상태
+			const paging = {
+				[ETopicSortType.trending]: {page: 1, loading: false, ended: false},
+				[ETopicSortType.fresh]: {page: 1, loading: false, ended: false},
+				[ETopicSortType.search]: {page: 1, loading: false, ended: false},
+				[ETopicSortType.uid]: {page: 1, loading: false, ended: false},
+			};
 
-	    elState.classList.remove(
-	      "bg-red-50", "border-red-200", "text-red-700",
-	      "bg-green-50", "border-green-200", "text-green-700",
-	      "bg-slate-50", "border-slate-200", "text-slate-700"
-	    );
+			const keyword = /*[[${keyword}]]*/ null;
+			const topicUid = /*[[${uid}]]*/ null;
 
-	    if (type === "err") elState.classList.add("bg-red-50", "border-red-200", "text-red-700");
-	    else if (type === "ok") elState.classList.add("bg-green-50", "border-green-200", "text-green-700");
-	    else elState.classList.add("bg-slate-50", "border-slate-200", "text-slate-700");
-	  }
+			function safeText(v, fallback = "") {
+				if (v === null || v === undefined) return fallback;
+				const s = String(v).trim();
+				return s ? s : fallback;
+			}
 
-	  function hideState() {
-	    if (!elState) return;
-	    elState.classList.add("hidden");
-	    elState.textContent = "";
-	  }
+			// ✅ 기존 renderList를 "append 지원"으로 확장
+			function renderList(container, topics, append = false) {
+				if (!container) return;
 
-	  function safeText(v, fallback = "") {
-	    if (v === null || v === undefined) return fallback;
-	    const s = String(v).trim();
-	    return s ? s : fallback;
-	  }
+				if (!append) container.innerHTML = "";
 
-	  // ✅ 기존 renderList를 "append 지원"으로 확장
-	  function renderList(container, topics, append = false) {
-	    if (!container) return;
+				// 첫 페이지에서만 empty 표시
+				if (!append && (!topics || topics.length === 0)) {
+					const empty = document.createElement("div");
+					empty.className = "mx-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500";
+					empty.textContent = "표시할 토픽이 없습니다.";
+					container.appendChild(empty);
+					return;
+				}
 
-	    if (!append) container.innerHTML = "";
+				if (!topics || topics.length === 0) return;
 
-	    // 첫 페이지에서만 empty 표시
-	    if (!append && (!topics || topics.length === 0)) {
-	      const empty = document.createElement("div");
-	      empty.className = "mx-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500";
-	      empty.textContent = "표시할 토픽이 없습니다.";
-	      container.appendChild(empty);
-	      return;
-	    }
+				topics.forEach((t) => {
+					const node = tpl.content.firstElementChild.cloneNode(true);
 
-	    if (!topics || topics.length === 0) return;
+					const emoji = node.querySelector(".emoji-badge");
+					const name = node.querySelector(".topic-name");
+					const desc = node.querySelector(".topic-desc");
+					const flow = node.querySelector(".topic-flow");
+					const memo = node.querySelector(".topic-memo");
+					const btn_follow = node.querySelector(".btn-follow");
+					const flowImg = node.querySelector(".flow-img");
+					const uid = node.querySelector(".topic-uid");
+					const userImg = node.querySelector(".topic-user-img");
+					const userName = node.querySelector(".topic-user-name");
 
-	    topics.forEach((t) => {
-	      const node = tpl.content.firstElementChild.cloneNode(true);
+					emoji.textContent = safeText(t.imogi, "😊");
+					name.textContent = safeText(t.name, "(이름 없음)");
+					desc.textContent = safeText(t.description, "");
+					flow.textContent = Number(t.flowCount || 0).toLocaleString();
+					memo.textContent = Number(t.fragmentCount || 0).toLocaleString();
+					uid.textContent = safeText(t.uid, "");
 
-	      const emoji = node.querySelector(".emoji-badge");
-	      const name = node.querySelector(".topic-name");
-	      const desc = node.querySelector(".topic-desc");
-	      const flow = node.querySelector(".topic-flow");
-	      const memo = node.querySelector(".topic-memo");
-	      const btn = node.querySelector(".btn-follow");
-	      const flowImg = node.querySelector(".flow-img");
-	      const uid = node.querySelector(".topic-uid");
-	      const no = node.querySelector(".topic-no");
-	      const userImg = node.querySelector(".topic-user-img");
-	      const userName = node.querySelector(".topic-user-name");
-		  
-	      emoji.textContent = safeText(t.imogi, "😊");
-	      name.textContent = safeText(t.name, "(이름 없음)");
-	      desc.textContent = safeText(t.description, "");
-	      flow.textContent = Number(t.flowCount || 0).toLocaleString();
-	      memo.textContent = Number(t.fragmentCount || 0).toLocaleString();
-	      uid.textContent = safeText(t.uid, "");
-	      no.textContent = String(t.topicNo ?? "");
+					const userUid = (t.user && t.user.uid) ? String(t.user.uid).trim() : "";
+					const nick = (t.user && t.user.nickname) ? String(t.user.nickname).trim() : "";
+					const profileUrl = (t.user && t.user.profileUrl) ? String(t.user.profileUrl).trim() : "";
 
-	      const userUid = (t.user && t.user.uid) ? String(t.user.uid).trim() : "";
-	      const nick = (t.user && t.user.nickname) ? String(t.user.nickname).trim() : "";
-	      const profileUrl = (t.user && t.user.profileUrl) ? String(t.user.profileUrl).trim() : "";
+					userName.textContent = nick || "Unknown";
+					if (profileUrl) userImg.src = profileUrl;
+					else userImg.removeAttribute("src");
 
-	      userName.textContent = nick || "Unknown";
-	      if (profileUrl) userImg.src = profileUrl;
-	      else userImg.removeAttribute("src");
+					const color = safeText(t.color, "");
+					if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+						emoji.style.background = color;
+						emoji.style.borderColor = "rgba(148,163,184,0.6)";
+						node.style.borderLeft = `6px solid ${color}`;
+					}
 
-	      const color = safeText(t.color, "");
-	      if (/^#[0-9a-fA-F]{6}$/.test(color)) {
-	        emoji.style.background = color;
-	        emoji.style.borderColor = "rgba(148,163,184,0.6)";
-	        node.style.borderLeft = `6px solid ${color}`;
-	      }
+					// flow 버튼(서버 연동)
+					let isFlow = !!t.flow;
+					let busy = false;
 
-	      // flow 버튼(서버 연동)
-	      let isFlow = !!t.flow;
-	      let busy = false;
+					function applyFlowUI() {
+						flowImg.src = isFlow
+							? (/*[[@{/images/topic/topic_flow_apply.svg}]]*/ '/images/topic/topic_flow_apply.svg')
+							: (/*[[@{/images/topic/topic_flow_cancel.svg}]]*/ '/images/topic/topic_flow_cancel.svg');
+					}
+					applyFlowUI();
 
-	      function applyFlowUI() {
-	        flowImg.src = isFlow
-	          ? (/*[[@{/images/topic/topic_flow_apply.svg}]]*/ '/images/topic/topic_flow_apply.svg')
-	          : (/*[[@{/images/topic/topic_flow_cancel.svg}]]*/ '/images/topic/topic_flow_cancel.svg');
-	      }
-	      applyFlowUI();
+					btn_follow.addEventListener("click", async (e) => {
+						e.stopPropagation();
+						if (busy) return;
 
-	      btn.addEventListener("click", async (e) => {
-	        e.stopPropagation();
-	        if (busy) return;
+						if (!IS_LOGIN) {
+							toastLoginRequired();
+							return;
+						}
 
-	        const uidVal = (t.uid || "").trim();
-	        if (!uidVal) {
-	          showState("err", "uid가 없어 Flow를 처리할 수 없습니다.");
-	          return;
-	        }
-			
-			const ask = "[" + t.name + "] 팔로우" + (isFlow ? " 해지할까요?" : "할까요?");
-			const ok = await confirmP(ask);
-			if (!ok) return;
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showToast("경고", "uid가 없어 Flow를 처리할 수 없습니다.", ToastType.WARNING, 1500);
+							return;
+						}
 
-	        busy = true;
-	        btn.disabled = true;
+						const ask = "[" + t.name + "] 팔로우" + (isFlow ? " 해지할까요?" : "할까요?");
+						const ok = await confirmP(ask);
+						if (!ok) return;
 
-	        try {
-	          const url = /*[[@{/Mosaic/Flow.json}]]*/ "/Mosaic/Flow.json";
-	          const res = await apiPost(url, { uid: uidVal });
+						busy = true;
+						btn_follow.disabled = true;
 
-	          if (!res || res.code !== "0") {
-	            showState("err", (res && res.message) ? res.message : "처리에 실패했습니다.");
-	            return;
-	          }
+						try {
+							const url = /*[[@{/Mosaic/Flow.json}]]*/ "/Mosaic/Flow.json";
+							const res = await apiPost(url, {uid: uidVal});
 
-	          const before = isFlow;
-	          isFlow = !isFlow;
-	          applyFlowUI();
+							if (!res || res.code !== "0") {
+								showToast("오류", (res && res.message) ? res.message : "처리에 실패했습니다.", ToastType.ERROR, 1800);
+								return;
+							}
 
-	          const cur = Number(t.flowCount || 0);
-	          if (!before && isFlow) t.flowCount = cur + 1;
-	          if (before && !isFlow) t.flowCount = Math.max(0, cur - 1);
-	          flow.textContent = Number(t.flowCount || 0).toLocaleString();
+							const before = isFlow;
+							isFlow = !isFlow;
+							applyFlowUI();
+							
+							showToast("안내", "[" + t.name + "] 팔로우" + (before ? " 해지했습니다." : "했습니다."), ToastType.SUCCESS);
 
-	        } catch (err) {
-	          showState("err", "네트워크 오류로 처리하지 못했습니다.");
-	        } finally {
-	          busy = false;
-	          btn.disabled = false;
-	        }
-	      });
+							const cur = Number(t.flowCount || 0);
+							if (!before && isFlow) t.flowCount = cur + 1;
+							if (before && !isFlow) t.flowCount = Math.max(0, cur - 1);
+							flow.textContent = Number(t.flowCount || 0).toLocaleString();
 
-	      name.addEventListener("click", (e) => {
-	        e.stopPropagation();
-	        const uidVal = (t.uid || "").trim();
-	        if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
-	        const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
-	        location.href = url + "?topicUid=" + encodeURIComponent(uidVal);
-	      });
+						} catch (err) {
+							showToast("오류", "네트워크 오류로 처리하지 못했습니다.", ToastType.ERROR, 1500);
+						} finally {
+							busy = false;
+							btn_follow.disabled = false;
+						}
+					});
 
-	      emoji.addEventListener("click", (e) => {
-	        e.stopPropagation();
-	        const uidVal = (t.uid || "").trim();
-	        if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
-	        const url = /*[[@{/Mosaic/Item.html}]]*/ "/Mosaic/Item.html";
-	        location.href = url + "?uid=" + encodeURIComponent(uidVal);
-	      });
+					name.addEventListener("click", (e) => {
+						e.stopPropagation();
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
+						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
+						location.href = url + "?topicUid=" + encodeURIComponent(uidVal);
+					});
 
-	      node.querySelector(".topic-user").addEventListener("click", (e) => {
-	        e.stopPropagation();
-	        if (!userUid) return showState("err", "사용자 UID가 없습니다.");
-	        const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
-	        location.href = url + "?userUid=" + encodeURIComponent(userUid);
-	      });
+					emoji.addEventListener("click", (e) => {
+						e.stopPropagation();
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
+						const url = /*[[@{/Mosaic/Item.html}]]*/ "/Mosaic/Item.html";
+						location.href = url + "?uid=" + encodeURIComponent(uidVal);
+					});
 
-	      node.querySelector(".fragment-write").addEventListener("click", (e) => {
-	        e.stopPropagation();
-	        const uidVal = (t.uid || "").trim();
-	        if (!uidVal) return showState("err", "토픽 UID가 없습니다.");
-	        const url = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
-	        location.href = url + "?topic=" + encodeURIComponent(uidVal);
-	      });
-		  
-		  node.querySelector(".btn-share").addEventListener("click", async (e) => {
-		    e.stopPropagation();
+					node.querySelector(".topic-user").addEventListener("click", (e) => {
+						e.stopPropagation();
+						if (!userUid){
+							showToast("안내", "사용자 UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						} 
+						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
+						location.href = url + "?userUid=" + encodeURIComponent(userUid);
+					});
 
-		    const uid = (t.uid || "").trim();
-		    if (!uid) {
-		      showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
-		      return;
-		    }
+					node.querySelector(".fragment-write").addEventListener("click", async (e) => {
+						e.stopPropagation();
+						
+						if (!IS_LOGIN) {
+							toastLoginRequired();
+							return;
+						}
+						
+						const uidVal = (t.uid || "").trim();
+						if (!uidVal) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
+						
+						if( !isFlow ){
+							const flowIcon = /*[[@{/images/topic/topic_flow_cancel.svg}]]*/ '/images/topic/topic_flow_cancel.svg';
 
-		    // 1) 지원 체크
-		    if (!navigator.share) {
-		      showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
-		      return;
-		    }
+							showToast(
+							  "안내",
+							  `<div class="flex items-center gap-2">
+							     <img src="${flowIcon}" class="w-5 h-5" alt="flow">
+							     <span>를 이용해 팔로우를 먼저 해 주세요.</span>
+							   </div>`,
+							  ToastType.SUCCESS,
+							  2000
+							);
+							return;
+						}
+						
+						const url = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
+						location.href = url + "?topic=" + encodeURIComponent(uidVal);
+					});
 
-		    try {
-		      // 2) 공유 데이터 조회
-		      const url = /*[[@{/TopicShare.json}]]*/ "/TopicShare.json";
-		      const res = await apiGetWithParam(url, { uid });
+					node.querySelector(".btn-share").addEventListener("click", async (e) => {
+						e.stopPropagation();
 
-		      if (!res || res.code !== "0" || !res.data) {
-		        showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
-		        return;
-		      }
+						const uid = (t.uid || "").trim();
+						if (!uid) {
+							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
 
-		      const payload = {
-		        title: res.data.title ?? "",
-		        text: res.data.text ?? "",
-		        url: res.data.url ?? ""
-		      };
+						// 1) 지원 체크
+						if (!navigator.share) {
+							showToast("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType.INFO, 1800);
+							return;
+						}
 
-		      // (선택) Web Share API Level 2: 특정 타입 지원 확인
-		      // if (navigator.canShare && !navigator.canShare(payload)) { ... }
+						try {
+							// 2) 공유 데이터 조회
+							const url = /*[[@{/TopicShare.json}]]*/ "/TopicShare.json";
+							const res = await apiGetWithParam(url, {uid});
 
-		      // 3) 실제 공유
-		      await navigator.share(payload);
+							if (!res || res.code !== "0" || !res.data) {
+								showToast("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType.ERROR, 1800);
+								return;
+							}
 
-		    } catch (err) {
-		      // 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
-		      // 필요하면 err.name === 'AbortError' 분기 가능
-		  	console.error(err);
-		      showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
-		    }
-		  });
+							const payload = {
+								title: res.data.title ?? "",
+								text: res.data.text ?? "",
+								url: res.data.url ?? ""
+							};
 
-	      container.appendChild(node);
-	    });
-	  }
+							// (선택) Web Share API Level 2: 특정 타입 지원 확인
+							// if (navigator.canShare && !navigator.canShare(payload)) { ... }
 
-	  function setMoreButtonState(sortType, btn) {
-	    if (!btn) return;
-	    const st = paging[sortType];
-	    btn.disabled = !!st.loading || !!st.ended;
-	    btn.textContent = st.ended ? "마지막 페이지입니다" : (st.loading ? "불러오는 중..." : "더 보기");
-	  }
+							// 3) 실제 공유
+							await navigator.share(payload);
 
-	  async function fetchPage(sortType) {
-	    const st = paging[sortType];
-	    if (st.loading || st.ended) return;
+						} catch (err) {
+							// 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
+							// 필요하면 err.name === 'AbortError' 분기 가능
+							console.error(err);
+							showToast("공유", "공유를 완료하지 못했습니다.", ToastType.INFO, 1500);
+						}
+					});
 
-	    st.loading = true;
-	    hideState();
+					container.appendChild(node);
+				});
+			}
 
-	    // 버튼 상태 갱신
-	    if (sortType === ETopicSortType.trending) setMoreButtonState(sortType, btnMoreTrending);
-	    if (sortType === ETopicSortType.fresh) setMoreButtonState(sortType, btnMoreFresh);
-	    if (sortType === ETopicSortType.search) setMoreButtonState(sortType, btnMoreSearch);
+			function setMoreButtonState(sortType, btn) {
+				if (!btn) return;
+				const st = paging[sortType];
+				btn.disabled = !!st.loading || !!st.ended;
+				btn.textContent = st.ended ? "마지막 페이지입니다" : (st.loading ? "불러오는 중..." : "더 보기");
+			}
 
-	    try {
-	      const baseUrl = /*[[@{/Mosaic/List.json}]]*/ "/Mosaic/List.json";
-	      const params = {
-	        sortType: sortType,
-	        page: String(st.page),
-	      };
+			async function fetchPage(sortType) {
+				const st = paging[sortType];
+				if (st.loading || st.ended) return;
 
-	      if (sortType === ETopicSortType.search && keyword) {
-	        params.set("keyword", keyword);
-	      }
+				st.loading = true;
 
-	      const res = await apiGetWithParam(baseUrl, params);
+				// 버튼 상태 갱신
+				if (sortType === ETopicSortType.trending) setMoreButtonState(sortType, btnMoreTrending);
+				if (sortType === ETopicSortType.fresh) setMoreButtonState(sortType, btnMoreFresh);
+				if (sortType === ETopicSortType.search) setMoreButtonState(sortType, btnMoreSearch);
 
-	      if (!res || res.code !== "0") {
-	        showState("err", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.");
-	        return;
-	      }
+				try {
+					const baseUrl = /*[[@{/Mosaic/List.json}]]*/ "/Mosaic/List.json";
+					const params = {
+						uid: (sortType === ETopicSortType.uid ? topicUid : null),
+						sortType: sortType,
+						page: String(st.page),
+					};
 
-	      const list = Array.isArray(res.data) ? res.data : [];
+					if (sortType === ETopicSortType.search && keyword) {
+						params.keyword = keyword;
+					}
 
-	      // ✅ 마지막 페이지 판정: data가 빈 배열
-	      if (list.length === 0) {
-	        st.ended = true;
-	        return;
-	      }
+					const res = await apiGetWithParam(baseUrl, params);
 
-	      const isFirst = (st.page === 1);
-	      if (sortType === ETopicSortType.trending) renderList(elTrending, list, !isFirst);
-	      if (sortType === ETopicSortType.fresh) renderList(elFresh, list, !isFirst);
-	      if (sortType === ETopicSortType.search) renderList(elSearch, list, !isFirst);
+					if (!res || res.code !== "0") {
+						showToast("에러", (res && res.message) ? res.message : "목록을 불러오지 못했습니다.", ToastType.ERROR, 1500); 
+						return;
+					}
 
-	      // ✅ 다음 호출을 위해 page 증가
-	      st.page += 1;
+					const list = Array.isArray(res.data) ? res.data : [];
 
-	    } catch (e) {
-	      console.error(e);
-	      showState("err", "네트워크 오류로 목록을 불러오지 못했습니다.");
-	    } finally {
-	      st.loading = false;
+					// ✅ 마지막 페이지 판정: data가 빈 배열
+					if (list.length === 0) {
+						st.ended = true;
+						return;
+					}
 
-	      if (sortType === ETopicSortType.trending) setMoreButtonState(sortType, btnMoreTrending);
-	      if (sortType === ETopicSortType.fresh) setMoreButtonState(sortType, btnMoreFresh);
-	      if (sortType === ETopicSortType.search) setMoreButtonState(sortType, btnMoreSearch);
-	    }
-	  }
+					const isFirst = (st.page === 1);
+					if (sortType === ETopicSortType.trending) renderList(elTrending, list, !isFirst);
+					if (sortType === ETopicSortType.fresh) renderList(elFresh, list, !isFirst);
+					if (sortType === ETopicSortType.search) renderList(elSearch, list, !isFirst);
+					if (sortType === ETopicSortType.uid) renderList(elSingle, list, !isFirst);
 
-	  async function init() {
-	    // 초기 버튼 상태
-	    setMoreButtonState(ETopicSortType.trending, btnMoreTrending);
-	    setMoreButtonState(ETopicSortType.fresh, btnMoreFresh);
-	    setMoreButtonState(ETopicSortType.search, btnMoreSearch);
+					// ✅ 다음 호출을 위해 page 증가
+					st.page += 1;
 
-	    // 이벤트
-	    btnMoreTrending?.addEventListener("click", () => fetchPage(ETopicSortType.trending));
-	    btnMoreFresh?.addEventListener("click", () => fetchPage(ETopicSortType.fresh));
-	    btnMoreSearch?.addEventListener("click", () => fetchPage(ETopicSortType.search));
+				} catch (e) {
+					console.error(e);
+					showToast("오류", "네트워크 오류로 목록을 불러오지 못했습니다.", ToastType.ERROR, 1500); 
+				} finally {
+					st.loading = false;
 
-	    // 첫 로딩
-	    if (keyword) {
-	      // search 1페이지
-	      fetchPage(ETopicSortType.search);
-	    } else {
-	      // trending 1페이지 + fresh 1페이지
-	      fetchPage(ETopicSortType.trending);
-	      fetchPage(ETopicSortType.fresh);
-	    }
-	  }
+					if (sortType === ETopicSortType.trending) setMoreButtonState(sortType, btnMoreTrending);
+					if (sortType === ETopicSortType.fresh) setMoreButtonState(sortType, btnMoreFresh);
+					if (sortType === ETopicSortType.search) setMoreButtonState(sortType, btnMoreSearch);
+				}
+			}
 
-	  window.addEventListener("DOMContentLoaded", init);
-	})();
+			async function init() {
+				// 초기 버튼 상태
+				setMoreButtonState(ETopicSortType.trending, btnMoreTrending);
+				setMoreButtonState(ETopicSortType.fresh, btnMoreFresh);
+				setMoreButtonState(ETopicSortType.search, btnMoreSearch);
+
+				// 이벤트
+				btnMoreTrending?.addEventListener("click", () => fetchPage(ETopicSortType.trending));
+				btnMoreFresh?.addEventListener("click", () => fetchPage(ETopicSortType.fresh));
+				btnMoreSearch?.addEventListener("click", () => fetchPage(ETopicSortType.search));
+
+				// 첫 로딩
+				if (keyword) {
+					fetchPage(ETopicSortType.search);
+					return;
+				}
+
+				// uid가 있으면: 단일 Mosaic 화면(1개만)
+				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
+				if (uidMode) {
+					fetchPage(ETopicSortType.uid);
+					paging[ETopicSortType.uid].ended = true; // 단일 모드 1회만
+					return;
+				}
+
+				// 기본: 인기 + 새로운
+				fetchPage(ETopicSortType.trending);
+				fetchPage(ETopicSortType.fresh);
+			}
+
+			window.addEventListener("DOMContentLoaded", init);
+		})();
 	</script>
-	
-    <script th:inline="javascript">
-		
+
+	<script th:inline="javascript">
+
 		function headerSearch(keyword) {
-			
-			if( !keyword || keyword.trim() === "" ){
+
+			if (!keyword || keyword.trim() === "") {
 				return;
 			}
-			
-            // Mosaic 검색 처리
+
+			// Mosaic 검색 처리
 			const url = /*[[@{/Mosaic/index.html}]]*/ "/Mosaic/index.html";
-			location.replace( url + "?keyword=" + encodeURIComponent(keyword) );
+			location.replace(url + "?keyword=" + encodeURIComponent(keyword));
 		}
-		
-		function functionLeft(){
+
+		function functionLeft() {
 			location.replace(/*[[@{/}]]*/ '/');
 		}
-		
-		function functionRight(){
+
+		function functionRight() {
 			location.href = /*[[@{/Mosaic/Ensemble.html}]]*/ '/Mosaic/Ensemble.html';
 		}
-		</script>
+	</script>
 </th:block>
 
 </html>

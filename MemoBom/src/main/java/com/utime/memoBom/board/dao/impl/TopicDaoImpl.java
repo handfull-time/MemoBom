@@ -150,4 +150,16 @@ class TopicDaoImpl implements TopicDao{
 		return topicMapper.listMyOrFollowTopic( user, keyword, pageNo);
 	}
 	
+	@Override
+	public List<LoginUser> getTopicFollowList(LoginUser user, String topicUid) {
+		final List<LoginUser> result = new ArrayList<>();
+		final List<Long> res = topicMapper.selectTopicFollowList(user, topicUid);
+		if( AppUtils.isNotEmpty(res)) {
+			for( long userNo : res ) {
+				result.add( new LoginUser(userNo, null, null) );
+			}
+		}
+		return result;
+	}
+	
 }

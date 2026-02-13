@@ -1,10 +1,7 @@
 package com.utime.memoBom.board.controller;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +12,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.board.dto.ShareDto;
 import com.utime.memoBom.board.service.ShareService;
 import com.utime.memoBom.board.vo.EShareTargetType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -70,13 +70,15 @@ public class BoardController {
 
 		final List<TopicResultVo> list;
 		if( ! AppUtils.isEmpty(topicUid) ) {
-			final TopicResultVo topic = topicServce.loadTopic(topicUid);
-			if( topic == null ) {
-				model.addAttribute("res", new ReturnBasic("E", "존재하지 않는 주제입니다.") );
+			final ReturnBasic topicRes = topicServce.loadTopic( user, topicUid );
+			if( topicRes.isError() ) {
+				model.addAttribute("res", topicRes );
 				model.addAttribute(AppDefine.KeyShowFooter, false );
 			    model.addAttribute(AppDefine.KeyLoadScript, false );
 				return "Common/ErrorAlert";
 			}
+			
+			final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 			list = List.of(topic);
 		}else {
 			list = topicServce.loadUserTopicList( user );
@@ -117,7 +119,9 @@ public class BoardController {
 		
 		reqVo.setIp(AppUtils.getRemoteAddress(request));
 		
-		return boardServce.saveFragment( user, device, reqVo );
+		final ReturnBasic result = boardServce.saveFragment( user, device, reqVo );
+		
+		return result;
 	}
 
 	/**

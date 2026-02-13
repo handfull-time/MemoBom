@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminAlarmMapper">
+	
+	<!--푸시로 알람 내역 추가.-->
+	<insert id="insertPushAlarm" parameterType="map">
+		INSERT INTO MB_ALARM (
+			UID
+			, MAKE_SOURCE
+			, ALARM_TYPE
+			, USER_NO
+			, TITLE 
+		    , MESSAGE 
+		    , URL
+		)VALUES (
+			#{uid}
+			, 'P'
+			, 'I'
+			, #{user.userNo}
+			, #{push.title}
+			, #{push.message}
+			, #{push.linkUrl}
+		)
+	</insert>
+	
+	<!--알람 읽음 처리-->
+	<update id="updateAlarmCheck" parameterType="map">
+		UPDATE MB_ALARM SET
+			READ_AT = CURRENT_TIMESTAMP
+		WHERE UID = #{uid}
+	</update>
+</mapper>

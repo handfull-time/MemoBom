@@ -13,13 +13,11 @@ import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
 import com.utime.memoBom.board.vo.ETopicSortType;
-import com.utime.memoBom.board.vo.ShareVo;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
-import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -88,13 +86,15 @@ public class TopicController {
 	@GetMapping("Item.html")
 	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam("uid") String uid ) {
 		
-		final TopicResultVo topic = topicServce.loadTopic( uid );
-		if( topic == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "사라진 주제입니다.") );
+		final ReturnBasic topicRes = topicServce.loadTopic( user, uid );
+		if( topicRes.isError() ) {
+			model.addAttribute("res", topicRes );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
 		}
+		
+		final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 		
 		model.addAttribute("topic", topic);
 		

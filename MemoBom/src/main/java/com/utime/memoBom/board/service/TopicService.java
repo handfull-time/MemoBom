@@ -47,7 +47,8 @@ public interface TopicService {
 	 * @param uid
 	 * @return
 	 */
-	TopicResultVo loadTopic(String uid);
+//	TopicResultVo loadTopic(String uid);
+	ReturnBasic loadTopic(LoginUser user, String uid);
 	
 	/**
 	 * 사용자의 보유 Topic 목록
