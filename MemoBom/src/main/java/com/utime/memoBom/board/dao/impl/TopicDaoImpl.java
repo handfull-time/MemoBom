@@ -3,6 +3,7 @@ package com.utime.memoBom.board.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 class TopicDaoImpl implements TopicDao{
 
 	final TopicMapper topicMapper;
-
+	
+	@Scheduled(cron = "0 0 2 1 * *")
+    public void runHoliday() throws Exception {
+		topicMapper.rebuildTopicStats();
+	}
+	
 	@Override
 	public boolean hasTopic(LoginUser user) {
 		

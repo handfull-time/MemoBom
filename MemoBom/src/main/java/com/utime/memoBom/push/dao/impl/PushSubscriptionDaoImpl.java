@@ -47,7 +47,7 @@ class PushSubscriptionDaoImpl implements PushSubscriptionDao{
 	}
 	
 	@Override
-	public List<PushSubInfoVo> findAllByUser(LoginUser user) {
+	public List<PushSubInfoVo> findPushSubsByUser(LoginUser user) {
 		
 		return subMapper.selectActivePushSubsByUser(user.userNo());
 	}

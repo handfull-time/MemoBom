@@ -8,6 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -189,6 +190,14 @@ public class HolidayServiceImpl {
     	cal.add( Calendar.MONTH, 4);
     	final int year = cal.get( Calendar.YEAR );
     	
+    	final LocalDateTime lastDate = holidayDao.getLastUpdateTime();
+    	if( lastDate != null ) {
+        	if( lastDate.isAfter(LocalDateTime.now().minusDays(27)) ) {
+        		log.info("기념일 추가 일정 미만.");
+        		return;
+        	}
+    	}    	
+    	
     	// 실행 옵션 -DuseProxy=true
     	final String isProxy = System.getProperty("useProxy"); 
 
@@ -215,10 +224,6 @@ public class HolidayServiceImpl {
     
     @PostConstruct
 	private void init() throws Exception{
-
-    	if( System.getProperty("useProxy") != null ) {
-    		return;
-    	}
 
     	new Thread( new Runnable() {
     		

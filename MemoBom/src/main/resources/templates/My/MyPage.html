@@ -4,6 +4,59 @@
 
 <th:block layout:fragment="my_title">마이페이지</th:block>
 
+<th:block layout:fragment="my_css">
+  <style>
+    /* 공통: 파란 accent 제거 + 트랙/채움 고정 */
+    input[type="range"].font-range {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 24px;
+      background: transparent;
+      outline: none;
+    }
+
+    /* Webkit (Chrome/Safari/Edge) */
+    input[type="range"].font-range::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #e5e7eb; /* gray-200 */
+      border-radius: 999px;
+    }
+    input[type="range"].font-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 2px solid #6b7280; /* gray-500 */
+      margin-top: -7px; /* (thumb 18 - track 4)/2 */
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    }
+
+    /* Firefox */
+    input[type="range"].font-range::-moz-range-track {
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 999px;
+    }
+    input[type="range"].font-range::-moz-range-progress {
+      background: #e5e7eb; /* 진행부도 동일색으로 (파란색 제거) */
+      height: 4px;
+      border-radius: 999px;
+    }
+    input[type="range"].font-range::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 2px solid #6b7280;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    }
+  </style>
+</th:block>
+
+
 <th:block layout:fragment="my_content">
 	<div class="max-w-sm mx-auto px-4 pb-24">
 
@@ -43,15 +96,15 @@
 			<div class="px-4 py-4">
 				<div class="text-sm font-semibold text-slate-500 text-center mb-3">이용 통계</div>
 
-				<ul class="rounded-2xl bg-slate-50 ring-1 ring-slate-200/60 overflow-hidden">
+				<ul class="rounded-2xl bg-slate-50 divide-y divide-slate-200/50 overflow-hidden">
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">Topic 생성</span>
+						<span class="text-slate-700">Mosaic 생성</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.topicCreatedCount}">0</span>
 					</li>
 					<div class="h-[1px] bg-slate-200/60"></div>
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">Topic 팔로우</span>
+						<span class="text-slate-700">Mosaic 팔로우</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.topicFollowCount}">0</span>
 					</li>
@@ -104,14 +157,35 @@
 						<!-- 토글: pp-toggle -->
 						<pp-toggle id="togglePush" name="pushReceive" on-text="ON" off-text="OFF"></pp-toggle>
 					</li>
+<!--
+					<li class="px-4 py-4">
+						<div class="relative px-2">
+						  <input id="fontSizeRange"
+						         type="range"
+						         min="0"
+						         max="4"
+						         step="1"
+						         class="w-full font-range"
+						         th:attr="data-init=${item.user.fontSize}" />
+
+						  <div class="flex justify-between mt-2 text-slate-500 leading-none select-none">
+						    <span class="text-xs">아주작게</span>
+						    <span class="text-sm">작게</span>
+						    <span class="text-md font-semibold text-slate-700">보통</span>
+						    <span class="text-lg">크게</span>
+						    <span class="text-xl">아주크게</span>
+						  </div>
+						</div>
+					</li>
+-->					
 				</ul>
 			</div>
-			
+
 			<th:block th:if="${isAdmin}">
 				<div class="h-[1px] bg-slate-200/70"></div>
 				<a th:href="@{/Lotus/Login.html}"
-				   class="shrink-0 px-2 py-2 text-sm font-medium text-blue-500 hover:text-blue-600">
-				    AdminPage
+					class="shrink-0 px-2 py-2 text-sm font-medium text-blue-500 hover:text-blue-600">
+					AdminPage
 				</a>
 			</th:block>
 
@@ -261,14 +335,14 @@
 			 * 닉네임 포커스 아웃 시 저장 ⭕
 			 * ===================== */
 			$nickname.addEventListener('blur', async () => {
-			    await saveNicknameIfNeeded();
+				await saveNicknameIfNeeded();
 			});
 
 			$nickname.addEventListener('keydown', (e) => {
-			    if (e.key === 'Enter') {
-			        e.preventDefault();
-			        $nickname.blur(); // blur → 저장 트리거
-			    }
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					$nickname.blur(); // blur → 저장 트리거
+				}
 			});
 
 			/* =====================
@@ -400,7 +474,56 @@
 			window.addEventListener('load', init);
 		})();
 
+		/*
+		(function () {
+
+			const fontMap = ['XS', 'SM', 'MD', 'LG', 'XL'];
+
+			const range = document.getElementById('fontSizeRange');
+			if (!range) return;
+
+			// 초기값 세팅
+			const init = range.dataset.init || 'md';
+			const initIndex = fontMap.indexOf(init);
+			range.value = initIndex >= 0 ? initIndex : 2;
+
+			// body에 즉시 반영
+			function applyFont(size) {
+			  document.body.setAttribute('data-font-size', size);
+			}
+
+			applyFont(fontMap[range.value]);
+
+			range.addEventListener('input', (e) => {
+				const size = fontMap[e.target.value];
+				applyFont(size);
+			});
+
+			range.addEventListener('change', async (e) => {
+				const size = fontMap[e.target.value];
+
+				try {
+					const fd = new FormData();
+					fd.append('uid', document.getElementById('myPageRoot').dataset.itemUid);
+					fd.append('fontSize', size);
+
+					const cp = window.contextPath || '';
+					await fetch(cp + '/My/updateUserFontSize.json', {
+						method: 'POST',
+						body: fd,
+						credentials: 'include'
+					});
+				} catch (err) {
+					console.error(err);
+					showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
+				}
+			});
+
+		})();
+*/
 	</script>
+	
+	
 </th:block>
 
 </html>

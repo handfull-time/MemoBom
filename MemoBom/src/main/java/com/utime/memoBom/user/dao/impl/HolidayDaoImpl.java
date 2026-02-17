@@ -1,5 +1,6 @@
 package com.utime.memoBom.user.dao.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,12 @@ class HolidayDaoImpl implements HolidayDao {
 		}
 		
 		return insertedCount;
+	}
+	
+	@Override
+	public LocalDateTime getLastUpdateTime() {
+		
+		return holidayMapper.selectLastUpdateTime();
 	}
 
 }

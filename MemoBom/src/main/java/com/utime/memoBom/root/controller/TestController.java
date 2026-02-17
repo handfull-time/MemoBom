@@ -1,7 +1,6 @@
 package com.utime.memoBom.root.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.utime.memoBom.admin.service.impl.GeminiClient;
 import com.utime.memoBom.admin.vo.gemini.GeminiResponse;
 import com.utime.memoBom.board.service.TopicService;
+import com.utime.memoBom.board.vo.query.ShareDataVo;
 import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -27,6 +28,7 @@ import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -203,7 +205,12 @@ public class TestController {
 	
 	@ResponseBody
     @PostMapping("sendPush.json")
-    public ReturnBasic sendPush() throws Exception {
+    public ReturnBasic sendPush(@RequestBody String strUserNo) throws Exception {
+		
+		final long userNo = Long.parseLong(strUserNo);
+		BasicUserVo basicUserVo = userDao.getBasicUserFromUserNo( userNo );
+		
+		LoginUser loginUser = new LoginUser(userNo, basicUserVo.getUid(), EJwtRole.User);
 		
 		final PushSendDataVo data = new PushSendDataVo();
 		data.setTitle("Mosaic");
@@ -211,11 +218,26 @@ public class TestController {
 		data.setImageUrl("/MemoBom/images/profile-placeholder.svg");
 		data.setLinkUrl("/Mosaic/index.html");
 		
-    	final ReturnBasic res = pushSendService.sendPush(getLoginUser(), data);
+    	final ReturnBasic res = pushSendService.sendPush(loginUser, data);
         
     	return res;
     }
 	
+	@ResponseBody
+    @PostMapping("sendPush2.json")
+    public ReturnBasic sendPushw(@RequestBody ShareDataVo data) throws Exception {
+		
+		final long userNo = data.getUserNo();
+		BasicUserVo basicUserVo = userDao.getBasicUserFromUserNo( userNo );
+		
+		LoginUser loginUser = new LoginUser(userNo, basicUserVo.getUid(), EJwtRole.User);
+		
+    	final int res = pushSendService.sendMessageNewFragment(loginUser, data.getUid());
+    	log.info(res + "");
+        
+    	return new ReturnBasic();
+    }
+
 	private final GeminiClient gc; 
 	
 	@ResponseBody

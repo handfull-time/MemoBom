@@ -119,18 +119,18 @@ class PushSendServiceImpl implements PushSendService {
     		return new ReturnBasic("E", "null 안됨.");
     	}
     	
-    	final List<PushSubInfoVo> entityList = pushDao.findAllByUser(user);
+    	final List<PushSubInfoVo> entityList = pushDao.findPushSubsByUser(user);
     	if( AppUtils.isEmpty(entityList) ) {
     		return new ReturnBasic("E", "보낼 대상 없음.");
     	}
-    	
-    	final UUID uid = UUID.randomUUID();
     	
 		final PushNotiDataDto pushDto = new PushNotiDataDto();
 		pushDto.setTitle(data.getTitle());
 		pushDto.setMessage(data.getMessage());
 		pushDto.setIcon(data.getImageUrl());
 		
+    	final UUID uid = UUID.randomUUID();
+    	
 		final PushNotiDataDto._Data dtoData = pushDto.getData();
 		dtoData.setContextPath("/" + appName);
 		dtoData.setClickId( uid );
@@ -238,12 +238,14 @@ class PushSendServiceImpl implements PushSendService {
     	
         final ExecutorService executor = Executors.newFixedThreadPool(1);
 
+    	final TopicVo vo = topicDao.loadTopic(topicUid);
+    	
         executor.submit(() -> {
-        	final List<LoginUser> userList = topicDao.getTopicFollowList( user, topicUid);
-        	if( userList.isEmpty() )
+        	final List<LoginUser> userList = topicDao.getTopicFollowList( user, topicUid );
+        	if( userList.isEmpty() ) {
+        		log.info("팔로우 사용자가 없습니다.");
         		return;
-        	
-        	final TopicVo vo = topicDao.loadTopic(topicUid);
+        	}
         	
         	final PushSendDataVo data = new PushSendDataVo();
         	data.setTitle(appName + " 새글 알림");
@@ -252,6 +254,8 @@ class PushSendServiceImpl implements PushSendService {
         	data.setLinkUrl("/Fragment/index.html?topicUid=" + topicUid);
         	
         	userList.forEach( item -> {
+            	log.info("{} topic. UserNo : {}. send push - {}", vo.getName(), item.userNo(),  data.toString());
+            	
         		try {
 					sendPush( item, data);
 				} catch (Exception e) {
@@ -261,6 +265,8 @@ class PushSendServiceImpl implements PushSendService {
         	
         });
 
+        log.info("{} topic. complete", vo.getName());
+        
         executor.shutdown();
     	
     	return 1;

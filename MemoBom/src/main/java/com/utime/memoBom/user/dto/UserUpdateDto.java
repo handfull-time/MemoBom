@@ -2,6 +2,8 @@ package com.utime.memoBom.user.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.utime.memoBom.user.vo.EFontSize;
+
 import lombok.Data;
 
 /**
@@ -15,4 +17,6 @@ public class UserUpdateDto {
 	String nickname;
 	/** 프로필 이미지  */
 	MultipartFile profile;
+	
+	EFontSize fonstSize;
 }

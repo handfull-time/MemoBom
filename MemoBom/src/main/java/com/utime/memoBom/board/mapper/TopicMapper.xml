@@ -388,38 +388,101 @@
 		WHERE TOPIC_NO = #{topicNo}
     </update>
     
+    <!--댓글 작성 성공 후 +1, 최신글 시간 갱신-->
+    <update id="increaseTopicStatsCommentCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+		   SET COMMENT_COUNT = COMMENT_COUNT + 1,
+		       LAST_COMMENT_AT = CURRENT_TIMESTAMP,
+		       UPDATED_AT = CURRENT_TIMESTAMP
+		 WHERE TOPIC_NO = (
+			SELECT 
+				TOPIC_NO
+			FROM MB_FRAGMENT WHERE UID = #{fragmentUid}
+		 )
+    </update>
+    
+    <!--댓글 삭제(soft delete) 성공 후 -1-->
+    <update id="decreaseTopicStatsCommentCount" parameterType="map">
+    	UPDATE MB_TOPIC_STATS
+		   SET COMMENT_COUNT = CASE WHEN COMMENT_COUNT > 0 THEN COMMENT_COUNT - 1 ELSE 0 END,
+		       UPDATED_AT = CURRENT_TIMESTAMP
+		WHERE TOPIC_NO = #{topicNo}
+    </update>
+    
     <!-- 통계 리빌드용 -->
     <update id="rebuildTopicStats">
-    MERGE INTO MB_TOPIC_STATS ST
+	    MERGE INTO MB_TOPIC_STATS ST
 		USING (
 		    SELECT
 		        TP.TOPIC_NO AS TOPIC_NO,
+		
 		        COALESCE(FL.CNT, 0) AS FOLLOW_COUNT,
 		        COALESCE(FG.CNT, 0) AS FRAGMENT_COUNT,
 		        COALESCE(CM.CNT, 0) AS COMMENT_COUNT,
-		        FG.LAST_AT AS LAST_FRAGMENT_AT
+		
+		        FG.LAST_AT AS LAST_FRAGMENT_AT,
+		        CM.LAST_AT AS LAST_COMMENT_AT
+		
 		    FROM MB_TOPIC TP
-		    LEFT JOIN (SELECT TOPIC_NO, COUNT(*) CNT FROM MB_TOPIC_FOLLOW GROUP BY TOPIC_NO) FL
+		
+		    LEFT JOIN (
+		        SELECT TOPIC_NO, COUNT(*) CNT
+		        FROM MB_TOPIC_FOLLOW
+		        GROUP BY TOPIC_NO
+		    ) FL
 		      ON FL.TOPIC_NO = TP.TOPIC_NO
-		    LEFT JOIN (SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
-		               FROM MB_FRAGMENT WHERE IS_DELETED = FALSE GROUP BY TOPIC_NO) FG
+		
+		    LEFT JOIN (
+		        SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
+		        FROM MB_FRAGMENT
+		        WHERE IS_DELETED = FALSE
+		        GROUP BY TOPIC_NO
+		    ) FG
 		      ON FG.TOPIC_NO = TP.TOPIC_NO
-		    LEFT JOIN (SELECT F.TOPIC_NO, COUNT(*) CNT
-		               FROM MB_FRAGMENT_COMMENTS C
-		               JOIN MB_FRAGMENT F ON F.FRAGMENT_NO = C.FRAGMENT_NO
-		               WHERE F.IS_DELETED = FALSE
-		               GROUP BY F.TOPIC_NO) CM
+		
+		    LEFT JOIN (
+		        SELECT
+		            F.TOPIC_NO,
+		            COUNT(*) CNT,
+		            MAX(C.REG_DATE) LAST_AT
+		        FROM MB_FRAGMENT_COMMENTS C
+		        JOIN MB_FRAGMENT F
+		          ON F.FRAGMENT_NO = C.FRAGMENT_NO
+		        WHERE F.IS_DELETED = FALSE
+		        GROUP BY F.TOPIC_NO
+		    ) CM
 		      ON CM.TOPIC_NO = TP.TOPIC_NO
 		) SRC
 		ON ST.TOPIC_NO = SRC.TOPIC_NO
-		WHEN MATCHED THEN UPDATE SET
-		    ST.FOLLOW_COUNT = SRC.FOLLOW_COUNT,
-		    ST.FRAGMENT_COUNT = SRC.FRAGMENT_COUNT,
-		    ST.COMMENT_COUNT = SRC.COMMENT_COUNT,
-		    ST.LAST_FRAGMENT_AT = SRC.LAST_FRAGMENT_AT,
-		    ST.UPDATED_AT = CURRENT_TIMESTAMP
-		WHEN NOT MATCHED THEN INSERT (TOPIC_NO, FOLLOW_COUNT, FRAGMENT_COUNT, COMMENT_COUNT, LAST_FRAGMENT_AT, UPDATED_AT)
-		VALUES (SRC.TOPIC_NO, SRC.FOLLOW_COUNT, SRC.FRAGMENT_COUNT, SRC.COMMENT_COUNT, SRC.LAST_FRAGMENT_AT, CURRENT_TIMESTAMP)
+		
+		WHEN MATCHED THEN
+		    UPDATE SET
+		        ST.FOLLOW_COUNT      = SRC.FOLLOW_COUNT,
+		        ST.FRAGMENT_COUNT    = SRC.FRAGMENT_COUNT,
+		        ST.COMMENT_COUNT     = SRC.COMMENT_COUNT,
+		        ST.LAST_FRAGMENT_AT  = SRC.LAST_FRAGMENT_AT,
+		        ST.LAST_COMMENT_AT   = SRC.LAST_COMMENT_AT,
+		        ST.UPDATED_AT        = CURRENT_TIMESTAMP
+		
+		WHEN NOT MATCHED THEN
+		    INSERT (
+		        TOPIC_NO,
+		        FOLLOW_COUNT,
+		        FRAGMENT_COUNT,
+		        COMMENT_COUNT,
+		        LAST_FRAGMENT_AT,
+		        LAST_COMMENT_AT,
+		        UPDATED_AT
+		    )
+		    VALUES (
+		        SRC.TOPIC_NO,
+		        SRC.FOLLOW_COUNT,
+		        SRC.FRAGMENT_COUNT,
+		        SRC.COMMENT_COUNT,
+		        SRC.LAST_FRAGMENT_AT,
+		        SRC.LAST_COMMENT_AT,
+		        CURRENT_TIMESTAMP
+		    )
 	</update>    	
 
 	<select id="loadTopicFromUid" parameterType="map" resultMap="TopicMap">

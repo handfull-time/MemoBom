@@ -1,25 +1,52 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<th:block th:fragment="BasicFooter">
 		<div class="grid grid-cols-3 h-full">
-			<!-- LEFT -->
-			<div class="flex items-center justify-center cursor-pointer
-	       active:bg-gray-100 transition-colors duration-100" th:onclick="|location.href='@{/Mosaic/index.html}'|">
-				<img th:src="@{/images/bottom/mosaic.svg}" alt="Mosaic" class="pointer-events-none" />
+
+			<!-- LEFT : Mosaic -->
+			<div class="flex items-center justify-center cursor-pointer active:bg-gray-100 transition-colors duration-100"
+				th:onclick="|location.href='@{/Mosaic/index.html}'|">
+				<div class="w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
+					th:classappend="${#strings.startsWith(currentPath, '/Mosaic')}
+						? ' border-2 border-gray-600 bg-sky-50'
+						: ' border-2 border-transparent bg-transparent'">
+					<img th:src="@{/images/bottom/mosaic.svg}" alt="Mosaic"
+						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
+						th:classappend="${#strings.startsWith(currentPath, '/Mosaic')} ? '' : ' opacity-80'" />
+				</div>
 			</div>
 
-			<!-- CENTER -->
-			<div class="flex items-center justify-center cursor-pointer
-	     active:bg-gray-100 transition-colors duration-100" th:onclick="|location.href='@{/Fragment/index.html}'|">
-				<img th:src="@{/images/bottom/fragment.svg}" alt="Fragment" class="pointer-events-none" />
-
+			<!-- CENTER : Fragment -->
+			<div class="flex items-center justify-center cursor-pointer active:bg-gray-100 transition-colors duration-100"
+				th:onclick="|location.href='@{/Fragment/index.html}'|">
+				<div class="w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
+					th:classappend="${#strings.startsWith(currentPath, '/Fragment')}
+						? ' border-2 border-gray-600 bg-sky-50'
+						: ' border-2 border-transparent bg-transparent'">
+					<img th:src="@{/images/bottom/fragment.svg}" alt="Fragment"
+						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
+						th:classappend="${#strings.startsWith(currentPath, '/Fragment')} ? '' : ' opacity-80'" />
+				</div>
 			</div>
 
-			<!-- RIGHT -->
-			<div class="flex items-center justify-center cursor-pointer
-	     active:bg-gray-100 transition-colors duration-100"
+			<!-- RIGHT : My / About -->
+			<div class="flex items-center justify-center cursor-pointer active:bg-gray-100 transition-colors duration-100"
 				th:onclick="|location.href='@{${user != null ? '/My/index.html' : '/About/Application.html'}}'|">
-				<img th:src="@{/images/bottom/my.svg}" alt="MyPage" class="pointer-events-none" />
+				<div class="w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
+					th:classappend="${
+						#strings.startsWith(currentPath, '/My')
+						or #strings.startsWith(currentPath, '/About')
+					}
+						? ' border-2 border-gray-600 bg-sky-50'
+						: ' border-2 border-transparent bg-transparent'">
+					<img th:src="@{/images/bottom/my.svg}" alt="MyPage"
+						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
+						th:classappend="${
+							#strings.startsWith(currentPath, '/My')
+							or #strings.startsWith(currentPath, '/About')
+						} ? '' : ' opacity-80'" />
+				</div>
 			</div>
+
 		</div>
 	</th:block>
 

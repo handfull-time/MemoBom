@@ -34,3 +34,7 @@ body[data-font-size="XL"] {
   --font-title: 22px;
   --font-small: 18px;
 }
+
+html {
+  font-size: var(--font-base);
+}

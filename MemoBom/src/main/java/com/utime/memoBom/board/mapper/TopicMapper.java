@@ -17,6 +17,12 @@ import com.utime.memoBom.common.security.LoginUser;
 public interface TopicMapper {
 	
 	/**
+	 * 통계 리빌드용
+	 * @return
+	 */
+	int rebuildTopicStats();
+	
+	/**
 	 * 팔로우 한 topic이 있나?
 	 * @param user
 	 * @return true:있다. flase:없다.
@@ -148,6 +154,20 @@ public interface TopicMapper {
 	 * @return
 	 */
 	int decreaseTopicStatsFragmentCount( @Param("topicNo") long topicNo);
+	
+	/**
+	 * 댓글 작성 성공 후 +1, 최신글 시간 갱신
+	 * @param topicNo
+	 * @return
+	 */
+	int increaseTopicStatsCommentCount( @Param("fragmentUid") String fragUid);
+	
+	/**
+	 * 댓글 삭제(soft delete) 성공 후 -1
+	 * @param topicNo
+	 * @return
+	 */
+	int decreaseTopicStatsCommentCount( @Param("topicNo") long topicNo);
 
 	/**
 	 * 토픽 조회

@@ -30,7 +30,7 @@ public interface PushSubscriptionDao {
 	 * @param user
 	 * @return
 	 */
-	List<PushSubInfoVo> findAllByUser(LoginUser user);
+	List<PushSubInfoVo> findPushSubsByUser(LoginUser user);
 
 	/**
 	 * 푸시 발송 결과 업데이트

@@ -96,7 +96,7 @@ class BoardDaoImpl implements BoardDao {
 
 		int result = 0;
 		result += boardMapper.insertFragment(user, device, topic, item);
-		result += topicMapper.updateTopicStatsFollowCount( topic.getTopicNo() );
+		result += topicMapper.increaseTopicStatsFragmentCount( topic.getTopicNo() );
 
 		final Set<String> hashTags = this.parseTags(reqVo.getHashTag());
 		if (hashTags.isEmpty()) {
@@ -222,6 +222,8 @@ class BoardDaoImpl implements BoardDao {
 	public CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception {
 		
 		boardMapper.insertComment(user, reqVo);
+		
+		topicMapper.increaseTopicStatsCommentCount( reqVo.getUid() );
 		
 		final CommentItem result = boardMapper.selectCommentByNo(reqVo.getCommentNo());
 		

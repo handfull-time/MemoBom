@@ -769,7 +769,7 @@
 				if (img && u.profileUrl) img.src = u.profileUrl;
 				nick.textContent = u.nickname || 'User';
 				date.textContent = comment.regDate || '';
-				cont.textContent = comment.content || '';
+				cont.innerHTML = safeText(comment.content, "");
 
 				// [3.3][3.4]
 				const btnSum = node.querySelector('.cEmoSummary');

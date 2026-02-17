@@ -88,6 +88,19 @@ public class MyController {
 	}
 	
 	/**
+	 * 글자 크기 수정
+	 * @param user
+	 * @param data
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping("updateUserFontSize.json")
+	public ReturnBasic updateMyFontSize( LoginUser user, UserUpdateDto data ) {
+		
+		return userService.updateMyInfo( user, data );
+	}
+	
+	/**
 	 * 로그아웃
 	 * @param request
 	 * @param response

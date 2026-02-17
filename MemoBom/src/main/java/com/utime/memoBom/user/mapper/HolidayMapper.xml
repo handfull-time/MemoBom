@@ -17,5 +17,12 @@
 			#{dateName}
 		)
     </insert>
+    
+    <!--가장 마지막 업데이트 시간-->
+    <select id="selectLastUpdateTime" resultType="java.time.LocalDateTime">
+    	SELECT 
+    		MAX(CREATE_AT)
+    	FROM MB_HOLIDAY    		
+    </select>
 
 </mapper>
