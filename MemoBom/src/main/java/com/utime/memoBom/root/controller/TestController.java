@@ -26,7 +26,9 @@ import com.utime.memoBom.push.service.PushSendService;
 import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.dto.MySearchDto;
+import com.utime.memoBom.user.dto.UserDto;
 import com.utime.memoBom.user.service.UserService;
+import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 
@@ -250,6 +252,13 @@ public class TestController {
 		
 		return new ReturnBasic("0", "ok");
 	}
+
+    @GetMapping("FontSize.html")
+	public String FontSize(Model model) throws Exception {
+    	model.addAttribute(AppDefine.KeyParamUser, new UserDto( "fefefe", "hahaha", "/MemoBom/images/profile-placeholder.svg" , EFontSize.xs ));
+    	return "Test/FontSize";
+    }
+    
 
 }
 //

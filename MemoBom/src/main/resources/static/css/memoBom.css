@@ -36,5 +36,15 @@ body[data-font-size="XL"] {
 }
 
 html {
-  font-size: var(--font-base);
+  font-size: var(--font-base); /* 루트 크기 결정 */
 }
+
+body {
+  font-size: 1rem; /* html의 font-size(var--font-base)를 100% 상속 */
+  line-height: 1.5;
+}
+
+/* 가독성을 위해 추가 */
+.dynamic-text { font-size: 1rem; } 
+.font-title { font-size: var(--font-title); }
+.font-small { font-size: var(--font-small); }

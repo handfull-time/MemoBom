@@ -69,6 +69,7 @@ class PushSendServiceImpl implements PushSendService {
             Security.addProvider(new BouncyCastleProvider());
         }
 
+        // publicKeyBytes는 반드시 65바이트여야 함 (0x04로 시작)
         this.pushService = new PushService(publicKey, privateKey, subject);
     }
 
@@ -162,7 +163,12 @@ class PushSendServiceImpl implements PushSendService {
                     resList.add( new PushSendResVo(sub, true) );
                 } else {
                     failCount++;
-                    log.warn("push fail status={} endpoint={} body={}", status, sub.getEndPoint(), body);
+                    log.warn("push fail\nstatus={}\nendpoint={}\nP256dh={}\nauth={}\nbody={}"
+                    		, status
+                    		, sub.getEndPoint()
+                    		, sub.getP256dh()
+                    		, sub.getAuth()
+                    		, body);
 
                     if (status == 404 || status == 410) {
                     	resList.add( new PushSendResVo(sub, null) );
