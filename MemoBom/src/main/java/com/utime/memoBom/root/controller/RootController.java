@@ -5,11 +5,11 @@ import java.io.OutputStream;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.query.UserProfile;
 
@@ -35,9 +35,9 @@ public class RootController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String rootPage(LoginUser user) {
+    public String rootPage(@CookieValue(name = "refreshToken", required = false) String refresh) {
 		
-		if( user == null ) {
+		if( refresh == null ) {
 			return "Intro/IntroIndex";
 		}
 		
