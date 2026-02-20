@@ -1,50 +1,125 @@
+/* ================================
+   MemoBom Dynamic Font System
+   Tailwind scale 기반 구조
+================================ */
+
+/* 1️⃣ 기본 배율 (md 기준) */
 :root {
-  --font-base: 16px;
-  --font-title: 18px;
-  --font-small: 14px;
+	/* 모바일 기본을 크게: 1.18 = 약 +18% */
+	--font-scale: 1.18;
+
+	/*
+    사용자 폰트 설정과 합산된 최종 배율이 너무 커져
+    레이아웃이 깨지는 것을 방지 (최소~최대 제한)
+  */
+	--font-scale-min: 0.98;
+	--font-scale-max: 1.55;
+
+	/* 최종 배율(클램프 적용) */
+	--font-scale-final: clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max));
 }
 
-/* 사용자 설정별 */
-body[data-font-size="XS"] {
-  --font-base: 13px;
-  --font-title: 15px;
-  --font-small: 12px;
+/* 2️⃣ 사용자 설정에 따른 배율 */
+
+[data-font-size="xs"] {
+	--font-scale: 1.05;
 }
 
-body[data-font-size="SM"] {
-  --font-base: 14px;
-  --font-title: 16px;
-  --font-small: 13px;
+[data-font-size="sm"] {
+	--font-scale: 1.13;
 }
 
-body[data-font-size="MD"] {
-  --font-base: 16px;
-  --font-title: 18px;
-  --font-small: 14px;
+[data-font-size="md"] {
+	--font-scale: 1.18;
 }
 
-body[data-font-size="LG"] {
-  --font-base: 18px;
-  --font-title: 20px;
-  --font-small: 16px;
+[data-font-size="lg"] {
+	--font-scale: 1.30;
 }
 
-body[data-font-size="XL"] {
-  --font-base: 20px;
-  --font-title: 22px;
-  --font-small: 18px;
+[data-font-size="xl"] {
+	--font-scale: 1.42;
 }
 
-html {
-  font-size: var(--font-base); /* 루트 크기 결정 */
+/* ================================
+   3️⃣ Tailwind 기본 텍스트 스케일
+================================ */
+.text-dynamic-xs {
+	font-size: calc(0.75rem * var(--font-scale-final));
 }
+
+.text-dynamic-sm {
+	font-size: calc(0.875rem * var(--font-scale-final));
+}
+
+.text-dynamic-base {
+	font-size: calc(1rem * var(--font-scale-final));
+}
+
+.text-dynamic-lg {
+	font-size: calc(1.125rem * var(--font-scale-final));
+}
+
+.text-dynamic-xl {
+	font-size: calc(1.25rem * var(--font-scale-final));
+}
+
+.text-dynamic-2xl {
+	font-size: calc(1.5rem * var(--font-scale-final));
+}
+
+.text-dynamic-3xl {
+	font-size: calc(1.875rem * var(--font-scale-final));
+}
+
+.text-dynamic-4xl {
+	font-size: calc(2.25rem * var(--font-scale-final));
+}
+
+.text-dynamic-5xl {
+	font-size: calc(3rem * var(--font-scale-final));
+}
+
+.text-dynamic-6xl {
+	font-size: calc(3.75rem * var(--font-scale-final));
+}
+
+.text-dynamic-7xl {
+	font-size: calc(4.5rem * var(--font-scale-final));
+}
+
+.text-dynamic-8xl {
+	font-size: calc(6rem * var(--font-scale-final));
+}
+
+.text-dynamic-9xl {
+	font-size: calc(8rem * var(--font-scale-final));
+}
+
+/* 부드러운 전환 */
+[class^="text-dynamic-"] {
+	transition: font-size 0.2s ease;
+}
+
+/* ================================
+   4️⃣ 기본 body 설정
+================================ */
 
 body {
-  font-size: 1rem; /* html의 font-size(var--font-base)를 100% 상속 */
-  line-height: 1.5;
+	font-size: calc(1rem * var(--font-scale));
+	line-height: 1.5;
+	letter-spacing: 0;     /* 과한 자간 금지 */
 }
 
-/* 가독성을 위해 추가 */
-.dynamic-text { font-size: 1rem; } 
-.font-title { font-size: var(--font-title); }
-.font-small { font-size: var(--font-small); }
+.text-dynamic-xs,
+.text-dynamic-sm {
+  /* 모바일에서 최소 13px 정도는 유지되게 하고 싶다면 아래를 켜세요.
+     (Tailwind 기본 rem과 배율에 따라 이미 충분히 크면 필요 없음)
+  */
+  font-size: max(0.85rem, calc(0.875rem * var(--font-scale-final)));
+}
+
+/* 7) 모바일 터치 환경: 버튼/링크 텍스트 가독성 보정(선택) */
+a, button {
+  -webkit-tap-highlight-color: transparent;
+}

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.query.UserProfile;
 
@@ -34,7 +35,11 @@ public class RootController {
 	 * @return
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
-    public String rootPage() {
+    public String rootPage(LoginUser user) {
+		
+		if( user == null ) {
+			return "Intro/IntroIndex";
+		}
 		
 		return "redirect:/Fragment/index.html";
     }
