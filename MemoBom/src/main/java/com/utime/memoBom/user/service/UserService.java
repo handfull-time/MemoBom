@@ -73,6 +73,14 @@ public interface UserService {
 	ReturnBasic updateMyInfo(LoginUser user, UserUpdateDto data);
 
 	/**
+	 * 글자 크기 변경
+	 * @param user
+	 * @param data
+	 * @return
+	 */
+	ReturnBasic updateMyInfoFontSize(LoginUser user, UserUpdateDto data);
+
+	/**
 	 * 회원의 email이 일치하는지 검사.
 	 * @param user
 	 * @param email

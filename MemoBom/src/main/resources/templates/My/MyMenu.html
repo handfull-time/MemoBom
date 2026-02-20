@@ -2,7 +2,7 @@
 
 	<th:block th:with="path=${currentPath}">
 
-		<nav class="text-sm space-y-1">
+		<nav class="text-dynamic-sm space-y-1">
 			<th:block th:if="${user ne null}">
 				<!-- 메뉴 항목들: 예시 (active 처리 포함) -->
 				<a th:href="@{/My/index.html}"

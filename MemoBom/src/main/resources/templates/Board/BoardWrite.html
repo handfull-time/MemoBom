@@ -17,12 +17,12 @@
 		<div class="w-full max-w-sm rounded-2xl bg-white shadow-2xl">
 			<!-- 헤더 -->
 			<div class="px-4 pt-4 pb-3 border-b border-slate-100">
-				<div class="text-base font-extrabold text-slate-800">토픽 선택</div>
-				<div class="text-xs text-slate-500 mt-1">주제를 선택하면 바로 작성할 수 있어요.</div>
+				<div class="text-dynamic-base font-extrabold text-slate-800">토픽 선택</div>
+				<div class="text-dynamic-xs text-slate-500 mt-1">주제를 선택하면 바로 작성할 수 있어요.</div>
 
 				<!-- 검색 -->
 				<div class="mt-3">
-					<input id="topicSearch" type="text" placeholder="토픽 검색..." class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm
+					<input id="topicSearch" type="text" placeholder="토픽 검색..." class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-dynamic-sm
                       outline-none focus:ring-2 focus:ring-slate-300/40" />
 				</div>
 			</div>
@@ -34,15 +34,15 @@
                        data-maxlen=${t.maxLen},
                        data-color=${t.color},
                        data-name=${t.name}">
-					<span class="text-lg w-6 text-center" th:text="${t.imogi}">🧩</span>
-					<span class="flex-1 text-sm font-semibold text-slate-800 truncate" th:text="${t.name}">Topic</span>
+					<span class="text-dynamic-lg w-6 text-center" th:text="${t.imogi}">🧩</span>
+					<span class="flex-1 text-dynamic-sm font-semibold text-slate-800 truncate" th:text="${t.name}">Topic</span>
 
 					<span class="h-3 w-3 rounded-full border border-black/10 shrink-0"
 						th:style="'background:' + ${t.color}"></span>
 				</button>
 
 				<!-- 검색 결과 없음 -->
-				<div id="topicEmpty" class="hidden px-4 py-6 text-center text-sm text-slate-400">
+				<div id="topicEmpty" class="hidden px-4 py-6 text-center text-dynamic-sm text-slate-400">
 					검색 결과가 없습니다.
 				</div>
 			</div>
@@ -55,7 +55,7 @@
 		<!-- 본문: 남은 공간 전부 차지 -->
 		<textarea id="content" name="content" placeholder="내용을 입력해 주세요." disabled
 			style="font-size: var(--font-base); line-height: 1.6;"
-			class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-[15px] box-border bg-transparent"></textarea>
+			class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-dynamic-15 box-border bg-transparent"></textarea>
 
 		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
 		<div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
@@ -66,16 +66,16 @@
 					<div id="contentProgress" class="h-full rounded-full" style="width:0%; background:#3b82f6;">
 					</div>
 				</div>
-				<div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+				<div class="mt-1 flex items-center justify-between text-dynamic-sm text-slate-400">
 					<span id="contentCounter">0 / 0</span>
 					<span id="contentHint" class="hidden text-rose-500 font-semibold">최대 길이에 가까워요</span>
 				</div>
 			</div>
 
 			<input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
-				class="w-full border-0 outline-none text-[13px] text-slate-600 bg-transparent" />
+				class="w-full border-0 outline-none text-dynamic-sm text-slate-600 bg-transparent" />
 
-			<div class="mt-1 text-[11px] text-slate-400">
+			<div class="mt-1 text-dynamic-xs text-slate-400">
 				쉼표(,) 또는 띄어쓰기로 여러 개 입력할 수 있어요.
 			</div>
 		</div>

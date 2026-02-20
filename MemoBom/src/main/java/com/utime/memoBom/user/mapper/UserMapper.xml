@@ -252,6 +252,13 @@
  		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
  	</update>
  	
+ 	<!--글자 크기 변경-->
+ 	<update id="updateMyInfoFontSize" parameterType="map" >
+ 		UPDATE MB_USER SET
+ 			FONT_SIZE = #{fs, typeHandler=com.utime.memoBom.user.typeHandler.EFontSizeTypeHandler}
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 	</update>
+ 	
  	<!--푸시 수신 상태-->
  	<select id="selectPushStatus" parameterType="map" resultType="boolean">
  		SELECT

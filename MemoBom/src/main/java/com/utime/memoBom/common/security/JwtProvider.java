@@ -54,7 +54,8 @@ public class JwtProvider {
     private final String CLM_SID    = "sid";
     private final String CLM_PROVIDER = "provider";
     
-    private final CacheIntervalMap<String, UserVo> intervalMap = new CacheIntervalMap<>(CACHE_EXP_MS, TimeUnit.MILLISECONDS);
+    private final CacheIntervalMap<String, UserVo> intervalUserSidMap = new CacheIntervalMap<>(CACHE_EXP_MS, TimeUnit.MILLISECONDS);
+    private final CacheIntervalMap<Long, String> intervalUserNoMap = new CacheIntervalMap<>(CACHE_EXP_MS, TimeUnit.MILLISECONDS);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -226,7 +227,7 @@ public class JwtProvider {
 
         final String sid = (String)claims.get(CLM_SID, String.class);
         if (sid != null && ! sid.isEmpty()) {
-        	intervalMap.remove(sid);
+        	intervalUserSidMap.remove(sid);
         }
         log.info("Logout Processed - All Cookies Cleared");
     }
@@ -275,8 +276,8 @@ public class JwtProvider {
         	return result;
         }
 
-        if( intervalMap.containsKey(sid) ) {
-        	final UserVo user = intervalMap.get(sid);
+        if( intervalUserSidMap.containsKey(sid) ) {
+        	final UserVo user = intervalUserSidMap.get(sid);
         	log.info("Cash user : {}", user.toString());
         	
         	result.setUser(user);
@@ -311,7 +312,8 @@ public class JwtProvider {
         
         result.setCode(KeyDbReload);
         result.setUser(user);
-        intervalMap.put(sid, user);
+        intervalUserSidMap.put(sid, user);
+        intervalUserNoMap.put(user.getUserNo(), sid);
         return result;
     }
 
@@ -334,7 +336,7 @@ public class JwtProvider {
         this.genericUserCookie(request, response, user, sid);
 
         log.info("Login user : {}", user.toString());
-        this.intervalMap.put(sid, user);
+        this.intervalUserSidMap.put(sid, user);
         
     	final String ip = AppUtils.getRemoteAddress(request);
     	final UserDevice device = AppUtils.getDeviceInfoFromUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
@@ -342,6 +344,13 @@ public class JwtProvider {
 		userDao.addLoginRecord( user, ip, device );
 
         return new ReturnBasic();
+    }
+    
+    public void removeCacheSid( LoginUser user ) {
+    	String sid = this.intervalUserNoMap.remove( user.userNo() );
+    	if( sid != null ) {
+    		this.intervalUserSidMap.remove(sid);
+    	}
     }
 
     public ResUserVo reissueAccessToken(HttpServletRequest request, HttpServletResponse response) {

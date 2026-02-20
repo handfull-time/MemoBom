@@ -85,7 +85,7 @@
 					<input id="profileFile" type="file" accept="image/*" class="hidden" />
 				</label>
 
-				<input id="nickname" th:value="${item.user.nickname}" maxlength="32" class="mt-3 w-full text-center text-xl font-bold tracking-tight text-slate-900
+				<input id="nickname" th:value="${item.user.nickname}" maxlength="32" class="mt-3 w-full text-center text-dynamic-xl font-bold tracking-tight text-slate-900
                       outline-none bg-transparent" placeholder="닉네임" />
 			</div>
 
@@ -94,7 +94,7 @@
 
 			<!-- 이용 통계: iOS 리스트 -->
 			<div class="px-4 py-4">
-				<div class="text-sm font-semibold text-slate-500 text-center mb-3">이용 통계</div>
+				<div class="text-dynamic-sm font-semibold text-slate-500 text-center mb-3">이용 통계</div>
 
 				<ul class="rounded-2xl bg-slate-50 divide-y divide-slate-200/50 overflow-hidden">
 					<li class="flex items-center justify-between px-4 py-3">
@@ -145,46 +145,45 @@
 
 			<!-- 설정 -->
 			<div class="px-4 py-4">
-				<div class="text-sm font-semibold text-slate-500 text-center mb-3">설정</div>
+				<div class="text-dynamic-sm font-semibold text-slate-500 text-center mb-3">설정</div>
 
 				<ul class="rounded-2xl bg-slate-50 ring-1 ring-slate-200/60 overflow-hidden">
 					<li class="flex items-center justify-between px-4 py-3">
 						<div class="flex flex-col">
 							<span class="text-slate-700">푸시 알림 받기</span>
-							<span class="text-xs text-slate-500 mt-0.5" id="pushHint">설정 확인 중...</span>
+							<span class="text-dynamic-xs text-slate-500 mt-0.5" id="pushHint">설정 확인 중...</span>
 						</div>
 
 						<!-- 토글: pp-toggle -->
 						<pp-toggle id="togglePush" name="pushReceive" on-text="ON" off-text="OFF"></pp-toggle>
 					</li>
-<!--
+
 					<li class="px-4 py-4">
 						<div class="relative px-2">
-						  <input id="fontSizeRange"
-						         type="range"
-						         min="0"
-						         max="4"
-						         step="1"
-						         class="w-full font-range"
-						         th:attr="data-init=${item.user.fontSize}" />
+							<input id="fontSizeRange"
+							       type="range"
+							       min="0"
+							       max="4"
+							       step="1"
+							       class="w-full font-range"
+							       th:attr="data-init=${item.user.fontSize == null ? 'md' : #strings.toLowerCase(item.user.fontSize)}" />
 
-						  <div class="flex justify-between mt-2 text-slate-500 leading-none select-none">
-						    <span class="text-xs">아주작게</span>
-						    <span class="text-sm">작게</span>
-						    <span class="text-md font-semibold text-slate-700">보통</span>
-						    <span class="text-lg">크게</span>
-						    <span class="text-xl">아주크게</span>
-						  </div>
+								 <div id="fontSizeLabels" class="flex justify-between mt-2 text-slate-500 leading-none select-none">
+								   <span data-index="0" class="text-xs">최소</span>
+								   <span data-index="1" class="text-sm">소</span>
+								   <span data-index="2" class="text-base">중</span>
+								   <span data-index="3" class="text-lg">대</span>
+								   <span data-index="4" class="text-xl">최대</span>
+								 </div>
 						</div>
 					</li>
--->					
 				</ul>
 			</div>
 
 			<th:block th:if="${isAdmin}">
 				<div class="h-[1px] bg-slate-200/70"></div>
 				<a th:href="@{/Lotus/Login.html}"
-					class="shrink-0 px-2 py-2 text-sm font-medium text-blue-500 hover:text-blue-600">
+					class="shrink-0 px-2 py-2 text-dynamic-sm font-medium text-blue-500 hover:text-blue-600">
 					AdminPage
 				</a>
 			</th:block>
@@ -192,14 +191,14 @@
 			<!-- 하단 액션: 로그아웃(버튼) + 탈퇴(우측) -->
 			<div class="px-4 pb-5 pt-2">
 				<div class="flex items-center justify-between gap-3">
-					<button id="btnLogout" type="button" class="flex-1 py-3 rounded-2xl text-base font-semibold
+					<button id="btnLogout" type="button" class="flex-1 py-3 rounded-2xl text-dynamic-base font-semibold
 	                     bg-slate-100 text-slate-900 hover:bg-slate-200
 	                     ring-1 ring-slate-200">
 						로그아웃
 					</button>
 
 					<button id="btnWithdraw" type="button"
-						class="shrink-0 px-2 py-2 text-sm font-medium text-rose-500 hover:text-rose-600">
+						class="shrink-0 px-2 py-2 text-dynamic-sm font-medium text-rose-500 hover:text-rose-600">
 						탈퇴
 					</button>
 				</div>
@@ -474,53 +473,75 @@
 			window.addEventListener('load', init);
 		})();
 
-		/*
 		(function () {
+		  const fontMap = ['xs', 'sm', 'md', 'lg', 'xl'];
 
-			const fontMap = ['XS', 'SM', 'MD', 'LG', 'XL'];
+		  const range = document.getElementById('fontSizeRange');
+		  const labelsRoot = document.getElementById('fontSizeLabels');
+		  const labels = labelsRoot ? Array.from(labelsRoot.querySelectorAll('[data-index]')) : [];
 
-			const range = document.getElementById('fontSizeRange');
-			if (!range) return;
+		  if (!range) return;
 
-			// 초기값 세팅
-			const init = range.dataset.init || 'md';
-			const initIndex = fontMap.indexOf(init);
-			range.value = initIndex >= 0 ? initIndex : 2;
+		  // data-init 안전 처리: 공백 제거 + 소문자
+		  const rawInit = (range.dataset.init || 'md').trim().toLowerCase();
+		  const initIndex = fontMap.indexOf(rawInit);
+		  const safeIndex = initIndex >= 0 ? initIndex : 2; // md
 
-			// body에 즉시 반영
-			function applyFont(size) {
-			  document.body.setAttribute('data-font-size', size);
-			}
+		  // body에 즉시 반영
+		  function applyFontByIndex(idx) {
+		    const size = fontMap[idx] || 'md';
+		    document.body.setAttribute('data-font-size', size);
+		  }
 
-			applyFont(fontMap[range.value]);
+		  // 라벨 강조 처리
+		  function updateLabels(idx) {
+		    labels.forEach(el => {
+		      const i = Number(el.dataset.index);
+		      const selected = (i === Number(idx));
+		      el.classList.toggle('font-semibold', selected);
+		      el.classList.toggle('text-slate-700', selected);
+		      el.classList.toggle('text-slate-500', !selected);
+		    });
+		  }
 
-			range.addEventListener('input', (e) => {
-				const size = fontMap[e.target.value];
-				applyFont(size);
-			});
+		  // ✅ 최초: 서버값을 기본으로 세팅
+		  range.value = String(safeIndex);
+		  applyFontByIndex(safeIndex);
+		  updateLabels(safeIndex);
 
-			range.addEventListener('change', async (e) => {
-				const size = fontMap[e.target.value];
+		  // ✅ 드래그 중: 즉시 반영 + 라벨 강조 변경
+		  range.addEventListener('input', (e) => {
+		    const idx = Number(e.target.value);
+		    applyFontByIndex(idx);
+		    updateLabels(idx);
+		  });
 
-				try {
-					const fd = new FormData();
-					fd.append('uid', document.getElementById('myPageRoot').dataset.itemUid);
-					fd.append('fontSize', size);
+		  // ✅ 드래그 끝: 서버 저장
+		  range.addEventListener('change', async (e) => {
+		    const idx = Number(e.target.value);
+		    const size = fontMap[idx] || 'md';
 
-					const cp = window.contextPath || '';
-					await fetch(cp + '/My/updateUserFontSize.json', {
-						method: 'POST',
-						body: fd,
-						credentials: 'include'
-					});
-				} catch (err) {
-					console.error(err);
-					showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
-				}
-			});
+		    try {
+		      const root = document.getElementById('myPageRoot');
+		      const uid = root?.dataset?.itemUid || '';
 
+		      const fd = new FormData();
+		      fd.append('uid', uid);
+		      fd.append('fontSize', size);
+
+		      const cp = window.contextPath || '';
+		      await fetch(cp + '/My/updateUserFontSize.json', {
+		        method: 'POST',
+		        body: fd,
+		        credentials: 'include'
+		      });
+		    } catch (err) {
+		      console.error(err);
+		      showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
+		    }
+		  });
 		})();
-*/
+
 	</script>
 	
 	

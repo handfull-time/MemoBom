@@ -18,5 +18,5 @@ public class UserUpdateDto {
 	/** 프로필 이미지  */
 	MultipartFile profile;
 	
-	EFontSize fonstSize;
+	EFontSize fontSize;
 }

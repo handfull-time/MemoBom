@@ -15,6 +15,7 @@ import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.mapper.UserMapper;
 import com.utime.memoBom.user.mapper.UserProfileMapper;
+import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
@@ -146,6 +147,13 @@ class UserDaoImpl implements UserDao {
 	public int setPushStatus(LoginUser user, boolean enabled) throws Exception {
 		
 		return userMapper.updatePushStatus(user, enabled);
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int updateMyInfoFontSize(LoginUser user, EFontSize fs) throws Exception {
+		
+		return userMapper.updateMyInfoFontSize(user, fs);
 	}
 
 }

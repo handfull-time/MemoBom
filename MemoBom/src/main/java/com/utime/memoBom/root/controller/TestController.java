@@ -105,7 +105,7 @@ public class TestController {
 
 	@GetMapping("TestView")
 	public String test(Model model) {
-	    model.addAttribute("showHeader", true);
+	    model.addAttribute("showHeader", false);
 	    model.addAttribute("showFooter", false);
 		return "Test/Test";
 	}
@@ -258,7 +258,7 @@ public class TestController {
     	model.addAttribute(AppDefine.KeyParamUser, new UserDto( "fefefe", "hahaha", "/MemoBom/images/profile-placeholder.svg" , EFontSize.xs ));
     	return "Test/FontSize";
     }
-    
+
 
 }
 //

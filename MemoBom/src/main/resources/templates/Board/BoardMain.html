@@ -18,7 +18,7 @@
 	<div id="fragmentList" class="space-y-3"></div>
 
 	<!-- 상태/로딩 -->
-	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-sm"></div>
+	<div id="stateBox" class="hidden mt-3 mx-2 rounded-2xl border p-3 text-dynamic-sm"></div>
 	<div id="pageSentinel" class="h-1"></div>
 
 	<!-- fragment card template -->
@@ -30,7 +30,7 @@
 					<!-- topic badge -->
 					<div class="flex items-center gap-2 min-w-0">
 						<div class="topic-pill inline-flex items-center gap-1.5
-						              rounded-full px-2.5 py-1 text-sm font-semibold
+						              rounded-full px-2.5 py-1 text-dynamic-sm font-semibold
 						              bg-slate-100 max-w-full min-w-0">
 							<span class="topic-emoji shrink-0">🧩</span>
 							<span class="topic-name truncate max-w-[12rem]">Topic</span>
@@ -40,13 +40,13 @@
 					<!-- user + date -->
 					<div class="flex items-center gap-2 shrink-0">
 						<img class="user-img w-6 h-6 rounded-full border border-slate-200 object-cover" alt="U" />
-						<div class="text-sm font-medium text-slate-700 user-name max-w-[120px] truncate">User</div>
-						<div class="text-xs text-slate-400 tabular-nums reg-date">2026-01-24 05:09</div>
+						<div class="text-dynamic-sm font-medium text-slate-700 user-name max-w-[120px] truncate">User</div>
+						<div class="text-dynamic-xs text-slate-400 tabular-nums reg-date">2026-01-24 05:09</div>
 					</div>
 				</div>
 
 				<!-- content -->
-				<div class="mt-2 text-base text-slate-900 leading-relaxed content"></div>
+				<div class="mt-2 text-dynamic-base text-slate-900 leading-relaxed content"></div>
 
 				<!-- hashtags -->
 				<div class="mt-2 flex flex-wrap gap-1.5 hashtag-box"></div>
@@ -95,7 +95,7 @@
 						<img class="meImg w-8 h-8 rounded-full border border-slate-200 object-cover" alt="me" />
 
 						<!-- [2.2] 입력(여러 줄 자동 확장) -->
-						<textarea class="commentInput flex-1 resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed
+						<textarea class="commentInput flex-1 resize-none rounded-xl border border-slate-200 bg-white px-3 py-2 text-dynamic-sm leading-relaxed
 				             focus:outline-none focus:ring-2 focus:ring-slate-200" rows="1" placeholder="댓글을 입력해 주세요."></textarea>
 
 						<!-- [2.3] 저장 버튼 -->
@@ -111,11 +111,11 @@
 					<div class="commentList mt-3 space-y-2"></div>
 
 					<!-- 댓글 로딩 상태 -->
-					<div class="commentState hidden mt-2 text-xs text-slate-400"></div>
+					<div class="commentState hidden mt-2 text-dynamic-xs text-slate-400"></div>
 
 					<!-- 댓글 더보기 버튼 (페이지네이션) -->
 					<button type="button" class="btnMoreComments hidden mt-3 w-full flex items-center justify-center gap-2
-				           rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-700
+				           rounded-xl border border-slate-200 bg-white py-2 text-dynamic-sm text-slate-700
 				           hover:bg-slate-50 active:bg-slate-100">
 						   <img th:src="@{/images/fragment/more_comments.svg}"
    							     alt="more comments"
@@ -142,11 +142,11 @@
 				<div class="flex-1 min-w-0">
 					<!-- 상단 라인: [3.5]닉네임 + [3.2]날짜 + [3.3][3.4]이모션 합 -->
 					<div class="flex items-center gap-2">
-						<div class="cNick text-sm font-semibold text-slate-800 truncate">닉네임</div>
-						<div class="cDate text-[11px] text-slate-400 whitespace-nowrap">2026-01-01 13:11</div>
+						<div class="cNick text-dynamic-sm font-semibold text-slate-800 truncate">닉네임</div>
+						<div class="cDate text-dynamic-11 text-slate-400 whitespace-nowrap">2026-01-01 13:11</div>
 
 						<button type="button"
-							class="cEmoSummary ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100">
+							class="cEmoSummary ml-auto inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-dynamic-xs text-slate-700 hover:bg-slate-100">
 							<img th:src="@{/images/fragment/comment_emotion.svg}"
    							     alt="emotion comments"
    							     class="pointer-events-none"/>
@@ -155,7 +155,7 @@
 					</div>
 
 					<!-- [3.6] 내용 -->
-					<div class="cContent mt-1 text-sm text-slate-800 whitespace-pre-wrap break-words"></div>
+					<div class="cContent mt-1 text-dynamic-sm text-slate-800 whitespace-pre-wrap break-words"></div>
 
 					<!-- [4.1] 이모션 패널(토글) -->
 					<div class="cEmoPanel hidden mt-2 flex flex-wrap gap-2"></div>
@@ -404,7 +404,7 @@
 				if (!list || list.length === 0) return;
 				list.forEach((t) => {
 					const tag = document.createElement("span");
-					tag.className = "inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-700";
+					tag.className = "inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-dynamic-xs text-slate-700";
 					tag.textContent = "#" + String(t);
 					box.appendChild(tag);
 				});
@@ -432,7 +432,7 @@
 
 					// emoji만
 					btn.innerHTML = `
-			      <span class="text-lg leading-none">${emotionEmoji(code)}</span>
+			      <span class="text-dynamic-lg leading-none">${emotionEmoji(code)}</span>
 			    `;
 
 					// 접근성(툴팁/숫자 숨겨도 의미 유지)
@@ -476,7 +476,7 @@
 				tip.className =
 					"emotion-tooltip absolute -top-9 left-1/2 -translate-x-1/2 " +
 					"whitespace-nowrap rounded-full border border-slate-200 bg-white " +
-					"px-2 py-1 text-xs text-slate-700 shadow-md pointer-events-none";
+					"px-2 py-1 text-dynamic-xs text-slate-700 shadow-md pointer-events-none";
 
 				// 말풍선 꼬리
 				tip.innerHTML = `
@@ -788,7 +788,7 @@
 						btn.type = 'button';
 						btn.className = "emotion-btn relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 bg-white hover:bg-slate-50";
 						btn.dataset.emotion = code;
-						btn.innerHTML = `<span class="text-lg">${emotionEmoji(code)}</span>`;
+						btn.innerHTML = `<span class="text-dynamic-lg">${emotionEmoji(code)}</span>`;
 
 						btn.addEventListener('click', async (ev) => {
 							ev.stopPropagation();

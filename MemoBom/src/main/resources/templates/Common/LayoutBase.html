@@ -13,7 +13,7 @@
 	</script>
 
 	<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-	<link rel="stylesheet" th:href="@{/css/memoBom.css}">
+	<link rel="stylesheet" th:href="@{/css/memoBom.css(v=${assetVersion})}">
 
 	<th:block layout:fragment="css"></th:block>
 
@@ -29,9 +29,9 @@
 	</style>
 </head>
 
-<body class="bg-gray-100 text-slate-900 overflow-hidden text-dynamic-md"
-	  data-font-size='xl'>
-	  th:attr="data-font-size=${user == null ? 'xl' : user.fontSize}"
+<body class="bg-gray-100 text-slate-900 overflow-hidden text-dynamic-base"
+	  th:attr="data-font-size=${user == null ? 'md' : user.fontSize}">
+	  
 	<div class="w-full mx-auto h-[100dvh] flex flex-col bg-white shadow-lg overflow-hidden relative">
 
 		<header th:if="${showHeader == null || showHeader}"

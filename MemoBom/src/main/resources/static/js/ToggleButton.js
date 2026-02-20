@@ -76,8 +76,8 @@ if (!customElements.get('pp-toggle')) {
 	                    ring-1 ring-black/5 transition-colors duration-300
 	                    focus:outline-none focus:ring-2 focus:ring-green-500/40"
 	           >
-	             <span class="onTxt absolute left-1.5 text-[11px] font-semibold text-white transition-opacity duration-200 opacity-0">${this.escape(this.onText)}</span>
-	             <span class="offTxt absolute right-1.5 text-[11px] font-semibold text-gray-900 transition-opacity duration-200 opacity-100">${this.escape(this.offText)}</span>
+	             <span class="onTxt absolute left-1.5 text-dynamic-11 font-semibold text-white transition-opacity duration-200 opacity-0">${this.escape(this.onText)}</span>
+	             <span class="offTxt absolute right-1.5 text-dynamic-11 font-semibold text-gray-900 transition-opacity duration-200 opacity-100">${this.escape(this.offText)}</span>
 	             <span class="knob absolute left-1 inline-block h-5 w-5 rounded-full bg-white shadow-sm transform transition-transform duration-300 translate-x-0"></span>
 	           </button>
 

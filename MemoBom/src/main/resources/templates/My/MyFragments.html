@@ -15,7 +15,7 @@
 	      <div class="relative">
 	        <input id="keyword" type="search" autocomplete="off" placeholder="검색"
 	               class="w-full h-11 rounded-2xl bg-white ring-1 ring-slate-200
-	                      pl-4 pr-11 text-[15px] outline-none
+	                      pl-4 pr-11 text-dynamic-15 outline-none
 	                      focus:ring-2 focus:ring-sky-300"/>
 	        <button id="btnSearch" type="button"
 	                class="absolute right-2 top-1/2 -translate-y-1/2
@@ -33,7 +33,7 @@
 	    <div id="list" class="mt-3 space-y-3"></div>
 
 	    <!-- 상태 -->
-	    <div id="state" class="mt-4 text-center text-sm text-slate-500"></div>
+	    <div id="state" class="mt-4 text-center text-dynamic-sm text-slate-500"></div>
 
 	    <!-- 센티넬 -->
 	    <div id="sentinel" class="h-10"></div>
@@ -50,12 +50,12 @@
 	          <button type="button"
 	                  class="topic-hit flex items-center gap-2 min-w-0 flex-1 text-left">
 	            <span class="topic-emoji w-6 h-6 rounded-lg bg-slate-100 ring-1 ring-slate-200
-	                         flex items-center justify-center text-sm">🙂</span>
-	            <span class="topic-name text-sm font-semibold text-slate-800 truncate">Topic 이름</span>
+	                         flex items-center justify-center text-dynamic-sm">🙂</span>
+	            <span class="topic-name text-dynamic-sm font-semibold text-slate-800 truncate">Topic 이름</span>
 	          </button>
 
 	          <!-- 날짜 -->
-	          <span class="reg-date text-xs text-slate-500 shrink-0">2026.01.29</span>
+	          <span class="reg-date text-dynamic-xs text-slate-500 shrink-0">2026.01.29</span>
 
 	          <!-- → 링크(프래그먼트) -->
 	          <button type="button"
@@ -81,7 +81,7 @@
 
 	        <!-- 본문 -->
 	        <div class="px-4 py-3">
-	          <div class="content text-[15px] leading-6 text-slate-900 line-clamp-3"></div>
+	          <div class="content text-dynamic-15 leading-6 text-slate-900 line-clamp-3"></div>
 	        </div>
 	      </div>
 	    </template>

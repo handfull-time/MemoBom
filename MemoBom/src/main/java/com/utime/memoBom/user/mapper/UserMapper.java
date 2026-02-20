@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
@@ -94,6 +95,14 @@ public interface UserMapper {
 	 * @return
 	 */
 	int updateProfile(@Param("user")LoginUser user, @Param("profile") String profile);
+	
+	/**
+	 * 글자 크기 변경
+	 * @param user
+	 * @param data
+	 * @return
+	 */
+	int updateMyInfoFontSize(@Param("user")LoginUser user,  @Param("fs")EFontSize fs);
 	
 	/**
 	 * 푸시 수신 상태

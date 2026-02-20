@@ -1,125 +1,66 @@
-/* ================================
-   MemoBom Dynamic Font System
-   Tailwind scale 기반 구조
-================================ */
+/* =========================================
+   MemoBom Font System (Mobile-first, Final)
+   - data-font-size: xs/sm/md/lg/xl
+   - Tailwind scale 기반 text-dynamic-* 제공
+   - 모바일 가독성 강화(기본 크게)
+   - clamp()를 각 calc()에 직접 사용 (재계산 이슈 방지)
+========================================= */
 
-/* 1️⃣ 기본 배율 (md 기준) */
+/* 1) 공통: 스케일 제한(너무 작아/커져서 레이아웃 깨짐 방지) */
 :root {
-	/* 모바일 기본을 크게: 1.18 = 약 +18% */
-	--font-scale: 1.18;
+  --font-scale-min: 0.98;
+  --font-scale-max: 1.55;
 
-	/*
-    사용자 폰트 설정과 합산된 최종 배율이 너무 커져
-    레이아웃이 깨지는 것을 방지 (최소~최대 제한)
-  */
-	--font-scale-min: 0.98;
-	--font-scale-max: 1.55;
-
-	/* 최종 배율(클램프 적용) */
-	--font-scale-final: clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max));
+  /* 모바일 전용 서비스이므로 기본을 크게(= md 기본값) */
+  --font-scale: 1.18;
 }
 
-/* 2️⃣ 사용자 설정에 따른 배율 */
+/* 2) 사용자 설정: EFontSize(xs, sm, md, lg, xl) */
+[data-font-size="xs"] { --font-scale: 1.05; }
+[data-font-size="sm"] { --font-scale: 1.13; }
+[data-font-size="md"] { --font-scale: 1.18; } /* 기본(모바일 기준) */
+[data-font-size="lg"] { --font-scale: 1.30; }
+[data-font-size="xl"] { --font-scale: 1.42; }
 
-[data-font-size="xs"] {
-	--font-scale: 1.05;
-}
-
-[data-font-size="sm"] {
-	--font-scale: 1.13;
-}
-
-[data-font-size="md"] {
-	--font-scale: 1.18;
-}
-
-[data-font-size="lg"] {
-	--font-scale: 1.30;
-}
-
-[data-font-size="xl"] {
-	--font-scale: 1.42;
-}
-
-/* ================================
-   3️⃣ Tailwind 기본 텍스트 스케일
-================================ */
-.text-dynamic-xs {
-	font-size: calc(0.75rem * var(--font-scale-final));
-}
-
-.text-dynamic-sm {
-	font-size: calc(0.875rem * var(--font-scale-final));
-}
-
-.text-dynamic-base {
-	font-size: calc(1rem * var(--font-scale-final));
-}
-
-.text-dynamic-lg {
-	font-size: calc(1.125rem * var(--font-scale-final));
-}
-
-.text-dynamic-xl {
-	font-size: calc(1.25rem * var(--font-scale-final));
-}
-
-.text-dynamic-2xl {
-	font-size: calc(1.5rem * var(--font-scale-final));
-}
-
-.text-dynamic-3xl {
-	font-size: calc(1.875rem * var(--font-scale-final));
-}
-
-.text-dynamic-4xl {
-	font-size: calc(2.25rem * var(--font-scale-final));
-}
-
-.text-dynamic-5xl {
-	font-size: calc(3rem * var(--font-scale-final));
-}
-
-.text-dynamic-6xl {
-	font-size: calc(3.75rem * var(--font-scale-final));
-}
-
-.text-dynamic-7xl {
-	font-size: calc(4.5rem * var(--font-scale-final));
-}
-
-.text-dynamic-8xl {
-	font-size: calc(6rem * var(--font-scale-final));
-}
-
-.text-dynamic-9xl {
-	font-size: calc(8rem * var(--font-scale-final));
-}
-
-/* 부드러운 전환 */
-[class^="text-dynamic-"] {
-	transition: font-size 0.2s ease;
-}
-
-/* ================================
-   4️⃣ 기본 body 설정
-================================ */
-
+/* 3) Body 기본 (Tailwind text-* 쓰지 않는 전제)
+      - data-font-size 변경 시 전체 기본 폰트도 같이 반응 */
 body {
-	font-size: calc(1rem * var(--font-scale));
-	line-height: 1.5;
-	letter-spacing: 0;     /* 과한 자간 금지 */
+  font-size: calc(1rem * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max)));
+  line-height: 1.6; /* 모바일 가독성 */
+  letter-spacing: 0;
 }
 
-.text-dynamic-xs,
-.text-dynamic-sm {
-  /* 모바일에서 최소 13px 정도는 유지되게 하고 싶다면 아래를 켜세요.
-     (Tailwind 기본 rem과 배율에 따라 이미 충분히 크면 필요 없음)
-  */
-  font-size: max(0.85rem, calc(0.875rem * var(--font-scale-final)));
+/* 4) Tailwind 기본 텍스트 스케일: text-dynamic-{xs~9xl} */
+.text-dynamic-xs   { font-size: calc(0.75rem  * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-sm   { font-size: calc(0.875rem * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-base { font-size: calc(1rem     * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-lg   { font-size: calc(1.125rem * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-xl   { font-size: calc(1.25rem  * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-2xl  { font-size: calc(1.5rem   * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-3xl  { font-size: calc(1.875rem * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-4xl  { font-size: calc(2.25rem  * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-5xl  { font-size: calc(3rem     * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-6xl  { font-size: calc(3.75rem  * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-7xl  { font-size: calc(4.5rem   * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-8xl  { font-size: calc(6rem     * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-9xl  { font-size: calc(8rem     * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+
+/* 5) px 기반(필요한 곳만): 캡션/메타/버튼 등 세밀 튜닝용 */
+.text-dynamic-11 { font-size: calc(11px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-12 { font-size: calc(12px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-13 { font-size: calc(13px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-14 { font-size: calc(14px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-15 { font-size: calc(15px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-16 { font-size: calc(16px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+.text-dynamic-17 { font-size: calc(17px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
+
+/* 6) 전환(폰트 크기만) */
+[class^="text-dynamic-"] {
+  transition: font-size 0.15s ease;
 }
 
-/* 7) 모바일 터치 환경: 버튼/링크 텍스트 가독성 보정(선택) */
-a, button {
-  -webkit-tap-highlight-color: transparent;
+/* 7) 모바일에서 너무 작은 텍스트 바닥값(선택)
+      - xs만 최소 13px 정도 보장 (원하면 사용)*/
+.text-dynamic-xs {
+  font-size: max(13px, calc(0.75rem * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))));
 }

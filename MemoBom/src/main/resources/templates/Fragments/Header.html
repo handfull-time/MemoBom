@@ -17,7 +17,7 @@
 	    </div>
 
 	    <!-- (옵션) 우측 버튼 영역 -->
-	    <div class="text-sm text-gray-500"></div>
+	    <div class="text-dynamic-sm text-gray-500"></div>
 	  </div>
 	</th:block>
 	
@@ -38,7 +38,7 @@
 	    </div>
 
 	    <!-- (옵션) 우측 버튼 영역 -->
-	    <div class="text-sm text-gray-500"></div>
+	    <div class="text-dynamic-sm text-gray-500"></div>
 	  </div>
 	</th:block>
 	
@@ -66,13 +66,13 @@
 	<th:block th:fragment="Header_MosaicMain">
 		<div class="grid grid-cols-3 items-center h-full px-2">
 			<button type="button" aria-label="back" onclick="history.back()"
-				class="justify-self-start text-2xl leading-none">
+				class="justify-self-start text-dynamic-2xl leading-none">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
 					<path d="M15 5 L8 12 L15 19" stroke="#4B5563" stroke-width="2.5" stroke-linecap="round"
 						stroke-linejoin="round" />
 				</svg>
 			</button>
-			<h1 class="justify-self-center text-base font-semibold leading-none">
+			<h1 class="justify-self-center text-dynamic-base font-semibold leading-none">
 				Mosaic
 			</h1>
 			<div class="justify-self-end w-8 h-6"></div>
@@ -84,7 +84,7 @@
 			<div class="shrink-0 flex items-center">
 				<!-- Left button -->
 				<!-- <button type="button" aria-label="left" onclick="functionLeft()"
-					class="shrink-0 w-10 h-10 flex items-center justify-center text-2xl leading-none">
+					class="shrink-0 w-10 h-10 flex items-center justify-center text-dynamic-2xl leading-none">
 					[[${leftTitle}]]
 				</button> -->
 				<button type="button" aria-label="left" onclick="functionLeft()"
@@ -115,7 +115,7 @@
 				<div data-role="search" class="hidden">
 					<div class="flex items-center w-full border border-gray-300 rounded-md bg-white px-2 py-1">
 						<input data-role="input" type="search" inputmode="search" autocomplete="off" placeholder="검색"
-							class="flex-1 min-w-0 bg-transparent outline-none text-sm" />
+							class="flex-1 min-w-0 bg-transparent outline-none text-dynamic-sm" />
 						<button type="button" aria-label="search" data-action="do-search"
 							class="shrink-0 px-2 text-sx leading-none">
 							🔍
@@ -131,7 +131,7 @@
 					🔍
 				</button>
 				<!-- <button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
-					class="w-10 h-10 flex items-center justify-center text-2xl leading-none">
+					class="w-10 h-10 flex items-center justify-center text-dynamic-2xl leading-none">
 					[[${rightTitle}]]
 				</button> -->
 				<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"

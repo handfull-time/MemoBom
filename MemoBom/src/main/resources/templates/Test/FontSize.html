@@ -10,8 +10,8 @@
     <div class="max-w-2xl mx-auto space-y-6">
         <div class="bg-white rounded-3xl shadow-sm p-6 border border-slate-200">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-slate-800">Display Settings</h3>
-                <span id="sizeLabel" class="text-sm font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg uppercase">Medium</span>
+                <h3 class="text-dynamic-lg font-bold text-slate-800">Display Settings</h3>
+                <span id="sizeLabel" class="text-dynamic-sm font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg uppercase">Medium</span>
             </div>
             
             <input id="fontSlider" type="range" min="0" max="4" step="1" value="2" 
@@ -37,12 +37,12 @@
                         PopaCoder의 시스템 설계 철학은 확장성과 안정성입니다.<br/>이 텍스트는 본문에 해당하며, 
                         사용자 설정에 따라 가독성 좋게 크기가 조절됩니다.<br/>
 						<br/>
-						잘못된 예: class="text-dynamic-base text-lg" (Tailwind의 text-lg가 고정 픽셀을 강제하여 동적 변경을 방해함)<br/>
+						잘못된 예: class="text-dynamic-base text-dynamic-lg" (Tailwind의 text-dynamic-lg가 고정 픽셀을 강제하여 동적 변경을 방해함)<br/>
 						올바른 예: class="text-dynamic-base font-bold text-slate-700" (크기는 동적으로, 굵기와 색상은 Tailwind로 제어)<br/>
 						<br/>
 						가변형(Dynamic): 게시글 본문, 뉴스 리스트, 댓글 등 사용자가 긴 시간을 들여 읽어야 하는 '콘텐츠' 영역.<br/>
 						<br/>
-						고정형(Fixed): 하단 푸터, 탭 바 아이콘 라벨, 버튼 내부 텍스트 등 레이아웃의 틀을 유지해야 하는 'UI 요소'. 이들은 text-fixed-lock 또는 Tailwind의 text-[12px]와 같은 절대 단위를 유지하는 것이 시스템 안정성 면에서 유리합니다.
+						고정형(Fixed): 하단 푸터, 탭 바 아이콘 라벨, 버튼 내부 텍스트 등 레이아웃의 틀을 유지해야 하는 'UI 요소'. 이들은 text-fixed-lock 또는 Tailwind의 text-dynamic-12와 같은 절대 단위를 유지하는 것이 시스템 안정성 면에서 유리합니다.
                     </p>
                 </section>
 

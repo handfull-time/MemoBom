@@ -97,7 +97,7 @@ public class MyController {
 	@PostMapping("updateUserFontSize.json")
 	public ReturnBasic updateMyFontSize( LoginUser user, UserUpdateDto data ) {
 		
-		return userService.updateMyInfo( user, data );
+		return userService.updateMyInfoFontSize( user, data );
 	}
 	
 	/**

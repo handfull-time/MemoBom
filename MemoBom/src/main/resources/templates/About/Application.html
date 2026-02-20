@@ -21,8 +21,8 @@
 		<!-- 상태 카드 -->
 		<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-lg font-semibold text-slate-900">앱 설치</div>
-				<div class="mt-1 text-sm text-slate-600">
+				<div class="text-dynamic-lg font-semibold text-slate-900">앱 설치</div>
+				<div class="mt-1 text-dynamic-sm text-slate-600">
 					앱으로 설치하면 더 빠르게 이용할 수 있고, 알림/푸시 기능도 안정적으로 동작합니다.
 				</div>
 			</div>
@@ -31,28 +31,28 @@
 
 			<div class="px-5 py-4 space-y-3">
 				<div class="flex items-center justify-between">
-					<div class="text-sm text-slate-700">설치 상태</div>
+					<div class="text-dynamic-sm text-slate-700">설치 상태</div>
 					<div id="pwaInstalledBadge"
-						class="text-xs font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-700">
+						class="text-dynamic-xs font-semibold px-2 py-1 rounded-lg bg-slate-100 text-slate-700">
 						확인 중...
 					</div>
 				</div>
 
 				<div class="flex items-center justify-between">
-					<div class="text-sm text-slate-700">설치 안내 다시 보기</div>
+					<div class="text-dynamic-sm text-slate-700">설치 안내 다시 보기</div>
 					<button id="btnResetDismiss" type="button"
-						class="px-3 py-2 text-sm rounded-xl border border-gray-200 hover:bg-gray-50">
+						class="px-3 py-2 text-dynamic-sm rounded-xl border border-gray-200 hover:bg-gray-50">
 						초기화
 					</button>
 				</div>
 
 				<!-- 설치 버튼 -->
 				<div class="pt-1">
-					<button id="btnInstallPwa" type="button" class="w-full py-3 rounded-2xl text-base font-semibold
+					<button id="btnInstallPwa" type="button" class="w-full py-3 rounded-2xl text-dynamic-base font-semibold
 									bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed">
 						설치하기
 					</button>
-					<div id="installHint" class="mt-2 text-xs text-slate-500 leading-relaxed">
+					<div id="installHint" class="mt-2 text-dynamic-xs text-slate-500 leading-relaxed">
 						브라우저가 설치를 지원하는 경우에만 “설치하기” 버튼이 활성화됩니다.
 					</div>
 				</div>
@@ -62,19 +62,19 @@
 		<!-- iOS 안내 -->
 		<div id="iosGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-base font-semibold text-slate-900">iPhone/iPad 설치 방법</div>
-				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+				<div class="text-dynamic-base font-semibold text-slate-900">iPhone/iPad 설치 방법</div>
+				<div class="mt-2 text-dynamic-sm text-slate-600 leading-relaxed">
 					iOS Safari는 “설치하기 버튼” 대신 아래 순서로 홈 화면에 추가합니다.
 				</div>
 
-				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+				<ol class="mt-3 text-dynamic-sm text-slate-700 list-decimal pl-5 space-y-2">
 					<li>Safari에서 이 페이지를 엽니다.</li>
 					<li>하단(또는 상단)의 <span class="font-semibold">공유</span> 버튼(□↑)을 누릅니다.</li>
 					<li><span class="font-semibold">홈 화면에 추가</span>를 선택합니다.</li>
 					<li>추가를 누르면 앱처럼 실행됩니다.</li>
 				</ol>
 
-				<div class="mt-3 text-xs text-slate-500">
+				<div class="mt-3 text-dynamic-xs text-slate-500">
 					※ iOS는 브라우저 정책상 설치 프롬프트 이벤트(beforeinstallprompt)가 제공되지 않습니다.
 				</div>
 			</div>
@@ -83,17 +83,17 @@
 		<!-- Chromium(Chrome/Edge/Brave/Opera 등) 안내 -->
 		<div id="chromiumGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-base font-semibold text-slate-900">Chrome/Edge 설치 방법</div>
-				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+				<div class="text-dynamic-base font-semibold text-slate-900">Chrome/Edge 설치 방법</div>
+				<div class="mt-2 text-dynamic-sm text-slate-600 leading-relaxed">
 					Chrome/Edge(Chromium 계열)에서는 “설치하기” 버튼 또는 브라우저 메뉴로 설치할 수 있습니다.
 				</div>
 
-				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+				<ol class="mt-3 text-dynamic-sm text-slate-700 list-decimal pl-5 space-y-2">
 					<li><b>모바일(Android)</b>: 우측 상단 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></li>
 					<li><b>PC</b>: 주소창 우측의 <b>설치 아이콘</b>(모니터+↓) 또는 메뉴 → <b>앱 설치</b></li>
 				</ol>
 
-				<div class="mt-3 text-xs text-slate-500">
+				<div class="mt-3 text-dynamic-xs text-slate-500">
 					※ 이 브라우저는 설치 가능할 때 <code>beforeinstallprompt</code> 이벤트가 발생할 수 있어, “설치하기” 버튼을 활성화할 수 있습니다.
 				</div>
 			</div>
@@ -102,17 +102,17 @@
 		<!-- Firefox 안내 -->
 		<div id="firefoxGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-base font-semibold text-slate-900">Firefox 설치 방법</div>
-				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+				<div class="text-dynamic-base font-semibold text-slate-900">Firefox 설치 방법</div>
+				<div class="mt-2 text-dynamic-sm text-slate-600 leading-relaxed">
 					Firefox는 환경에 따라 “설치하기 버튼”이 동작하지 않을 수 있어, 브라우저 메뉴에서 설치를 진행합니다.
 				</div>
 
-				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+				<ol class="mt-3 text-dynamic-sm text-slate-700 list-decimal pl-5 space-y-2">
 					<li><b>Android Firefox</b>: 우측 상단 메뉴(⋮) → <b>설치</b> 또는 <b>홈 화면에 추가</b></li>
 					<li><b>PC Firefox</b>: 설치 지원이 제한적일 수 있습니다. 설치가 필요하면 Chrome/Edge 사용을 권장합니다.</li>
 				</ol>
 
-				<div class="mt-3 text-xs text-slate-500">
+				<div class="mt-3 text-dynamic-xs text-slate-500">
 					※ <code>beforeinstallprompt</code>는 일부 브라우저에서만 제공됩니다.
 				</div>
 			</div>
@@ -121,18 +121,18 @@
 		<!-- macOS Safari 안내 -->
 		<div id="safariMacGuide" class="hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-base font-semibold text-slate-900">Mac Safari 설치 방법</div>
-				<div class="mt-2 text-sm text-slate-600 leading-relaxed">
+				<div class="text-dynamic-base font-semibold text-slate-900">Mac Safari 설치 방법</div>
+				<div class="mt-2 text-dynamic-sm text-slate-600 leading-relaxed">
 					macOS Sonoma 14 이상에서는 Safari에서 웹 앱으로 저장할 수 있습니다.
 				</div>
 
-				<ol class="mt-3 text-sm text-slate-700 list-decimal pl-5 space-y-2">
+				<ol class="mt-3 text-dynamic-sm text-slate-700 list-decimal pl-5 space-y-2">
 					<li>Safari에서 이 페이지를 엽니다.</li>
 					<li>상단 메뉴에서 <b>파일(File) → Dock에 추가(Add to Dock)</b>를 선택합니다.</li>
 					<li>이름을 확인하고 <b>추가</b>를 누르면 앱처럼 실행됩니다.</li>
 				</ol>
 
-				<div class="mt-3 text-xs text-slate-500">
+				<div class="mt-3 text-dynamic-xs text-slate-500">
 					※ “Dock에 추가”는 macOS Sonoma 14 이상에서 지원됩니다.
 				</div>
 			</div>
@@ -142,8 +142,8 @@
 		<!-- 안내/팁 -->
 		<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 overflow-hidden">
 			<div class="px-5 py-4">
-				<div class="text-base font-semibold text-slate-900">참고</div>
-				<ul class="mt-2 text-sm text-slate-700 list-disc pl-5 space-y-1">
+				<div class="text-dynamic-base font-semibold text-slate-900">참고</div>
+				<ul class="mt-2 text-dynamic-sm text-slate-700 list-disc pl-5 space-y-1">
 					<li>이미 앱으로 설치된 경우에는 “설치하기”가 비활성화됩니다.</li>
 					<li>PC 크롬/엣지에서는 주소창 우측의 설치 아이콘으로도 설치할 수 있습니다.</li>
 				</ul>
@@ -216,7 +216,7 @@
 			function setBadge(text, isOk) {
 				$badge.textContent = text;
 				$badge.className =
-					"text-xs font-semibold px-2 py-1 rounded-lg " +
+					"text-dynamic-xs font-semibold px-2 py-1 rounded-lg " +
 					(isOk ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-700");
 			}
 

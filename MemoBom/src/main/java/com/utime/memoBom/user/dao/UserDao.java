@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.common.security.LoginUser;
-import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
+import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
@@ -86,6 +86,14 @@ public interface UserDao {
 	 * @return
 	 */
 	int updateUserInfo(LoginUser user, String nickname, MultipartFile profile) throws Exception;
+	
+	/**
+	 * 글자 크기 변경
+	 * @param user
+	 * @param data
+	 * @return
+	 */
+	int updateMyInfoFontSize(LoginUser user, EFontSize fs) throws Exception;
 	
 	/**
 	 * 사용자 이미지 정보

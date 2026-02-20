@@ -13,6 +13,7 @@ import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
+import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -42,6 +43,7 @@ class UserServiceImpl implements UserService{
 	final UserDao userDao;
 	final TopicDao topicDao;
 	final BoardDao boardDao;
+	final JwtProvider provider;
 
 	@Override
 	public UserVo getUserFromUid(String uid) {
@@ -97,6 +99,29 @@ class UserServiceImpl implements UserService{
 		
 		try {
 			userDao.updateUserInfo( user, data.getNickname(), data.getProfile());
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", e.getMessage());
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic updateMyInfoFontSize(LoginUser user, UserUpdateDto data) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		if( ! user.uid().equals(data.getUid())) {
+			return result.setCodeMessage("E", "이용자 정보 불일치");
+		}
+		
+		try {
+			final int res = userDao.updateMyInfoFontSize( user, data.getFontSize() );
+			
+			if( res > 0 ) {
+				provider.removeCacheSid( user );	
+			}
+			
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", e.getMessage());

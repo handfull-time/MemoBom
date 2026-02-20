@@ -52,8 +52,8 @@
 <th:block layout:fragment="my_content">
   <div class="-m-2 h-[calc(100vh-48px-40px)] flex flex-col bg-white">
     <div class="flex items-center justify-between mb-2">
-      <div class="text-base font-bold">Calendar</div>
-      <div id="calMonthLabel" class="text-sm text-gray-500"></div>
+      <div class="text-dynamic-base font-bold">Calendar</div>
+      <div id="calMonthLabel" class="text-dynamic-sm text-gray-500"></div>
     </div>
     <div id="calendar" class="flex-1 min-h-0"></div>
   </div>
@@ -77,7 +77,7 @@
 
       <div class="p-3 border-t border-gray-200 flex justify-end">
         <button type="button"
-                class="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50"
+                class="px-3 py-2 text-dynamic-sm rounded-lg border border-gray-200 hover:bg-gray-50"
                 onclick="CalendarModalClose(this)">
           닫기
         </button>
@@ -135,12 +135,12 @@
           btn.type = 'button';
           btn.className = "w-full flex items-center justify-between px-3 py-3 rounded-xl border border-gray-200 hover:bg-gray-50 text-left";
 		  btn.innerHTML = `
-<div class="flex items-center gap-2 text-sm min-w-0">
+<div class="flex items-center gap-2 text-dynamic-sm min-w-0">
   <span class="${target === 'fragment' ? 'text-slate-900' : 'text-slate-700'}">${ICON[target]}</span>
   <span class="font-medium shrink-0">${label}</span>
-  <span class="text-xs text-gray-500 truncate">${escapeHtml(title)}</span>
+  <span class="text-dynamic-xs text-gray-500 truncate">${escapeHtml(title)}</span>
 </div>
-<span class="text-xs text-gray-400">선택</span>
+<span class="text-dynamic-xs text-gray-400">선택</span>
 		  `;
           btn.onclick = () => {
 			CalendarModalClose('btn.onclick');
@@ -363,7 +363,7 @@
           const textCls = (kind === 'fragment') ? 'text-slate-900' : 'text-slate-700';
 
           const html = `
-<div class="flex items-center gap-1 ${textCls} text-[11px] leading-none">
+<div class="flex items-center gap-1 ${textCls} text-dynamic-11 leading-none">
     ${icon}<span class="font-semibold">${count}</span>
 </div>
 `;
@@ -408,8 +408,8 @@
 		  if (kind === 'holiday' || kind === 'anniversary') {
 		    const name = arg.event.extendedProps.name || '';
 		    const cls = (kind === 'holiday')
-		      ? 'text-[11px] font-semibold text-red-500'
-		      : 'text-[11px] font-medium text-violet-600';
+		      ? 'text-dynamic-11 font-semibold text-red-500'
+		      : 'text-dynamic-11 font-medium text-violet-600';
 
 		    return { html: `<div class="${cls} truncate">${name}</div>` };
 		  }
@@ -420,7 +420,7 @@
 		  const textCls = (kind === 'fragment') ? 'text-slate-900' : 'text-slate-700';
 
 		  return {
-		    html: `<div class="flex items-center gap-1 ${textCls} text-[11px] leading-none">
+		    html: `<div class="flex items-center gap-1 ${textCls} text-dynamic-11 leading-none">
 		             ${icon}<span class="font-semibold">${count}</span>
 		           </div>`
 		  };

@@ -147,12 +147,12 @@ function showToast(
 
 	// title
 	const titleElement = document.createElement("div");
-	titleElement.className = "font-semibold text-base tracking-tight text-gray-900 drop-shadow-sm";
+	titleElement.className = "font-semibold text-dynamic-base tracking-tight text-gray-900 drop-shadow-sm";
 	titleElement.innerText = title ?? "";
 
 	// message
 	const messageElement = document.createElement("div");
-	messageElement.className = "mt-1 text-sm text-gray-800 leading-relaxed drop-shadow-sm";
+	messageElement.className = "mt-1 text-dynamic-sm text-gray-800 leading-relaxed drop-shadow-sm";
 	messageElement.innerHTML = message ?? "";
 
 	// buttons
@@ -163,7 +163,7 @@ function showToast(
 		const button = document.createElement("button");
 		button.type = "button";
 		button.className =
-			"rounded-lg bg-white/85 px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-white transition";
+			"rounded-lg bg-white/85 px-3 py-1.5 text-dynamic-sm font-medium text-gray-900 hover:bg-white transition";
 		button.innerText = btn.label ?? "OK";
 		button.addEventListener("click", () => {
 			try {
