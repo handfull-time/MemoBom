@@ -261,10 +261,17 @@
  	
  	<!--푸시 수신 상태-->
  	<select id="selectPushStatus" parameterType="map" resultType="boolean">
- 		SELECT
- 			PUSH_ENABLED
- 		FROM MB_USER
- 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 		SELECT 
+		    CASE WHEN EXISTS (
+		        SELECT 1
+		        FROM MB_USER US
+		        INNER JOIN MB_PUSH_SUB PU ON US.USER_NO = PU.USER_NO
+		        WHERE US.USER_NO = #{user.userNo}
+		          AND US.ENABLED = TRUE 
+		          AND PU.DEVICE_ID = #{deviceId}  
+		          AND US.PUSH_ENABLED = TRUE
+		    ) THEN TRUE ELSE FALSE END AS PUSH_ENABLED
+		FROM DUAL 
  	</select>
 
 	<!--푸시 수신 설정-->

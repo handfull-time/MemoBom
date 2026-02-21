@@ -32,13 +32,23 @@ public class PushController {
     private final PushSendService pushSendService;
     
 
+    /**
+     * 키 전달
+     * @return
+     */
     @GetMapping("vapid-public-key.json")
     public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
         return new ReturnBasic(AppDefine.ERROR_OK, vapidPublicKey);
     }
     
-    // ✅ 로그인 사용자만 접근 (Security에서 보호)
+    /**
+     * 푸시 구독하기.
+     * @param user
+     * @param dto
+     * @return
+     * @throws Exception
+     */
     @PostMapping("Subscription.json")
     public ResponseEntity<ReturnBasic> upsert(LoginUser user, @RequestBody PushSubscriptionDto dto ) throws Exception {
     	
@@ -56,6 +66,13 @@ public class PushController {
         }
     }
 
+    /**
+     * 푸시 구독 해제
+     * @param user
+     * @param endpoint
+     * @return
+     * @throws Exception
+     */
     @DeleteMapping("Subscription.json")
     public ResponseEntity<ReturnBasic> delete(LoginUser user, @RequestParam String endpoint) throws Exception {
     
@@ -71,9 +88,9 @@ public class PushController {
      * @throws Exception
      */
     @GetMapping("Status.json")
-    public ResponseEntity<ReturnBasic> getStatus(LoginUser user) throws Exception {
+    public ResponseEntity<ReturnBasic> getStatus(LoginUser user, @RequestParam String deviceId) throws Exception {
         
-    	final ReturnBasic res = pushSendService.getPushStatus(user);
+    	final ReturnBasic res = pushSendService.getPushStatus(user, deviceId);
         
     	return ResponseEntity.ok().body( res );
     }

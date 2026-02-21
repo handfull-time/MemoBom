@@ -55,6 +55,11 @@
         <Logger name="jdbc.resultsettable" level="OFF" />
         <Logger name="jdbc.connection" level="OFF" />
         
+        <RegexFilter regex="(?s).*NO_LOG.*"
+                       onMatch="DENY"
+                       onMismatch="NEUTRAL"
+                       useRawMsg="true"/>
+
         <Root level="INFO">
             <AppenderRef ref="Console" />
             <AppenderRef ref="File" />

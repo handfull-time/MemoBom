@@ -5,55 +5,62 @@
 <th:block layout:fragment="my_title">마이페이지</th:block>
 
 <th:block layout:fragment="my_css">
-  <style>
-    /* 공통: 파란 accent 제거 + 트랙/채움 고정 */
-    input[type="range"].font-range {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 24px;
-      background: transparent;
-      outline: none;
-    }
+	<style>
+		/* 공통: 파란 accent 제거 + 트랙/채움 고정 */
+		input[type="range"].font-range {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 100%;
+			height: 24px;
+			background: transparent;
+			outline: none;
+		}
 
-    /* Webkit (Chrome/Safari/Edge) */
-    input[type="range"].font-range::-webkit-slider-runnable-track {
-      height: 4px;
-      background: #e5e7eb; /* gray-200 */
-      border-radius: 999px;
-    }
-    input[type="range"].font-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 2px solid #6b7280; /* gray-500 */
-      margin-top: -7px; /* (thumb 18 - track 4)/2 */
-      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
-    }
+		/* Webkit (Chrome/Safari/Edge) */
+		input[type="range"].font-range::-webkit-slider-runnable-track {
+			height: 4px;
+			background: #e5e7eb;
+			/* gray-200 */
+			border-radius: 999px;
+		}
 
-    /* Firefox */
-    input[type="range"].font-range::-moz-range-track {
-      height: 4px;
-      background: #e5e7eb;
-      border-radius: 999px;
-    }
-    input[type="range"].font-range::-moz-range-progress {
-      background: #e5e7eb; /* 진행부도 동일색으로 (파란색 제거) */
-      height: 4px;
-      border-radius: 999px;
-    }
-    input[type="range"].font-range::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: #ffffff;
-      border: 2px solid #6b7280;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
-    }
-  </style>
+		input[type="range"].font-range::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 18px;
+			height: 18px;
+			border-radius: 999px;
+			background: #ffffff;
+			border: 2px solid #6b7280;
+			/* gray-500 */
+			margin-top: -7px;
+			/* (thumb 18 - track 4)/2 */
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+		}
+
+		/* Firefox */
+		input[type="range"].font-range::-moz-range-track {
+			height: 4px;
+			background: #e5e7eb;
+			border-radius: 999px;
+		}
+
+		input[type="range"].font-range::-moz-range-progress {
+			background: #e5e7eb;
+			/* 진행부도 동일색으로 (파란색 제거) */
+			height: 4px;
+			border-radius: 999px;
+		}
+
+		input[type="range"].font-range::-moz-range-thumb {
+			width: 18px;
+			height: 18px;
+			border-radius: 999px;
+			background: #ffffff;
+			border: 2px solid #6b7280;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+		}
+	</style>
 </th:block>
 
 
@@ -160,21 +167,17 @@
 
 					<li class="px-4 py-4">
 						<div class="relative px-2">
-							<input id="fontSizeRange"
-							       type="range"
-							       min="0"
-							       max="4"
-							       step="1"
-							       class="w-full font-range"
-							       th:attr="data-init=${item.user.fontSize == null ? 'md' : #strings.toLowerCase(item.user.fontSize)}" />
+							<input id="fontSizeRange" type="range" min="0" max="4" step="1" class="w-full font-range"
+								th:attr="data-init=${item.user.fontSize == null ? 'md' : #strings.toLowerCase(item.user.fontSize)}" />
 
-								 <div id="fontSizeLabels" class="flex justify-between mt-2 text-slate-500 leading-none select-none">
-								   <span data-index="0" class="text-xs">최소</span>
-								   <span data-index="1" class="text-sm">소</span>
-								   <span data-index="2" class="text-base">중</span>
-								   <span data-index="3" class="text-lg">대</span>
-								   <span data-index="4" class="text-xl">최대</span>
-								 </div>
+							<div id="fontSizeLabels"
+								class="flex justify-between mt-2 text-slate-500 leading-none select-none">
+								<span data-index="0" class="text-xs">최소</span>
+								<span data-index="1" class="text-sm">소</span>
+								<span data-index="2" class="text-base">중</span>
+								<span data-index="3" class="text-lg">대</span>
+								<span data-index="4" class="text-xl">최대</span>
+							</div>
 						</div>
 					</li>
 				</ul>
@@ -427,10 +430,41 @@
 						return;
 					}
 
+					// 1) 계정 설정(서버)
 					const enabled = await PWA_PUSH.getUserPushStatus();
-					$togglePush.checked = enabled;
-					setHint(enabled ? '푸시 수신: ON' : '푸시 수신: OFF');
 
+					// 2) 브라우저 권한/구독(클라이언트)
+					const perm = window.PWA_PUSH.permission();
+					const sub = await PWA_PUSH.getSubscription();
+					const deviceSubscribed = !!sub;
+
+					// 토글은 "계정 설정"을 그대로 표시
+					$togglePush.checked = enabled;
+
+					// 3) 상태 문구(불일치 표시)
+					if (!enabled) {
+						setHint(deviceSubscribed
+							? '푸시 수신: OFF (이 브라우저는 구독이 남아있어 정리 중...)'
+							: '푸시 수신: OFF');
+						// 계정 OFF면 남은 구독 정리(선택)
+						if (deviceSubscribed) PWA_PUSH.unsubscribeDevice().catch(console.warn);
+						return;
+					}
+
+					// enabled == true
+					if (perm !== 'granted') {
+						setHint('푸시 수신: ON (이 브라우저 알림 권한이 꺼져있음)');
+						return;
+					}
+
+					if (!deviceSubscribed) {
+						setHint('푸시 수신: ON (이 브라우저는 아직 구독되지 않음: 구독 처리 중...)');
+						// 자동 구독(선택) — 사용자 UX에 따라 버튼으로 유도해도 됨
+						PWA_PUSH.subscribeDevice().catch(console.warn);
+						return;
+					}
+
+					setHint('푸시 수신: ON (이 브라우저 구독 완료)');
 				} catch (e) {
 					console.error(e);
 					setHint('푸시 상태 조회 실패');
@@ -474,77 +508,77 @@
 		})();
 
 		(function () {
-		  const fontMap = ['xs', 'sm', 'md', 'lg', 'xl'];
+			const fontMap = ['xs', 'sm', 'md', 'lg', 'xl'];
 
-		  const range = document.getElementById('fontSizeRange');
-		  const labelsRoot = document.getElementById('fontSizeLabels');
-		  const labels = labelsRoot ? Array.from(labelsRoot.querySelectorAll('[data-index]')) : [];
+			const range = document.getElementById('fontSizeRange');
+			const labelsRoot = document.getElementById('fontSizeLabels');
+			const labels = labelsRoot ? Array.from(labelsRoot.querySelectorAll('[data-index]')) : [];
 
-		  if (!range) return;
+			if (!range) return;
 
-		  // data-init 안전 처리: 공백 제거 + 소문자
-		  const rawInit = (range.dataset.init || 'md').trim().toLowerCase();
-		  const initIndex = fontMap.indexOf(rawInit);
-		  const safeIndex = initIndex >= 0 ? initIndex : 2; // md
+			// data-init 안전 처리: 공백 제거 + 소문자
+			const rawInit = (range.dataset.init || 'md').trim().toLowerCase();
+			const initIndex = fontMap.indexOf(rawInit);
+			const safeIndex = initIndex >= 0 ? initIndex : 2; // md
 
-		  // body에 즉시 반영
-		  function applyFontByIndex(idx) {
-		    const size = fontMap[idx] || 'md';
-		    document.body.setAttribute('data-font-size', size);
-		  }
+			// body에 즉시 반영
+			function applyFontByIndex(idx) {
+				const size = fontMap[idx] || 'md';
+				document.body.setAttribute('data-font-size', size);
+			}
 
-		  // 라벨 강조 처리
-		  function updateLabels(idx) {
-		    labels.forEach(el => {
-		      const i = Number(el.dataset.index);
-		      const selected = (i === Number(idx));
-		      el.classList.toggle('font-semibold', selected);
-		      el.classList.toggle('text-slate-700', selected);
-		      el.classList.toggle('text-slate-500', !selected);
-		    });
-		  }
+			// 라벨 강조 처리
+			function updateLabels(idx) {
+				labels.forEach(el => {
+					const i = Number(el.dataset.index);
+					const selected = (i === Number(idx));
+					el.classList.toggle('font-semibold', selected);
+					el.classList.toggle('text-slate-700', selected);
+					el.classList.toggle('text-slate-500', !selected);
+				});
+			}
 
-		  // ✅ 최초: 서버값을 기본으로 세팅
-		  range.value = String(safeIndex);
-		  applyFontByIndex(safeIndex);
-		  updateLabels(safeIndex);
+			// ✅ 최초: 서버값을 기본으로 세팅
+			range.value = String(safeIndex);
+			applyFontByIndex(safeIndex);
+			updateLabels(safeIndex);
 
-		  // ✅ 드래그 중: 즉시 반영 + 라벨 강조 변경
-		  range.addEventListener('input', (e) => {
-		    const idx = Number(e.target.value);
-		    applyFontByIndex(idx);
-		    updateLabels(idx);
-		  });
+			// ✅ 드래그 중: 즉시 반영 + 라벨 강조 변경
+			range.addEventListener('input', (e) => {
+				const idx = Number(e.target.value);
+				applyFontByIndex(idx);
+				updateLabels(idx);
+			});
 
-		  // ✅ 드래그 끝: 서버 저장
-		  range.addEventListener('change', async (e) => {
-		    const idx = Number(e.target.value);
-		    const size = fontMap[idx] || 'md';
+			// ✅ 드래그 끝: 서버 저장
+			range.addEventListener('change', async (e) => {
+				const idx = Number(e.target.value);
+				const size = fontMap[idx] || 'md';
 
-		    try {
-		      const root = document.getElementById('myPageRoot');
-		      const uid = root?.dataset?.itemUid || '';
+				try {
+					const root = document.getElementById('myPageRoot');
+					const uid = root?.dataset?.itemUid || '';
 
-		      const fd = new FormData();
-		      fd.append('uid', uid);
-		      fd.append('fontSize', size);
+					const fd = new FormData();
+					fd.append('uid', uid);
+					fd.append('fontSize', size);
 
-		      const cp = window.contextPath || '';
-		      await fetch(cp + '/My/updateUserFontSize.json', {
-		        method: 'POST',
-		        body: fd,
-		        credentials: 'include'
-		      });
-		    } catch (err) {
-		      console.error(err);
-		      showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
-		    }
-		  });
+					const cp = window.contextPath || '';
+					await fetch(cp + '/My/updateUserFontSize.json', {
+						method: 'POST',
+						body: fd,
+						credentials: 'include'
+					});
+				} catch (err) {
+					console.error(err);
+					showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
+				}
+			});
 		})();
 
 	</script>
-	
-	
+
+
 </th:block>
 
 </html>

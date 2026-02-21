@@ -125,7 +125,12 @@
 
 	// ---- 계정 단위 수신 설정(Status.json) ----
 	async function getUserPushStatus() {
-		const res = await apiGet(cp() + '/Push/Status.json');
+		
+		const param = {
+			deviceId:getOrCreateDeviceId()
+		};
+		
+		const res = await apiGetWithParam(cp() + '/Push/Status.json', param);
 		if (res?.code !== '0') throw new Error(res?.message || 'status error');
 		return !!res.data;
 	}

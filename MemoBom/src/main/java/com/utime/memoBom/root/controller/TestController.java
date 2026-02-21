@@ -191,7 +191,7 @@ public class TestController {
 	@GetMapping("status.json")
     public ResponseEntity<ReturnBasic> getStatus() throws Exception {
         
-    	final ReturnBasic res = pushSendService.getPushStatus(getLoginUser());
+    	final ReturnBasic res = pushSendService.getPushStatus(getLoginUser(), "asdfasdf");
         
     	return ResponseEntity.ok().body( res );
     }

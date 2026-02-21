@@ -137,9 +137,9 @@ class UserDaoImpl implements UserDao {
 	}
 	
 	@Override
-	public Boolean getPushStatus(LoginUser user) {
+	public Boolean getPushStatus(LoginUser user, String deviceId) {
 		
-		return userMapper.selectPushStatus(user);
+		return userMapper.selectPushStatus(user, deviceId);
 	}
 	
 	@Override

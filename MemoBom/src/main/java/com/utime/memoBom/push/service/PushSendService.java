@@ -39,7 +39,7 @@ public interface PushSendService {
 	 * @param user
 	 * @return
 	 */
-	ReturnBasic getPushStatus(LoginUser user);
+	ReturnBasic getPushStatus(LoginUser user, String deviceId);
 
 	/**
 	 * 푸시 수신 설정

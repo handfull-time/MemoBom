@@ -109,7 +109,7 @@ public interface UserMapper {
 	 * @param user
 	 * @return
 	 */
-	boolean selectPushStatus(@Param("user")LoginUser user);
+	boolean selectPushStatus(@Param("user")LoginUser user,  @Param("deviceId")String deviceId);
 
 	/**
 	 * 푸시 수신 설정

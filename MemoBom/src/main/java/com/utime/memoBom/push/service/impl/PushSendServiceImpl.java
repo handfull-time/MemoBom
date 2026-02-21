@@ -202,10 +202,10 @@ class PushSendServiceImpl implements PushSendService {
     }
     
     @Override
-    public ReturnBasic getPushStatus(LoginUser user) {
+    public ReturnBasic getPushStatus(LoginUser user, String deviceId) {
     	final ReturnBasic result = new ReturnBasic();
     	
-    	result.setData( userDao.getPushStatus(user) );
+    	result.setData( userDao.getPushStatus(user, deviceId) );
 
     	return result;
     }

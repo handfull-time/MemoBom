@@ -89,6 +89,7 @@
 
 	<!-- 만료된 키 삭제 -->
     <delete id="removeExpire">
+    	/* NO_LOG */
         DELETE FROM APP_KV WHERE EXPIRE_AT IS NOT NULL AND EXPIRE_AT <![CDATA[ <= ]]> CURRENT_TIMESTAMP
     </delete>
     
