@@ -1,5 +1,10 @@
 package com.utime.memoBom.push.controller;
 
+import java.security.KeyFactory;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Base64;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
@@ -41,25 +44,69 @@ public class PushController {
     @GetMapping("vapid-public-key.json")
     public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
-        return new ReturnBasic(AppDefine.ERROR_OK, normalizeBase64Url(vapidPublicKey));
+        return new ReturnBasic(AppDefine.ERROR_OK, normalizePublicKeyForClient(vapidPublicKey));
     }
 
-    private static String normalizeBase64Url(String value) {
+    private static String normalizePublicKeyForClient(String value) {
+    	final byte[] decoded = decodeFlexibleBase64(value, "-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----");
+
+    	byte[] keyBytes = decoded;
+    	if (!(decoded.length == 65 && decoded[0] == 0x04)) {
+    		try {
+    			final KeyFactory keyFactory = KeyFactory.getInstance("EC");
+    			final ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(decoded));
+
+    			final byte[] x = fixedLength(publicKey.getW().getAffineX().toByteArray(), 32);
+    			final byte[] y = fixedLength(publicKey.getW().getAffineY().toByteArray(), 32);
+    			final byte[] raw = new byte[65];
+    			raw[0] = 0x04;
+    			System.arraycopy(x, 0, raw, 1, 32);
+    			System.arraycopy(y, 0, raw, 33, 32);
+    			keyBytes = raw;
+    		} catch (Exception e) {
+    			throw new IllegalArgumentException("invalid vapid public key format", e);
+    		}
+    	}
+
+    	if (keyBytes.length != 65 || keyBytes[0] != 0x04) {
+    		throw new IllegalArgumentException("invalid vapid public key. expected uncompressed EC point(65 bytes)");
+    	}
+
+    	return Base64.getUrlEncoder().withoutPadding().encodeToString(keyBytes);
+    }
+
+    private static byte[] fixedLength(byte[] value, int size) {
+    	if (value.length == size) {
+    		return value;
+    	}
+
+    	final byte[] out = new byte[size];
+    	if (value.length > size) {
+    		System.arraycopy(value, value.length - size, out, 0, size);
+    	} else {
+    		System.arraycopy(value, 0, out, size - value.length, value.length);
+    	}
+    	return out;
+    }
+
+    private static byte[] decodeFlexibleBase64(String value, String beginMarker, String endMarker) {
     	if (value == null) {
     		throw new IllegalArgumentException("vapid public key is null");
     	}
 
     	final String compact = value
-    			.replace("-----BEGIN PUBLIC KEY-----", "")
-    			.replace("-----END PUBLIC KEY-----", "")
+    			.replace(beginMarker, "")
+    			.replace(endMarker, "")
     			.replaceAll("\\s+", "");
+
+    	if (compact.isEmpty()) {
+    		throw new IllegalArgumentException("vapid public key is blank");
+    	}
 
     	final String base64 = compact.replace('-', '+').replace('_', '/');
     	final int mod = base64.length() % 4;
     	final String padded = mod == 0 ? base64 : base64 + "=".repeat(4 - mod);
-
-    	final byte[] decoded = Base64.getDecoder().decode(padded);
-    	return Base64.getUrlEncoder().withoutPadding().encodeToString(decoded);
+    	return Base64.getDecoder().decode(padded);
     }
     
     /**

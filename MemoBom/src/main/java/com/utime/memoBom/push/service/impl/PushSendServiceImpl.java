@@ -1,9 +1,14 @@
 package com.utime.memoBom.push.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
 import java.security.Security;
-import java.util.Base64;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -45,13 +50,13 @@ class PushSendServiceImpl implements PushSendService {
     private final AdminAlarmDao alarmDao;
     private final UserDao userDao;
     private final TopicDao topicDao;
-    
+
     @Value("${appName}")
 	private String appName;
-    
+
     @Autowired
     private ObjectMapper objMapper;
-    
+
     public PushSendServiceImpl(
     		PushSubscriptionDao repo,
     		UserDao userDao,
@@ -70,23 +75,87 @@ class PushSendServiceImpl implements PushSendService {
             Security.addProvider(new BouncyCastleProvider());
         }
 
-        final String normalizedPublicKey = normalizeBase64Url(publicKey);
-        final String normalizedPrivateKey = normalizeBase64Url(privateKey);
+        final byte[] publicKeyBytes = normalizePublicKey(publicKey);
+        final byte[] privateKeyBytes = normalizePrivateKey(privateKey);
 
-        // publicKeyBytes는 반드시 65바이트여야 함 (0x04로 시작)
+        if (publicKeyBytes.length != 65 || publicKeyBytes[0] != 0x04) {
+        	throw new IllegalArgumentException("invalid vapid public key. expected uncompressed EC point(65 bytes)");
+        }
+
+        if (privateKeyBytes.length != 32) {
+        	throw new IllegalArgumentException("invalid vapid private key. expected 32 bytes");
+        }
+
+        final String normalizedPublicKey = Base64.getUrlEncoder().withoutPadding().encodeToString(publicKeyBytes);
+        final String normalizedPrivateKey = Base64.getUrlEncoder().withoutPadding().encodeToString(privateKeyBytes);
+
         this.pushService = new PushService(normalizedPublicKey, normalizedPrivateKey, subject);
+        log.info("vapid key normalized publicLen={} privateLen={}", publicKeyBytes.length, privateKeyBytes.length);
     }
 
-    private static String normalizeBase64Url(String value) {
+    private static byte[] normalizePublicKey(String value) {
+    	final byte[] decoded = decodeFlexibleBase64(value,
+    			"-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----");
+
+    	if (decoded.length == 65 && decoded[0] == 0x04) {
+    		return decoded;
+    	}
+
+    	try {
+    		final KeyFactory keyFactory = KeyFactory.getInstance("EC");
+    		final ECPublicKey publicKey = (ECPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(decoded));
+
+    		final byte[] x = fixedLength(publicKey.getW().getAffineX().toByteArray(), 32);
+    		final byte[] y = fixedLength(publicKey.getW().getAffineY().toByteArray(), 32);
+    		final byte[] out = new byte[65];
+    		out[0] = 0x04;
+    		System.arraycopy(x, 0, out, 1, 32);
+    		System.arraycopy(y, 0, out, 33, 32);
+    		return out;
+    	} catch (Exception ignore) {
+    		return decoded;
+    	}
+    }
+
+    private static byte[] normalizePrivateKey(String value) {
+    	final byte[] decoded = decodeFlexibleBase64(value,
+    			"-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----");
+
+    	if (decoded.length == 32) {
+    		return decoded;
+    	}
+
+    	try {
+    		final KeyFactory keyFactory = KeyFactory.getInstance("EC");
+    		final ECPrivateKey privateKey = (ECPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(decoded));
+    		return fixedLength(privateKey.getS().toByteArray(), 32);
+    	} catch (Exception ignore) {
+    		return decoded;
+    	}
+    }
+
+    private static byte[] fixedLength(byte[] value, int size) {
+    	if (value.length == size) {
+    		return value;
+    	}
+
+    	final byte[] out = new byte[size];
+    	if (value.length > size) {
+    		System.arraycopy(value, value.length - size, out, 0, size);
+    	} else {
+    		System.arraycopy(value, 0, out, size - value.length, value.length);
+    	}
+    	return out;
+    }
+
+    private static byte[] decodeFlexibleBase64(String value, String beginMarker, String endMarker) {
     	if (value == null) {
     		throw new IllegalArgumentException("vapid key is null");
     	}
 
     	final String compact = value
-    			.replace("-----BEGIN PUBLIC KEY-----", "")
-    			.replace("-----END PUBLIC KEY-----", "")
-    			.replace("-----BEGIN PRIVATE KEY-----", "")
-    			.replace("-----END PRIVATE KEY-----", "")
+    			.replace(beginMarker, "")
+    			.replace(endMarker, "")
     			.replaceAll("\\s+", "");
 
     	if (compact.isEmpty()) {
@@ -96,9 +165,7 @@ class PushSendServiceImpl implements PushSendService {
     	final String base64 = compact.replace('-', '+').replace('_', '/');
     	final int mod = base64.length() % 4;
     	final String padded = mod == 0 ? base64 : base64 + "=".repeat(4 - mod);
-
-    	final byte[] decoded = Base64.getDecoder().decode(padded);
-    	return Base64.getUrlEncoder().withoutPadding().encodeToString(decoded);
+    	return Base64.getDecoder().decode(padded);
     }
 
     @Override
@@ -127,7 +194,7 @@ class PushSendServiceImpl implements PushSendService {
 
     	return new ReturnBasic();
     }
-    
+
     @Override
     public ReturnBasic deleteAllByUserIdAndEndpoint(LoginUser user, String endpoint) {
     	
@@ -140,7 +207,7 @@ class PushSendServiceImpl implements PushSendService {
          
          return new ReturnBasic();
     }
-    
+
     @Override
     public ReturnBasic sendPush(LoginUser user, PushSendDataVo data) throws Exception {
     	
@@ -228,7 +295,7 @@ class PushSendServiceImpl implements PushSendService {
 
     	return result;
     }
-    
+
     @Override
     public ReturnBasic getPushStatus(LoginUser user, String deviceId) {
     	final ReturnBasic result = new ReturnBasic();
@@ -237,7 +304,7 @@ class PushSendServiceImpl implements PushSendService {
 
     	return result;
     }
-    
+
     @Override
     public ReturnBasic setPushStatus(LoginUser user, boolean enabled) {
     	
@@ -250,11 +317,11 @@ class PushSendServiceImpl implements PushSendService {
 			log.error("", e);
 			result.setCodeMessage("E", e.getMessage());
 		}
-     
+
     	return result;
     }
-    
-    
+
+
     @Override
     public ReturnBasic procClickEvent(String clickId) {
     	
@@ -266,7 +333,7 @@ class PushSendServiceImpl implements PushSendService {
     	
     	return new ReturnBasic();
     }
-    
+
     @Override
     public int sendMessageNewFragment(LoginUser user, String topicUid) {
     	
@@ -305,5 +372,5 @@ class PushSendServiceImpl implements PushSendService {
     	
     	return 1;
     }
-    
+
 }
