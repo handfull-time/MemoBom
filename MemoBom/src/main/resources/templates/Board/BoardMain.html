@@ -31,8 +31,15 @@
 					<div class="flex items-center gap-2 min-w-0">
 						<div class="topic-pill inline-flex items-center gap-1.5
 						              rounded-full px-2.5 py-1 text-dynamic-sm font-semibold
-						              bg-slate-100 max-w-full min-w-0">
-							<span class="topic-emoji shrink-0">🧩</span>
+						              bg-slate-100 border border-slate-300 
+									  max-w-full min-w-0">
+									  <span class="topic-emoji
+									               inline-flex items-center justify-center
+									               w-7 h-7
+									               rounded-full
+									               text-lg leading-none">
+									    🧩
+									  </span>
 							<span class="topic-name truncate max-w-[12rem]">Topic</span>
 						</div>
 					</div>
@@ -62,6 +69,12 @@
 
 					<!-- actions (RIGHT) -->
 					<div class="action-row flex items-center gap-2 shrink-0">
+						<button type="button"
+							class="btn-menu p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
+							aria-label="share">
+							<img th:src="@{/images/fragment/menu.svg}" alt="menu" class="w-5 h-5 pointer-events-none"/>
+						</button>
+
 						<button type="button"
 							class="btn-share p-1.5 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-100"
 							aria-label="share">
@@ -605,6 +618,22 @@
 				const iconScrap = node.querySelector(".icon-scrap-img");
 				iconScrap.src = svgScrap(!!item.scrap);
 
+				const menuBtn = node.querySelector(".btn-menu");
+				if( IS_LOGIN ){
+					
+					if( LOGIN_USER.uid === item.user.uid ){
+						node.querySelector(".btn-menu").addEventListener("click", async (e) => {
+							e.stopPropagation();
+							
+							console.info('menu click', item );
+						});
+					} else {
+						menuBtn.classList.add("hidden");
+					}
+				} else {
+					menuBtn.classList.add("hidden");
+				}
+
 				// share (일단 placeholder)
 				node.querySelector(".btn-share").addEventListener("click", async (e) => {
 					e.stopPropagation();
@@ -702,10 +731,14 @@
 					const topicUid = item.topic?.uid;
 					location.href = `${window.contextPath}/Fragment/index.html?topicUid=${topicUid}`;
 				});
+				
+				const topicEmoji = node.querySelector(".topic-emoji");
 
-				node.querySelector(".topic-emoji").textContent = safeText(item.topic?.imogi, "🧩");
+				topicEmoji.textContent = safeText(item.topic?.imogi, "🧩");
 				node.querySelector(".topic-name").textContent = safeText(item.topic?.name, "Topic");
-				applyTopicColor(pill, safeText(item.topic?.color, ""));
+				//applyTopicColor(pill, safeText(item.topic?.color, ""));
+				applyTopicColor(topicEmoji, safeText(item.topic?.color, ""));
+				
 
 				const userImg = node.querySelector(".user-img");
 				const profileUrl = safeText(item.user?.profileUrl, "");

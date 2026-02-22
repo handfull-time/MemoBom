@@ -1,5 +1,6 @@
 package com.utime.memoBom.board.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dao.TopicDao;
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
+import com.utime.memoBom.board.dto.FragmentDto;
 import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.vo.CommentReqVo;
@@ -87,10 +89,14 @@ class BoardServiceImpl implements BoardService {
 		
 		try {
 			final List<FragmentItem> list = boardDao.loadFragmentList(user, reqVo);
-			result.setData( list );
+
+			final List<FragmentDto> resultList = new ArrayList<>();
+			result.setData( resultList );
 			
 			for( FragmentItem item : list ) {
-				item.setContent( SimpleLinkRenderer.render(item.getContent(), baseUrl) );
+				final FragmentDto addItem = FragmentDto.of(item);
+				addItem.setContent( SimpleLinkRenderer.render(addItem.getContent(), baseUrl) );
+				resultList.add( addItem );
 			}
 			
 			if( reqVo.getPageNo() == 1 ) {

@@ -1,6 +1,7 @@
 package com.utime.memoBom.board.dto;
 
 import com.utime.memoBom.board.vo.EmojiSetType;
+import com.utime.memoBom.board.vo.TopicVo;
 
 import lombok.Data;
 
@@ -29,4 +30,26 @@ public class TopicDto {
 	String imogi;
 	/** 이모지 세트 타입*/
 	EmojiSetType emojiSetType = EmojiSetType.EMOTION;
+	
+	public static TopicDto of(TopicVo item) {
+		
+		if( item == null ) {
+			return null;
+		}
+		
+		final TopicDto result = new TopicDto();
+		
+		result.uid = item.getUid();
+		result.name = item.getName();
+		result.description = item.getDescription();
+		result.color = item.getColor();
+		result.external = item.isExternal();
+		result.emotion = item.isEmotion();
+		result.comments = item.isComments();
+		result.maxLen = item.getMaxLen();
+		result.imogi = item.getImogi();
+		result.emojiSetType = item.getEmojiSetType();
+		
+		return result;
+	}
 }
