@@ -626,6 +626,8 @@
 							e.stopPropagation();
 							
 							console.info('menu click', item );
+							const url = /*[[@{/Fragment/Tessera.html}]]*/ "/Fragment/Tessera.html";
+							location.href = url + "?uid=" + encodeURIComponent(item.uid);
 						});
 					} else {
 						menuBtn.classList.add("hidden");

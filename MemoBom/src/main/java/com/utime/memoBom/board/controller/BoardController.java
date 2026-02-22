@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.nimbusds.jose.shaded.gson.Gson;
+import com.nimbusds.jose.shaded.gson.GsonBuilder;
+import com.nimbusds.jose.shaded.gson.Strictness;
 import com.utime.memoBom.board.dto.BoardMainParamDto;
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
+import com.utime.memoBom.board.dto.FragmentDto;
 import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.service.BoardService;
 import com.utime.memoBom.board.service.TopicService;
@@ -57,6 +61,56 @@ public class BoardController {
     }
 
 	/**
+	 * 글 수정하기
+	 * @param request
+	 * @param model
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
+	@GetMapping(value = "Tessera.html", params = "uid")
+	public String modifyFragment(HttpServletRequest request, ModelMap model, LoginUser user, 
+	        @RequestParam(required = true) String uid) {
+		
+		final String key = boardServce.createKey(request, user);
+		if( key == null ) {
+			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
+			return "Common/ErrorAlert";
+		}
+		
+		final FragmentDto resultItem = boardServce.loadFragment(user, uid);
+		if( resultItem == null ) {
+			model.addAttribute("res", new ReturnBasic("E", "요청 값이 유효하지 않습니다.") );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
+			return "Common/ErrorAlert";
+		}
+		
+		final ReturnBasic topicRes = topicServce.loadTopic(user, resultItem.getTopic().getUid());
+		if( topicRes.isError() ) {
+			model.addAttribute("res", topicRes );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+		    model.addAttribute(AppDefine.KeyLoadScript, false );
+			return "Common/ErrorAlert";
+		}
+		
+		model.addAttribute(KeyTopics, List.of( topicRes.getData() ) );
+		model.addAttribute("item", resultItem );
+		model.addAttribute("seal", key );
+		
+		final Gson gson = new GsonBuilder()
+				.setStrictness(Strictness.LENIENT)
+				.setPrettyPrinting()
+	            .create();
+		
+		System.out.println( gson.toJson(resultItem) );
+		
+		return "Board/BoardWrite";
+	}
+	
+	/**
 	 * 새 글 쓰기
 	 * @param request
 	 * @param model
@@ -64,7 +118,7 @@ public class BoardController {
 	 * @param topicUid
 	 * @return
 	 */
-	@GetMapping("Tessera.html")
+	@GetMapping(value = "Tessera.html", params = "!uid")
 	public String newFragment( HttpServletRequest request, ModelMap model, LoginUser user, 
 			@RequestParam(name="topic", required = false) String topicUid ) {
 
@@ -100,6 +154,7 @@ public class BoardController {
 		}
 		
 		model.addAttribute(KeyTopics, list );
+		model.addAttribute("item", null );
 		model.addAttribute("seal", key );
 		
 		return "Board/BoardWrite";

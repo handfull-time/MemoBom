@@ -49,10 +49,20 @@
 
 		</div>
 	</th:block>
-
+	
 	<th:block th:fragment="FooterWrite">
 		<div class="w-full h-full flex items-center justify-end px-3">
 			<button id="btnWrite" class="text-dynamic-xl" onclick="onClickWrite()">
+				<img th:src="@{/images/fragment/writeFragment.svg}" class="w-8 h-8" />
+			</button>
+		</div>
+	</th:block>
+	<th:block th:fragment="FooterModify">
+		<div class="w-full h-full flex items-center justify-end px-3 gap-[10px]">
+			<button id="btnWrite" class="text-dynamic-xl" onclick="onClickUpdate(true)">
+				<img th:src="@{/images/fragment/deleteFragment.svg}" class="w-8 h-8" />
+			</button>
+			<button id="btnWrite" class="text-dynamic-xl" onclick="onClickUpdate(false)">
 				<img th:src="@{/images/fragment/writeFragment.svg}" class="w-8 h-8" />
 			</button>
 		</div>

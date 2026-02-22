@@ -65,7 +65,10 @@ class BoardServiceImpl implements BoardService {
 		
 		try {
 			boardDao.saveFragment(user, device, reqVo);
-			pushService.sendMessageNewFragment( user, reqVo.getTopicUid() ); 
+			if( AppUtils.isEmpty( reqVo.getUid() )) {
+				// 새글만 push 보냄.
+				pushService.sendMessageNewFragment( user, reqVo.getTopicUid() );
+			}			 
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
@@ -80,6 +83,21 @@ class BoardServiceImpl implements BoardService {
 		return KeyUtil.createKey(keyValueDao, request, user);
 	}
 
+	@Override
+	public FragmentDto loadFragment( LoginUser user, String uid) {
+		
+		final FragmentDto result;
+		final FragmentItem item = boardDao.loadFragment( user, uid);
+		if( item == null ) {
+			log.info("{} 데이터 없음", uid);
+			result = null;
+		}else {
+			result = FragmentDto.of(item);
+		}
+		
+		return result;
+	}
+	
 	@Override
 	public FragmentListDto loadFragmentList(HttpServletRequest request, LoginUser user, FragmentListReqVO reqVo) {
 		

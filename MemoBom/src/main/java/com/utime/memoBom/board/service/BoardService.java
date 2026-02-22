@@ -2,6 +2,7 @@ package com.utime.memoBom.board.service;
 
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
+import com.utime.memoBom.board.dto.FragmentDto;
 import com.utime.memoBom.board.dto.FragmentListDto;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
@@ -29,6 +30,14 @@ public interface BoardService {
 	 */
 	ReturnBasic saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo);
 
+	/**
+	 * Fragment(편린) 조회
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
+	FragmentDto loadFragment( LoginUser user, String uid);
+	
 	/**
 	 * 목록 갖고 오기
 	 * @param user

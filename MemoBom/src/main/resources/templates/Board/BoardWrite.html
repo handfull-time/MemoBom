@@ -53,7 +53,10 @@
 	<div class="flex flex-col min-h-[320px] h-[calc(100dvh-120px)] h-[calc(100vh-120px)]">
 
 		<!-- 본문: 남은 공간 전부 차지 -->
-		<textarea id="content" name="content" placeholder="내용을 입력해 주세요." disabled
+		<textarea id="content" name="content" 
+			placeholder="내용을 입력해 주세요." 
+			th:disabled="${item == null}"
+		    th:text="${item == null ? '' : item.content}"
 			style="font-size: var(--font-base); line-height: 1.6;"
 			class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-dynamic-15 box-border bg-transparent"></textarea>
 
@@ -73,6 +76,7 @@
 			</div>
 
 			<input type="text" id="hashtags" name="hashtags" placeholder="#해시태그 (선택)"
+				th:value="${item == null ? '' : #strings.listJoin(item.hashtagList, ' ')}"
 				class="w-full border-0 outline-none text-dynamic-sm text-slate-600 bg-transparent" />
 
 			<div class="mt-1 text-dynamic-xs text-slate-400">
@@ -88,7 +92,11 @@
 
 
 <th:block layout:fragment="footer">
-	<th:block th:replace="~{Fragments/Footer :: FooterWrite}"></th:block>
+	<th:block 
+	    th:replace="${item == null} 
+	        ? ~{Fragments/Footer :: FooterWrite} 
+	        : ~{Fragments/Footer :: FooterModify}">
+	</th:block>
 </th:block>
 
 <th:block layout:fragment="script">
@@ -148,17 +156,24 @@
 			const ta = document.getElementById("content");
 			if (!ta) return;
 
+			if (item && item.topic) {
+			    applyTopicToEditor(item.topic);
+			}
+
 			// 입력할 때마다 업데이트
 			ta.addEventListener("input", updateContentProgress, {passive: true});
 
 			// 초기 1회
 			updateContentProgress();
+			
 		});
 	</script>
 
 
 	<script th:inline="javascript">
 		const topics = /*[[${topics}]]*/[];
+		const item = /*[[${item}]]*/ null;
+		
 		let selectedTopicUid = null;
 
 		function applyTopicToEditor(topic) {
@@ -226,36 +241,6 @@
 
 		document.addEventListener("DOMContentLoaded", initTopicModalCompact);
 
-		// 저장 시 사용
-		// onClickWrite에서: topicUid: selectedTopicUid 로 전송하는 것 유지
-	</script>
-
-
-	<script th:inline="javascript">
-		function normalizeHashtags(raw) {
-			// 사용자 입력 거부감 최소화: 자유 입력 허용, 내부적으로만 가볍게 정리
-			// - 구분자: 공백/쉼표
-			// - 앞의 # 제거
-			// - 중복 제거, 최대 10개
-			if (!raw) return [];
-			const parts = raw
-				.split(/[\s,]+/g)
-				.map(t => (t || '').trim())
-				.filter(Boolean)
-				.map(t => t.startsWith('#') ? t.slice(1) : t)
-				.map(t => t.replace(/^#+/g, ''))
-				.filter(Boolean)
-				.map(t => t.slice(0, 20));
-
-			const uniq = [];
-			for (const t of parts) {
-				if (!t) continue;
-				if (!uniq.includes(t)) uniq.push(t);
-				if (uniq.length >= 10) break;
-			}
-			return uniq;
-		}
-
 		async function onClickWrite() {
 			if (Array.isArray(topics) && topics.length > 1 && !selectedTopicUid) {
 				await alertP("Mosaic을 선택해 주세요.");
@@ -269,7 +254,6 @@
 			}
 
 			const hashtagRaw = (document.getElementById('hashtags')?.value || '').trim();
-			//const hashtags = normalizeHashtags(hashtagRaw);
 
 			const sendObj = {
 				seal: /*[[${seal}]]*/ null,
@@ -290,6 +274,56 @@
 
 				if (data.code === "0") {
 					await alertP("작은 조각이 추가됐습니다.");
+					window.__disableDirtyGuard__?.();
+					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
+				} else {
+					console.info(data);
+					showToast("오류", data.message, ToastType.WARNING, 1800);
+				}
+			} catch (e) {
+				console.error(e);
+				showToast("에러", e.message, ToastType.ERROR, 1800);
+			} finally {
+				// btnSave가 없는 화면도 있을 수 있어 안전하게 처리
+				if (typeof btnSave !== 'undefined' && btnSave) btnSave.disabled = false;
+			}
+		}
+		
+		async function onClickUpdate(isDelete) {
+
+			const actionName = isDelete? '삭제':'수정';
+
+			const ok = await confirmP(actionName + '할까요?');
+			if (!ok) return;
+			
+			const content = document.getElementById('content').value.trim();
+			if (!content || content.length === 0) {
+				await alertP('내용을 입력해 주세요.');
+				return;
+			}
+
+			const hashtagRaw = (document.getElementById('hashtags')?.value || '').trim();
+
+			const sendObj = {
+				seal: /*[[${seal}]]*/ null,
+				uid: /*[[${item != null ? item.uid : null}]]*/ null,
+				content: content,
+				hashTag: hashtagRaw,
+				deleted: isDelete
+			}
+			
+			try {
+				const url = /*[[@{/Fragment/Save.json}]]*/ '/Fragment/Save.json';
+
+				const data = await apiPost(url, sendObj);
+
+				if (!data) {
+					showToast("에러", actionName + "중 오류 발생했습니다.", ToastType.ERROR, 1800);
+					return;
+				}
+
+				if (data.code === "0") {
+					await alertP("작은 조각이 "+actionName+"됐습니다.");
 					window.__disableDirtyGuard__?.();
 					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
 				} else {
@@ -390,8 +424,6 @@
 				window.removeEventListener('beforeunload', onBeforeUnload);
 			};
 		})();
-
-
 	</script>
 
 </th:block>
