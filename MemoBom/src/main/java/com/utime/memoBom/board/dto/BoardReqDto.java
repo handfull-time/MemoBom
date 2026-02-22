@@ -7,6 +7,8 @@ import lombok.Data;
  */
 @Data
 public class BoardReqDto {
+	/** fragment 고유 키 */
+	String uid;
 	/** 검증 키 */
 	String seal;
 	/** topic uid */
@@ -17,4 +19,6 @@ public class BoardReqDto {
 	String hashTag;
 	/** 작성 ip */
 	String ip;
+	/** 삭제 여부. true:삭제. false:수정 */
+	boolean deleted = false;
 }

@@ -149,4 +149,20 @@ public interface BoardMapper {
 	 * @return
 	 */
 	List<FragmentItem> listMyScrapFragments(@Param("user") LoginUser user, @Param("keyword") String keyword, @Param("pageNo") int pageNo);
+
+	/**
+	 * Fragment 제거
+	 * @param userNo
+	 * @param uid
+	 * @return
+	 */
+	int removeFragment(@Param("userNo") long userNo, @Param("uid") String uid);
+
+	/**
+	 * Fragment 수정
+	 * @param userNo
+	 * @param item
+	 * @return
+	 */
+	int updateFragment(@Param("userNo") long userNo, @Param("req") FragmentVo item);
 }

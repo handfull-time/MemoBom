@@ -88,13 +88,24 @@ class BoardDaoImpl implements BoardDao {
 		final FragmentVo item = new FragmentVo();
 		item.setContent(reqVo.getContent());
 		item.setIp(reqVo.getIp());
+		
+		int result = 0;
+		if( AppUtils.isNotEmpty(reqVo.getUid()) ) {
+			if( reqVo.isDeleted() ) {
+				result += boardMapper.removeFragment( user.userNo(), reqVo.getUid() );
+			}else {
+				item.setUid(reqVo.getUid());
+				result += boardMapper.updateFragment( user.userNo(), item );
+			}
+			
+			return result;
+		}
 
 		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
 		if (topic == null) {
 			throw new Exception("topic is null.");
 		}
 
-		int result = 0;
 		result += boardMapper.insertFragment(user, device, topic, item);
 		result += topicMapper.increaseTopicStatsFragmentCount( topic.getTopicNo() );
 

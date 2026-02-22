@@ -507,5 +507,25 @@
 		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
 	</select>
 
+	<!--Fragment 제거-->
+	<update id="removeFragment" parameterType="map">
+		UPDATE MB_FRAGMENT SET
+			UPDATE_DATE = CURRENT_TIMESTAMP
+			, IS_DELETED = TRUE
+		WHERE 1=1
+			AND USER_NO = #{userNo}
+			AND UID = #{uid}
+	</update>
+
+	<!--Fragment 수정-->
+	<update id="updateFragment" parameterType="map">
+		UPDATE MB_FRAGMENT SET
+			UPDATE_DATE = CURRENT_TIMESTAMP
+			, CONTENT = #{req.content}
+			, IP = #{req.ip}
+		WHERE 1=1
+			AND USER_NO = #{userNo}
+			AND UID = #{req.uid}
+	</update>
 
 </mapper>
