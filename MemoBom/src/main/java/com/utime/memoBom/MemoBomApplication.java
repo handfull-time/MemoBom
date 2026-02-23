@@ -11,6 +11,9 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -63,6 +66,7 @@ h2.password=
 h2.path=
 google.client-id=
 google.client-secret=
+
 	 */
 
 	
@@ -116,6 +120,7 @@ google.client-secret=
 	    props.setProperty("env.gemini.key", empty);
 	    props.setProperty("env.gemini.version", empty);
 	    props.setProperty("env.admin.userNo", empty); // 어드민 처리 할 회원 번호 콤마 구분.
+	    props.setProperty("env.imagePath", empty); // 이미지 경로
 	    
 	    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             props.store(writer, "Request for property creation.");
@@ -180,6 +185,25 @@ google.client-secret=
 	    if( AppUtils.isEmpty( props.getProperty("google.client-secret") ) ) {
 	    	throw new RuntimeException("'google.client-secret'" + exceptionMessage);
 	    }
+	    if( AppUtils.isEmpty( props.getProperty("env.imagePath") ) ) {
+	    	throw new RuntimeException("'env.imagePath'" + exceptionMessage);
+	    }else {
+	    	final String imagePath = props.getProperty("env.imagePath");
+	    	final Path path = Paths.get(imagePath);
+
+	        if ( Files.exists(path) ) {
+	            if (!Files.isDirectory(path)) {
+	                throw new RuntimeException("Path exists but is not a directory: " + imagePath);
+	            }
+	        }else {
+	        	try {
+					Files.createDirectories(path);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+	        }
+	    }
+	    
 	    
 	    // 2. Check & Insert (로직 동일)
 	    final int beforeLen = props.size();
