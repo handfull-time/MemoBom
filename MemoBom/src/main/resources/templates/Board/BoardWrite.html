@@ -102,7 +102,7 @@
 <th:block layout:fragment="script">
 
 	<script th:inline="javascript">
-
+		
 		function lerp(a, b, t) {return a + (b - a) * t;}
 		function clamp01(x) {return Math.max(0, Math.min(1, x));}
 
@@ -156,8 +156,10 @@
 			const ta = document.getElementById("content");
 			if (!ta) return;
 
-			if (item && item.topic) {
-			    applyTopicToEditor(item.topic);
+			const topic = /*[[${item != null ? item.topic:null}]]*/ null;
+			
+			if (topic) {
+			    applyTopicToEditor(topic);
 			}
 
 			// 입력할 때마다 업데이트
@@ -172,7 +174,6 @@
 
 	<script th:inline="javascript">
 		const topics = /*[[${topics}]]*/[];
-		const item = /*[[${item}]]*/ null;
 		
 		let selectedTopicUid = null;
 

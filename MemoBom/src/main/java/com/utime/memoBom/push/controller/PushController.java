@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Base64;
-
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -41,27 +39,9 @@ public class PushController {
     @GetMapping("vapid-public-key.json")
     public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
-        return new ReturnBasic(AppDefine.ERROR_OK, normalizeBase64Url(vapidPublicKey));
+        return new ReturnBasic(AppDefine.ERROR_OK, vapidPublicKey);
     }
 
-    private static String normalizeBase64Url(String value) {
-    	if (value == null) {
-    		throw new IllegalArgumentException("vapid public key is null");
-    	}
-
-    	final String compact = value
-    			.replace("-----BEGIN PUBLIC KEY-----", "")
-    			.replace("-----END PUBLIC KEY-----", "")
-    			.replaceAll("\\s+", "");
-
-    	final String base64 = compact.replace('-', '+').replace('_', '/');
-    	final int mod = base64.length() % 4;
-    	final String padded = mod == 0 ? base64 : base64 + "=".repeat(4 - mod);
-
-    	final byte[] decoded = Base64.getDecoder().decode(padded);
-    	return Base64.getUrlEncoder().withoutPadding().encodeToString(decoded);
-    }
-    
     /**
      * 푸시 구독하기.
      * @param user

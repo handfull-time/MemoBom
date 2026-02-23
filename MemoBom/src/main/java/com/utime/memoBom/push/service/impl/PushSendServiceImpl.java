@@ -2,7 +2,6 @@ package com.utime.memoBom.push.service.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
-import java.util.Base64;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -70,35 +69,8 @@ class PushSendServiceImpl implements PushSendService {
             Security.addProvider(new BouncyCastleProvider());
         }
 
-        final String normalizedPublicKey = normalizeBase64Url(publicKey);
-        final String normalizedPrivateKey = normalizeBase64Url(privateKey);
-
         // publicKeyBytes는 반드시 65바이트여야 함 (0x04로 시작)
-        this.pushService = new PushService(normalizedPublicKey, normalizedPrivateKey, subject);
-    }
-
-    private static String normalizeBase64Url(String value) {
-    	if (value == null) {
-    		throw new IllegalArgumentException("vapid key is null");
-    	}
-
-    	final String compact = value
-    			.replace("-----BEGIN PUBLIC KEY-----", "")
-    			.replace("-----END PUBLIC KEY-----", "")
-    			.replace("-----BEGIN PRIVATE KEY-----", "")
-    			.replace("-----END PRIVATE KEY-----", "")
-    			.replaceAll("\\s+", "");
-
-    	if (compact.isEmpty()) {
-    		throw new IllegalArgumentException("vapid key is blank");
-    	}
-
-    	final String base64 = compact.replace('-', '+').replace('_', '/');
-    	final int mod = base64.length() % 4;
-    	final String padded = mod == 0 ? base64 : base64 + "=".repeat(4 - mod);
-
-    	final byte[] decoded = Base64.getDecoder().decode(padded);
-    	return Base64.getUrlEncoder().withoutPadding().encodeToString(decoded);
+        this.pushService = new PushService(publicKey, privateKey, subject);
     }
 
     @Override
