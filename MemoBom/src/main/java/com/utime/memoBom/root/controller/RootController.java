@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.user.service.UserService;
-import com.utime.memoBom.user.vo.query.UserProfile;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +50,9 @@ public class RootController {
 	public void getUserProfileImage(@PathVariable String userUid,
 	                                HttpServletResponse response) throws Exception {
 
-	    final UserProfile profile = userService.getUserProfile(userUid);
+	    final BinResultVo profile = userService.getUserProfile(userUid);
 
-	    if (profile == null || profile.getImage() == null) {
+	    if (profile == null || profile.getBinary() == null) {
 	        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 	        return;
 	    }
@@ -63,13 +63,13 @@ public class RootController {
 	    }
 
 	    response.setContentType(mimeType);
-	    response.setContentLength(profile.getImage().length);
+	    response.setContentLength(profile.getBinary().length);
 	    
 	    //브라우저 캐시도 허용
 	    response.setHeader("Cache-Control", "public, max-age=300");
 
 	    try (OutputStream os = response.getOutputStream()) {
-	        os.write(profile.getImage());
+	        os.write(profile.getBinary());
 	        os.flush();
 	    }
 	}

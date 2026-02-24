@@ -3,16 +3,11 @@
 
 <mapper namespace="com.utime.memoBom.user.mapper.UserProfileMapper">
 
-	<resultMap id="UserProfileMap" type="com.utime.memoBom.user.vo.query.UserProfile">
-		<result column="MIME_TYPE" property="mimeType" />
-		<result column="IMAGE" property="image" jdbcType="VARBINARY" />
-	</resultMap>
-	
 	<!-- 단건 조회 (이미지 포함) -->
-	<select id="selectUserProfile" parameterType="string" resultMap="UserProfileMap">
+	<select id="selectUserProfile" parameterType="string" resultMap="com.utime.memoBom.common.mapper.CommonMapper.BinResultVoMap">
 		SELECT
 			MIME_TYPE, 
-			IMAGE
+			IMAGE AS BIN_DATA
 		FROM MB_USER_PROFILE PR 
 			INNER JOIN MB_USER US 
 				ON PR.USER_NO = US.USER_NO 

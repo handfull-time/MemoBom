@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.mapper.UserMapper;
@@ -20,7 +21,6 @@ import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
-import com.utime.memoBom.user.vo.query.UserProfile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +131,7 @@ class UserDaoImpl implements UserDao {
 	}
 	
 	@Override
-	public UserProfile getUserProfile(String uid) {
+	public BinResultVo getUserProfile(String uid) {
 		
 		return profileMapper.selectUserProfile(uid);
 	}

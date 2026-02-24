@@ -1,10 +1,12 @@
 package com.utime.memoBom.board.controller;
 
+import java.io.OutputStream;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,11 +31,13 @@ import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 // Fragment(편린) 로 바꾸자.
@@ -170,7 +174,7 @@ public class BoardController {
 	 */
 	@ResponseBody
 	@PostMapping("Save.json")
-	public ReturnBasic saveFragment( HttpServletRequest request, LoginUser user, UserDevice device, @RequestBody BoardReqDto reqVo ) {
+	public ReturnBasic saveFragment( HttpServletRequest request, LoginUser user, UserDevice device, BoardReqDto reqVo ) {
 		
 		reqVo.setIp(AppUtils.getRemoteAddress(request));
 		
@@ -266,5 +270,66 @@ public class BoardController {
 		reqVo.setTargetType(EEmotionTargetType.Comment);
 		return boardServce.procEmotion( user, reqVo );
     }
+	
+	/**
+	 * Fragment 이미지 정보 갖고 오기
+	 * @param isThumb
+	 * @param index
+	 * @param uid
+	 * @param response
+	 * @throws Exception
+	 */
+	private void getFragmentImageData(boolean isThumb, int index, @PathVariable String uid,
+	                                HttpServletResponse response) throws Exception {
+
+	    final BinResultVo image = boardServce.getImage(isThumb, index, uid);
+
+	    if (image == null || image.getBinary() == null) {
+	        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	        return;
+	    }
+
+	    String mimeType = image.getMimeType();
+	    if (mimeType == null || mimeType.isBlank()) {
+	        mimeType = "image/webp";
+	    }
+
+	    response.setContentType(mimeType);
+	    response.setContentLength(image.getBinary().length);
+	    
+	    //브라우저 캐시도 허용
+	    response.setHeader("Cache-Control", "public, max-age=300");
+
+	    try (OutputStream os = response.getOutputStream()) {
+	        os.write(image.getBinary());
+	        os.flush();
+	    }
+	}
+	
+	@GetMapping("Thumb/{index}/{uid}")
+	public void getFragmentImageThumb(@PathVariable int index, @PathVariable String uid,
+	                                HttpServletResponse response) throws Exception {
+
+	    this.getFragmentImageData(true, index, uid, response);
+	}
+
+	@GetMapping("Thumb/{uid}")
+	public void getFragmentImageThumb(@PathVariable String uid,
+	                                HttpServletResponse response) throws Exception {
+		this.getFragmentImageThumb(0, uid, response);
+	}
+	
+	@GetMapping("Image/{index}/{uid}")
+	public void getFragmentImage(@PathVariable int index, @PathVariable String uid,
+	                                HttpServletResponse response) throws Exception {
+
+	    this.getFragmentImageData(false, index, uid, response);
+	}
+
+	@GetMapping("Image/{uid}")
+	public void getFragmentImage(@PathVariable String uid,
+	                                HttpServletResponse response) throws Exception {
+		this.getFragmentImage(0, uid, response);
+	}
 }
 

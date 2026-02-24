@@ -39,7 +39,8 @@
 						? ' border-2 border-gray-600 bg-sky-50'
 						: ' border-2 border-transparent bg-transparent'">
 					<img th:src="@{/images/bottom/my.svg}" alt="MyPage"
-						class="pointer-events-none w-6 h-6 transition-opacity duration-150" th:classappend="${
+						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
+						th:classappend="${
 							#strings.startsWith(currentPath, '/My')
 							or #strings.startsWith(currentPath, '/About')
 						} ? '' : ' opacity-80'" />
@@ -48,7 +49,7 @@
 
 		</div>
 	</th:block>
-
+	
 	<th:block th:fragment="FooterWrite">
 		<div class="w-full h-full flex items-center justify-between px-3">
 			<!-- LEFT : Select Image -->

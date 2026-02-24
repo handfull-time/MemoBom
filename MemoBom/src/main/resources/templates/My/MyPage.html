@@ -214,7 +214,7 @@
 	<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
 	<script type="text/javascript" th:src="@{/js/pwa.js(v=${assetVersion})}"></script>
 
-	<script>
+	<script th:inline="javascript">
 		(function () {
 			const root = document.getElementById('myPageRoot');
 			const loginUid = root?.dataset?.loginUid || '';
@@ -274,12 +274,12 @@
 					fd.append('profile', resized, 'profile.jpg');
 
 					const cp = window.contextPath || '';
-					const res = await fetch(cp + '/My/updateUser.json', {
-						method: 'POST',
-						body: fd,
-						credentials: 'include'
-					}).then(r => r.json());
-
+					// const res = await fetch(cp + '/My/updateUser.json', {
+					// 	method: 'POST',
+					// 	body: fd,
+					// 	credentials: 'include'
+					// }).then(r => r.json());
+					const res = await apiFormData(cp + '/My/updateUser.json', fd );
 					if (res?.code !== '0') {
 						await alertP(res?.message || '프로필 이미지 저장 실패');
 						return;
@@ -287,11 +287,11 @@
 
 					// 성공 → input 초기화
 					$file.value = '';
-					showToast?.('', '프로필 이미지가 변경되었습니다.', ToastType.SUCCESS, 1200);
+					showToast('안내', '프로필 이미지가 변경되었습니다.', ToastType.SUCCESS, 1200);
 
 				} catch (e) {
 					console.error(e);
-					await alertP('프로필 이미지 저장 중 오류가 발생했습니다.');
+					showToast('오류', '프로필 이미지 저장 중 오류가 발생했습니다.', ToastType.ERROR, 1800);
 				} finally {
 					hideLoading?.();
 					savingProfile = false;
@@ -316,11 +316,12 @@
 					fd.append('nickname', nickname);
 
 					const cp = window.contextPath || '';
-					const res = await fetch(cp + '/My/updateUser.json', {
-						method: 'POST',
-						body: fd,
-						credentials: 'include'
-					}).then(r => r.json());
+					// const res = await fetch(cp + '/My/updateUser.json', {
+					// 	method: 'POST',
+					// 	body: fd,
+					// 	credentials: 'include'
+					// }).then(r => r.json());
+					const res = await apiFormData(cp + '/My/updateUser.json', fd );
 
 					if (res?.code === '0') {
 						lastSavedNickname = nickname;
@@ -328,6 +329,7 @@
 					}
 				} catch (e) {
 					console.warn('닉네임 자동 저장 실패', e);
+					showToast('오류', '닉네임 자동 저장 중 오류가 발생했습니다.', ToastType.ERROR, 1800);
 				} finally {
 					savingNickname = false;
 				}
@@ -468,7 +470,7 @@
 				} catch (e) {
 					console.error(e);
 					setHint('푸시 상태 조회 실패');
-					showToast?.('', '푸시 상태 조회에 실패했습니다.', ToastType.ERROR, 1500);
+					showToast('', '푸시 상태 조회에 실패했습니다.', ToastType.ERROR, 1500);
 				} finally {
 					setBusy(false);
 				}
@@ -492,13 +494,13 @@
 						PWA_PUSH.unsubscribeDevice().catch(err => console.warn(err));
 					}
 
-					showToast?.('', next ? '푸시 수신이 켜졌습니다.' : '푸시 수신이 꺼졌습니다.', ToastType.SUCCESS, 1200);
+					showToast('', next ? '푸시 수신이 켜졌습니다.' : '푸시 수신이 꺼졌습니다.', ToastType.SUCCESS, 1200);
 
 				} catch (err) {
 					console.error(err);
 					$togglePush.checked = prev;
 					setHint('푸시 설정 변경 실패');
-					showToast?.('', '푸시 설정 변경에 실패했습니다.', ToastType.ERROR, 1500);
+					showToast('', '푸시 설정 변경에 실패했습니다.', ToastType.ERROR, 1500);
 				} finally {
 					setBusy(false);
 				}
@@ -556,22 +558,21 @@
 				const size = fontMap[idx] || 'md';
 
 				try {
-					const root = document.getElementById('myPageRoot');
-					const uid = root?.dataset?.itemUid || '';
-
-					const fd = new FormData();
-					fd.append('uid', uid);
-					fd.append('fontSize', size);
+					const fd = {
+						uid: /*[[${item.user.uid}]]*/ null,
+						fontSize: size
+					};
 
 					const cp = window.contextPath || '';
-					await fetch(cp + '/My/updateUserFontSize.json', {
-						method: 'POST',
-						body: fd,
-						credentials: 'include'
-					});
+					const res = await apiPost(cp + '/My/updateUserFontSize.json', fd);
+
+					if (!res || res.code !== "0") {
+						showToast("오류", (res && res.message) ? res.message : "폰트 저장 실패", ToastType.ERROR);
+						return;
+					}
 				} catch (err) {
 					console.error(err);
-					showToast?.('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
+					showToast('', '글자 크기 저장 실패', ToastType.ERROR, 1500);
 				}
 			});
 		})();

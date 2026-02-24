@@ -34,6 +34,7 @@
 	<resultMap id="BinResultVoMap" type="com.utime.memoBom.common.vo.BinResultVo">
 		<result column="BIN_DATA" property="binary" jdbcType="VARBINARY" />
 		<result column="LAST_DATE" property="lastDate" />
+		<result column="MIME_TYPE" property="mimeType" />
 	</resultMap>
 	
 	<!-- 테이블 컬럼 정보 조회 -->

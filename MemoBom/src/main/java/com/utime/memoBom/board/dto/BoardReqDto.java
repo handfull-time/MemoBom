@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 /**
@@ -21,4 +23,8 @@ public class BoardReqDto {
 	String ip;
 	/** 삭제 여부. true:삭제. false:수정 */
 	boolean deleted = false;
+	/** 첨부 이미지 */
+	MultipartFile image;
+	/** 섬네일 이미지 */
+	MultipartFile thumb;
 }

@@ -100,6 +100,14 @@ async function apiGet(url, opts) {
 	return apiRequest(url, { method: 'GET', ...opts });
 }
 
+async function apiFormData(url, body, opts) {
+	return apiRequest(url, {
+		method: 'POST',
+		headers: { ...(opts?.headers || {}) },
+		body: body === undefined ? undefined : body,
+		...opts,
+	});
+}
 
 async function apiPost(url, body, opts) {
 	return apiRequest(url, {

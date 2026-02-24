@@ -20,6 +20,7 @@ import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.push.service.PushSendService;
@@ -209,5 +210,11 @@ class BoardServiceImpl implements BoardService {
 		}
 
 		return result;
+	}
+	
+	@Override
+	public BinResultVo getImage(boolean isThumb, int index, String uid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

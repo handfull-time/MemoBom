@@ -17,6 +17,7 @@ import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.AppDefine;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.dto.MyCommentDto;
@@ -30,7 +31,6 @@ import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
-import com.utime.memoBom.user.vo.query.UserProfile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,7 +89,7 @@ class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	@CacheEvict(value = AppDefine.KeyUserProfileImage, key = "#user.uid()")
+	@CacheEvict(value = AppDefine.KeyUserProfileImage, key = "'USER_PROFILE:' + #data.uid")
 	public ReturnBasic updateMyInfo(LoginUser user, UserUpdateDto data) {
 		
 		final ReturnBasic result = new ReturnBasic();
@@ -131,8 +131,8 @@ class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	@Cacheable(value = AppDefine.KeyUserProfileImage, key = "#uid")
-	public UserProfile getUserProfile(String uid) {
+	@Cacheable(value = AppDefine.KeyUserProfileImage, key = "'USER_PROFILE:' + #uid")
+	public BinResultVo getUserProfile(String uid) {
 		
 		return userDao.getUserProfile(uid);
 	}

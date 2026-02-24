@@ -35,7 +35,7 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         var nativeCache = Caffeine.newBuilder()
                 .maximumSize(10_000)
-                .expireAfterWrite(30, TimeUnit.MINUTES)
+                .expireAfterWrite(20, TimeUnit.MINUTES)
                 .build();
 
         var cm = new SimpleCacheManager();

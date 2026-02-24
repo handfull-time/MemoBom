@@ -1,12 +1,12 @@
 package com.utime.memoBom.user.service;
 
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dto.MyPageDto;
 import com.utime.memoBom.user.dto.MySearchDto;
 import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.vo.UserVo;
-import com.utime.memoBom.user.vo.query.UserProfile;
 
 public interface UserService {
 
@@ -93,7 +93,7 @@ public interface UserService {
 	 * @param uid
 	 * @return
 	 */
-	UserProfile getUserProfile(String uid);
+	BinResultVo getUserProfile(String uid);
 
 	/**
 	 * 회원이 스크랩 한 글 목록

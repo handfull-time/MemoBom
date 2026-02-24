@@ -63,7 +63,7 @@
 			const IS_LOGIN = !!(LOGIN_USER && LOGIN_USER.uid);
 	
 			function toastLoginRequired() {
-				showToast?.("로그인 필요", "로그인 후 이용해 주세요.", ToastType?.INFO ?? "info", 1800);
+				showToast("로그인 필요", "로그인 후 이용해 주세요.", ToastType?.INFO ?? "info", 1800);
 			}
 		</script>
 	</th:block>

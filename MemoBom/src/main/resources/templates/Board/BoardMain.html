@@ -642,13 +642,13 @@
 
 					const uid = node.querySelector(".fragment-uid")?.textContent?.trim();
 					if (!uid) {
-						showToast?.("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
+						showToast("공유", "공유할 항목을 찾지 못했습니다.", ToastType?.ERROR ?? "error", 1500);
 						return;
 					}
 
 					// 1) 지원 체크
 					if (!navigator.share) {
-						showToast?.("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
+						showToast("공유", "이 브라우저는 공유 기능을 지원하지 않습니다.", ToastType?.INFO ?? "info", 1800);
 						return;
 					}
 
@@ -658,7 +658,7 @@
 						const res = await apiGetWithParam(url, {uid});
 
 						if (!res || res.code !== "0" || !res.data) {
-							showToast?.("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
+							showToast("공유", res?.message || "공유 정보를 불러오지 못했습니다.", ToastType?.ERROR ?? "error", 1800);
 							return;
 						}
 
@@ -678,7 +678,7 @@
 						// 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
 						// 필요하면 err.name === 'AbortError' 분기 가능
 						console.error(err);
-						showToast?.("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
+						showToast("공유", "공유를 완료하지 못했습니다.", ToastType?.INFO ?? "info", 1500);
 					}
 				});
 
@@ -897,7 +897,7 @@
 
 					const content = (input.value || '').trim();
 					if (!content) {
-						showToast?.("댓글", "댓글을 입력해 주세요.", ToastType?.INFO ?? "info", 1200);
+						showToast("댓글", "댓글을 입력해 주세요.", ToastType?.INFO ?? "info", 1200);
 						return;
 					}
 

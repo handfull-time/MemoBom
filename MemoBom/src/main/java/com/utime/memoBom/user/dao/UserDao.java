@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
-import com.utime.memoBom.user.vo.query.UserProfile;
 
 public interface UserDao {
 
@@ -100,7 +100,7 @@ public interface UserDao {
 	 * @param uid
 	 * @return
 	 */
-	UserProfile getUserProfile(String uid);
+	BinResultVo getUserProfile(String uid);
 	
 	/**
 	 * 푸시 수신 상태

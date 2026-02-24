@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class BinResultVo{
 	private byte [] binary;
+	private String mimeType;
 	private Date lastDate;
 }
 

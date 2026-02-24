@@ -8,6 +8,7 @@ import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 
@@ -78,5 +79,14 @@ public interface BoardService {
 	 * @return
 	 */
 	ReturnBasic saveComment(LoginUser user, CommentReqVo reqVo);
+
+	/**
+	 * Fragment(편린)이미지
+	 * @param isThumb true:thumbnail, false:origin 
+	 * @param index Fragment(편린) 이미지 인덱스 시작 - 0 
+	 * @param uid uid
+	 * @return
+	 */
+	BinResultVo getImage(boolean isThumb, int index, String uid);
 
 }

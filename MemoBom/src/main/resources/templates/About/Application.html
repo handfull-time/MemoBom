@@ -270,7 +270,7 @@
 				// “다시 안보기” 초기화 버튼(기존 그대로)
 				$btnReset?.addEventListener('click', async () => {
 					resetDismiss();
-					showToast?.("완료", "설치 안내 상태가 초기화되었습니다.", ToastType.SUCCESS, 1400);
+					showToast("완료", "설치 안내 상태가 초기화되었습니다.", ToastType.SUCCESS, 1400);
 				});
 			})();
 
@@ -308,13 +308,13 @@
 				deferredPrompt = null;
 
 				if (choice?.outcome === "accepted") {
-					showToast?.("완료", "설치가 진행됩니다.", ToastType.SUCCESS, 1500);
+					showToast("완료", "설치가 진행됩니다.", ToastType.SUCCESS, 1500);
 				} else {
 					// 사용자가 설치 UI에서 취소한 경우
 					// 메인 자동 팝업을 막고 싶다면 여기서 dismiss 키를 저장해도 됨
 					// (원하시면 이 정책을 “메인에서만 저장”으로 바꿔드릴게요)
 					try {localStorage.setItem(DISMISS_KEY, "1");} catch (e) { }
-					showToast?.("안내", "설치를 취소하셨습니다.", ToastType.INFO, 1500);
+					showToast("안내", "설치를 취소하셨습니다.", ToastType.INFO, 1500);
 				}
 			});
 
@@ -322,7 +322,7 @@
 				setBadge("설치됨", true);
 				setInstallEnabled(false);
 				$hint.textContent = "설치가 완료되었습니다.";
-				showToast?.("완료", "앱이 설치되었습니다.", ToastType.SUCCESS, 1500);
+				showToast("완료", "앱이 설치되었습니다.", ToastType.SUCCESS, 1500);
 			});
 
 		})();

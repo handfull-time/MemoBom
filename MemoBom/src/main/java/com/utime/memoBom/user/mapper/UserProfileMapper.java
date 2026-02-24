@@ -3,12 +3,12 @@ package com.utime.memoBom.user.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.utime.memoBom.user.vo.query.UserProfile;
+import com.utime.memoBom.common.vo.BinResultVo;
 
 @Mapper
 public interface UserProfileMapper {
     
-	UserProfile selectUserProfile(String uid);
+	BinResultVo selectUserProfile(String uid);
     
 	boolean existsUserProfileMeta(long userNo);
 
