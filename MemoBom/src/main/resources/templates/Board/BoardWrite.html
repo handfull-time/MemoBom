@@ -192,6 +192,7 @@
 		let __imgBlob = null;
 		let __thumbBlob = null;
 		let __imgObjectUrl = null;
+		let __imgMeta = { width: 0, height: 0, name: '' };
 
 		function __revokePreviewUrl() {
 			if (__imgObjectUrl) {
@@ -204,6 +205,7 @@
 			__revokePreviewUrl();
 			__imgBlob = null;
 			__thumbBlob = null;
+			__imgMeta = { width: 0, height: 0, name: '' };
 			const wrap = document.getElementById('imgWrap');
 			const img = document.getElementById('imgPreview');
 			if (img) img.removeAttribute('src');
@@ -253,24 +255,38 @@
 			});
 		}
 
-		async function __resizeToWebp(file, maxWidth) {
+		async function __resizeThumbToWebp(file, maxWidth) {
 			const img = await __loadImageFromFile(file);
 			const canvas = __drawToCanvas(img, maxWidth);
 			return __canvasToWebpBlob(canvas);
 		}
+
+		async function __resizeToWebp(file, maxWidth) {
+			const img = await __loadImageFromFile(file);
+			const srcW = img.naturalWidth || img.width;
+			const srcH = img.naturalHeight || img.height;
+			const ratio = (srcW > maxWidth) ? (maxWidth / srcW) : 1;
+			const targetW = Math.max(1, Math.round(srcW * ratio));
+			const targetH = Math.max(1, Math.round(srcH * ratio));
+			const canvas = __drawToCanvas(img, targetW, targetH);
+			const blob = await __canvasToWebpBlob(canvas);
+			return { blob, width: targetW, height: targetH };
+		}
+
 
 		async function __onSelectImageFile(file) {
 			if (!file) return;
 			// 1개만 허용. 새로 선택하면 기존 교체
 			__clearSelectedImage();
 
-			const mainBlob = await __resizeToWebp(file, 1440);
-			const thumbBlob = await __resizeToWebp(file, 64);
-			__imgBlob = mainBlob;
+			const resized = await __resizeToWebp(file, 1440);
+			const thumbBlob = await __resizeThumbToWebp(file, 64);
+			__imgBlob = resized.blob;
 			__thumbBlob = thumbBlob;
+			__imgMeta = { width: resized.width, height: resized.height, name: file.name || '' };
 
 			// preview
-			__imgObjectUrl = URL.createObjectURL(mainBlob);
+			__imgObjectUrl = URL.createObjectURL(__imgBlob);
 			const imgEl = document.getElementById('imgPreview');
 			const wrap = document.getElementById('imgWrap');
 			if (imgEl) imgEl.src = __imgObjectUrl;
@@ -284,7 +300,12 @@
 				if (v === undefined || v === null) return;
 				fd.append(k, v);
 			});
-			if (__imgBlob) fd.append('image', __imgBlob, 'image.webp');
+			if (__imgBlob) {
+				fd.append('image', __imgBlob, 'image.webp');
+				fd.append('imageWidth', String(__imgMeta.width || 0));
+				fd.append('imageHeight', String(__imgMeta.height || 0));
+				fd.append('imageName', __imgMeta.name || webpName);
+			}
 			if (__thumbBlob) fd.append('thumb', __thumbBlob, 'thumb.webp');
 			return apiFormData(url, fd);
 		}
@@ -440,6 +461,7 @@
 			const sendObj = {
 				seal: /*[[${seal}]]*/ null,
 				uid: /*[[${item != null ? item.uid : null}]]*/ null,
+				topicUid: selectedTopicUid,
 				content: content,
 				hashTag: hashtagRaw,
 				deleted: isDelete

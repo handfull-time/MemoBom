@@ -9,6 +9,7 @@ import com.utime.memoBom.board.dto.EmotionDto;
 import com.utime.memoBom.board.vo.CommentItem;
 import com.utime.memoBom.board.vo.CommentReqVo;
 import com.utime.memoBom.board.vo.EmotionItem;
+import com.utime.memoBom.board.vo.FragmentImageVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
@@ -165,4 +166,13 @@ public interface BoardMapper {
 	 * @return
 	 */
 	int updateFragment(@Param("userNo") long userNo, @Param("req") FragmentVo item);
+
+	/**
+	 * 이미지 정보 적용
+	 * @param user
+	 * @param topic
+	 * @param imgVo
+	 * @return
+	 */
+	int upsertFragmentImage(@Param("user") LoginUser user, @Param("topic") TopicVo topic, @Param("item") FragmentImageVo imgVo);
 }

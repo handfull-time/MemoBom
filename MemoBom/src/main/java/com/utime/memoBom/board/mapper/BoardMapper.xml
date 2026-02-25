@@ -527,5 +527,28 @@
 			AND USER_NO = #{userNo}
 			AND UID = #{req.uid}
 	</update>
+	
+	<update id="upsertFragmentImage" parameterType="map">
+		MERGE INTO MB_FRAGMENT_IMAGE (
+			UID
+			, FRAGMENT_NO
+			, USER_NO
+			, IMAGE_ORDER
+			, ORIGINAL_NAME
+			, WIDTH
+			, HEIGHT
+			, FILE_SIZE
+		) KEY (FRAGMENT_NO, USER_NO, IMAGE_ORDER)
+		VALUES (
+			#{item.uid}
+			, #{user.userNo}
+			, #{user.userNo}
+			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
+			, <include refid="getTargetNoSql" />
+			, #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
+			, CURRENT_TIMESTAMP
+		)
+	</update>
+
 
 </mapper>

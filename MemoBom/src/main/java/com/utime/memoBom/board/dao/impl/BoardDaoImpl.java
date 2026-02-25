@@ -1,14 +1,21 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.board.dao.BoardDao;
 import com.utime.memoBom.board.dto.BoardReqDto;
@@ -21,6 +28,7 @@ import com.utime.memoBom.board.vo.EEmotionCode;
 import com.utime.memoBom.board.vo.EmojiSetType;
 import com.utime.memoBom.board.vo.EmojiSets;
 import com.utime.memoBom.board.vo.EmotionItem;
+import com.utime.memoBom.board.vo.FragmentImageVo;
 import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
@@ -30,6 +38,7 @@ import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.UserDevice;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +49,17 @@ class BoardDaoImpl implements BoardDao {
 
 	final BoardMapper boardMapper;
 	final TopicMapper topicMapper;
+	
+	@Value("${env.imagePath}")
+	private String ValueEnvImagePath;
+	
+	private String ValueImagePath, ValueThumbPath;
+	
+	@PostConstruct
+	private void init() {
+		ValueImagePath = ValueEnvImagePath + "/image";
+		ValueThumbPath = ValueEnvImagePath + "/thumb";
+	}
 
 	/**
 	 * 해시태그 문자열을 파싱하여 순수한 키워드 목록을 반환합니다. 특징: Regex 미사용, 1-Pass 파싱, 메모리 할당 최소화
@@ -80,10 +100,68 @@ class BoardDaoImpl implements BoardDao {
 
 		return result;
 	}
+	
+	
+	
+	@Transactional(rollbackFor = Exception.class)
+	private int upsertImage( LoginUser user, TopicVo topic, BoardReqDto reqVo) {
+		int result = 0;
+		
+		// 이미지
+		final MultipartFile image = reqVo.getImage(), thumb = reqVo.getThumb();
+		
+		if( image == null || image.isEmpty() || thumb == null || thumb.isEmpty() )
+			return result;
+		
+		// 1. 년/월 경로 생성 (예: 2026/02)
+		final String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy" + File.separator + "MM"));
+		
+		final File imagePath = new File(ValueImagePath, datePath), thumbPath = new File(ValueThumbPath, datePath);;
+		
+		// 저장 디렉토리 생성
+        if (!imagePath.exists()) {
+        	imagePath.mkdirs();
+        }
+        if (!thumbPath.exists()) {
+        	thumbPath.mkdirs();
+        }
+		
+		final String fileName = UUID.randomUUID().toString() + ".webp";
+		final File imageFile = new File( imagePath, fileName);
+		final File thumbFile = new File( thumbPath, fileName );
+		final long imageSize = image.getSize();
+		
+		try {
+            // 파일 저장
+            image.transferTo(imageFile);
+            thumb.transferTo(thumbFile);
+            
+            final String storageName = imageFile.getCanonicalPath().substring( ValueEnvImagePath.length() );
+            
+            final FragmentImageVo imgVo = new FragmentImageVo(
+            		0, 
+            		storageName,
+            		image.getOriginalFilename(), 
+            		reqVo.getImageWidth(), 
+            		reqVo.getImageHeight(), 
+            		imageSize);
+            
+            result = boardMapper.upsertFragmentImage(user, topic, imgVo);
+            
+        } catch (IOException e) {
+            result = -1;
+        }
+		return result;
+	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) throws Exception {
+
+		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
+		if (topic == null) {
+			throw new Exception("topic is null.");
+		}
 
 		final FragmentVo item = new FragmentVo();
 		item.setContent(reqVo.getContent());
@@ -96,18 +174,15 @@ class BoardDaoImpl implements BoardDao {
 			}else {
 				item.setUid(reqVo.getUid());
 				result += boardMapper.updateFragment( user.userNo(), item );
+				result += this.upsertImage(user, topic, reqVo);
 			}
 			
 			return result;
 		}
 
-		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
-		if (topic == null) {
-			throw new Exception("topic is null.");
-		}
-
 		result += boardMapper.insertFragment(user, device, topic, item);
 		result += topicMapper.increaseTopicStatsFragmentCount( topic.getTopicNo() );
+		result += this.upsertImage(user, topic, reqVo);
 
 		final Set<String> hashTags = this.parseTags(reqVo.getHashTag());
 		if (hashTags.isEmpty()) {

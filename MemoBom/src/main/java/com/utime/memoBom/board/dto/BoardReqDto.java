@@ -27,4 +27,10 @@ public class BoardReqDto {
 	MultipartFile image;
 	/** 섬네일 이미지 */
 	MultipartFile thumb;
+	/** 첨부 이미지의 가로 크기 */
+	int imageWidth;
+	/** 첨부 이미지의 세로 크기 */
+	int imageHeight;
+	/** 첨부 이미지의 이름 */
+	String imageName;
 }
