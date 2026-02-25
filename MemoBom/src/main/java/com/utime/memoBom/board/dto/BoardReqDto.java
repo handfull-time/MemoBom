@@ -33,4 +33,5 @@ public class BoardReqDto {
 	int imageHeight;
 	/** 첨부 이미지의 이름 */
 	String imageName;
+	
 }

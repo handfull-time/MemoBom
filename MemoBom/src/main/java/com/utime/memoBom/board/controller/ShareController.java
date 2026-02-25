@@ -1,7 +1,10 @@
 package com.utime.memoBom.board.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,9 +46,10 @@ public class ShareController {
     	final ShareDto vo = shareServce.loadShareInfo( user, uid, isBot);
     	
     	if( isBot ) {
-    		
+    	
     		final String baseUrl = request.getScheme() + "://" + request.getServerName() + request.getContextPath();
-    		vo.setUrl( baseUrl + vo.getUrl());
+    		vo.setUrl( baseUrl + vo.getUrl() );
+    		vo.setImage( baseUrl + vo.getImage() );
     		model.addAttribute("item", vo);
     		
     		return "Share/ShowShareBot";
@@ -82,5 +86,57 @@ public class ShareController {
 		
 		return shareServce.makeShareInfo(request, user, EShareTargetType.Fragment, uid);
 	}
+	
+	/**
+	 * Topic og용 이미지 보기
+	 * @param uid
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@GetMapping(value = "Share/Mosaic/{uid}.png", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> ogMosaic( @PathVariable String uid ) throws Exception {
+    	
+        final byte[] png = shareServce.drawTopicOgImagePngBytes(uid);
+        if (png == null || png.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .contentLength(png.length)
+                .body(png);
+    }
+    
+    private static final MediaType IMAGE_WEBP = MediaType.parseMediaType("image/webp");
+    
+    @ResponseBody
+    @GetMapping(value = "Share/Fragment/{uid}.webp", produces = "image/webp")
+    public ResponseEntity<byte[]> ogFragment(@PathVariable String uid) throws Exception {
+
+        final byte[] webp = shareServce.drawFragmentOgImagePngBytes(uid);
+
+        // 1️⃣ 정상 WebP 반환
+        if (webp != null && webp.length > 0) {
+            return ResponseEntity.ok()
+                    .contentType(IMAGE_WEBP)
+                    .contentLength(webp.length)
+                    .body(webp);
+        }
+
+        // 2️⃣ fallback: favicon PNG 반환
+        final ClassPathResource resource = new ClassPathResource("static/images/favicon/favicon_512.png");
+
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        final byte[] fallback = resource.getInputStream().readAllBytes();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .contentLength(fallback.length)
+                .body(fallback);
+    }
 	
 }

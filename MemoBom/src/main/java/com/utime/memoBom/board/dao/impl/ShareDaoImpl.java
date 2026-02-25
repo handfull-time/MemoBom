@@ -90,4 +90,5 @@ class ShareDaoImpl implements ShareDao{
 
 		return share;
 	}
+	
 }

@@ -101,4 +101,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createFeedback();
+
+	/**
+	 * 이미지 정보 생성
+	 * @return
+	 */
+	int createFragmentImage();
 }

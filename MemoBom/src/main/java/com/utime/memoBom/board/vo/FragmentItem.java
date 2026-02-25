@@ -9,6 +9,8 @@ import lombok.Data;
 
 @Data
 public class FragmentItem {
+	/** 고유 번호 */
+	long fragmentNo;
 	/** 게시글 uid */
 	String uid;
 	/** topic 정보 */
@@ -21,6 +23,8 @@ public class FragmentItem {
 	String content;
 	/** 스크랩 여부 */
 	boolean scrap;
+	/** 이미지 경로 정보 */
+	String imagePath;
 	/** 이모션 목록 */
 	List<EmotionItem> emotionList;
 	/** 해시 태그 목록 */

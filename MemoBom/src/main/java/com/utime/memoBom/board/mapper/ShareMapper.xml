@@ -61,17 +61,17 @@
     <!--공유 대상 Fragment 정보 조회-->
     <select id="loadFragmentInfo" parameterType="map" resultType="com.utime.memoBom.board.vo.query.ShareTargetInfo">
     	SELECT
-    		FRAGMENT_NO AS "targetNo"
-	        , CONTENT AS "text"
-	        , CAST(UID AS VARCHAR) AS "uid"
-    	FROM MB_FRAGMENT
+    		FG.FRAGMENT_NO AS "targetNo"
+	        , FG.CONTENT AS "text"
+	        , CAST(FG.UID AS VARCHAR) AS "uid"
+    	FROM MB_FRAGMENT FG
     	WHERE 1=1 
-    		AND IS_DELETED = FALSE
+    		AND FG.IS_DELETED = FALSE
     		<if test="uid != null and ! uid.isEmpty()">
-				AND UID = #{uid}
+				AND FG.UID = #{uid}
 			</if>
 			<if test="fragmentNo > 0">
-				AND FRAGMENT_NO = #{fragmentNo}
+				AND FG.FRAGMENT_NO = #{fragmentNo}
 			</if>
     </select>
     

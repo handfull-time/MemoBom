@@ -152,6 +152,15 @@ class CreateRepository {
 			
 			result += common.createIndex("MB_FEEDBACK_USER_NO_INDX", "MB_FEEDBACK", "USER_NO");	
 		}
+		
+		if( !common.existTable("MB_FRAGMENT_IMAGE") ) {
+			log.info("MB_FRAGMENT_IMAGE 생성");
+			result += mapper.createFragmentImage();
+			
+			result += common.createIndex("MB_FRAGMENT_IMAGE_USER_NO_INDX", "MB_FRAGMENT_IMAGE", "USER_NO");	
+			result += common.createIndex("MB_FRAGMENT_IMAGE_FRAGMENT_NO_INDX", "MB_FRAGMENT_IMAGE", "FRAGMENT_NO");
+		}
+		
 
 		
 		

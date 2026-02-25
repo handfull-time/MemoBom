@@ -41,10 +41,13 @@
 	</update>
 	
   <resultMap id="FragmentItemMap" type="com.utime.memoBom.board.vo.FragmentItem">
+  		<id property="fragmentNo" column="fragment_no" />
         <id property="uid" column="fragment_uid" />
         <result property="content" column="content" />
         <result property="regDate" column="reg_date" />
         <result property="scrap" column="is_scrap" /> 
+        <result property="imagePath" column="img_storage_name" />
+        
         
         <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
             <result property="uid" column="user_uid" />
@@ -141,7 +144,9 @@
 	            <otherwise>
 	                FALSE
 	            </otherwise>
-	        </choose> AS is_scrap
+	        </choose> AS is_scrap,
+	        
+	        img.STORAGE_NAME AS img_storage_name
 	
 	    FROM MB_FRAGMENT f
 		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
@@ -153,6 +158,9 @@
 		              AND s.USER_NO = #{user.userNo}
 		    </if>
 		    
+		    LEFT JOIN MB_FRAGMENT_IMAGE img
+		    	ON img.FRAGMENT_NO = f.FRAGMENT_NO 
+		    	AND img.IMAGE_ORDER = 0
 	    WHERE 1=1
 	      -- 기본 조건
 	      AND f.IS_DELETED = FALSE
@@ -223,6 +231,50 @@
 	    ORDER BY f.REG_DATE DESC
         LIMIT 5 OFFSET (#{req.pageNo} - 1) * 5
     </select>
+    
+    <!--게시글 정보 조회-->
+    <select id="getFragment" parameterType="map" resultMap="FragmentItemMap">
+	    SELECT
+	        <!-- 게시글 정보 -->
+	        f.FRAGMENT_NO    AS fragment_no,
+	        CAST(f.UID AS VARCHAR) AS fragment_uid,
+	        f.CONTENT        AS content,
+	        f.REG_DATE       AS reg_date,
+	
+	        <!-- 작성자 정보 -->
+	        CAST(u.UID AS VARCHAR) AS user_uid,
+	        u.NICKNAME       AS user_nickname,
+	        u.PROFILE_IMG_PATH AS user_img_url,
+	
+	        <!-- 토픽 정보 -->
+	        CAST(t.UID AS VARCHAR) AS topic_uid,
+	        t.NAME           AS topic_name,
+	        t.COLOR          AS topic_color,
+	        t.IMOGI          AS topic_imogi,
+	        t.EMOJI_SET_TYPE AS emoji_set_type,
+	        
+	        img.STORAGE_NAME AS img_storage_name
+	
+	    FROM MB_FRAGMENT f
+		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
+		    INNER JOIN MB_TOPIC t ON f.TOPIC_NO = t.TOPIC_NO
+		    
+		    LEFT JOIN MB_FRAGMENT_IMAGE img
+		    	ON img.FRAGMENT_NO = f.FRAGMENT_NO 
+		    	AND img.IMAGE_ORDER = 0
+	    WHERE 1=1
+	      AND f.IS_DELETED = FALSE
+	      AND u.ENABLED    = TRUE
+	      AND t.ENABLED    = TRUE
+	
+	      <if test="fid != null and !fid.isEmpty() ">
+	        AND f.UID = #{fid}
+	      </if>
+	
+	      <if test="fNo > 0 ">
+	        AND f.FRAGMENT_NO = #{fNo}
+	      </if>;
+	</select>
     
     <!--스크랩 존재 여부 확인  -->
     <select id="existsScrap" resultType="boolean">
@@ -530,25 +582,25 @@
 	
 	<update id="upsertFragmentImage" parameterType="map">
 		MERGE INTO MB_FRAGMENT_IMAGE (
-			UID
-			, FRAGMENT_NO
+			FRAGMENT_NO
 			, USER_NO
 			, IMAGE_ORDER
+			, STORAGE_NAME
 			, ORIGINAL_NAME
 			, WIDTH
 			, HEIGHT
 			, FILE_SIZE
-		) KEY (FRAGMENT_NO, USER_NO, IMAGE_ORDER)
+		) KEY (FRAGMENT_NO, IMAGE_ORDER)
 		VALUES (
-			#{item.uid}
+			#{fragment}
 			, #{user.userNo}
-			, #{user.userNo}
-			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
-			, <include refid="getTargetNoSql" />
-			, #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
-			, CURRENT_TIMESTAMP
+			, #{item.imageOrder}
+			, #{item.storageName}
+			, #{item.originalName}
+			, #{item.width}
+			, #{item.height}
+			, #{item.fileSize}
 		)
 	</update>
-
 
 </mapper>

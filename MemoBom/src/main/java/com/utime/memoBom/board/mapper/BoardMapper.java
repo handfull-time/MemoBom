@@ -52,6 +52,14 @@ public interface BoardMapper {
      * @return FragmentItem 리스트
      */
     List<FragmentItem> loadFragmentList( @Param("user") LoginUser user, @Param("req") FragmentListReqVO reqVo );
+    
+    /**
+     * 게시글 정보 조회
+     * @param no
+     * @param uid
+     * @return
+     */
+    FragmentItem getFragment( @Param("fNo") long no, @Param("fUid") String uid);
 
     /**
      * 스크랩 존재 여부 확인
@@ -174,5 +182,5 @@ public interface BoardMapper {
 	 * @param imgVo
 	 * @return
 	 */
-	int upsertFragmentImage(@Param("user") LoginUser user, @Param("topic") TopicVo topic, @Param("item") FragmentImageVo imgVo);
+	int upsertFragmentImage(@Param("user") LoginUser user, @Param("fragment") long fragmentNo, @Param("item") FragmentImageVo imgVo);
 }

@@ -28,4 +28,18 @@ public interface ShareService {
 	 */
 	ReturnBasic makeShareInfo(HttpServletRequest request, LoginUser user, EShareTargetType targetType, String targetUid);
 
+	/**
+	 * Topic 해당하는 이미지 생성
+	 * @param uid
+	 * @return
+	 */
+	byte[] drawTopicOgImagePngBytes(String uid);
+
+	/**
+	 * Fragment 해당 이미지 생성
+	 * @param uid
+	 * @return
+	 */
+	byte[] drawFragmentOgImagePngBytes(String uid);
+
 }

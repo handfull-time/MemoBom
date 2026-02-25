@@ -104,7 +104,7 @@ class BoardDaoImpl implements BoardDao {
 	
 	
 	@Transactional(rollbackFor = Exception.class)
-	private int upsertImage( LoginUser user, TopicVo topic, BoardReqDto reqVo) {
+	private int upsertImage( LoginUser user, long fragmentNo, BoardReqDto reqVo) {
 		int result = 0;
 		
 		// 이미지
@@ -136,17 +136,17 @@ class BoardDaoImpl implements BoardDao {
             image.transferTo(imageFile);
             thumb.transferTo(thumbFile);
             
-            final String storageName = imageFile.getCanonicalPath().substring( ValueEnvImagePath.length() );
+            final String storageName = imageFile.getCanonicalPath().substring( ValueImagePath.length() );
             
             final FragmentImageVo imgVo = new FragmentImageVo(
             		0, 
             		storageName,
-            		image.getOriginalFilename(), 
+            		reqVo.getImageName(), 
             		reqVo.getImageWidth(), 
             		reqVo.getImageHeight(), 
             		imageSize);
             
-            result = boardMapper.upsertFragmentImage(user, topic, imgVo);
+            result = boardMapper.upsertFragmentImage(user, fragmentNo, imgVo);
             
         } catch (IOException e) {
             result = -1;
@@ -157,11 +157,6 @@ class BoardDaoImpl implements BoardDao {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int saveFragment(LoginUser user, UserDevice device, BoardReqDto reqVo) throws Exception {
-
-		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
-		if (topic == null) {
-			throw new Exception("topic is null.");
-		}
 
 		final FragmentVo item = new FragmentVo();
 		item.setContent(reqVo.getContent());
@@ -174,15 +169,22 @@ class BoardDaoImpl implements BoardDao {
 			}else {
 				item.setUid(reqVo.getUid());
 				result += boardMapper.updateFragment( user.userNo(), item );
-				result += this.upsertImage(user, topic, reqVo);
+				
+				final FragmentItem f = boardMapper.getFragment( 0, reqVo.getUid() );
+				result += this.upsertImage(user, f.getFragmentNo(), reqVo);
 			}
 			
 			return result;
 		}
 
+		final TopicVo topic = topicMapper.loadTopic(reqVo.getTopicUid(), -1L);
+		if (topic == null) {
+			throw new Exception("topic is null.");
+		}
+
 		result += boardMapper.insertFragment(user, device, topic, item);
 		result += topicMapper.increaseTopicStatsFragmentCount( topic.getTopicNo() );
-		result += this.upsertImage(user, topic, reqVo);
+		result += this.upsertImage(user, item.getFragmentNo(), reqVo);
 
 		final Set<String> hashTags = this.parseTags(reqVo.getHashTag());
 		if (hashTags.isEmpty()) {

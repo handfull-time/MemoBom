@@ -13,4 +13,6 @@ public class ShareDto {
 	String text;
 	/** URL */
 	String url;
+	/** URL */
+	String image;
 }
