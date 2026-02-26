@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.nimbusds.jose.shaded.gson.GsonBuilder;
-import com.nimbusds.jose.shaded.gson.Strictness;
 import com.utime.memoBom.board.dto.BoardMainParamDto;
 import com.utime.memoBom.board.dto.BoardReqDto;
 import com.utime.memoBom.board.dto.EmotionDto;
