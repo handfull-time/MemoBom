@@ -431,13 +431,19 @@
 			function bindFragmentImage(node, item) {
 				const imageEl = node.querySelector(".fragment-image");
 				if (!imageEl) return;
-
-				const imageUid = safeText(item.imageUid, "");
-				if (!imageUid) {
+				
+				const image = item.image;
+				if (!image) {
 					imageEl.classList.add("hidden");
 					imageEl.removeAttribute("src");
 					return;
-				}
+				}		
+
+			    imageEl.width = image.width;
+			    imageEl.height = image.height;
+			    imageEl.alt = image.name;
+				
+				const imageUid = safeText(image.uid, "");
 
 				const thumbSrc = `${window.contextPath}/Fragment/Thumb/${encodeURIComponent(imageUid)}`;
 				const fullSrc = `${window.contextPath}/Fragment/Image/${encodeURIComponent(imageUid)}`;

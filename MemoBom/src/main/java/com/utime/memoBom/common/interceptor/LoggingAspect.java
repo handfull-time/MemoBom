@@ -150,7 +150,12 @@ class LoggingAspect {
         if( objList.size() > 0 ) {
         	paramStrBuffer.append(RequestBody);
         	for( Object obj : objList ) {
-            	paramStrBuffer.append( obj.toString() ).append(lineSepretor); 
+            	paramStrBuffer.append( obj.toString() ).append(lineSepretor);
+//        		try {
+//					paramStrBuffer.append( objWirter.writeValueAsString(obj) ).append(lineSepretor);
+//				} catch (Exception e) {
+//					paramStrBuffer.append( "Json Convert Error : " + e.getMessage() ).append(lineSepretor);
+//				}
         	}
         }
 
@@ -189,13 +194,19 @@ class LoggingAspect {
 				paramStrBuffer.append(ValueFront);
 				paramStrBuffer.append(key);
 				paramStrBuffer.append(equals);
-				
+//				
 				final Object obj = modelMap.get(key);
 				if( obj == null ) {
 					paramStrBuffer.append("Is null.");
 				}else {
-					paramStrBuffer.append(obj.toString());
+					try {
+						paramStrBuffer.append( objWirter.writeValueAsString(obj) ).append(lineSepretor);
+					} catch (Exception e) {
+						paramStrBuffer.append( "Json Convert Error : " + e.getMessage() ).append(lineSepretor);
+						paramStrBuffer.append( proceed ).append(lineSepretor);
+					}
 				}
+				
 				paramStrBuffer.append(lineSepretor);
 			}
 

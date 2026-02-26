@@ -9,7 +9,7 @@ public class BoardImageVo {
 	/** 가로 */
 	int width;
 	/** 세로 */
-	int hieght;
+	int height;
 	/** 이름 */
 	String originName;
 	/** 파일 저장소 이름 */

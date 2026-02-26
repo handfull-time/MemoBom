@@ -46,7 +46,13 @@
         <result property="content" column="content" />
         <result property="regDate" column="reg_date" />
         <result property="scrap" column="is_scrap" /> 
-        <result property="imageUid" column="img_uid" />
+        
+        <association property="image" javaType="com.utime.memoBom.board.vo.query.BoardImageVo">
+            <result property="uid" column="img_uid" />
+            <result property="width" column="img_width" />
+            <result property="height" column="img_height" />
+            <result property="originName" column="img_original_name" />
+        </association>
         
         <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
             <result property="uid" column="user_uid" />
@@ -145,7 +151,10 @@
 	            </otherwise>
 	        </choose> AS is_scrap,
 	        
-	        img.STORAGE_NAME AS img_storage_name
+	        img.UID AS img_uid,
+			img.ORIGINAL_NAME AS img_original_name,
+			img.WIDTH AS img_width,
+			img.HEIGHT AS img_height
 	
 	    FROM MB_FRAGMENT f
 		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
@@ -606,7 +615,6 @@
 		)
 	</update>
 	
-	
 	<!--Fragment Image 정보 조회-->
 	<select id="selectFragmentImage" parameterType="map" resultType="com.utime.memoBom.board.vo.query.BoardImageVo">
 		SELECT
@@ -615,7 +623,8 @@
 			, STORAGE_NAME AS "storageName" 
 			, ORIGINAL_NAME AS "originName"
 			, WIDTH  AS "width"
-			, HEIGHT  AS "hieght"
+			, HEIGHT  AS "height"
+		FROM MB_FRAGMENT_IMAGE
 		WHERE UID = #{uid}
 	</select>
 
