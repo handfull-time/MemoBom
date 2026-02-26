@@ -102,16 +102,13 @@ public class BoardController {
 			return "Common/ErrorAlert";
 		}
 		
+		model.addAttribute("itemImageUrl", resultItem.getImage() == null
+				? null
+				: "/Fragment/Image/" + resultItem.getImage().getUid());
+		
 		model.addAttribute(KeyTopics, List.of( topicRes.getData() ) );
 		model.addAttribute("item", resultItem );
 		model.addAttribute("seal", key );
-		
-		final Gson gson = new GsonBuilder()
-				.setStrictness(Strictness.LENIENT)
-				.setPrettyPrinting()
-	            .create();
-		
-		System.out.println( gson.toJson(resultItem) );
 		
 		return "Board/BoardWrite";
 	}
@@ -160,6 +157,7 @@ public class BoardController {
 		}
 		
 		model.addAttribute(KeyTopics, list );
+		model.addAttribute("itemImageUrl", null);
 		model.addAttribute("item", null );
 		model.addAttribute("seal", key );
 		

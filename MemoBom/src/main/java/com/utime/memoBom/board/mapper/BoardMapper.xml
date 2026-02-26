@@ -275,8 +275,8 @@
 	      AND u.ENABLED    = TRUE
 	      AND t.ENABLED    = TRUE
 	
-	      <if test="fid != null and !fid.isEmpty() ">
-	        AND f.UID = #{fid}
+	      <if test="fUid != null and !fUid.isEmpty() ">
+	        AND f.UID = #{fUid}
 	      </if>
 	
 	      <if test="fNo > 0 ">
