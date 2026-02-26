@@ -53,7 +53,12 @@
 				</div>
 
 				<!-- content -->
-				<div class="mt-2 text-dynamic-base text-slate-900 leading-relaxed content"></div>
+				<div class="mt-2 fragment-content-box">
+					<img class="fragment-image hidden w-full rounded-xl border border-slate-200 object-cover"
+						 alt="fragment image"
+						 loading="lazy" />
+					<div class="mt-2 text-dynamic-base text-slate-900 leading-relaxed content"></div>
+				</div>
 
 				<!-- hashtags -->
 				<div class="mt-2 flex flex-wrap gap-1.5 hashtag-box"></div>
@@ -423,6 +428,46 @@
 				});
 			}
 
+			function bindFragmentImage(node, item) {
+				const imageEl = node.querySelector(".fragment-image");
+				if (!imageEl) return;
+
+				const imageUid = safeText(item.imageUid, "");
+				if (!imageUid) {
+					imageEl.classList.add("hidden");
+					imageEl.removeAttribute("src");
+					return;
+				}
+
+				const thumbSrc = `${window.contextPath}/Fragment/Thumb/${encodeURIComponent(imageUid)}`;
+				const fullSrc = `${window.contextPath}/Fragment/Image/${encodeURIComponent(imageUid)}`;
+
+				imageEl.src = thumbSrc;
+				imageEl.classList.remove("hidden");
+				imageEl.dataset.fullSrc = fullSrc;
+				imageEl.dataset.fullLoaded = "0";
+
+				if (!("IntersectionObserver" in window)) {
+					return;
+				}
+
+				const io = new IntersectionObserver((entries, observer) => {
+					entries.forEach((entry) => {
+						if (!entry.isIntersecting) return;
+						if (imageEl.dataset.fullLoaded === "1") {
+							observer.unobserve(imageEl);
+							return;
+						}
+
+						imageEl.src = imageEl.dataset.fullSrc;
+						imageEl.dataset.fullLoaded = "1";
+						observer.unobserve(imageEl);
+					});
+				}, { root: null, threshold: 0.1 });
+
+				io.observe(imageEl);
+			}
+
 			function renderEmotions(row, item) {
 				row.innerHTML = "";
 				const list = item.emotionList || [];
@@ -759,6 +804,7 @@
 					}
 				});
 				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
+				bindFragmentImage(node, item);
 				node.querySelector(".content").innerHTML = safeText(item.content, "");
 
 				renderHashtags(node.querySelector(".hashtag-box"), item.hashtagList || []);
