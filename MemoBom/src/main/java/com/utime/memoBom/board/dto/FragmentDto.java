@@ -27,6 +27,8 @@ public class FragmentDto {
 	String content;
 	/** 스크랩 여부 */
 	boolean scrap;
+	/** 이미지 uid */
+	String imageUid;
 	/** 이모션 목록 */
 	List<EmotionItem> emotionList;
 	/** 해시 태그 목록 */
@@ -44,6 +46,7 @@ public class FragmentDto {
 		result.regDate = item.getRegDate();
 		result.content = item.getContent();
 		result.scrap = item.isScrap();
+		result.imageUid = item.getImageUid();
 		result.emotionList = item.getEmotionList() == null
 		        ? List.of() : List.copyOf(item.getEmotionList());
 		result.hashtagList = item.getHashtagList() == null

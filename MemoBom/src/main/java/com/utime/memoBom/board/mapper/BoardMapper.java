@@ -14,6 +14,7 @@ import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.BoardImageVo;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.UserDevice;
@@ -183,4 +184,11 @@ public interface BoardMapper {
 	 * @return
 	 */
 	int upsertFragmentImage(@Param("user") LoginUser user, @Param("fragment") long fragmentNo, @Param("item") FragmentImageVo imgVo);
+
+	/**
+	 * Fragment Image 정보 조회
+	 * @param uid
+	 * @return
+	 */
+	BoardImageVo selectFragmentImage(@Param("uid") String uid);
 }

@@ -46,8 +46,7 @@
         <result property="content" column="content" />
         <result property="regDate" column="reg_date" />
         <result property="scrap" column="is_scrap" /> 
-        <result property="imagePath" column="img_storage_name" />
-        
+        <result property="imageUid" column="img_uid" />
         
         <association property="user" javaType="com.utime.memoBom.user.vo.UserVo">
             <result property="uid" column="user_uid" />
@@ -253,7 +252,7 @@
 	        t.IMOGI          AS topic_imogi,
 	        t.EMOJI_SET_TYPE AS emoji_set_type,
 	        
-	        img.STORAGE_NAME AS img_storage_name
+	        img.UID AS img_uid
 	
 	    FROM MB_FRAGMENT f
 		    INNER JOIN MB_USER  u ON f.USER_NO  = u.USER_NO
@@ -582,9 +581,11 @@
 	
 	<update id="upsertFragmentImage" parameterType="map">
 		MERGE INTO MB_FRAGMENT_IMAGE (
-			FRAGMENT_NO
+			UID
+			, FRAGMENT_NO
 			, USER_NO
 			, IMAGE_ORDER
+			, MIME_TYPE
 			, STORAGE_NAME
 			, ORIGINAL_NAME
 			, WIDTH
@@ -592,9 +593,11 @@
 			, FILE_SIZE
 		) KEY (FRAGMENT_NO, IMAGE_ORDER)
 		VALUES (
-			#{fragment}
+			#{item.uid}
+			, #{fragment}
 			, #{user.userNo}
 			, #{item.imageOrder}
+			, #{item.mimeType}
 			, #{item.storageName}
 			, #{item.originalName}
 			, #{item.width}
@@ -602,5 +605,18 @@
 			, #{item.fileSize}
 		)
 	</update>
+	
+	
+	<!--Fragment Image 정보 조회-->
+	<select id="selectFragmentImage" parameterType="map" resultType="com.utime.memoBom.board.vo.query.BoardImageVo">
+		SELECT
+			UID AS "uid"
+			, MIME_TYPE AS "mimeType"
+			, STORAGE_NAME AS "storageName" 
+			, ORIGINAL_NAME AS "originName"
+			, WIDTH  AS "width"
+			, HEIGHT  AS "hieght"
+		WHERE UID = #{uid}
+	</select>
 
 </mapper>

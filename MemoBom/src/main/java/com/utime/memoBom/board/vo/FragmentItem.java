@@ -23,8 +23,8 @@ public class FragmentItem {
 	String content;
 	/** 스크랩 여부 */
 	boolean scrap;
-	/** 이미지 경로 정보 */
-	String imagePath;
+	/** 이미지 정보 */
+	String imageUid;
 	/** 이모션 목록 */
 	List<EmotionItem> emotionList;
 	/** 해시 태그 목록 */

@@ -11,6 +11,7 @@ import lombok.Data;
 public class BinResultVo{
 	private byte [] binary;
 	private String mimeType;
+	private String name;
 	private Date lastDate;
 }
 

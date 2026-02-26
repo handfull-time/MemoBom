@@ -83,10 +83,9 @@ public interface BoardService {
 	/**
 	 * Fragment(편린)이미지
 	 * @param isThumb true:thumbnail, false:origin 
-	 * @param index Fragment(편린) 이미지 인덱스 시작 - 0 
-	 * @param uid uid
+	 * @param uid image의 uid
 	 * @return
 	 */
-	BinResultVo getImage(boolean isThumb, int index, String uid);
+	BinResultVo getImage(boolean isThumb, String uid);
 
 }

@@ -12,6 +12,7 @@ import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.UserDevice;
 
 public interface BoardDao {
@@ -99,4 +100,12 @@ public interface BoardDao {
 	 * @return
 	 */
 	List<FragmentItem> listMyScrapFragments(LoginUser user, String keyword, int pageNo);
+
+	/**
+	 * 이미지 정보 갖고 오기
+	 * @param isThumb
+	 * @param uid
+	 * @return
+	 */
+	BinResultVo getImage(boolean isThumb, String uid);
 }

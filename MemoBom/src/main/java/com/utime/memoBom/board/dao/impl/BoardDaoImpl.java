@@ -2,6 +2,8 @@ package com.utime.memoBom.board.dao.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -33,9 +35,11 @@ import com.utime.memoBom.board.vo.FragmentItem;
 import com.utime.memoBom.board.vo.FragmentListReqVO;
 import com.utime.memoBom.board.vo.FragmentVo;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.board.vo.query.BoardImageVo;
 import com.utime.memoBom.board.vo.query.MyCommentVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
+import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.UserDevice;
 
 import jakarta.annotation.PostConstruct;
@@ -125,8 +129,12 @@ class BoardDaoImpl implements BoardDao {
         if (!thumbPath.exists()) {
         	thumbPath.mkdirs();
         }
-		
-		final String fileName = UUID.randomUUID().toString() + ".webp";
+        
+        final String mimeType = image.getContentType();
+        final String ext = mimeType.substring(mimeType.indexOf("/") + 1 );
+        
+		final String uid = UUID.randomUUID().toString();
+		final String fileName = uid + "." + ext;
 		final File imageFile = new File( imagePath, fileName);
 		final File thumbFile = new File( thumbPath, fileName );
 		final long imageSize = image.getSize();
@@ -139,9 +147,11 @@ class BoardDaoImpl implements BoardDao {
             final String storageName = imageFile.getCanonicalPath().substring( ValueImagePath.length() );
             
             final FragmentImageVo imgVo = new FragmentImageVo(
+            		uid,
             		0, 
             		storageName,
             		reqVo.getImageName(), 
+            		mimeType,
             		reqVo.getImageWidth(), 
             		reqVo.getImageHeight(), 
             		imageSize);
@@ -339,5 +349,36 @@ class BoardDaoImpl implements BoardDao {
 	public List<FragmentItem> listMyScrapFragments(LoginUser user, String keyword, int pageNo) {
 		
 		return boardMapper.listMyScrapFragments(user, keyword, pageNo);
+	}
+	
+	@Override
+	public BinResultVo getImage(boolean isThumb, String uid) {
+		
+		final BoardImageVo imageVo = boardMapper.selectFragmentImage( uid );
+		if( imageVo == null ) {
+			log.warn("{} 이미지 없음.", uid);
+			return null;
+		}
+		
+		final String basePath = isThumb? ValueThumbPath:ValueImagePath;
+		final File imageFile = new File(basePath, imageVo.getStorageName());
+		if( ! imageFile.exists() ) {
+			log.warn("{}{} 이미지 파일 없음.", imageFile.getPath(), imageFile.getName());
+			return null;
+		}
+
+		final Path imagePath = imageFile.toPath();
+		
+		final BinResultVo result = new BinResultVo();
+		try {
+			result.setBinary( Files.readAllBytes(imagePath) );
+		} catch (IOException e) {
+			log.error("파일 로딩 오류 : " + imageFile.getName(), e);
+			return null;
+		}
+		result.setMimeType(imageVo.getMimeType() );
+		result.setName(imageVo.getOriginName() );
+		
+		return result;
 	}
 }

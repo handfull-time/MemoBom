@@ -1,6 +1,8 @@
 package com.utime.memoBom.board.controller;
 
 import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -279,10 +281,10 @@ public class BoardController {
 	 * @param response
 	 * @throws Exception
 	 */
-	private void getFragmentImageData(boolean isThumb, int index, @PathVariable String uid,
+	private void getFragmentImageData(boolean isThumb, String uid,
 	                                HttpServletResponse response) throws Exception {
 
-	    final BinResultVo image = boardServce.getImage(isThumb, index, uid);
+	    final BinResultVo image = boardServce.getImage(isThumb, uid);
 
 	    if (image == null || image.getBinary() == null) {
 	        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -297,6 +299,14 @@ public class BoardController {
 	    response.setContentType(mimeType);
 	    response.setContentLength(image.getBinary().length);
 	    
+	    // 한글 파일명 인코딩 (RFC 5987 준수)
+	    final String fileName = (image.getName() != null) ? image.getName() : "image";
+	    final String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+
+	    // Content-Disposition 헤더 설정 (inline: 브라우저 출력, attachment: 다운로드)
+	    // filename*: UTF-8 인코딩을 명시적으로 선언하여 한글 깨짐 방지
+	    response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"; filename*=UTF-8''" + encodedFileName);
+	    
 	    //브라우저 캐시도 허용
 	    response.setHeader("Cache-Control", "public, max-age=300");
 
@@ -306,30 +316,28 @@ public class BoardController {
 	    }
 	}
 	
-	@GetMapping("Thumb/{index}/{uid}")
-	public void getFragmentImageThumb(@PathVariable int index, @PathVariable String uid,
-	                                HttpServletResponse response) throws Exception {
-
-	    this.getFragmentImageData(true, index, uid, response);
-	}
-
+	/**
+	 * fragment의 섬네일 이미지
+	 * @param uid 이미지의 uid
+	 * @param response
+	 * @throws Exception
+	 */
 	@GetMapping("Thumb/{uid}")
 	public void getFragmentImageThumb(@PathVariable String uid,
 	                                HttpServletResponse response) throws Exception {
-		this.getFragmentImageThumb(0, uid, response);
+	    this.getFragmentImageData(true, uid, response);
 	}
 	
-	@GetMapping("Image/{index}/{uid}")
-	public void getFragmentImage(@PathVariable int index, @PathVariable String uid,
-	                                HttpServletResponse response) throws Exception {
-
-	    this.getFragmentImageData(false, index, uid, response);
-	}
-
+	/**
+	 * fragment의 이미지
+	 * @param uid 이미지의 uid
+	 * @param response
+	 * @throws Exception
+	 */
 	@GetMapping("Image/{uid}")
 	public void getFragmentImage(@PathVariable String uid,
 	                                HttpServletResponse response) throws Exception {
-		this.getFragmentImage(0, uid, response);
+	    this.getFragmentImageData(false, uid, response);
 	}
 }
 

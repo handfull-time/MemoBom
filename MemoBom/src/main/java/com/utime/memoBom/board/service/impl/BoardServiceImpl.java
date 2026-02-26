@@ -213,8 +213,8 @@ class BoardServiceImpl implements BoardService {
 	}
 	
 	@Override
-	public BinResultVo getImage(boolean isThumb, int index, String uid) {
-		// TODO Auto-generated method stub
-		return null;
+	public BinResultVo getImage(boolean isThumb, String uid) {
+		
+		return boardDao.getImage(isThumb, uid);
 	}
 }
