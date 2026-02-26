@@ -193,6 +193,7 @@
 		let __thumbBlob = null;
 		let __imgObjectUrl = null;
 		let __imgMeta = { width: 0, height: 0, name: '' };
+		const __initialImageUrl = /*[[${itemImageUrl}]]*/ null;
 
 		function __revokePreviewUrl() {
 			if (__imgObjectUrl) {
@@ -293,6 +294,14 @@
 			wrap?.classList.remove('hidden');
 		}
 
+		function __bindExistingImagePreview() {
+			if (!__initialImageUrl) return;
+			const imgEl = document.getElementById('imgPreview');
+			const wrap = document.getElementById('imgWrap');
+			if (imgEl) imgEl.src = __initialImageUrl;
+			wrap?.classList.remove('hidden');
+		}
+
 		async function submitFragment(url, payload) {
 			// BoardReqDto: MultipartFile(image/thumb) + 기타 필드. (항상 FormData로 전송)
 			const fd = new FormData();
@@ -376,6 +385,8 @@
 		document.addEventListener("DOMContentLoaded", initTopicModalCompact);
 
 		document.addEventListener("DOMContentLoaded", () => {
+			__bindExistingImagePreview();
+
 			// footer select img
 			const btn = document.getElementById('btnSelectImg');
 			const input = document.getElementById('imgFile');

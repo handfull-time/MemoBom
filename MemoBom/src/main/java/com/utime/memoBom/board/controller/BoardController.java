@@ -104,6 +104,9 @@ public class BoardController {
 		
 		model.addAttribute(KeyTopics, List.of( topicRes.getData() ) );
 		model.addAttribute("item", resultItem );
+		model.addAttribute("itemImageUrl", resultItem.getImage() == null
+				? null
+				: "/Fragment/Image/" + resultItem.getImage().getUid());
 		model.addAttribute("seal", key );
 		
 		final Gson gson = new GsonBuilder()
@@ -161,6 +164,7 @@ public class BoardController {
 		
 		model.addAttribute(KeyTopics, list );
 		model.addAttribute("item", null );
+		model.addAttribute("itemImageUrl", null);
 		model.addAttribute("seal", key );
 		
 		return "Board/BoardWrite";
@@ -340,4 +344,3 @@ public class BoardController {
 	    this.getFragmentImageData(false, uid, response);
 	}
 }
-
