@@ -30,6 +30,7 @@ import java.util.Properties;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContextInitializer;
@@ -48,6 +49,12 @@ import lombok.extern.slf4j.Slf4j;
 @EnableScheduling
 @SpringBootApplication
 public class MemoBomApplication {
+
+    private final ApplicationRunner schemaSyncRunner;
+
+    MemoBomApplication(ApplicationRunner schemaSyncRunner) {
+        this.schemaSyncRunner = schemaSyncRunner;
+    }
 	
 	/*
 	 * java -jar app.jar --spring.config.import=file:/etc/project.properties
@@ -252,7 +259,7 @@ google.client-secret=
 	            props.setProperty(AppDefine.KeyPushPrivate, Base64.getUrlEncoder().withoutPadding().encodeToString(privateKeyBytes) );
 
 			} catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
-				log.error("", e);
+				throw new RuntimeException("Load properties error", e);
 			} 
         }
 
@@ -273,26 +280,31 @@ google.client-secret=
 	
 	public static void main(String[] args) {
 		
-		final String space = "\n\n\n";
+		// argument load
+		final SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
 		
+		// log path setting
+		System.setProperty("env.logPath", source.getProperty("logPath") );
+        ((org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false)).reconfigure();
+		
+		final String space = "\n\n\n";
 		log.info( space + "\t\tStart MemoBom Application!" + space );
 		
 		final String processId = ManagementFactory.getRuntimeMXBean().getName();
 		final String processorId = processId.substring( 0, processId.indexOf("@") );
 		log.info( "MemoBom pid : " + processorId);
 		
-		// argument load
-		final SimpleCommandLinePropertySource source = new SimpleCommandLinePropertySource(args);
-		
 		// config file param
 		if( ! source.containsProperty("spring.config.import") ) {
 			throw new RuntimeException("Configuration file option is required. Please add '--spring.config.import={file_path}'.");
 		}
-		
+
 		String configPath =  source.getProperty("spring.config.import");
 		configPath = configPath.substring("file:".length());
+
 		log.info("config file : {}", configPath );
-		log.info("port : {}", source.getProperty("port") );
+		final String envPort = source.getProperty("port");
+		log.info("port : {}", envPort );
 		
 		final File config = new File( configPath );
 		if( ! config.exists() ) {
@@ -308,7 +320,7 @@ google.client-secret=
 		
         if( AppDefine.IsLinux ) {
 
-            port = Integer.valueOf( source.getProperty("port") );
+            port = Integer.valueOf( envPort );
             
             if( port < 1024 ) {
             	log.info("Not a valid service port.");
