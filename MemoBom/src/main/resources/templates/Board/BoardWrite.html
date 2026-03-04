@@ -53,9 +53,10 @@
 	<div class="flex flex-col min-h-[320px] h-[calc(100dvh-120px)] h-[calc(100vh-120px)]">
 
 		<!-- Image Preview (centered, optional) -->
-		<div id="imgWrap" class="hidden px-3 pt-3">
+		<div id="imgWrap" class="hidden shrink-0 px-3 pt-3">
 			<div class="relative mx-auto w-fit max-w-full">
-				<img id="imgPreview" alt="preview" class="max-w-full rounded-xl shadow-sm" />
+				<img id="imgPreview" alt="preview"
+					class="max-w-full max-h-[34dvh] max-h-[34vh] object-contain rounded-xl shadow-sm" />
 				<button id="btnImgRemove" type="button"
 					class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black/55 text-white flex items-center justify-center"
 					aria-label="이미지 제거">✕</button>
@@ -71,7 +72,7 @@
 			th:disabled="${item == null}"
 		    th:text="${item == null ? '' : item.content}"
 			style="font-size: var(--font-base); line-height: 1.6;"
-			class="flex-1 min-h-0 w-full border-0 outline-none resize-none p-3 text-dynamic-15 box-border bg-transparent"></textarea>
+			class="flex-1 min-h-[160px] w-full border-0 outline-none resize-none p-3 text-dynamic-15 box-border bg-transparent"></textarea>
 
 		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
 		<div class="sticky bottom-0 border-t border-slate-200 px-3 pt-2 pb-2.5 bg-white">
