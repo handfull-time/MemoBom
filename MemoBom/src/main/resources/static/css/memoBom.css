@@ -46,6 +46,7 @@ body {
 .text-dynamic-9xl  { font-size: calc(8rem     * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
 
 /* 5) px 기반(필요한 곳만): 캡션/메타/버튼 등 세밀 튜닝용 */
+.text-dynamic-10 { font-size: calc(10px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
 .text-dynamic-11 { font-size: calc(11px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
 .text-dynamic-12 { font-size: calc(12px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
 .text-dynamic-13 { font-size: calc(13px * clamp(var(--font-scale-min), var(--font-scale), var(--font-scale-max))); }
