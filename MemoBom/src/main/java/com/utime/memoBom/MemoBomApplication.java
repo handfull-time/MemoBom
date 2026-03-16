@@ -50,12 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication
 public class MemoBomApplication {
 
-    private final ApplicationRunner schemaSyncRunner;
-
-    MemoBomApplication(ApplicationRunner schemaSyncRunner) {
-        this.schemaSyncRunner = schemaSyncRunner;
-    }
-	
 	/*
 	 * java -jar app.jar --spring.config.import=file:/etc/project.properties
 	 * 
