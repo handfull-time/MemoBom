@@ -1,6 +1,5 @@
 package com.utime.memoBom.push.controller;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.utime.memoBom.common.security.LoginUser;
-import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.dto.PushClickDto;
 import com.utime.memoBom.push.dto.PushSubscriptionDto;
@@ -26,9 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PushController {
 
-    @Value("${app.push.vapid.public-key}")
-    private String vapidPublicKey;
-    
     private final PushSendService pushSendService;
     
 
@@ -39,7 +34,7 @@ public class PushController {
     @GetMapping("vapid-public-key.json")
     public ReturnBasic getVapidPublicKey() {
         // Front에 공개키 전달
-        return new ReturnBasic(AppDefine.ERROR_OK, vapidPublicKey);
+        return pushSendService.getPublicKey();
     }
 
     /**

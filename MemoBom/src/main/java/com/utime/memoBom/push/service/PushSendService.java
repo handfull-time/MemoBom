@@ -11,6 +11,12 @@ import com.utime.memoBom.push.vo.PushSendDataVo;
 public interface PushSendService {
 
 	/**
+	 * 공개키 전달
+	 * @return
+	 */
+	ReturnBasic getPublicKey();
+
+	/**
 	 * 구독 신청
 	 * @param user
 	 * @param dto
@@ -63,5 +69,6 @@ public interface PushSendService {
 	 * @return
 	 */
 	int sendMessageNewFragment(LoginUser user, String topicUid);
+
 
 }
