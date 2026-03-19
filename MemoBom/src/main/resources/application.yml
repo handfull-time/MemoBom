@@ -66,8 +66,8 @@ app:
   push:
     vapid:
       subject: "mailto:utimezgd@gmail.com" # 관리자 연락처 필수
-      public-key: ${env.push.public}
-      private-key: ${env.push.private}
+#      public-key: ${env.push.public}
+#      private-key: ${env.push.private}
   schema-sync:
     enabled: true
     mapper-locations: "classpath:**/mapper/CreateMapper.xml"

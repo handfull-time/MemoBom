@@ -7,30 +7,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.security.Security;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 import java.util.Properties;
 
 import javax.crypto.spec.IvParameterSpec;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContextInitializer;
@@ -50,12 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication
 public class MemoBomApplication {
 
-    private final ApplicationRunner schemaSyncRunner;
-
-    MemoBomApplication(ApplicationRunner schemaSyncRunner) {
-        this.schemaSyncRunner = schemaSyncRunner;
-    }
-	
 	/*
 	 * java -jar app.jar --spring.config.import=file:/etc/project.properties
 	 * 
@@ -136,31 +118,6 @@ google.client-secret=
         }
 	}
 	
-	/** EC 공개키 → uncompressed point (0x04 + X + Y) */
-    private static byte[] encodePublicKey(ECPublicKey publicKey) {
-    	final byte[] x = bigIntTo32Bytes(publicKey.getW().getAffineX());
-    	final byte[] y = bigIntTo32Bytes(publicKey.getW().getAffineY());
-
-    	final byte[] encoded = new byte[65];
-        encoded[0] = 0x04; // uncompressed
-        System.arraycopy(x, 0, encoded, 1, 32);
-        System.arraycopy(y, 0, encoded, 33, 32);
-        return encoded;
-    }
-
-    /** BigInteger → 32 bytes */
-    private static byte[] bigIntTo32Bytes(BigInteger value) {
-        final byte[] src = value.toByteArray();
-        final byte[] dst = new byte[32];
-
-        if (src.length > 32) {
-            System.arraycopy(src, src.length - 32, dst, 0, 32);
-        } else {
-            System.arraycopy(src, 0, dst, 32 - src.length, src.length);
-        }
-        return dst;
-    }
-
     /** 환경 값 누락 검사 */
 	private static void checkProperty(final File file) {
 	    
@@ -233,37 +190,6 @@ google.client-secret=
 	        props.setProperty(AppDefine.KeyJwtSecret, value);
 	    }
 	    
-        if (!props.containsKey(AppDefine.KeyPushPrivate)) {
-        	// 
-			try {
-			    // 1. BouncyCastle 보안 공급자 등록 (P-256 곡선 알고리즘 사용을 위함)
-		        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-		            Security.addProvider(new BouncyCastleProvider());
-		        }
-		        
-	            // 2. EC(Elliptic Curve) 키 쌍 생성기 초기화
-				final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(nl.martijndwars.webpush.Utils.ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
-//				final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
-	            // VAPID는 반드시 'secp256r1' (또는 prime256v1) 곡선을 사용해야 함
-	            keyPairGenerator.initialize(new ECGenParameterSpec(nl.martijndwars.webpush.Utils.CURVE));
-	            // 3. 키 생성
-	            final KeyPair keyPair = keyPairGenerator.generateKeyPair();
-	            
-	            final ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
-	            final ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
-
-	            final byte[] publicKeyBytes = encodePublicKey(publicKey);
-	            final byte[] privateKeyBytes = bigIntTo32Bytes(privateKey.getS());
-	            
-	            props.setProperty(AppDefine.KeyPushPublic, Base64.getUrlEncoder().withoutPadding().encodeToString(publicKeyBytes) );
-	            props.setProperty(AppDefine.KeyPushPrivate, Base64.getUrlEncoder().withoutPadding().encodeToString(privateKeyBytes) );
-
-			} catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
-				throw new RuntimeException("Load properties error", e);
-			} 
-        }
-
-
 	    // 3. Save (UTF-8 Writer 사용)
 	    if (beforeLen < props.size()) {
 	        // log.info("config properties update");
