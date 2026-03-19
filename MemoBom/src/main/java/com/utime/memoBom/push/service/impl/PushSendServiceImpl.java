@@ -109,9 +109,11 @@ class PushSendServiceImpl implements PushSendService {
         
         final String publicKey, privateKey;
         if( kvDao.containKey(AppDefine.KeyPushPrivate) ) {
+        	log.info("Push 키 DB에서 읽음");
         	publicKey = this.kvDao.getValue(AppDefine.KeyPushPublic);
         	privateKey = this.kvDao.getValue(AppDefine.KeyPushPrivate);
         }else {
+        	log.info("Push 키 새로 생성");
         	 // EC(Elliptic Curve) 키 쌍 생성기 초기화
 			final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(nl.martijndwars.webpush.Utils.ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
 //			final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
@@ -133,6 +135,10 @@ class PushSendServiceImpl implements PushSendService {
             this.kvDao.setValue(AppDefine.KeyPushPublic, publicKey); 
         	this.kvDao.setValue(AppDefine.KeyPushPrivate, privateKey);
         }
+        
+        log.info("subject : {}", subject);
+        log.info("publicKey : {}", publicKey);
+        log.info("privateKey : {}", privateKey);
 
         // publicKeyBytes는 반드시 65바이트여야 함 (0x04로 시작)
         this.pushService = new PushService(publicKey, privateKey, subject);
