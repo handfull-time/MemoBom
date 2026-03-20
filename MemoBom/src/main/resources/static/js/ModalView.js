@@ -86,9 +86,8 @@ async function openPopup(sendObj) {
 			data: sendValue.data
 		});
 
-		const response = await apiRequest(sendValue.url, opts);
-		if (!response.ok) throw new Error(`HTTP 오류: ${response.status} ${response.statusText}`);
-		const html = await response.text();
+		const html = await apiRequestHtml(sendValue.url, opts);
+		if (html == null) return;
 
 		// 스택 인덱스
 		popupIndex++;

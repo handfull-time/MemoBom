@@ -73,6 +73,53 @@ async function apiRequest(url, options = {}, { timeoutMs = 15000, debug = true }
 	}
 }
 
+
+async function apiRequestHtml(url, options = {}, { timeoutMs = 15000, debug = true } = {}) {
+	const controller = new AbortController();
+	const t = setTimeout(() => controller.abort(new Error('timeout')), timeoutMs);
+
+	const finalOptions = {
+		credentials: 'include',
+		...options,
+		headers: {
+			Accept: 'text/html',
+			...(options.headers || {}),
+		},
+		signal: controller.signal,
+	};
+
+	if (debug) console.info('🚀 request(html)', url, finalOptions);
+
+	try {
+		const res = await fetch(url, finalOptions);
+		if (debug) console.info('✅ response(html)', res);
+
+		if (res.status === 401 || res.status === 403) {
+			const cp = window.contextPath || '';
+			const returnUrl = encodeURIComponent(window.location.href);
+			window.location.href = cp + "/Auth/Login.html?returnUrl=" + returnUrl;
+			return null;
+		}
+
+		const text = await res.text().catch(() => null);
+		if (debug) console.info('✅ response(html) - data', text);
+
+		if (!res.ok) {
+			const msg = (typeof text === 'string' && text.slice(0, 200)) || `HTTP ${res.status}`;
+			throw new ApiError(msg, { status: res.status, url, data: text, headers: res.headers });
+		}
+
+		return text ?? '';
+	} catch (err) {
+		if (err?.name === 'AbortError') {
+			throw new ApiError('Request timeout', { status: 0, url });
+		}
+		throw err;
+	} finally {
+		clearTimeout(t);
+	}
+}
+
 async function apiGetWithParam(baseUrl, params, opts) {
 
 	// 1. URLSearchParams 객체 생성
