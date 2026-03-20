@@ -410,63 +410,113 @@
 		})();
 
 		(function () {
+
 			const $togglePush = document.getElementById('togglePush');
 			const $pushHint = document.getElementById('pushHint');
 			if (!$togglePush) return;
 
+			/**
+			 * 안내 문구를 설정합니다.
+			 * @param {string} msg 표시할 메시지
+			 * @returns {void}
+			 */
 			function setHint(msg) {
-				if ($pushHint) $pushHint.textContent = msg || '';
-			}
-			function setBusy(busy) {
-				if (busy) $togglePush.setAttribute('disabled', '');
-				else $togglePush.removeAttribute('disabled');
+				if ($pushHint) {
+					$pushHint.textContent = msg || '';
+				}
 			}
 
+			/**
+			 * 토글의 busy 상태를 설정합니다.
+			 * @param {boolean} busy 처리 중 여부
+			 * @returns {void}
+			 */
+			function setBusy(busy) {
+				if (busy) {
+					$togglePush.setAttribute('disabled', '');
+				} else {
+					$togglePush.removeAttribute('disabled');
+				}
+			}
+
+			/**
+			 * Push 상태에 맞는 안내 문구를 생성합니다.
+			 * @param {{
+			 *   supported: boolean,
+			 *   permission: NotificationPermission,
+			 *   userEnabled: boolean,
+			 *   subscribed: boolean,
+			 *   ready: boolean
+			 * }} state Push 상태
+			 * @returns {string} 안내 문구
+			 */
+			function buildHint(state) {
+				if (!state.supported) {
+					return '이 브라우저는 푸시를 지원하지 않습니다.';
+				}
+
+				if (!state.userEnabled) {
+					return state.subscribed
+						? '푸시 수신: OFF (이 브라우저 구독 잔여 상태)'
+						: '푸시 수신: OFF';
+				}
+
+				if (state.permission !== 'granted') {
+					if (state.permission === 'denied') {
+						return '푸시 수신: ON (브라우저 알림 권한 차단)';
+					}
+					return '푸시 수신: ON (브라우저 알림 권한 필요)';
+				}
+
+				if (!state.subscribed) {
+					return '푸시 수신: ON (이 브라우저 미구독 상태)';
+				}
+
+				return '푸시 수신: ON (이 브라우저 구독 완료)';
+			}
+
+			/**
+			 * 화면에 Push 상태를 반영합니다.
+			 * @param {{
+			 *   supported: boolean,
+			 *   permission: NotificationPermission,
+			 *   userEnabled: boolean,
+			 *   subscribed: boolean,
+			 *   ready: boolean
+			 * }} state Push 상태
+			 * @returns {void}
+			 */
+			function renderPushState(state) {
+				$togglePush.checked = !!state.userEnabled;
+				setHint(buildHint(state));
+
+				if (!state.supported) {
+					$togglePush.setAttribute('disabled', '');
+				}
+			}
+
+			/**
+			 * 현재 Push 상태를 조회하여 화면에 초기 반영합니다.
+			 * @async
+			 * @returns {Promise<void>}
+			 */
 			async function init() {
 				setBusy(true);
+
 				try {
 					if (!window.PWA_PUSH?.supported()) {
-						$togglePush.checked = false;
-						$togglePush.setAttribute('disabled', '');
-						setHint('이 브라우저는 푸시를 지원하지 않습니다.');
+						renderPushState({
+							supported: false,
+							permission: 'denied',
+							userEnabled: false,
+							subscribed: false,
+							ready: false
+						});
 						return;
 					}
 
-					// 1) 계정 설정(서버)
-					const enabled = await PWA_PUSH.getUserPushStatus();
-
-					// 2) 브라우저 권한/구독(클라이언트)
-					const perm = window.PWA_PUSH.permission();
-					const sub = await PWA_PUSH.getSubscription();
-					const deviceSubscribed = !!sub;
-
-					// 토글은 "계정 설정"을 그대로 표시
-					$togglePush.checked = enabled;
-
-					// 3) 상태 문구(불일치 표시)
-					if (!enabled) {
-						setHint(deviceSubscribed
-							? '푸시 수신: OFF (이 브라우저는 구독이 남아있어 정리 중...)'
-							: '푸시 수신: OFF');
-						// 계정 OFF면 남은 구독 정리(선택)
-						if (deviceSubscribed) PWA_PUSH.unsubscribeDevice().catch(console.warn);
-						return;
-					}
-
-					// enabled == true
-					if (perm !== 'granted') {
-						setHint('푸시 수신: ON (이 브라우저 알림 권한이 꺼져있음)');
-						return;
-					}
-
-					if (!deviceSubscribed) {
-						setHint('푸시 수신: ON (이 브라우저는 아직 구독되지 않음: 구독 처리 중...)');
-						// 자동 구독(선택) — 사용자 UX에 따라 버튼으로 유도해도 됨
-						PWA_PUSH.subscribeDevice().catch(console.warn);
-						return;
-					}
-
-					setHint('푸시 수신: ON (이 브라우저 구독 완료)');
+					const state = await PWA_PUSH.getPushState();
+					renderPushState(state);
 				} catch (e) {
 					console.error(e);
 					setHint('푸시 상태 조회 실패');
@@ -481,26 +531,46 @@
 				const prev = !next;
 
 				setBusy(true);
-				try {
-					// 1) 서버(계정) 설정
-					await PWA_PUSH.setUserPushStatus(next);
 
-					// 2) 디바이스 구독/해제는 비동기
-					if (next) {
-						setHint('푸시 수신: ON (이 기기 구독 처리 중...)');
-						PWA_PUSH.subscribeDevice().catch(err => console.warn(err));
-					} else {
-						setHint('푸시 수신: OFF (이 기기 구독 해제 중...)');
-						PWA_PUSH.unsubscribeDevice().catch(err => console.warn(err));
+				try {
+					setHint(next
+						? '푸시 수신 설정 적용 중...'
+						: '푸시 수신 해제 적용 중...');
+
+					const result = await PWA_PUSH.setPushEnabled(next);
+
+					if (!result?.ok) {
+						$togglePush.checked = prev;
+						renderPushState(result?.state || {
+							supported: true,
+							permission: PWA_PUSH.permission(),
+							userEnabled: prev,
+							subscribed: prev,
+							ready: false
+						});
+
+						showToast(
+							'알림',
+							next ? '푸시 수신 설정에 실패했습니다.' : '푸시 수신 해제에 실패했습니다.',
+							ToastType.ERROR,
+							1500
+						);
+						return;
 					}
 
-					showToast('', next ? '푸시 수신이 켜졌습니다.' : '푸시 수신이 꺼졌습니다.', ToastType.SUCCESS, 1200);
+					renderPushState(result.state);
 
+					showToast(
+						'알림',
+						next ? '푸시 수신이 켜졌습니다.' : '푸시 수신이 꺼졌습니다.',
+						ToastType.SUCCESS,
+						1200
+					);
 				} catch (err) {
 					console.error(err);
 					$togglePush.checked = prev;
 					setHint('푸시 설정 변경 실패');
-					showToast('', '푸시 설정 변경에 실패했습니다.', ToastType.ERROR, 1500);
+					showToast('알림', '푸시 설정 변경에 실패했습니다.', ToastType.ERROR, 1500);
 				} finally {
 					setBusy(false);
 				}
