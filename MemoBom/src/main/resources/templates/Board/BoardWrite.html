@@ -453,8 +453,9 @@
 
 				if (data.code === "0") {
 					await alertP("작은 조각이 추가됐습니다.");
-					window.__disableDirtyGuard__?.();
-					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
+					window.__disableDirtyGuard__?.(() => {
+						location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
+					});
 				} else {
 					console.info(data);
 					showToast("오류", data.message, ToastType.WARNING, 1800);
@@ -504,8 +505,9 @@
 
 				if (data.code === "0") {
 					await alertP("작은 조각이 "+actionName+"됐습니다.");
-					window.__disableDirtyGuard__?.();
-					location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
+					window.__disableDirtyGuard__?.(() => {
+						location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
+					});
 				} else {
 					console.info(data);
 					showToast("오류", data.message, ToastType.WARNING, 1800);
@@ -570,6 +572,13 @@
 			});
 
 			window.addEventListener('popstate', async () => {
+				if (allowLeave && typeof window.__onDirtyGuardPopped__ === 'function') {
+					const cb = window.__onDirtyGuardPopped__;
+					window.__onDirtyGuardPopped__ = null;
+					cb();
+					return;
+				}
+
 				// 우리가 guard 제거하려고 history.back() 했을 때 발생한 popstate는 무시
 				if (suppressNextPop) {
 					suppressNextPop = false;
@@ -598,10 +607,19 @@
 			});
 
 			// ✅ 저장 성공 후 이동 전에 호출할 “안전 종료” 함수 노출
-			window.__disableDirtyGuard__ = () => {
+			window.__disableDirtyGuard__ = (onGuardCleared) => {
 				allowLeave = true;
 				isDirty = false;
 				window.removeEventListener('beforeunload', onBeforeUnload);
+
+				if (guardPushed) {
+					window.__onDirtyGuardPopped__ = (typeof onGuardCleared === 'function') ? onGuardCleared : null;
+					guardPushed = false;
+					history.back();
+					return;
+				}
+
+				if (typeof onGuardCleared === 'function') onGuardCleared();
 			};
 		})();
 	</script>
