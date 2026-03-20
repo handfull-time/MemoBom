@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">Mosaic</th:block>
+<th:block layout:fragment="title">주제</th:block>
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: Header_Search(
 			leftTitle=~{Fragments/Icons :: favicon},
-			title='Mosaic', 
+			title='주제', 
 			rightTitle=~{Fragments/Icons :: topic_write}
 		) }"></th:block>
 </th:block>
@@ -35,8 +35,8 @@
 		<!-- 단일 Mosaic(Topic UID 지정) -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">Mosaic</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">선택한 Mosaic입니다.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">주제</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">선택한 주제입니다.</p>
 			</div>
 
 			<div id="singleList" class="space-y-2"></div>
@@ -47,8 +47,8 @@
 		<!-- 상단 섹션: 인기 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">인기 Mosaic</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">요즘 뜨는 Mosaic을 모아봤어요.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">인기 주제</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">요즘 뜨는 주제를 모아봤어요.</p>
 			</div>
 
 			<div id="trendingList" class="space-y-2"></div>
@@ -65,8 +65,8 @@
 		<!-- 하단 섹션: 새로운 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">새로운 Mosaic</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">최근 생성된 Mosaic이에요.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">새로운 주제</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">최근 생성된 주제에요.</p>
 			</div>
 
 			<div id="freshList" class="space-y-2"></div>
@@ -308,7 +308,7 @@
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
@@ -319,7 +319,7 @@
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 						const url = /*[[@{/Mosaic/Item.html}]]*/ "/Mosaic/Item.html";
@@ -346,7 +346,7 @@
 						
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 						
@@ -374,7 +374,7 @@
 
 						const uid = (t.uid || "").trim();
 						if (!uid) {
-							showToast("안내", "Mosaic UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 
@@ -501,7 +501,7 @@
 					return;
 				}
 
-				// uid가 있으면: 단일 Mosaic 화면(1개만)
+				// uid가 있으면: 단일 주제 화면(1개만)
 				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
 				if (uidMode) {
 					fetchPage(ETopicSortType.uid);
@@ -526,7 +526,7 @@
 				return;
 			}
 
-			// Mosaic 검색 처리
+			// 주제 검색 처리
 			const url = /*[[@{/Mosaic/index.html}]]*/ "/Mosaic/index.html";
 			location.replace(url + "?keyword=" + encodeURIComponent(keyword));
 		}

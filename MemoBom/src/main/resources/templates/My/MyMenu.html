@@ -30,7 +30,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">Mosaic</span>
+					<span class="font-medium">주제</span>
 				</a>
 
 				<a th:href="@{/My/Fragments.html}"
@@ -39,7 +39,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">Fragments</span>
+					<span class="font-medium">메모</span>
 				</a>
 
 				<a th:href="@{/My/Comments.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
@@ -47,7 +47,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Comments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">Comments</span>
+					<span class="font-medium">댓글</span>
 				</a>
 
 				<a th:href="@{/My/Scrap.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition

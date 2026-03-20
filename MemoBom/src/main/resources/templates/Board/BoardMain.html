@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">Memo</th:block>
+<th:block layout:fragment="title">메모</th:block>
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: Header_Search(
 		leftTitle=~{Fragments/Icons :: favicon},
-		title='Fragment', 
+		title='메모', 
 		rightTitle=~{Fragments/Icons :: fragment_write}
 	) }"></th:block>
 </th:block>

@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">Mosaic</th:block>
+<th:block layout:fragment="title">주제</th:block>
 
 <th:block layout:fragment="css">
 </th:block>
 
 <th:block layout:fragment="header">
 	<th:block
-		th:replace="~{Fragments/Header :: Header_Back(${topic.uid == null ? 'Mosaic New' : ('Mosaic ' + topic.name)})}">
+		th:replace="~{Fragments/Header :: Header_Back(${topic.uid == null ? '새로운 주제' : ('주제 ' + topic.name)})}">
 	</th:block>
 </th:block>
 
@@ -17,7 +17,7 @@
 	<div class="mx-auto w-full px-4 py-4 space-y-4">
 		<!-- Page intro -->
 		<div class="px-1">
-			<h2 class="text-dynamic-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새 Mosaic' :
+			<h2 class="text-dynamic-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새로운 주제' :
 				topic.name}]]</h2>
 			<p class="mt-1 text-dynamic-xs text-gray-500">이름과 스타일을 정하고, 옵션을 선택해 주세요.</p>
 		</div>
@@ -426,7 +426,7 @@
 					}
 
 					if (data.code === "0") {
-						await alertP("Mosaic이 저장되었습니다.");
+						await alertP("주제가 저장되었습니다.");
 						location.replace(/*[[@{/Mosaic/index.html}]]*/ '/Mosaic/index.html');
 					} else {
 						showToast("오류", data.message || "저장 실패", ToastType.ERROR);

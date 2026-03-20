@@ -9,7 +9,7 @@
 					th:classappend="${#strings.startsWith(currentPath, '/Mosaic')}
 						? ' border-2 border-gray-600 bg-sky-50'
 						: ' border-2 border-transparent bg-transparent'">
-					<img th:src="@{/images/bottom/mosaic.svg}" alt="Mosaic"
+					<img th:src="@{/images/bottom/mosaic.svg}" alt="주제"
 						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
 						th:classappend="${#strings.startsWith(currentPath, '/Mosaic')} ? '' : ' opacity-80'" />
 				</div>
@@ -22,7 +22,7 @@
 					th:classappend="${#strings.startsWith(currentPath, '/Fragment')}
 						? ' border-2 border-gray-600 bg-sky-50'
 						: ' border-2 border-transparent bg-transparent'">
-					<img th:src="@{/images/bottom/fragment.svg}" alt="Fragment"
+					<img th:src="@{/images/bottom/fragment.svg}" alt="메모"
 						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
 						th:classappend="${#strings.startsWith(currentPath, '/Fragment')} ? '' : ' opacity-80'" />
 				</div>
