@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutModal}">
+
+<th:block layout:fragment="modalTitle">모달 샘플</th:block>
+
+<th:block layout:fragment="modalContent">
+	<div class="space-y-3 text-sm sm:text-base">
+		<p>모바일에서는 하단 시트 형태로, PC에서는 중앙 팝업 형태로 표시됩니다.</p>
+		<label class="block">
+			<span class="block mb-1 font-medium">샘플 입력</span>
+			<input type="text" class="w-full rounded-md border border-gray-300 px-3 py-2" placeholder="텍스트를 입력하세요." />
+		</label>
+		<p class="text-gray-500">화면 폭을 줄여 레이아웃 변화를 확인해 보세요.</p>
+	</div>
+</th:block>
+
+<th:block layout:fragment="modalButton">
+	<button type="button" onclick="closePopup(this)"
+		class="px-4 py-2 rounded-md border border-gray-300 bg-white">닫기</button>
+	<button type="button"
+		class="px-4 py-2 rounded-md bg-blue-600 text-white">확인</button>
+</th:block>
+
+</html>

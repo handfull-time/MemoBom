@@ -107,7 +107,7 @@ async function openPopup(sendObj) {
 
 		const popupWindow = newPopup.querySelector("#popupWindow");
 		popupWindow.id = newWindowId;
-		popupWindow.style.width = sendValue.width;
+		popupWindow.style.width = window.matchMedia('(max-width: 639px)').matches ? '100%' : sendValue.width;
 		popupWindow.style.zIndex = String(zFor(index, 'window'));
 		popupWindow.setAttribute('role', 'dialog');
 		popupWindow.setAttribute('aria-modal', 'true');
@@ -181,6 +181,7 @@ async function openPopup(sendObj) {
 
 // 드래그 시작
 function startDrag(event, headerElement) {
+	if (window.matchMedia('(max-width: 639px)').matches) return;
 	const popup = headerElement.closest(".modalTop");
 	if (!popup) return;
 

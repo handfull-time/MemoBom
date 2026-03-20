@@ -117,6 +117,20 @@ public class TestController {
 		return "Test/Test2";
 	}
 
+
+
+	@GetMapping("Modal.html")
+	public String testModal(Model model) {
+	    model.addAttribute("showHeader", false);
+	    model.addAttribute("showFooter", false);
+		return "Test/TestModal";
+	}
+
+	@GetMapping("ModalSample.html")
+	public String testModalSample() {
+		return "Test/TestModalSample";
+	}
+
 	@GetMapping("Topic")
 	public String topic(Model model) {
 

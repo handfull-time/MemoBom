@@ -3,20 +3,15 @@
 	<!-- 팝업을 위한 컨테이너 -->
 	<div id="popupContainer">
 		<div id="popupOverlay"
-			class="fixed inset-0 z-45 bg-black bg-opacity-50 hidden flex justify-center items-center">
-			<div id="popupWindow" class="modalTop bg-white rounded-lg shadow-lg relative">
+			class="fixed inset-0 z-45 bg-black/50 hidden flex justify-center items-end sm:items-center p-0 sm:p-4">
+			<div id="popupWindow"
+				class="modalTop bg-white shadow-lg relative w-full max-h-[100dvh] sm:max-h-[calc(100dvh-2rem)] sm:max-w-[min(90vw,960px)] rounded-t-2xl sm:rounded-lg overflow-hidden">
 				<div id="popupContentContainer">
 					<!-- 서버에서 로드된 내용이 여기에 삽입됨 -->
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- 로딩 오버레이 추가 (popupContainer 바깥 or 안쪽 어디든 상관없음) -->
-	<!-- 변경: 로딩 오버레이는 항상 최상단 -->
-	<!-- <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center"
-		style="z-index:10000">
-		<div class="text-white text-dynamic-xl font-semibold animate-pulse">로딩 중...</div>
-	</div> -->
 
 	<script type="text/javascript" th:src="@{/js/ModalView.js(v=${assetVersion})}"></script>
 </th:block>
