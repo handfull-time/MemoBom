@@ -274,11 +274,6 @@
 					fd.append('profile', resized, 'profile.jpg');
 
 					const cp = window.contextPath || '';
-					// const res = await fetch(cp + '/My/updateUser.json', {
-					// 	method: 'POST',
-					// 	body: fd,
-					// 	credentials: 'include'
-					// }).then(r => r.json());
 					const res = await apiFormData(cp + '/My/updateUser.json', fd );
 					if (res?.code !== '0') {
 						await alertP(res?.message || '프로필 이미지 저장 실패');
@@ -316,11 +311,6 @@
 					fd.append('nickname', nickname);
 
 					const cp = window.contextPath || '';
-					// const res = await fetch(cp + '/My/updateUser.json', {
-					// 	method: 'POST',
-					// 	body: fd,
-					// 	credentials: 'include'
-					// }).then(r => r.json());
 					const res = await apiFormData(cp + '/My/updateUser.json', fd );
 
 					if (res?.code === '0') {
@@ -362,6 +352,9 @@
 					const ok = await confirmP('로그아웃 하시겠습니까?');
 					if (!ok) return;
 
+					// 푸시 해지.
+					await PWA_PUSH.setPushEnabled(false);
+					
 					try {
 						showLoading?.();
 						const cp = window.contextPath || '';

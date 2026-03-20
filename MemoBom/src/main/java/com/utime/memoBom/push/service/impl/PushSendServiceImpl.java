@@ -114,9 +114,8 @@ class PushSendServiceImpl implements PushSendService {
         	privateKey = this.kvDao.getValue(AppDefine.KeyPushPrivate);
         }else {
         	log.info("Push 키 새로 생성");
-        	 // EC(Elliptic Curve) 키 쌍 생성기 초기화
+        	// 키 쌍 생성기 초기화
 			final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(nl.martijndwars.webpush.Utils.ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
-//			final KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
             // VAPID는 반드시 'secp256r1' (또는 prime256v1) 곡선을 사용해야 함
             keyPairGenerator.initialize(new ECGenParameterSpec(nl.martijndwars.webpush.Utils.CURVE));
 

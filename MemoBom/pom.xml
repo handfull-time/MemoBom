@@ -129,7 +129,10 @@
 		<dependency>
 		    <groupId>nl.martijndwars</groupId>
 		    <artifactId>web-push</artifactId>
-		    <version>5.1.2</version>
+		    <version>5.1.1</version>
+		    <!--
+			  5.1.2는 Chromium(Chrome/Whale) + FCM 전송 시 Crypto-Key header format 403 문제가 있어 5.1.1 사용
+			-->
 		</dependency>
 		
 		<dependency>

@@ -311,7 +311,11 @@
 		if (res?.code !== '0') {
 			throw new Error(res?.message || 'status_error');
 		}
-		return !!res.data;
+		
+		const result = !!res.data;
+		console.info('GET /Push/Status.json', result );
+		
+		return result;
 	}
 
 	/**
@@ -322,6 +326,8 @@
 	 * @returns {Promise<boolean>} 설정 완료 후의 상태값
 	 */
 	async function setUserPushStatus(enabled) {
+		console.info('SET /Push/Status.json', enabled );
+		
 		const url = cp() + '/Push/Status.json?enabled=' + (enabled ? 'true' : 'false');
 		const res = await apiRequest(url, { method: 'POST' });
 		if (res?.code !== '0') {
