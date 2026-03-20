@@ -162,7 +162,7 @@ public class BoardController {
 	}
 	
 	/**
-	 * 편린 저장
+	 * 메모 저장
 	 * @param request
 	 * @param user
 	 * @param device

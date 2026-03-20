@@ -53,44 +53,44 @@ public class TestController {
     
     private final PushSendService pushSendService;
 	
-    @GetMapping("Login")
+    @GetMapping("Login.html")
 	public String testLogin() throws Exception {
     	return "Test/TestLogin";
     }
     
-    @GetMapping("LoginGo")
-	public String testLoginGo(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam() String id) throws Exception {
-
-    	UserVo userVo = userDao.findById("localPc", id);
-    	
-    	if( userVo == null ) {
-    		userVo = new UserVo();
-    		userVo.setId(id);
-    		userVo.setProvider("localPc");
-    		userVo.setEnabled(true);
-    		userVo.setEmail(id + "@Gmail.cococo" );
-    		userVo.setRole(EJwtRole.User);
-    		userVo.setNickname( "Tester-" + id );
-    		userVo.setProfileUrl( "/MemoBom/images/profile-placeholder.svg" );
-    		
-    		log.info("사용자 추가 정보 : {}", userVo);
-    		
-    		userDao.addUser(userVo);
-    	}
-		
-		try {
-			ReturnBasic result = jwtProvider.procLogin(request, response, userVo);
-			log.info(result.toString());
-		} catch (Exception e) {
-			log.error("", e);
-			model.addAttribute("res", new ReturnBasic("E", e.getMessage()) );
-			model.addAttribute(AppDefine.KeyShowFooter, false );
-		    model.addAttribute(AppDefine.KeyLoadScript, false );
-			return "Common/ErrorAlert";
-		}
-
-		return "redirect:/";
-	}
+//    @GetMapping("LoginGo")
+//	public String testLoginGo(HttpServletRequest request, HttpServletResponse response, Model model, @RequestParam() String id) throws Exception {
+//
+//    	UserVo userVo = userDao.findById("localPc", id);
+//    	
+//    	if( userVo == null ) {
+//    		userVo = new UserVo();
+//    		userVo.setId(id);
+//    		userVo.setProvider("localPc");
+//    		userVo.setEnabled(true);
+//    		userVo.setEmail(id + "@Gmail.cococo" );
+//    		userVo.setRole(EJwtRole.User);
+//    		userVo.setNickname( "Tester-" + id );
+//    		userVo.setProfileUrl( "/MemoBom/images/profile-placeholder.svg" );
+//    		
+//    		log.info("사용자 추가 정보 : {}", userVo);
+//    		
+//    		userDao.addUser(userVo);
+//    	}
+//		
+//		try {
+//			ReturnBasic result = jwtProvider.procLogin(request, response, userVo);
+//			log.info(result.toString());
+//		} catch (Exception e) {
+//			log.error("", e);
+//			model.addAttribute("res", new ReturnBasic("E", e.getMessage()) );
+//			model.addAttribute(AppDefine.KeyShowFooter, false );
+//		    model.addAttribute(AppDefine.KeyLoadScript, false );
+//			return "Common/ErrorAlert";
+//		}
+//
+//		return "redirect:/";
+//	}
 
 	@GetMapping("Push.html")
 	public String testPush(Model model) {
