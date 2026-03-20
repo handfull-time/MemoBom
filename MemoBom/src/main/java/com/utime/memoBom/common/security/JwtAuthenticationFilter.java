@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	}
     	
     	final boolean result = whiteListPaths.stream().anyMatch(path::startsWith);
-    	log.info("{} -> {}", path, result);
+//    	log.info("{} -> {}", path, result);
     	return result;
     }
 

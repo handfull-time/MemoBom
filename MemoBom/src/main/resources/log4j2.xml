@@ -12,6 +12,11 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout disableAnsi="false" pattern="${CONSOLE_LOG_FORMAT}"/>
+            <RegexFilter
+                regex="(?s).*NO_LOG.*"
+                onMatch="DENY"
+                onMismatch="NEUTRAL"
+                useRawMsg="true"/>
         </Console>
 
         <RollingFile name="File"
@@ -19,6 +24,11 @@
             filePattern="${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyyMMdd}.log">
             
             <PatternLayout pattern="${FILE_LOG_FORMAT}" />
+            <RegexFilter
+                regex="(?s).*NO_LOG.*"
+                onMatch="DENY"
+                onMismatch="NEUTRAL"
+                useRawMsg="true"/>
             
             <Policies>
                 <TimeBasedTriggeringPolicy />
@@ -51,11 +61,6 @@
         <Logger name="jdbc.resultset" level="OFF" />
         <Logger name="jdbc.resultsettable" level="OFF" />
         <Logger name="jdbc.connection" level="OFF" />
-        
-        <RegexFilter regex="(?s).*NO_LOG.*"
-                       onMatch="DENY"
-                       onMismatch="NEUTRAL"
-                       useRawMsg="true"/>
 
         <Root level="INFO">
             <AppenderRef ref="Console" />
