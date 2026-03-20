@@ -77,7 +77,7 @@ async function openPopup(sendObj) {
 	// 포커스 복원용 저장
 	lastFocusedEl = document.activeElement;
 
-	loadingHide();
+	loadingShow();
 
 	try {
 		const opts = buildRequestOptions({
@@ -174,7 +174,7 @@ async function openPopup(sendObj) {
 	} catch (err) {
 		console.error(err);
 	} finally {
-		loadingShow();
+		loadingHide();
 	}
 }
 
@@ -232,9 +232,10 @@ function stopDrag(event, popup) {
 // 닫기
 function closePopup(buttonElementOrPopup) {
 	// button 요소 또는 overlay 요소 둘 다 지원
-	const modal = (buttonElementOrPopup instanceof Element && buttonElementOrPopup.classList.contains('fixed'))
+	const modal = (buttonElementOrPopup instanceof Element
+		&& (buttonElementOrPopup.id?.startsWith('popupOverlay_') || buttonElementOrPopup.classList.contains('fixed')))
 		? buttonElementOrPopup
-		: buttonElementOrPopup.closest(".fixed");
+		: buttonElementOrPopup?.closest('[id^="popupOverlay_"]');
 
 	if (!modal) return;
 
@@ -251,6 +252,11 @@ function closePopup(buttonElementOrPopup) {
 
 	// DOM 제거
 	modal.remove();
+
+	// 혹시 남아있는 빈 오버레이 정리
+	document.querySelectorAll('#popupContainer > [id^="popupOverlay_"]').forEach((overlay) => {
+		if (!overlay.querySelector('.modalTop')) overlay.remove();
+	});
 
 	// 스택 팝 & 스크롤 잠금 해제 여부
 	const idx = modalStack.indexOf(modalId);
