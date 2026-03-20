@@ -225,6 +225,12 @@ public class TestController {
     	return res;
     }
 	
+	@GetMapping("PushNoti.html")
+    public String testPushNoti(Model model) {
+        model.addAttribute("assetVersion", AppDefine.AssetVersion);
+        return "Test/PushNoti";
+    }
+	
 	@ResponseBody
     @PostMapping("sendPush2.json")
     public ReturnBasic sendPushw(@RequestBody ShareDataVo data) throws Exception {

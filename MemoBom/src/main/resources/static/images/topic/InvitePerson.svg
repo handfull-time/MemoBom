@@ -1,42 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="256" height="256"
-     viewBox="0 0 256 256">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+     xmlns="http://www.w3.org/2000/svg">
 
-<g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+  <!-- user -->
+  <circle cx="8" cy="9" r="3"
+          stroke="#4B5563" stroke-width="1.8"/>
 
-	<!-- Person (gray) -->
-	<path d="M38.877 40.375
-	         c-9.415 0-17.118-7.703-17.118-17.118v-6.139
-	         C21.759 7.703 29.462 0 38.877 0
-	         c9.415 0 17.118 7.703 17.118 17.118v6.139
-	         C55.995 32.672 48.292 40.375 38.877 40.375z"
-	      fill="#6b7280"/>
+  <path d="M3.5 18C3.5 15.5 6 14 8 14C10 14 12.5 15.5 12.5 18"
+        stroke="#4B5563"
+        stroke-width="1.8"
+        stroke-linecap="round"/>
 
-	<path d="M50.103 75.603
-	         c0-10.209 7.969-18.535 18.022-19.154
-	         c-3.98-7.222-11.159-12.461-19.609-13.722
-	         c-2.896 1.499-6.169 2.363-9.639 2.363
-	         c-3.47 0-6.743-0.863-9.639-2.363
-	         C16.296 44.659 6.286 55.889 6.286 69.347v17.707
-	         C6.286 88.674 7.612 90 9.232 90h47.391
-	         C52.633 86.479 50.103 81.342 50.103 75.603z"
-	      fill="#6b7280"/>
+  <!-- invite arrow -->
+  <path d="M16 7V13"
+        stroke="#4B5563"
+        stroke-width="1.8"
+        stroke-linecap="round"/>
 
-	<!-- Blue badge circle -->
-	<circle cx="69.317" cy="75.603" r="14.397"
-	        fill="#2563eb"/>
-
-	<!-- Centered plus -->
-	<!-- bar thickness = 4 -->
-	<rect x="61.317" y="73.603"
-	      width="16" height="4"
-	      rx="1.5"
-	      fill="white"/>
-
-	<rect x="67.317" y="67.603"
-	      width="4" height="16"
-	      rx="1.5"
-	      fill="white"/>
-
-</g>
+  <path d="M13.5 10.5L16 13L18.5 10.5"
+        stroke="#4B5563"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
 </svg>

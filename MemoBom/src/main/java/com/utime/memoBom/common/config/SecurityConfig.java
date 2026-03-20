@@ -57,23 +57,23 @@ public class SecurityConfig {
 	@Autowired
 	AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 	
-	/**
-     * 정적 자원에 대한 보안 필터 적용 제외 설정.<br/>
-     * 필터 체인을 완전히 바이패스하므로 성능 최적화에 유리하며, 
-     * 주로 public한 static resources(js, css, images 등)에 적용함.
-     * * @return WebSecurityCustomizer
-     */
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            .requestMatchers(
-                "/manifest.webmanifest",
-                "/sw.js",
-                "/favicon.ico",
-                "/Error/**"
-            );
-    }
+//	/**
+//     * 정적 자원에 대한 보안 필터 적용 제외 설정.<br/>
+//     * 필터 체인을 완전히 바이패스하므로 성능 최적화에 유리하며, 
+//     * 주로 public한 static resources(js, css, images 등)에 적용함.
+//     * * @return WebSecurityCustomizer
+//     */
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring()
+//            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+//            .requestMatchers(
+//                "/manifest.webmanifest",
+//                "/sw.js",
+//                "/favicon.ico",
+//                "/Error/**"
+//            );
+//    }
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -93,6 +93,13 @@ public class SecurityConfig {
         extended.add(matcher.matcher("/Fragment/**"));
         extended.add(matcher.matcher("/Mosaic/**"));
         extended.add(matcher.matcher("/"));
+        extended.add(PathRequest.toStaticResources().atCommonLocations());
+        extended.add(matcher.matcher("/manifest.webmanifest"));
+        extended.add(matcher.matcher("/sw.js"));
+        extended.add(matcher.matcher("/favicon.ico"));
+        extended.add(matcher.matcher("/error"));
+        extended.add(matcher.matcher("/error/**"));
+        extended.add(matcher.matcher("/Error/**")); // 기존 경로 유지가 필요하면 남김
 
         final RequestMatcher[] permitAllWhiteList = extended.toArray(RequestMatcher[]::new);
 	
