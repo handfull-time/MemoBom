@@ -61,6 +61,11 @@ class PushSendServiceImpl implements PushSendService {
     @Autowired
     private ObjectMapper objMapper;
     
+    /**
+     * 푸시 메시지 서버 유효 시간
+     */
+    private final int NotificationTtl = 60 * 60;
+    
 	/** EC 공개키 → uncompressed point (0x04 + X + Y) */
     private static byte[] encodePublicKey(ECPublicKey publicKey) {
     	final byte[] x = bigIntTo32Bytes(publicKey.getW().getAffineX());
@@ -223,7 +228,7 @@ class PushSendServiceImpl implements PushSendService {
 
         for (PushSubInfoVo sub : entityList) {
             final Notification notification = new Notification(
-                sub.getEndPoint(), sub.getP256dh(), sub.getAuth(), payloadBytes
+                sub.getEndPoint(), sub.getP256dh(), sub.getAuth(), payloadBytes, NotificationTtl
             );
 
             try {

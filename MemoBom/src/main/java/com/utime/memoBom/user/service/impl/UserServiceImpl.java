@@ -20,6 +20,7 @@ import com.utime.memoBom.common.vo.AppDefine;
 import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.dto.MyAlaramDto;
 import com.utime.memoBom.user.dto.MyCommentDto;
 import com.utime.memoBom.user.dto.MyFragmentDto;
 import com.utime.memoBom.user.dto.MyPageDto;
@@ -30,6 +31,7 @@ import com.utime.memoBom.user.dto.UserDto;
 import com.utime.memoBom.user.dto.UserUpdateDto;
 import com.utime.memoBom.user.service.UserService;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.AlarmVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import lombok.RequiredArgsConstructor;
@@ -153,6 +155,17 @@ class UserServiceImpl implements UserService{
 		
 		final ReturnBasic result = new ReturnBasic();
 		
+		final List<AlarmVo> list = userDao.listMyAlarm( user, searchVo.getKeyword(), searchVo.getPageNo());
+		final List<MyAlaramDto> alarmList = new ArrayList<>();
+		
+		for( AlarmVo src : list) {
+			final MyAlaramDto alarm = new MyAlaramDto();
+			BeanUtils.copyProperties(src, alarm);
+			alarmList.add(alarm);
+		}
+		
+		result.setData(alarmList);
+		
 		return result;
 	}
 
@@ -247,5 +260,38 @@ class UserServiceImpl implements UserService{
 		
 		return result;
 	}
+	
+	@Override
+	public ReturnBasic searchInviteUser(LoginUser user, String nickName) {
+		if( nickName != null && nickName.length() < 3 ) {
+			return new ReturnBasic("E", "검색어가 부족합니다.");
+		}
+		
+		final List<BasicUserVo> userBasiclist = userDao.searchInviteUser(user, nickName);
+		final List<UserDto> userDtoList = new ArrayList<>();
+		
+		for( BasicUserVo item : userBasiclist ) {
+			userDtoList.add( new UserDto( item.getUid(), item.getNickname(), item.getProfileUrl(), item.getFontSize() ));
+		}
+		
+		final ReturnBasic result = new ReturnBasic();
+		result.setData(userDtoList);
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic getMyRedDot(LoginUser user) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		final int count = userDao.getMyRedDot(user);
+		log.info("미확인 알람 {}개", count);
+		
+		result.setData( Boolean.valueOf(count > 0) );
+		
+		return result;
+	}
+	
 	
 }

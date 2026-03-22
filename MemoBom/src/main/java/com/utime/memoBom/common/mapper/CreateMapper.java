@@ -107,4 +107,10 @@ public interface CreateMapper {
 	 * @return
 	 */
 	int createFragmentImage();
+	
+	/** 
+	 * 토픽 초대 생성
+	 * @return
+	 */
+	int createInviteUser();
 }

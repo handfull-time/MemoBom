@@ -6,10 +6,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.BinResultVo;
+import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.AlarmVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
 
@@ -116,4 +118,29 @@ public interface UserDao {
 	 * @return
 	 */
 	int setPushStatus(LoginUser user, boolean enabled)throws Exception;
+	
+	/**
+	 * 사용자 검색
+	 * @param user
+	 * @param userNickName
+	 * @return
+	 */
+	List<BasicUserVo> searchInviteUser(LoginUser user, String userNickName);
+	
+	/**
+	 * 확인 안한 알람 수량
+	 * @param user
+	 * @return
+	 */
+	int getMyRedDot(LoginUser user);
+	
+	/**
+	 * 알람 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<AlarmVo> listMyAlarm(LoginUser user, String keyword, int pageNo);
+	
 }

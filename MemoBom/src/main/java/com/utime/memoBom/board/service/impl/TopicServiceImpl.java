@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
+import com.utime.memoBom.board.dto.InvitePersonDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
@@ -163,6 +164,24 @@ class TopicServiceImpl implements TopicService {
 		if( AppUtils.isNotEmpty(list)) {
 			for( TopicVo topic : list)
 			result.add( this.convertTopicToTopicResultVo(topic) );
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ReturnBasic inviteUser(LoginUser user, InvitePersonDto invite) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		try {
+			int res = topicDao.addInviteUser(user, invite.getTopicUid(), invite.getUserUid() );
+			if( res <= 0 ) {
+				result.setCodeMessage("E", "No changes were made.");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "An error occurred while saving.");
 		}
 		
 		return result;

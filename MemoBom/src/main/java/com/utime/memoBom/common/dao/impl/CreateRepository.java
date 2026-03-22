@@ -161,8 +161,14 @@ class CreateRepository {
 			result += common.createIndex("MB_FRAGMENT_IMAGE_FRAGMENT_NO_INDX", "MB_FRAGMENT_IMAGE", "FRAGMENT_NO");
 		}
 		
-
-		
+		if( !common.existTable("MB_TOPIC_INVITE_USER") ) {
+			log.info("MB_TOPIC_INVITE_USER 생성");
+			result += mapper.createInviteUser();
+			
+			result += common.createIndex("MB_TOPIC_INVITE_USER_SOURCE_USER_NO_INDX", "MB_TOPIC_INVITE_USER", "SOURCE_USER_NO");
+			result += common.createIndex("MB_TOPIC_INVITE_USER_TARGET_USER_NO_INDX", "MB_TOPIC_INVITE_USER", "TARGET_USER_NO");
+			result += common.createIndex("MB_TOPIC_INVITE_USER_TOPIC_NO_INDX", "MB_TOPIC_INVITE_USER", "TOPIC_NO");
+		}
 		
 		log.info("초기 작업 {}", result);
 	}

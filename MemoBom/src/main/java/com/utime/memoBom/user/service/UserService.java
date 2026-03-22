@@ -103,4 +103,18 @@ public interface UserService {
 	 */
 	ReturnBasic getMyScrapDataList(LoginUser user, MySearchDto searchVo);
 
+	/**
+	 * 사용자 검색
+	 * @param user
+	 * @param nickName
+	 * @return
+	 */
+	ReturnBasic searchInviteUser(LoginUser user, String nickName);
+
+	/**
+	 * 확인 안한 알람이 있는지 확인
+	 * @param user
+	 * @return
+	 */
+	ReturnBasic getMyRedDot(LoginUser user);
 }

@@ -168,4 +168,9 @@ class TopicDaoImpl implements TopicDao{
 		return result;
 	}
 	
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int addInviteUser(LoginUser user, String topicUid, String userUid) throws Exception {
+		return topicMapper.insertInviteUser(user, topicUid, userUid);
+	}
 }

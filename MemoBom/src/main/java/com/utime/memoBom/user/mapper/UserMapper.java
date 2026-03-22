@@ -10,6 +10,7 @@ import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.AlarmVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
 
@@ -118,4 +119,35 @@ public interface UserMapper {
 	 * @return
 	 */
 	int updatePushStatus(@Param("user")LoginUser user, @Param("enabled")boolean enabled);
+	
+	/**
+	 * 초대할 사용자 검색
+	 * @param user
+	 * @param userNickName
+	 * @return
+	 */
+	List<BasicUserVo> selectInviteUser(@Param("user")LoginUser user, @Param("nickName")String userNickName);
+	
+	/**
+	 * 확인 안한 알람 수량
+	 * @param user
+	 * @return
+	 */
+	int selectUnreadAlarmCount(@Param("user")LoginUser user);
+	
+	/**
+	 * 확인 안한 알람 읽음 처리
+	 * @param user
+	 * @return
+	 */
+	int updateUnreadAlarm(@Param("user")LoginUser user);
+	
+	/**
+	 * 알람 목록 조회
+	 * @param user
+	 * @param keyword
+	 * @param pageNo
+	 * @return
+	 */
+	List<AlarmVo> listMyAlarm(@Param("user")LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);
 }

@@ -559,5 +559,26 @@
     		AND TP.ENABLED = TRUE
     		AND TP.UID = #{uid}
     </select>
+    
+    <insert id="insertInviteUser" parameterType="map">
+    	INSERT INTO MB_TOPIC_INVITE_USER (
+			TOPIC_NO,
+			SOURCE_USER_NO,
+			TARGET_USER_NO
+		) VALUES (
+			(
+				SELECT 
+					TOPIC_NO
+				FROM MB_TOPIC WHERE UID = #{uid}
+			 ),
+			 #{user.userNo},
+			 (
+				SELECT 
+					USER_NO
+				FROM MB_USER WHERE UID = #{userUid}
+			 )
+		) 
+    </insert>
+    
 
 </mapper>

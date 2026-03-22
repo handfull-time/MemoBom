@@ -159,6 +159,13 @@ public class MyController {
 		
 		return userService.getMyAlarmDataList( user, searchVo );
     }
+	
+	@ResponseBody
+	@GetMapping(path = "RedDot.json")
+    public ReturnBasic myRedDot( LoginUser user ) {
+		
+		return userService.getMyRedDot( user );
+    }
 
 	@GetMapping(path = "Mosaic.html")
     public String myMosaic(Model model) {
@@ -226,5 +233,9 @@ public class MyController {
 		return userService.getMyCalendarDataList( user, date );
     }
 	
+	@GetMapping(path = "Setting.html")
+    public String mySetting( Model model) {
+		return "My/MySetting";
+    }
 	
 }

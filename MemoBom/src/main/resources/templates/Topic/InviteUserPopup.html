@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutModal}">
+
+<th:block layout:fragment="modalTitle">사용자 초대</th:block>
+
+<th:block layout:fragment="modalContent">
+		여기에 사용자 nicname 조회 하는 것 추가.
+		조회 api는 /User/SearchInviteUser.json 
+		
+	 조회 결과 중 하나만 선택 해서 초대 할 수 있음.
+	 
+	 리스트에 보이는건 사용자 프로필 이미지와 닉네임.	
+	
+</th:block>
+
+<th:block layout:fragment="modalButton">
+	<button type="button" onclick="closePopup(this)"
+		class="px-4 py-2 rounded-md border border-gray-300 bg-white">닫기</button>
+	<button type="button"
+		class="px-4 py-2 rounded-md bg-blue-600 text-white">초대하기</button>
+</th:block>
+
+</html>

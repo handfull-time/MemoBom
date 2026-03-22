@@ -2,6 +2,7 @@ package com.utime.memoBom.board.service;
 
 import java.util.List;
 
+import com.utime.memoBom.board.dto.InvitePersonDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.vo.ETopicSortType;
@@ -81,5 +82,13 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic flow(LoginUser user, TopicDto reqVo);
+
+	/**
+	 * 회원 초대하기
+	 * @param user
+	 * @param invite
+	 * @return
+	 */
+	ReturnBasic inviteUser(LoginUser user, InvitePersonDto invite);
 
 }

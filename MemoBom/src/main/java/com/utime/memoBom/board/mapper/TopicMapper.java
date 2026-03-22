@@ -195,5 +195,15 @@ public interface TopicMapper {
 	 * @return
 	 */
 	List<Long> selectTopicFollowList(@Param("user") LoginUser user, @Param("uid") String topicUid);
+	
+	/**
+	 * 주제 사용자 초대
+	 * @param user
+	 * @param topicUid
+	 * @param userUid
+	 * @return
+	 * @throws Exception
+	 */
+	int insertInviteUser(@Param("user") LoginUser user, @Param("uid") String topicUid, @Param("userUid") String userUid);
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.utime.memoBom.board.dto.InvitePersonDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
@@ -84,7 +85,7 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Item.html")
-	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam("uid") String uid ) {
+	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam String uid ) {
 		
 		final ReturnBasic topicRes = topicServce.loadTopic( user, uid );
 		if( topicRes.isError() ) {
@@ -136,27 +137,6 @@ public class TopicController {
 		return topicServce.listTopic( user, sortType, page, keyword, uid );
 	}
 	
-//	/**
-//	 * 토픽 정보 읽기
-//	 * @param uid
-//	 * @return
-//	 */
-//	@ResponseBody
-//	@GetMapping("LoadMosaic.json")
-//	public ReturnBasic loadTopic( @RequestParam() String uid ) {
-//		
-//		final ReturnBasic result = new ReturnBasic();
-//		
-//		TopicResultVo vo = topicServce.loadTopic( uid );
-//		if( vo == null ) {
-//			result.setCodeMessage("E", "Mosaic is not found.");
-//		}else {
-//			result.setData(vo);
-//		}
-//
-//		return result;
-//	}
-	
 	/**
 	 * 토픽 언 팔로우 / 팔로우
 	 * @param user
@@ -169,6 +149,26 @@ public class TopicController {
 		
 		return topicServce.flow( user, reqVo );
 	}
+	
+	/**
+	 * 사용자 초대 팝업 화면
+	 * @param user
+	 * @return
+	 */
+	@GetMapping("InviteUser.popup")
+	public String InviteUserPopup( ModelMap model, LoginUser user, @RequestParam String topicUid ) {
+		
+		model.addAttribute("topicUid", topicUid);
+		
+		return "Topic/InviteUserPopup";
+	}
+	
+	@PostMapping("InviteUser.json")
+	public ReturnBasic InviteUser( LoginUser user, @RequestBody InvitePersonDto invite ) {
+		
+		return topicServce.inviteUser(user, invite);
+	}
+
 	
 //	@GetMapping(path = "Mosaic.html", params = "keyword")
 //    public String topicSearch( ModelMap model, LoginUser user, @RequestParam() String keyword) {

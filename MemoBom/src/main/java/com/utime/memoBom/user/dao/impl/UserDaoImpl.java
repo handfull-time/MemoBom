@@ -19,6 +19,7 @@ import com.utime.memoBom.user.mapper.UserProfileMapper;
 import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.AlarmVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.user.vo.query.UsageStatisticsVo;
 
@@ -155,5 +156,27 @@ class UserDaoImpl implements UserDao {
 		
 		return userMapper.updateMyInfoFontSize(user, fs);
 	}
+	
+	@Override
+	public List<BasicUserVo> searchInviteUser(LoginUser user, String userNickName) {
+		
+		return userMapper.selectInviteUser(user, userNickName);
+	}
 
+	@Override
+	public int getMyRedDot(LoginUser user) {
+		
+		return userMapper.selectUnreadAlarmCount(user);
+	}
+	
+	@Override
+	public List<AlarmVo> listMyAlarm(LoginUser user, String keyword, int pageNo) {
+		
+		if( pageNo == 1 ) {
+			userMapper.updateUnreadAlarm(user);
+		}
+		
+		return userMapper.listMyAlarm(user, keyword, pageNo);
+	}
+	
 }

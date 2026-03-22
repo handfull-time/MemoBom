@@ -99,4 +99,14 @@ public interface TopicDao {
 	 */
 	List<LoginUser> getTopicFollowList(LoginUser user, String topicUid);
 
+	/**
+	 * 주제 사용자 초대
+	 * @param user
+	 * @param topicUid
+	 * @param userUid
+	 * @return
+	 * @throws Exception
+	 */
+	int addInviteUser(LoginUser user, String topicUid, String userUid)throws Exception;
+
 }
