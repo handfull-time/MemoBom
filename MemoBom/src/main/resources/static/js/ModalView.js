@@ -69,11 +69,6 @@ async function openPopup(sendObj) {
 	if (!sendValue.url) throw new Error("❌ [openPopup Error] 'url' 값이 필수입니다.");
 	if (!sendValue.popupId) throw new Error("❌ [openPopup Error] 'popupId' 값이 필수입니다.");
 
-	if (!sendValue.NotCheck) {
-		const refresh = await checkAndRefreshToken();
-		if (!refresh) return;
-	}
-
 	// 포커스 복원용 저장
 	lastFocusedEl = document.activeElement;
 
