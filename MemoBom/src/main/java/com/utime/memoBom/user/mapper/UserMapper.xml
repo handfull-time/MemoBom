@@ -319,7 +319,7 @@
 		<id column="UID" property="uid"/>
 		<result column="CREATE_AT" property="createDate"/>
 		<result column="READ_AT" property="readDate"/>
-		<result column="ALARM_TYPE" property="alarmType" typeHandler="com.utime.memoBom.common.typeHandler.SeedEncryptTypeHandler"/>
+		<result column="ALARM_TYPE" property="alarmType" typeHandler="com.utime.memoBom.user.typeHandler.EAlaramTypeTypeHandler"/>
 		<result column="TITLE" property="title"/>
 		<result column="MESSAGE" property="message"/>
 		<result column="URL" property="url"/>
@@ -336,7 +336,7 @@
 			, MESSAGE 
 			, URL
 		FROM MB_ALARM
-		WEHRE 1=1
+		WHERE 1=1
 			AND USER_NO = #{user.userNo} 
 			<if test="keyword != null and !keyword.isEmpty()">
 				AND ( TITLE LIKE CONCAT('%', #{keyword}, '%')
