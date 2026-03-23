@@ -234,8 +234,13 @@ public class MyController {
     }
 	
 	@GetMapping(path = "Setting.html")
-    public String mySetting( Model model) {
-		return "My/MySetting";
+    public String mySetting(Model model, LoginUser user) {
+		if( user == null ) {
+			return "redirect:/About/Application.html";
+		}else {
+			model.addAttribute("item", userService.getMyPage(user));
+			return "My/MySetting";
+		}
     }
 	
 }

@@ -369,12 +369,41 @@
 						location.href = url + "?topic=" + encodeURIComponent(uidVal);
 					});
 
-					node.querySelector(".btn-share").addEventListener("click", async (e) => {
+					const btnShare = node.querySelector(".btn-share");
+					const shareImg = btnShare.querySelector("img");
+					const isExternal = !!t.external;
+
+					if (shareImg) {
+						shareImg.src = isExternal
+							? (/*[[@{/images/share.svg}]]*/ '/images/share.svg')
+							: (/*[[@{/images/topic/InvitePerson.svg}]]*/ '/images/topic/InvitePerson.svg');
+						shareImg.alt = isExternal ? "share" : "invite";
+					}
+
+					btnShare.setAttribute("aria-label", isExternal ? "share" : "invite");
+
+					btnShare.addEventListener("click", async (e) => {
 						e.stopPropagation();
 
 						const uid = (t.uid || "").trim();
 						if (!uid) {
 							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
+							return;
+						}
+
+						if (!isExternal) {
+							if (!IS_LOGIN) {
+								toastLoginRequired();
+								return;
+							}
+
+							await openPopup({
+								url: (/*[[@{/Mosaic/InviteUser.popup}]]*/ "/Mosaic/InviteUser.popup") + "?topicUid=" + encodeURIComponent(uid),
+								method: MethodType.Get,
+								contentType: ContentsType.Form,
+								popupId: "inviteUserPopup",
+								width: "560px"
+							});
 							return;
 						}
 
@@ -400,15 +429,9 @@
 								url: res.data.url ?? ""
 							};
 
-							// (선택) Web Share API Level 2: 특정 타입 지원 확인
-							// if (navigator.canShare && !navigator.canShare(payload)) { ... }
-
-							// 3) 실제 공유
 							await navigator.share(payload);
 
 						} catch (err) {
-							// 사용자가 공유창을 닫는 경우도 reject로 올 수 있어 과하게 에러 토스트 띄우지 않는 게 UX상 좋음
-							// 필요하면 err.name === 'AbortError' 분기 가능
 							console.error(err);
 							showToast("공유", "공유를 완료하지 못했습니다.", ToastType.INFO, 1500);
 						}

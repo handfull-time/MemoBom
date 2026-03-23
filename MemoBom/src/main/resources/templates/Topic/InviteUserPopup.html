@@ -5,20 +5,164 @@
 <th:block layout:fragment="modalTitle">사용자 초대</th:block>
 
 <th:block layout:fragment="modalContent">
-		여기에 사용자 nicname 조회 하는 것 추가.
-		조회 api는 /User/SearchInviteUser.json 
-		
-	 조회 결과 중 하나만 선택 해서 초대 할 수 있음.
-	 
-	 리스트에 보이는건 사용자 프로필 이미지와 닉네임.	
-	
+	<div class="space-y-3">
+		<div class="text-dynamic-sm text-slate-600">닉네임으로 사용자를 검색해 초대할 수 있습니다.</div>
+
+		<div class="flex items-center gap-2">
+			<input id="inviteNickName" type="search" autocomplete="off" placeholder="닉네임 검색"
+				class="w-full h-10 rounded-xl border border-slate-200 px-3 outline-none focus:ring-2 focus:ring-sky-300" />
+			<button id="btnInviteSearch" type="button"
+				class="h-10 px-3 rounded-xl bg-slate-900 text-white text-dynamic-sm hover:bg-slate-800">검색</button>
+		</div>
+
+		<div id="inviteState" class="text-dynamic-xs text-slate-500"></div>
+
+		<div id="inviteUserList" class="max-h-[320px] overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white"></div>
+	</div>
 </th:block>
 
 <th:block layout:fragment="modalButton">
 	<button type="button" onclick="closePopup(this)"
 		class="px-4 py-2 rounded-md border border-gray-300 bg-white">닫기</button>
-	<button type="button"
-		class="px-4 py-2 rounded-md bg-blue-600 text-white">초대하기</button>
+	<button id="btnInviteApply" type="button"
+		class="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed" disabled>초대하기</button>
+</th:block>
+
+<th:block layout:fragment="modalScript">
+	<script th:inline="javascript">
+		(function () {
+			const topicUid = /*[[${topicUid}]]*/ '';
+			const input = document.getElementById('inviteNickName');
+			const btnSearch = document.getElementById('btnInviteSearch');
+			const btnInvite = document.getElementById('btnInviteApply');
+			const list = document.getElementById('inviteUserList');
+			const state = document.getElementById('inviteState');
+
+			let selectedUid = '';
+
+			function setState(msg) {
+				if (!state) return;
+				state.textContent = msg || '';
+			}
+
+			function renderUsers(users) {
+				list.innerHTML = '';
+				selectedUid = '';
+				btnInvite.disabled = true;
+
+				if (!Array.isArray(users) || users.length === 0) {
+					const empty = document.createElement('div');
+					empty.className = 'px-3 py-4 text-center text-dynamic-sm text-slate-500';
+					empty.textContent = '검색 결과가 없습니다.';
+					list.appendChild(empty);
+					return;
+				}
+
+				users.forEach((u) => {
+					const item = document.createElement('button');
+					item.type = 'button';
+					item.className = 'w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-50';
+					item.dataset.uid = u.uid || '';
+
+					const img = document.createElement('img');
+					img.className = 'w-8 h-8 rounded-full border border-slate-200 object-cover bg-slate-100';
+					img.src = u.profileUrl || (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
+					img.alt = 'profile';
+					img.onerror = function () {
+						this.src = (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
+					};
+
+					const name = document.createElement('div');
+					name.className = 'min-w-0 flex-1 truncate text-dynamic-sm text-slate-800';
+					name.textContent = u.nickname || '(이름 없음)';
+
+					const marker = document.createElement('div');
+					marker.className = 'w-4 h-4 rounded-full border border-slate-300';
+
+					item.appendChild(img);
+					item.appendChild(name);
+					item.appendChild(marker);
+
+					item.addEventListener('click', () => {
+						Array.from(list.querySelectorAll('button[data-uid]')).forEach((el) => {
+							el.classList.remove('bg-sky-50');
+							const dot = el.lastElementChild;
+							dot.className = 'w-4 h-4 rounded-full border border-slate-300';
+						});
+
+						item.classList.add('bg-sky-50');
+						marker.className = 'w-4 h-4 rounded-full bg-sky-500 border border-sky-500';
+						selectedUid = item.dataset.uid || '';
+						btnInvite.disabled = !selectedUid;
+					});
+
+					list.appendChild(item);
+				});
+			}
+
+			async function searchUsers() {
+				const nickName = (input.value || '').trim();
+				setState('검색 중...');
+
+				try {
+					const url = (/*[[@{/User/SearchInviteUser.json}]]*/ '/User/SearchInviteUser.json');
+					const res = await apiGetWithParam(url, { nickName });
+
+					if (!res || res.code !== '0') {
+						setState(res?.message || '사용자 검색 실패');
+						renderUsers([]);
+						return;
+					}
+
+					renderUsers(res.data || []);
+					setState('');
+				} catch (e) {
+					console.error(e);
+					setState('검색 중 오류가 발생했습니다.');
+					renderUsers([]);
+				}
+			}
+
+			btnSearch.addEventListener('click', searchUsers);
+			input.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					searchUsers();
+				}
+			});
+
+			btnInvite.addEventListener('click', async () => {
+				if (!selectedUid) {
+					showToast('안내', '초대할 사용자를 선택해 주세요.', ToastType.INFO, 1200);
+					return;
+				}
+
+				try {
+					btnInvite.disabled = true;
+					const url = (/*[[@{/Mosaic/InviteUser.json}]]*/ '/Mosaic/InviteUser.json');
+					const res = await apiPost(url, {
+						topicUid: topicUid,
+						userUid: selectedUid
+					});
+
+					if (!res || res.code !== '0') {
+						showToast('오류', res?.message || '초대하기에 실패했습니다.', ToastType.ERROR, 1500);
+						btnInvite.disabled = false;
+						return;
+					}
+
+					showToast('안내', '초대가 완료되었습니다.', ToastType.SUCCESS, 1200);
+					closePopup(btnInvite);
+				} catch (e) {
+					console.error(e);
+					showToast('오류', '초대 중 오류가 발생했습니다.', ToastType.ERROR, 1500);
+					btnInvite.disabled = false;
+				}
+			});
+
+			setState('닉네임을 입력 후 검색해 주세요.');
+		})();
+	</script>
 </th:block>
 
 </html>
