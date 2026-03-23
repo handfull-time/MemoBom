@@ -7,7 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
-import com.utime.memoBom.board.dto.InvitePersonDto;
+import com.utime.memoBom.board.dto.InviteUserDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
@@ -170,7 +170,7 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-	public ReturnBasic inviteUser(LoginUser user, InvitePersonDto invite) {
+	public ReturnBasic inviteUser(LoginUser user, InviteUserDto invite) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		

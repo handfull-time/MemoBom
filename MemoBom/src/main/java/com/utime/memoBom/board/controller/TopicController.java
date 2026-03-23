@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.utime.memoBom.board.dto.InvitePersonDto;
+import com.utime.memoBom.board.dto.InviteUserDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
@@ -163,8 +163,14 @@ public class TopicController {
 		return "Topic/InviteUserPopup";
 	}
 	
+	/**
+	 * 사용자 초대하기
+	 * @param user
+	 * @param invite
+	 * @return
+	 */
 	@PostMapping("InviteUser.json")
-	public ReturnBasic InviteUser( LoginUser user, @RequestBody InvitePersonDto invite ) {
+	public ReturnBasic InviteUser( LoginUser user, @RequestBody InviteUserDto invite ) {
 		
 		return topicServce.inviteUser(user, invite);
 	}
