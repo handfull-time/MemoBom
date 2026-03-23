@@ -31,7 +31,7 @@
 			<!-- RIGHT : My / About -->
 			<div class="flex items-center justify-center cursor-pointer active:bg-gray-100 transition-colors duration-100"
 				th:onclick="|location.href='@{${user != null ? '/My/index.html' : '/About/Application.html'}}'|">
-				<div class="w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
+				<div class="relative w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
 					th:classappend="${
 						#strings.startsWith(currentPath, '/My')
 						or #strings.startsWith(currentPath, '/About')
@@ -43,10 +43,37 @@
 							#strings.startsWith(currentPath, '/My')
 							or #strings.startsWith(currentPath, '/About')
 						} ? '' : ' opacity-80'" />
+					<span id="footerMyRedDot" th:if="${user != null}"
+						class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500"></span>
 				</div>
 			</div>
 
 		</div>
+
+		<script th:if="${user != null}" th:inline="javascript">
+			(function () {
+				const dot = document.getElementById('footerMyRedDot');
+				if (!dot) return;
+
+				async function syncMyRedDot() {
+					try {
+						const cp = window.contextPath || '';
+						const res = await apiGet(cp + '/My/RedDot.json');
+						const isOn = (res?.code === '0' && res?.data === true);
+						dot.classList.toggle('hidden', !isOn);
+					} catch (e) {
+						console.warn('Footer red-dot load fail', e);
+						dot.classList.add('hidden');
+					}
+				}
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', syncMyRedDot, { once: true });
+				} else {
+					syncMyRedDot();
+				}
+			})();
+		</script>
 	</th:block>
 
 	<th:block th:fragment="FooterWrite">
