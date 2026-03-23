@@ -21,6 +21,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Alarm.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+					<span class="my-alarm-red-dot hidden w-2 h-2 rounded-full bg-red-500"></span>
 					<span class="font-medium">알람</span>
 				</a>
 
@@ -127,5 +128,37 @@
 				<span class="font-medium">About</span>
 			</a>
 		</nav>
+
+		<script th:if="${user ne null}" th:inline="javascript">
+			(function () {
+				async function syncAlarmRedDot() {
+					const dots = document.querySelectorAll('.my-alarm-red-dot');
+					if (!dots.length) return;
+
+					try {
+						const cp = window.contextPath || '';
+						const callApi = (typeof apiGet === 'function')
+							? apiGet(cp + '/My/RedDot.json')
+							: fetch(cp + '/My/RedDot.json', { credentials: 'include' }).then(r => r.json());
+
+						const res = await callApi;
+						const isOn = (res?.code === '0' && res?.data === true);
+
+						dots.forEach(dot => {
+							dot.classList.toggle('hidden', !isOn);
+						});
+					} catch (e) {
+						console.warn('MyMenu red-dot load fail', e);
+						dots.forEach(dot => dot.classList.add('hidden'));
+					}
+				}
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', syncAlarmRedDot, { once: true });
+				} else {
+					syncAlarmRedDot();
+				}
+			})();
+		</script>
 	</th:block>
 </th:block>
