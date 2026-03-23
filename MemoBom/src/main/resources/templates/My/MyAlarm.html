@@ -3,12 +3,213 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{My/MyLayout}">
 
+	<th:block layout:fragment="my_title">알람</th:block>
+
 <body>
 <th:block layout:fragment="my_content">
-	<div class="rounded-xl p-5 text-gray-900 shadow-lg backdrop-blur-md ring-1 ring-rose-300/30
-		                bg-gradient-to-br from-rose-500/45 via-red-500/30 to-fuchsia-600/40">
-	  <div class="font-bold">알람</div>
+	<div class="w-full mx-auto px-4 pb-24">
+
+		<!-- 검색 바 -->
+		<div class="mt-3 sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md pt-2 pb-2">
+			<div class="flex items-center gap-2">
+				<div class="relative flex-1">
+					<input id="keyword" type="search" autocomplete="off" placeholder="알람 검색"
+						class="w-full h-11 rounded-2xl bg-white ring-1 ring-slate-200
+						       pl-4 pr-11 text-dynamic-15 outline-none
+						       focus:ring-2 focus:ring-sky-300" />
+					<button id="btnSearch" type="button"
+						class="absolute right-2 top-1/2 -translate-y-1/2
+						       w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"
+						aria-label="검색">
+						<svg class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none">
+							<path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+							<circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+						</svg>
+					</button>
+				</div>
+
+				<button id="btnReset" type="button"
+					class="h-11 px-3 rounded-2xl bg-white ring-1 ring-slate-200
+					       text-dynamic-sm font-semibold text-slate-700 hover:bg-slate-100">
+					초기화
+				</button>
+			</div>
+		</div>
+
+		<!-- 리스트 -->
+		<div id="list" class="mt-3 space-y-3"></div>
+
+		<!-- 상태 -->
+		<div id="state" class="mt-4 text-center text-dynamic-sm text-slate-500"></div>
+
+		<!-- 무한스크롤 센티넬 -->
+		<div id="sentinel" class="h-10"></div>
+
+		<!-- 템플릿 -->
+		<template id="tplAlarmItem">
+			<div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70 px-4 py-3">
+				<div class="flex items-start justify-between gap-3">
+					<div class="min-w-0 flex-1">
+						<div class="flex items-center gap-2">
+							<span class="badge-type px-2 py-0.5 rounded-lg text-dynamic-xs font-semibold bg-slate-100 text-slate-600"></span>
+							<span class="date text-dynamic-xs text-slate-500"></span>
+						</div>
+						<div class="title mt-2 text-dynamic-base font-semibold text-slate-900 break-words"></div>
+						<div class="message mt-1 text-dynamic-sm text-slate-600 break-words"></div>
+					</div>
+				</div>
+			</div>
+		</template>
 	</div>
+</th:block>
+
+<th:block layout:fragment="my_script">
+	<script>
+	(function () {
+		const cp = window.contextPath || '';
+		const API_URL = cp + '/My/Alarm.json';
+
+		const $list = document.getElementById('list');
+		const $state = document.getElementById('state');
+		const $sentinel = document.getElementById('sentinel');
+		const $keyword = document.getElementById('keyword');
+		const $btnSearch = document.getElementById('btnSearch');
+		const $btnReset = document.getElementById('btnReset');
+		const tpl = document.getElementById('tplAlarmItem');
+
+		let pageNo = 1;
+		let loading = false;
+		let ended = false;
+		let currentKeyword = '';
+
+		function setState(msg) {
+			$state.textContent = msg || '';
+		}
+
+		function toTypeText(alarmType) {
+			if (alarmType === 'Event') return '이벤트';
+			if (alarmType === 'Info') return '정보';
+			return alarmType || '알림';
+		}
+
+		function formatDate(raw) {
+			if (!raw) return '';
+			const date = new Date(raw);
+			if (Number.isNaN(date.getTime())) return '';
+
+			const yyyy = date.getFullYear();
+			const mm = String(date.getMonth() + 1).padStart(2, '0');
+			const dd = String(date.getDate()).padStart(2, '0');
+			const hh = String(date.getHours()).padStart(2, '0');
+			const mi = String(date.getMinutes()).padStart(2, '0');
+			return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
+		}
+
+		function createItemNode(item) {
+			const frag = tpl.content.cloneNode(true);
+			const root = frag.firstElementChild;
+
+			const typeText = toTypeText(item.alarmType);
+			const $badge = root.querySelector('.badge-type');
+			$badge.textContent = typeText;
+			$badge.className = [
+				'badge-type px-2 py-0.5 rounded-lg text-dynamic-xs font-semibold',
+				item.alarmType === 'Event'
+					? 'bg-rose-100 text-rose-700'
+					: 'bg-slate-100 text-slate-600'
+			].join(' ');
+
+			root.querySelector('.date').textContent = formatDate(item.createDate);
+			root.querySelector('.title').textContent = item.title || '(제목 없음)';
+			root.querySelector('.message').textContent = item.message || '';
+
+			if (item.url) {
+				root.classList.add('cursor-pointer', 'hover:bg-slate-50');
+				root.addEventListener('click', () => {
+					window.location.href = item.url;
+				});
+			}
+
+			return root;
+		}
+
+		async function fetchPage() {
+			if (loading || ended) return;
+			loading = true;
+			setState('불러오는 중…');
+
+			try {
+				const res = await apiGetWithParam(API_URL, {
+					pageNo: pageNo,
+					keyword: currentKeyword || ''
+				});
+
+				if (!res || res.code !== '0') {
+					setState(res?.message || '조회에 실패했습니다.');
+					ended = true;
+					return;
+				}
+
+				const data = res.data;
+				if (!data || (Array.isArray(data) && data.length === 0)) {
+					ended = true;
+					setState($list.children.length === 0 ? '알람이 없습니다.' : '마지막입니다.');
+					return;
+				}
+
+				const holder = document.createDocumentFragment();
+				for (const item of data) {
+					holder.appendChild(createItemNode(item));
+				}
+				$list.appendChild(holder);
+
+				pageNo += 1;
+				setState('');
+			} catch (e) {
+				console.error(e);
+				setState('네트워크 오류가 발생했습니다.');
+				ended = true;
+			} finally {
+				loading = false;
+			}
+		}
+
+		async function resetAndLoad() {
+			pageNo = 1;
+			ended = false;
+			loading = false;
+			$list.innerHTML = '';
+			setState('');
+			await fetchPage();
+		}
+
+		$btnSearch.addEventListener('click', () => {
+			currentKeyword = ($keyword.value || '').trim();
+			resetAndLoad();
+		});
+
+		$keyword.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') {
+				currentKeyword = ($keyword.value || '').trim();
+				resetAndLoad();
+			}
+		});
+
+		$btnReset.addEventListener('click', () => {
+			$keyword.value = '';
+			currentKeyword = '';
+			resetAndLoad();
+		});
+
+		const io = new IntersectionObserver((entries) => {
+			const ent = entries[0];
+			if (ent.isIntersecting) fetchPage();
+		}, { root: null, threshold: 0.1 });
+
+		io.observe($sentinel);
+		fetchPage();
+	})();
+	</script>
 </th:block>
 </body>
 </html>
