@@ -12,12 +12,19 @@
 			<input id="inviteNickName" type="search" autocomplete="off" placeholder="닉네임 검색"
 				class="w-full h-10 rounded-xl border border-slate-200 px-3 outline-none focus:ring-2 focus:ring-sky-300" />
 			<button id="btnInviteSearch" type="button"
-				class="h-10 px-3 rounded-xl bg-slate-900 text-white text-dynamic-sm hover:bg-slate-800">검색</button>
+				class="h-10 px-3 rounded-xl bg-slate-900 text-white text-dynamic-sm hover:bg-slate-800 flex items-center justify-center"
+				aria-label="검색">
+				<img th:src="@{/images/topic/InvitePerson.svg}" alt="검색" class="w-5 h-5" />
+			</button>
 		</div>
 
 		<div id="inviteState" class="text-dynamic-xs text-slate-500"></div>
 
 		<div id="inviteUserList" class="max-h-[320px] overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white"></div>
+		<button id="btnInviteMore" type="button"
+			class="hidden w-full h-9 rounded-lg border border-slate-200 bg-white text-dynamic-xs text-slate-600 hover:bg-slate-50">
+			더 보기
+		</button>
 	</div>
 </th:block>
 
@@ -35,22 +42,81 @@
 			const input = document.getElementById('inviteNickName');
 			const btnSearch = document.getElementById('btnInviteSearch');
 			const btnInvite = document.getElementById('btnInviteApply');
+			const btnMore = document.getElementById('btnInviteMore');
 			const list = document.getElementById('inviteUserList');
 			const state = document.getElementById('inviteState');
 
 			let selectedUid = '';
+			let allUsers = [];
+			let renderedCount = 0;
+			const PAGE_SIZE = 20;
 
 			function setState(msg) {
 				if (!state) return;
 				state.textContent = msg || '';
 			}
 
-			function renderUsers(users) {
-				list.innerHTML = '';
-				selectedUid = '';
-				btnInvite.disabled = true;
+			function setMoreVisible(visible) {
+				btnMore.classList.toggle('hidden', !visible);
+			}
 
-				if (!Array.isArray(users) || users.length === 0) {
+			function createUserNode(u) {
+				const item = document.createElement('button');
+				item.type = 'button';
+				item.className = 'w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-50';
+				item.dataset.uid = u.uid || '';
+
+				const img = document.createElement('img');
+				img.className = 'w-8 h-8 rounded-full border border-slate-200 object-cover bg-slate-100';
+				img.src = u.profileUrl || (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
+				img.alt = 'profile';
+				img.onerror = function () {
+					this.src = (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
+				};
+
+				const name = document.createElement('div');
+				name.className = 'min-w-0 flex-1 truncate text-dynamic-sm text-slate-800';
+				name.textContent = u.nickname || '(이름 없음)';
+
+				const marker = document.createElement('div');
+				marker.className = 'w-4 h-4 rounded-full border border-slate-300';
+
+				item.appendChild(img);
+				item.appendChild(name);
+				item.appendChild(marker);
+
+				if (item.dataset.uid && item.dataset.uid === selectedUid) {
+					item.classList.add('bg-sky-50');
+					marker.className = 'w-4 h-4 rounded-full bg-sky-500 border border-sky-500';
+				}
+
+				item.addEventListener('click', () => {
+					Array.from(list.querySelectorAll('button[data-uid]')).forEach((el) => {
+						el.classList.remove('bg-sky-50');
+						const dot = el.lastElementChild;
+						dot.className = 'w-4 h-4 rounded-full border border-slate-300';
+					});
+
+					item.classList.add('bg-sky-50');
+					marker.className = 'w-4 h-4 rounded-full bg-sky-500 border border-sky-500';
+					selectedUid = item.dataset.uid || '';
+					btnInvite.disabled = !selectedUid;
+				});
+
+				return item;
+			}
+
+			function renderMore(reset = false) {
+				if (reset) {
+					list.innerHTML = '';
+					renderedCount = 0;
+				}
+
+				if (!Array.isArray(allUsers) || allUsers.length === 0) {
+					selectedUid = '';
+					btnInvite.disabled = true;
+					setMoreVisible(false);
+
 					const empty = document.createElement('div');
 					empty.className = 'px-3 py-4 text-center text-dynamic-sm text-slate-500';
 					empty.textContent = '검색 결과가 없습니다.';
@@ -58,46 +124,18 @@
 					return;
 				}
 
-				users.forEach((u) => {
-					const item = document.createElement('button');
-					item.type = 'button';
-					item.className = 'w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-50';
-					item.dataset.uid = u.uid || '';
+				const next = allUsers.slice(renderedCount, renderedCount + PAGE_SIZE);
+				const holder = document.createDocumentFragment();
+				next.forEach((u) => holder.appendChild(createUserNode(u)));
+				list.appendChild(holder);
 
-					const img = document.createElement('img');
-					img.className = 'w-8 h-8 rounded-full border border-slate-200 object-cover bg-slate-100';
-					img.src = u.profileUrl || (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
-					img.alt = 'profile';
-					img.onerror = function () {
-						this.src = (/*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg');
-					};
+				renderedCount += next.length;
+				setMoreVisible(renderedCount < allUsers.length);
+				setState(`검색 결과 ${allUsers.length}명 (현재 ${renderedCount}명 표시)`);
 
-					const name = document.createElement('div');
-					name.className = 'min-w-0 flex-1 truncate text-dynamic-sm text-slate-800';
-					name.textContent = u.nickname || '(이름 없음)';
-
-					const marker = document.createElement('div');
-					marker.className = 'w-4 h-4 rounded-full border border-slate-300';
-
-					item.appendChild(img);
-					item.appendChild(name);
-					item.appendChild(marker);
-
-					item.addEventListener('click', () => {
-						Array.from(list.querySelectorAll('button[data-uid]')).forEach((el) => {
-							el.classList.remove('bg-sky-50');
-							const dot = el.lastElementChild;
-							dot.className = 'w-4 h-4 rounded-full border border-slate-300';
-						});
-
-						item.classList.add('bg-sky-50');
-						marker.className = 'w-4 h-4 rounded-full bg-sky-500 border border-sky-500';
-						selectedUid = item.dataset.uid || '';
-						btnInvite.disabled = !selectedUid;
-					});
-
-					list.appendChild(item);
-				});
+				if (selectedUid) {
+					btnInvite.disabled = false;
+				}
 			}
 
 			async function searchUsers() {
@@ -110,20 +148,23 @@
 
 					if (!res || res.code !== '0') {
 						setState(res?.message || '사용자 검색 실패');
-						renderUsers([]);
+						allUsers = [];
+						renderMore(true);
 						return;
 					}
 
-					renderUsers(res.data || []);
-					setState('');
+					allUsers = Array.isArray(res.data) ? res.data : [];
+					renderMore(true);
 				} catch (e) {
 					console.error(e);
 					setState('검색 중 오류가 발생했습니다.');
-					renderUsers([]);
+					allUsers = [];
+					renderMore(true);
 				}
 			}
 
 			btnSearch.addEventListener('click', searchUsers);
+			btnMore.addEventListener('click', () => renderMore(false));
 			input.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter') {
 					e.preventDefault();
