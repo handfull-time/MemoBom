@@ -170,6 +170,7 @@ public class TopicController {
 	 * @return
 	 */
 	@PostMapping("InviteUser.json")
+	@ResponseBody
 	public ReturnBasic InviteUser( LoginUser user, @RequestBody InviteUserDto invite ) {
 		
 		return topicServce.inviteUser(user, invite);
@@ -183,4 +184,3 @@ public class TopicController {
 //    }
 
 }
-
