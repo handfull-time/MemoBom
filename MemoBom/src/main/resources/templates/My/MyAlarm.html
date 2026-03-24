@@ -57,6 +57,12 @@
 						<div class="title mt-2 text-dynamic-base font-semibold text-slate-900 break-words"></div>
 						<div class="message mt-1 text-dynamic-sm text-slate-600 break-words"></div>
 					</div>
+					<div class="flex shrink-0 items-center">
+						<button type="button"
+							class="btn-move hidden h-9 px-3 rounded-xl border border-slate-200 bg-white text-dynamic-xs text-slate-700 hover:bg-slate-50">
+							해당 페이지로 이동
+						</button>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -123,9 +129,10 @@
 			root.querySelector('.title').textContent = item.title || '(제목 없음)';
 			root.querySelector('.message').textContent = item.message || '';
 
-			if (item.url) {
-				root.classList.add('cursor-pointer', 'hover:bg-slate-50');
-				root.addEventListener('click', () => {
+			const $btnMove = root.querySelector('.btn-move');
+			if (item.url && $btnMove) {
+				$btnMove.classList.remove('hidden');
+				$btnMove.addEventListener('click', () => {
 					window.location.href = cp + item.url;
 				});
 			}

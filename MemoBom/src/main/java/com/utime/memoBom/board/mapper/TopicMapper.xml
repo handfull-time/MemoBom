@@ -579,6 +579,30 @@
 			 )
 		) 
     </insert>
+
+	<select id="existsPendingInvite" parameterType="map" resultType="boolean">
+		SELECT
+			CASE WHEN COUNT(1) > 0 THEN TRUE ELSE FALSE END
+		FROM MB_TOPIC_INVITE_USER INV
+			JOIN MB_TOPIC TP
+				ON TP.TOPIC_NO = INV.TOPIC_NO
+		WHERE 1=1
+			AND TP.UID = #{uid}
+			AND INV.TARGET_USER_NO = #{user.userNo}
+			AND INV.IS_ACCEPT IS NULL
+	</select>
+
+	<update id="updateInviteDecision" parameterType="map">
+		UPDATE MB_TOPIC_INVITE_USER INV
+		SET
+			IS_ACCEPT = #{isAccept},
+			UPD_DATE = CURRENT_TIMESTAMP
+		WHERE INV.TOPIC_NO = (
+			SELECT TOPIC_NO FROM MB_TOPIC WHERE UID = #{uid}
+		)
+		AND INV.TARGET_USER_NO = #{user.userNo}
+		AND INV.IS_ACCEPT IS NULL
+	</update>
     
 
 </mapper>

@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.board.dao.TopicDao;
+import com.utime.memoBom.board.dto.InviteDecisionDto;
 import com.utime.memoBom.board.dto.InviteUserDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
@@ -18,6 +19,8 @@ import com.utime.memoBom.common.dao.KeyValueDao;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.push.service.PushSendService;
+import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +35,7 @@ class TopicServiceImpl implements TopicService {
 	final TopicDao topicDao;
 	final UserDao userDao;
 	final KeyValueDao keyValueDao;
+	final PushSendService pushSendService;
 	
 	@Override
 	public String createKey(HttpServletRequest request, LoginUser user) {
@@ -178,13 +182,61 @@ class TopicServiceImpl implements TopicService {
 			int res = topicDao.addInviteUser(user, invite.getTopicUid(), invite.getUserUid() );
 			if( res <= 0 ) {
 				result.setCodeMessage("E", "No changes were made.");
+				return result;
 			}
+
+			final TopicVo topic = topicDao.loadTopic(invite.getTopicUid());
+			final PushSendDataVo push = new PushSendDataVo();
+			push.setTitle("토픽 초대 알림");
+			push.setMessage(topic.getName() + " 토픽에 초대되었습니다.");
+			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
+			push.setLinkUrl("/Mosaic/Item.html?uid=" + invite.getTopicUid() + "&invite=true");
+			pushSendService.sendPush(new LoginUser(0L, invite.getUserUid(), null), push);
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
 		}
 		
 		return result;
+	}
+
+	@Override
+	public ReturnBasic decideInvite(LoginUser user, InviteDecisionDto dto) {
+		final ReturnBasic result = new ReturnBasic();
+		if( user == null ) {
+			result.setCodeMessage("E", "로그인이 필요합니다.");
+			return result;
+		}
+		if( AppUtils.isEmpty(dto.getTopicUid()) ) {
+			result.setCodeMessage("E", "토픽 정보가 없습니다.");
+			return result;
+		}
+
+		if( !topicDao.hasPendingInvite(user, dto.getTopicUid()) ) {
+			result.setCodeMessage("E", "처리할 초대 정보가 없습니다.");
+			return result;
+		}
+
+		try {
+			if( dto.isAccept() ) {
+				topicDao.acceptInvite(user, dto.getTopicUid());
+			}else {
+				topicDao.rejectInvite(user, dto.getTopicUid());
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", "초대 처리 중 오류가 발생했습니다.");
+		}
+
+		return result;
+	}
+
+	@Override
+	public boolean hasPendingInvite(LoginUser user, String topicUid) {
+		if( user == null || AppUtils.isEmpty(topicUid) ) {
+			return false;
+		}
+		return topicDao.hasPendingInvite(user, topicUid);
 	}
 	
 }

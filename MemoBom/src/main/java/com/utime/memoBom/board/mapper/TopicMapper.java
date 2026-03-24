@@ -206,4 +206,21 @@ public interface TopicMapper {
 	 */
 	int insertInviteUser(@Param("user") LoginUser user, @Param("uid") String topicUid, @Param("userUid") String userUid);
 
+	/**
+	 * 초대 대기 여부
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
+	boolean existsPendingInvite(@Param("user") LoginUser user, @Param("uid") String topicUid);
+
+	/**
+	 * 초대 상태 갱신
+	 * @param user
+	 * @param uid
+	 * @param isAccept
+	 * @return
+	 */
+	int updateInviteDecision(@Param("user") LoginUser user, @Param("uid") String topicUid, @Param("isAccept") boolean isAccept);
+
 }

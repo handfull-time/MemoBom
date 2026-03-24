@@ -173,4 +173,34 @@ class TopicDaoImpl implements TopicDao{
 	public int addInviteUser(LoginUser user, String topicUid, String userUid) throws Exception {
 		return topicMapper.insertInviteUser(user, topicUid, userUid);
 	}
+
+	@Override
+	public boolean hasPendingInvite(LoginUser user, String topicUid) {
+		return topicMapper.existsPendingInvite(user, topicUid);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int acceptInvite(LoginUser user, String topicUid) throws Exception {
+		final int updated = topicMapper.updateInviteDecision(user, topicUid, true);
+		if( updated <= 0 ) {
+			return 0;
+		}
+
+		final long topicNo = topicMapper.selectTopicNoByUid(topicUid);
+		final boolean followed = topicMapper.isTopicFollowed(user.userNo(), topicNo);
+		if( followed ) {
+			return 0;
+		}
+
+		topicMapper.insertTopicFlow(user.userNo(), topicNo);
+		topicMapper.updateTopicStatsFollowCount(topicNo);
+		return 1;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int rejectInvite(LoginUser user, String topicUid) throws Exception {
+		return topicMapper.updateInviteDecision(user, topicUid, false);
+	}
 }

@@ -2,6 +2,7 @@ package com.utime.memoBom.board.service;
 
 import java.util.List;
 
+import com.utime.memoBom.board.dto.InviteDecisionDto;
 import com.utime.memoBom.board.dto.InviteUserDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
@@ -90,5 +91,21 @@ public interface TopicService {
 	 * @return
 	 */
 	ReturnBasic inviteUser(LoginUser user, InviteUserDto invite);
+
+	/**
+	 * 초대 수락/거절 처리
+	 * @param user
+	 * @param dto
+	 * @return
+	 */
+	ReturnBasic decideInvite(LoginUser user, InviteDecisionDto dto);
+
+	/**
+	 * 해당 토픽에 대한 사용자 초대 대기 여부
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	boolean hasPendingInvite(LoginUser user, String topicUid);
 
 }

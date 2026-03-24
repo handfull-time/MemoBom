@@ -109,4 +109,30 @@ public interface TopicDao {
 	 */
 	int addInviteUser(LoginUser user, String topicUid, String userUid)throws Exception;
 
+	/**
+	 * 대기 중인 초대가 있는지
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	boolean hasPendingInvite(LoginUser user, String topicUid);
+
+	/**
+	 * 초대 수락 처리 + 토픽 팔로우 추가(이미 팔로우면 유지)
+	 * @param user
+	 * @param topicUid
+	 * @return 새로 추가된 follow 수
+	 * @throws Exception
+	 */
+	int acceptInvite(LoginUser user, String topicUid) throws Exception;
+
+	/**
+	 * 초대 거절 처리
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 * @throws Exception
+	 */
+	int rejectInvite(LoginUser user, String topicUid) throws Exception;
+
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.board.dto.InviteUserDto;
+import com.utime.memoBom.board.dto.InviteDecisionDto;
 import com.utime.memoBom.board.dto.TopicDto;
 import com.utime.memoBom.board.dto.TopicSaveDto;
 import com.utime.memoBom.board.service.TopicService;
@@ -85,7 +86,8 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Item.html")
-	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam String uid ) {
+	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam String uid,
+			@RequestParam(required = false, defaultValue = "false") boolean invite ) {
 		
 		final ReturnBasic topicRes = topicServce.loadTopic( user, uid );
 		if( topicRes.isError() ) {
@@ -98,6 +100,8 @@ public class TopicController {
 		final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 		
 		model.addAttribute("topic", topic);
+		model.addAttribute("inviteMode", invite);
+		model.addAttribute("pendingInvite", invite && topicServce.hasPendingInvite(user, uid));
 		
 		if( uid == null ) {
 			model.addAttribute(KeySeal, topicServce.createKey(request, user));
@@ -174,6 +178,12 @@ public class TopicController {
 	public ReturnBasic InviteUser( LoginUser user, @RequestBody InviteUserDto invite ) {
 		
 		return topicServce.inviteUser(user, invite);
+	}
+
+	@PostMapping("InviteDecision.json")
+	@ResponseBody
+	public ReturnBasic inviteDecision(LoginUser user, @RequestBody InviteDecisionDto dto) {
+		return topicServce.decideInvite(user, dto);
 	}
 
 	
