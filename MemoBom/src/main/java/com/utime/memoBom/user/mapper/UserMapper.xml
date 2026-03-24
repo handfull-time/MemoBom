@@ -295,8 +295,13 @@
 			AND TI.TARGET_USER_NO IS NULL
 			AND UR.USER_NO != #{user.userNo}
 			AND UR.ENABLED = TRUE
-			AND UR.NICKNAME LIKE '%${nickName}%' 
-		ORDER BY UR.NICKNAME
+			AND UR.NICKNAME LIKE CONCAT('%', #{nickName}, '%')
+		ORDER BY 
+			CASE 
+				WHEN UPPER(UR.NICKNAME) = UPPER(#{nickName}) THEN 0
+				ELSE 1
+			END
+			, UR.NICKNAME
 	</select>
 	
 	
