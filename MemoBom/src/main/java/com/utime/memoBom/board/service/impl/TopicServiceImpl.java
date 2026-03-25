@@ -22,6 +22,7 @@ import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.service.PushSendService;
 import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.vo.UserVo;
 import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -113,7 +114,24 @@ class TopicServiceImpl implements TopicService {
 	}
 	
 	@Override
-//	TopicResultVo loadTopic(String uid);
+	public ReturnBasic loadTopic(String uid) {
+		final ReturnBasic result = new ReturnBasic();
+		if( AppUtils.isEmpty(uid) ) {
+			result.setCodeMessage("E", "Mosaic ID가 없습니다.");
+			return result;
+		} 
+		
+		final TopicVo topic = topicDao.loadTopic(uid);
+		if( topic == null ) {
+			result.setCodeMessage("E", "Mosaic을 찾을 수 없습니다.");
+			return result;
+		}
+		
+		result.setData( this.convertTopicToTopicResultVo(topic) );
+		return result;
+	}
+	
+	@Override
 	public ReturnBasic loadTopic(LoginUser user, String uid) {
 	
 		final ReturnBasic result = new ReturnBasic();
@@ -179,20 +197,22 @@ class TopicServiceImpl implements TopicService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
+		final TopicVo topic = topicDao.loadTopic(invite.getTopicUid());
+		final UserVo targetUser = userDao.getUserFromUid(invite.getUserUid());
+		
 		try {
-			int res = topicDao.addInviteUser(user, invite.getTopicUid(), invite.getUserUid() );
+			final int res = topicDao.addInviteUser(user, topic.getTopicNo(), targetUser.getUserNo() );
 			if( res <= 0 ) {
 				result.setCodeMessage("E", "No changes were made.");
 				return result;
 			}
-
-			final TopicVo topic = topicDao.loadTopic(invite.getTopicUid());
+			
 			final PushSendDataVo push = new PushSendDataVo();
 			push.setTitle("토픽 초대 알림");
 			push.setMessage(topic.getName() + " 토픽에 초대되었습니다.");
 			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
-			push.setLinkUrl("/Mosaic/InviteUser.html?uid=" + invite.getTopicUid());
-			pushSendService.sendPush(new LoginUser(0L, invite.getUserUid(), null), push);
+			push.setLinkUrl("/Mosaic/InviteUser.html?uid=" + topic.getUid());
+			pushSendService.sendPush(new LoginUser(targetUser.getUserNo(), targetUser.getUid(), targetUser.getRole()), push);
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");

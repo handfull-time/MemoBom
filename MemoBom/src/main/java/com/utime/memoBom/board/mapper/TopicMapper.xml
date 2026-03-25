@@ -566,17 +566,9 @@
 			SOURCE_USER_NO,
 			TARGET_USER_NO
 		) VALUES (
-			(
-				SELECT 
-					TOPIC_NO
-				FROM MB_TOPIC WHERE UID = #{uid}
-			 ),
+			#{topicNo},
 			 #{user.userNo},
-			 (
-				SELECT 
-					USER_NO
-				FROM MB_USER WHERE UID = #{userUid}
-			 )
+			 #{targetUserNo}
 		) 
     </insert>
 

@@ -117,7 +117,8 @@ public class TopicController {
 
 	@GetMapping("InviteUser.html")
 	public String inviteUserPage(ModelMap model, LoginUser user, @RequestParam String uid) {
-		final ReturnBasic topicRes = topicServce.loadTopic(user, uid);
+		
+		final ReturnBasic topicRes = topicServce.loadTopic(uid);
 		if( topicRes.isError() ) {
 			model.addAttribute("res", topicRes );
 			model.addAttribute(AppDefine.KeyShowFooter, false );

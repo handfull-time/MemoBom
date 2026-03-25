@@ -200,9 +200,18 @@ class PushSendServiceImpl implements PushSendService {
     	if( user == null || data == null ) {
     		return new ReturnBasic("E", "null 안됨.");
     	}
+
+    	final UUID uid = UUID.randomUUID();
     	
-    	final List<PushSubInfoVo> entityList = pushDao.findPushSubsByUser(user);
+    	final List<PushSubInfoVo> entityList = List.of(); // pushDao.findPushSubsByUser(user);
     	if( AppUtils.isEmpty(entityList) ) {
+    		
+    		try {
+    			alarmDao.addPushAlarm(user, data, uid);
+    		} catch (Exception e) {
+    			log.error("", e);
+    			return new ReturnBasic("E", e.getMessage());
+    		}
     		return new ReturnBasic("E", "보낼 대상 없음.");
     	}
     	
@@ -211,8 +220,6 @@ class PushSendServiceImpl implements PushSendService {
 		pushDto.setMessage(data.getMessage());
 		pushDto.setIcon(data.getImageUrl());
 		
-    	final UUID uid = UUID.randomUUID();
-    	
 		final PushNotiDataDto._Data dtoData = pushDto.getData();
 		dtoData.setContextPath("/" + appName);
 		dtoData.setClickId( uid );

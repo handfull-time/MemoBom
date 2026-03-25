@@ -200,12 +200,12 @@ public interface TopicMapper {
 	/**
 	 * 주제 사용자 초대
 	 * @param user
-	 * @param topicUid
-	 * @param userUid
+	 * @param topicNo
+	 * @param targetUserNo
 	 * @return
 	 * @throws Exception
 	 */
-	int insertInviteUser(@Param("user") LoginUser user, @Param("uid") String topicUid, @Param("userUid") String userUid);
+	int insertInviteUser(@Param("user") LoginUser user, @Param("topicNo")long topicNo, @Param("targetUserNo")long targetUserNo);
 
 	/**
 	 * 초대 대기 여부

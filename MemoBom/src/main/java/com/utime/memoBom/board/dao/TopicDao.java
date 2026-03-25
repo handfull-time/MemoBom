@@ -104,11 +104,11 @@ public interface TopicDao {
 	 * 주제 사용자 초대
 	 * @param user
 	 * @param topicUid
-	 * @param userUid
+	 * @param topicNo
 	 * @return
 	 * @throws Exception
 	 */
-	int addInviteUser(LoginUser user, String topicUid, String userUid)throws Exception;
+	int addInviteUser(LoginUser user, long topicNo, long targetUserNo )throws Exception;
 
 	/**
 	 * 대기 중인 초대가 있는지

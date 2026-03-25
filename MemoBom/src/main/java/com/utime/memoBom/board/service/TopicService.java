@@ -46,11 +46,18 @@ public interface TopicService {
 	ReturnBasic saveTopic(LoginUser user, TopicSaveDto reqVo);
 
 	/**
-	 * topic 읽기
+	 * topic 읽기 - 비공개도 읽는다.
 	 * @param uid
 	 * @return
 	 */
-//	TopicResultVo loadTopic(String uid);
+	ReturnBasic loadTopic(String uid);
+	
+	/**
+	 * topic 읽기 - 사용자 권한 내
+	 * @param user
+	 * @param uid
+	 * @return
+	 */
 	ReturnBasic loadTopic(LoginUser user, String uid);
 	
 	/**
