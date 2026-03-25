@@ -60,6 +60,12 @@
 			const btnInviteReject = document.getElementById("btnInviteReject");
 
 			async function submitInviteDecision(accept) {
+				const ask = accept ? "토픽 가입을 수락하시겠습니까?" : "토픽 초대를 거절하시겠습니까?";
+				const ok = await confirmP(ask);
+				if (!ok) {
+					return;
+				}
+
 				const url = /*[[@{/Mosaic/InviteDecision.json}]]*/ '/Mosaic/InviteDecision.json';
 				const payload = {
 					topicUid: /*[[${topic.uid}]]*/ null,
