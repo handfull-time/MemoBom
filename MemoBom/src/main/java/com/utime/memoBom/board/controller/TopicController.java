@@ -99,8 +99,6 @@ public class TopicController {
 		final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 		
 		model.addAttribute("topic", topic);
-		model.addAttribute("inviteMode", false);
-		model.addAttribute("pendingInvite", false);
 		
 		if( uid == null ) {
 			model.addAttribute(KeySeal, topicServce.createKey(request, user));

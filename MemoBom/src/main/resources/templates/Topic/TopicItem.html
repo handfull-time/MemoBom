@@ -22,13 +22,6 @@
 			<p class="mt-1 text-dynamic-xs text-gray-500">이름과 스타일을 정하고, 옵션을 선택해 주세요.</p>
 		</div>
 
-		<section th:if="${inviteMode}" class="bg-blue-50 rounded-2xl border border-blue-200 p-4 space-y-2">
-			<h3 class="text-dynamic-sm font-semibold text-blue-900">토픽 초대</h3>
-			<p class="text-dynamic-xs text-blue-800">초대 토픽 소개 페이지입니다. 가입 여부를 선택할 수 있습니다.</p>
-			<p th:if="${pendingInvite}" class="text-dynamic-xs text-blue-700">아래에서 수락 또는 거절을 선택해 주세요.</p>
-			<p th:if="${!pendingInvite}" class="text-dynamic-xs text-slate-600">이미 처리된 초대입니다.</p>
-		</section>
-
 		<!-- 기본 정보 -->
 		<section class="bg-white rounded-2xl border border-red-200 p-4">
 			<div class="flex items-center justify-between">
@@ -204,17 +197,6 @@
 			</button>
 		</div>
 
-		<div th:if="${inviteMode and pendingInvite}" class="grid grid-cols-2 gap-2 pb-2">
-			<button type="button" id="btnInviteReject"
-				class="h-12 rounded-2xl border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-50 active:scale-[0.99] transition">
-				가입 거절
-			</button>
-			<button type="button" id="btnInviteAccept"
-				class="h-12 rounded-2xl bg-slate-900 text-white font-semibold enabled:hover:bg-slate-800 disabled:bg-slate-300 active:scale-[0.99] transition">
-				가입 수락
-			</button>
-		</div>
-
 	</div>
 </th:block>
 
@@ -263,9 +245,6 @@
 			const btnSave = $("btnSave");
 			const btnSetEmotion = $("btnSetEmotion");
 			const btnSetReaction = $("btnSetReaction");
-			const btnInviteAccept = $("btnInviteAccept");
-			const btnInviteReject = $("btnInviteReject");
-			const inviteMode = /*[[${inviteMode}]]*/ false;
 
 			//const elExternal = $("external");
 			//const elEmotion = $("emotion");
@@ -463,41 +442,6 @@
 			// ---- events ----
 			//btnCheckName.addEventListener("click", checkSameName);
 			btnSave?.addEventListener("click", saveTopic);
-
-			async function submitInviteDecision(accept) {
-				const url = /*[[@{/Mosaic/InviteDecision.json}]]*/ '/Mosaic/InviteDecision.json';
-				const payload = {
-					topicUid: /*[[${topic.uid}]]*/ null,
-					accept
-				};
-
-				try {
-					const res = await apiPost(url, payload);
-					if (!res || res.code !== "0") {
-						showToast("오류", res?.message || "초대 처리에 실패했습니다.", ToastType.ERROR);
-						return;
-					}
-
-					if (accept) {
-						showToast("완료", "토픽 가입이 완료되었습니다.", ToastType.SUCCESS);
-						if (btnInviteAccept) btnInviteAccept.disabled = true;
-						if (btnInviteReject) btnInviteReject.disabled = true;
-					} else {
-						await alertP("초대를 거절했습니다.");
-						location.replace("/");
-					}
-				} catch (e) {
-					console.error(e);
-					showToast("오류", "초대 처리 중 오류가 발생했습니다.", ToastType.ERROR);
-				}
-			}
-
-			btnInviteAccept?.addEventListener("click", () => submitInviteDecision(true));
-			btnInviteReject?.addEventListener("click", () => submitInviteDecision(false));
-
-			if (inviteMode) {
-				btnSave.style.display = "none";
-			}
 
 			// 이름이 바뀌면 중복확인 무효화 + 디바운스 자동 체크
 			let t = null;
