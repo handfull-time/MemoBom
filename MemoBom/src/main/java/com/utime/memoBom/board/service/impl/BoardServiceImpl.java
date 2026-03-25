@@ -24,8 +24,10 @@ import com.utime.memoBom.common.vo.BinResultVo;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.push.service.PushSendService;
+import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.vo.UserVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -204,6 +206,31 @@ class BoardServiceImpl implements BoardService {
 		
 		try {
 			result.setData( boardDao.saveComment(user, reqVo) );
+
+			final FragmentItem fragment = boardDao.loadFragment(user, reqVo.getUid());
+			if( fragment == null || fragment.getTopic() == null ) {
+				return result;
+			}
+
+			final long topicOwnerNo = fragment.getTopic().getOwnerNo();
+			if( topicOwnerNo == user.userNo() ) {
+				return result;
+			}
+
+			final BasicUserVo cmtUser = userDao.getBasicUserFromUserNo(user.userNo());
+			final String cmtUserName = (cmtUser == null)? "누군가":cmtUser.getNickname();
+
+			final PushSendDataVo push = new PushSendDataVo();
+			push.setTitle("댓글 알림");
+			push.setMessage(cmtUserName + "님이 " + fragment.getTopic().getName() + " 토픽에 댓글을 남겼습니다.");
+			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
+			push.setLinkUrl("/Fragment/index.html?fragUid=" + reqVo.getUid());
+
+			try {
+				pushService.sendPush(new LoginUser(topicOwnerNo, null, null), push);
+			} catch (Exception e) {
+				log.error("댓글 알림 푸시 발송 실패. ownerNo={}, fragUid={}", topicOwnerNo, reqVo.getUid(), e);
+			}
 		} catch (Exception e) {
 			log.error("", e);
 			result.setCodeMessage("E", "An error occurred while saving.");
