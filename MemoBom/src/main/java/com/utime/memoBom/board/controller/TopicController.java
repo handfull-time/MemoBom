@@ -86,8 +86,7 @@ public class TopicController {
 	 * @return
 	 */
 	@GetMapping("Item.html")
-	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam String uid,
-			@RequestParam(required = false, defaultValue = "false") boolean invite ) {
+	public String topicItem( HttpServletRequest request, ModelMap model, LoginUser user, @RequestParam String uid ) {
 		
 		final ReturnBasic topicRes = topicServce.loadTopic( user, uid );
 		if( topicRes.isError() ) {
@@ -100,8 +99,8 @@ public class TopicController {
 		final TopicResultVo topic = (TopicResultVo)topicRes.getData();
 		
 		model.addAttribute("topic", topic);
-		model.addAttribute("inviteMode", invite);
-		model.addAttribute("pendingInvite", invite && topicServce.hasPendingInvite(user, uid));
+		model.addAttribute("inviteMode", false);
+		model.addAttribute("pendingInvite", false);
 		
 		if( uid == null ) {
 			model.addAttribute(KeySeal, topicServce.createKey(request, user));
@@ -116,6 +115,22 @@ public class TopicController {
 		}
 		
 		return "Topic/TopicItem";
+	}
+
+	@GetMapping("InviteUser.html")
+	public String inviteUserPage(ModelMap model, LoginUser user, @RequestParam String uid) {
+		final ReturnBasic topicRes = topicServce.loadTopic(user, uid);
+		if( topicRes.isError() ) {
+			model.addAttribute("res", topicRes );
+			model.addAttribute(AppDefine.KeyShowFooter, false );
+			model.addAttribute(AppDefine.KeyLoadScript, false );
+			return "Common/ErrorAlert";
+		}
+
+		model.addAttribute("topic", topicRes.getData());
+		model.addAttribute("pendingInvite", topicServce.hasPendingInvite(user, uid));
+
+		return "Topic/InviteUser";
 	}
 	
 	/**

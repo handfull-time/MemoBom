@@ -190,7 +190,7 @@ class TopicServiceImpl implements TopicService {
 			push.setTitle("토픽 초대 알림");
 			push.setMessage(topic.getName() + " 토픽에 초대되었습니다.");
 			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
-			push.setLinkUrl("/Mosaic/Item.html?uid=" + invite.getTopicUid() + "&invite=true");
+			push.setLinkUrl("/Mosaic/InviteUser.html?uid=" + invite.getTopicUid());
 			pushSendService.sendPush(new LoginUser(0L, invite.getUserUid(), null), push);
 		} catch (Exception e) {
 			log.error("", e);
