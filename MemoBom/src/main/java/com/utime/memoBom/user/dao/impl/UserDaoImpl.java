@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,14 @@ class UserDaoImpl implements UserDao {
 	
 	@Value("${appName}")
 	private String appName;
+	
+	@Scheduled(cron = "0 10 1 * * *", zone = "Asia/Seoul")
+	public void cleanupExpired() {
+	    final int cnt = userMapper.removeAlarmExpire();
+	    if (cnt > 0) {
+	        log.info("Expired alarm removed: {}", cnt);
+	    }
+	}
 	
 	@Override
 	public UserVo findById(String provider, String id) {

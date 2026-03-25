@@ -31,7 +31,8 @@ class KeyValueDaoImpl implements KeyValueDao {
 		}
 	}
 
-	@Scheduled(fixedDelay = 60 * 60 * 1000) // 1시간
+//	@Scheduled(fixedDelay = 60 * 60 * 1000) 
+	@Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul")
 	public void cleanupExpired() {
 	    final int cnt = mapper.removeExpire();
 	    if (cnt > 0) {

@@ -150,4 +150,10 @@ public interface UserMapper {
 	 * @return
 	 */
 	List<AlarmVo> listMyAlarm(@Param("user")LoginUser user, @Param("keyword")String keyword, @Param("pageNo")int pageNo);
+
+	/**
+	 * 기간 만료된 알람 제거
+	 * @return
+	 */
+	int removeAlarmExpire();
 }

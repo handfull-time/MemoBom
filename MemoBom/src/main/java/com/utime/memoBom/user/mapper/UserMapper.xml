@@ -353,4 +353,10 @@
 		LIMIT 10 OFFSET (#{pageNo} - 1) * 10
 	</select>
 	
+	<!--기간 만료된 알람 제거-->
+	<delete id="removeAlarmExpire">
+		DELETE FROM MB_ALARM
+		WHERE CREATE_AT <![CDATA[ <= ]]> DATEADD('MONTH', -3, CURRENT_TIMESTAMP)
+	</delete>
+	
 </mapper>

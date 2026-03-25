@@ -81,10 +81,11 @@
 
 					if (accept) {
 						await alertP("가입이 완료되었습니다.");
-						location.replace("/Mosaic/Item.html?uid=" + encodeURIComponent(payload.topicUid));
+						const address = /*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html';
+						location.replace(address + "?topicUid=" + encodeURIComponent(payload.topicUid));
 					} else {
 						await alertP("초대를 거절했습니다.");
-						location.replace("/");
+						location.replace(/*[[@{/}]]*/ '/');
 					}
 				} catch (e) {
 					console.error(e);

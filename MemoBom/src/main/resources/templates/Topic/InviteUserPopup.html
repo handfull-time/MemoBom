@@ -152,7 +152,7 @@
 						renderMore(true);
 						return;
 					}
-
+					setState('');
 					allUsers = Array.isArray(res.data) ? res.data : [];
 					renderMore(true);
 				} catch (e) {

@@ -203,7 +203,7 @@ class PushSendServiceImpl implements PushSendService {
 
     	final UUID uid = UUID.randomUUID();
     	
-    	final List<PushSubInfoVo> entityList = List.of(); // pushDao.findPushSubsByUser(user);
+    	final List<PushSubInfoVo> entityList = pushDao.findPushSubsByUser(user);
     	if( AppUtils.isEmpty(entityList) ) {
     		
     		try {
