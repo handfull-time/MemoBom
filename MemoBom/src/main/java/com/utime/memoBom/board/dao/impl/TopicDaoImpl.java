@@ -14,6 +14,7 @@ import com.utime.memoBom.board.vo.TopicVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -202,5 +203,10 @@ class TopicDaoImpl implements TopicDao{
 	@Transactional(rollbackFor = Exception.class)
 	public int rejectInvite(LoginUser user, String topicUid) throws Exception {
 		return topicMapper.updateInviteDecision(user, topicUid, false);
+	}
+
+	@Override
+	public BasicUserVo getPendingInviteSourceUser(LoginUser user, String topicUid) {
+		return topicMapper.selectPendingInviteSourceUser(user, topicUid);
 	}
 }

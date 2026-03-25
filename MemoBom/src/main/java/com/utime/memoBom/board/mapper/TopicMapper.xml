@@ -603,6 +603,24 @@
 		AND INV.TARGET_USER_NO = #{user.userNo}
 		AND INV.IS_ACCEPT IS NULL
 	</update>
+
+	<select id="selectPendingInviteSourceUser" parameterType="map" resultType="com.utime.memoBom.user.vo.query.BasicUserVo">
+		SELECT
+			CAST(USR.UID AS VARCHAR) AS UID,
+			USR.NICKNAME AS NICKNAME,
+			USR.PROFILE_IMG_PATH AS PROFILE_URL
+		FROM MB_TOPIC_INVITE_USER INV
+			JOIN MB_TOPIC TP
+				ON TP.TOPIC_NO = INV.TOPIC_NO
+			JOIN MB_USER USR
+				ON USR.USER_NO = INV.SOURCE_USER_NO
+		WHERE 1=1
+			AND TP.UID = #{uid}
+			AND INV.TARGET_USER_NO = #{user.userNo}
+			AND INV.IS_ACCEPT IS NULL
+		ORDER BY INV.REG_DATE DESC
+		LIMIT 1
+	</select>
     
 
 </mapper>

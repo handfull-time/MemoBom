@@ -15,20 +15,26 @@
 			<p class="mt-1 text-dynamic-sm text-blue-800">아래 토픽 정보를 확인하고 가입 여부를 선택해 주세요.</p>
 		</section>
 
-		<section class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
-			<div class="flex items-center gap-3">
-				<div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-dynamic-2xl"
-					th:text="${topic.imogi ?: '📌'}">📌</div>
-				<div class="min-w-0">
-					<div class="text-dynamic-base font-semibold text-slate-900 break-words" th:text="${topic.name}">토픽명</div>
-					<div class="text-dynamic-xs text-slate-500">
-						작성자: <span th:text="${topic.user.nickname}">닉네임</span>
+			<section class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+				<div class="flex items-center gap-3">
+					<div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-dynamic-2xl"
+						th:text="${topic.imogi ?: '📌'}">📌</div>
+					<div class="min-w-0">
+						<div class="text-dynamic-base font-semibold text-slate-900 break-words" th:text="${topic.name}">토픽명</div>
+						<div class="text-dynamic-xs text-slate-500">
+							토픽 생성자: <span th:text="${topic.user.nickname}">닉네임</span>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="text-dynamic-sm text-slate-700 whitespace-pre-line break-words"
-				th:text="${topic.description ?: '토픽 설명이 없습니다.'}">토픽 설명</div>
-		</section>
+				<div class="rounded-xl bg-slate-50 px-3 py-2 text-dynamic-sm text-slate-700">
+					<div>
+						초대한 사람:
+						<span class="font-semibold" th:text="${inviter != null ? inviter.nickname : '확인 불가'}">초대자</span>
+					</div>
+				</div>
+				<div class="text-dynamic-sm text-slate-700 whitespace-pre-line break-words"
+					th:text="${topic.description ?: '토픽 설명이 없습니다.'}">토픽 설명</div>
+			</section>
 
 		<section th:if="${pendingInvite}" class="grid grid-cols-2 gap-2">
 			<button type="button" id="btnInviteReject"

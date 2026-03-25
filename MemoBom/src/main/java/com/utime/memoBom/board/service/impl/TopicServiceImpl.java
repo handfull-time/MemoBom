@@ -22,6 +22,7 @@ import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.push.service.PushSendService;
 import com.utime.memoBom.push.vo.PushSendDataVo;
 import com.utime.memoBom.user.dao.UserDao;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -237,6 +238,14 @@ class TopicServiceImpl implements TopicService {
 			return false;
 		}
 		return topicDao.hasPendingInvite(user, topicUid);
+	}
+
+	@Override
+	public BasicUserVo getPendingInviteSourceUser(LoginUser user, String topicUid) {
+		if( user == null || AppUtils.isEmpty(topicUid) ) {
+			return null;
+		}
+		return topicDao.getPendingInviteSourceUser(user, topicUid);
 	}
 	
 }

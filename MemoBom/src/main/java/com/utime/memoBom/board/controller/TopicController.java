@@ -127,6 +127,7 @@ public class TopicController {
 
 		model.addAttribute("topic", topicRes.getData());
 		model.addAttribute("pendingInvite", topicServce.hasPendingInvite(user, uid));
+		model.addAttribute("inviter", topicServce.getPendingInviteSourceUser(user, uid));
 
 		return "Topic/InviteUser";
 	}

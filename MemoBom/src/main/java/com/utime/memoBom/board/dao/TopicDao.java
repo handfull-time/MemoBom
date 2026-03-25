@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 
@@ -134,5 +135,13 @@ public interface TopicDao {
 	 * @throws Exception
 	 */
 	int rejectInvite(LoginUser user, String topicUid) throws Exception;
+
+	/**
+	 * 대기중인 초대 발신자 정보
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	BasicUserVo getPendingInviteSourceUser(LoginUser user, String topicUid);
 
 }

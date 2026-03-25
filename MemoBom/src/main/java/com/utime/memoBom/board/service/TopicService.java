@@ -10,6 +10,7 @@ import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -107,5 +108,13 @@ public interface TopicService {
 	 * @return
 	 */
 	boolean hasPendingInvite(LoginUser user, String topicUid);
+
+	/**
+	 * 초대 보낸 사용자 정보
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	BasicUserVo getPendingInviteSourceUser(LoginUser user, String topicUid);
 
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.utime.memoBom.board.vo.ETopicSortType;
 import com.utime.memoBom.board.vo.TopicVo;
+import com.utime.memoBom.user.vo.query.BasicUserVo;
 import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 
@@ -222,5 +223,13 @@ public interface TopicMapper {
 	 * @return
 	 */
 	int updateInviteDecision(@Param("user") LoginUser user, @Param("uid") String topicUid, @Param("isAccept") boolean isAccept);
+
+	/**
+	 * 대기중인 초대 발신자 조회
+	 * @param user
+	 * @param topicUid
+	 * @return
+	 */
+	BasicUserVo selectPendingInviteSourceUser(@Param("user") LoginUser user, @Param("uid") String topicUid);
 
 }
