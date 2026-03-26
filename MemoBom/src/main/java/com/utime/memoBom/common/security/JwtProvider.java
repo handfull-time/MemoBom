@@ -87,7 +87,7 @@ public class JwtProvider {
     //  Token Resolution & Parsing
     // =========================================================================
 
-    private String getCookieValue(HttpServletRequest request, String name) {
+    public String getCookieValue(HttpServletRequest request, String name) {
         final Cookie[] cookies = request.getCookies();
         if (cookies == null) return null;
         for (Cookie c : cookies) {
@@ -146,7 +146,7 @@ public class JwtProvider {
      * @param token
      * @param expMs
      */
-    private void addTokenCookie(HttpServletRequest req, HttpServletResponse res,
+    public void addCookie(HttpServletRequest req, HttpServletResponse res,
                                 String cookieName, String token, long expMs) {
         String contextPath = req.getContextPath();
         final String path = (contextPath != null && !contextPath.isEmpty()) ? contextPath : "/";
@@ -174,11 +174,11 @@ public class JwtProvider {
     private void genericUserCookie(HttpServletRequest request, HttpServletResponse response, UserVo user, String sid ) {
     	 // 1. Access Token
         final String access = this.generateToken(user, Map.of(CLM_SID, sid), ACCESS_EXP_MS);
-        this.addTokenCookie(request, response, COOKIE_ACCESS, access, ACCESS_EXP_MS);
+        this.addCookie(request, response, COOKIE_ACCESS, access, ACCESS_EXP_MS);
 
         // 2. Refresh Token
         final String refresh = this.generateToken(user, this.createRequestBindClaims(request, sid), REFRESH_EXP_MS);
-        this.addTokenCookie(request, response, COOKIE_REFRESH, refresh, REFRESH_EXP_MS);
+        this.addCookie(request, response, COOKIE_REFRESH, refresh, REFRESH_EXP_MS);
     }
 
     /**
@@ -188,7 +188,7 @@ public class JwtProvider {
      * @param res
      * @param cookieName
      */
-    private void deleteCookie(HttpServletRequest req, HttpServletResponse res, String cookieName) {
+    public void deleteCookie(HttpServletRequest req, HttpServletResponse res, String cookieName) {
         String contextPath = req.getContextPath();
         final String path = (contextPath != null && !contextPath.isEmpty()) ? contextPath : "/";
         final String domain = req.getServerName();

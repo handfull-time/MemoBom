@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminCommentMapper">
 <!--
 SELECT C.COMMENT_UID, C.REG_DATE, C.FRAG_UID, F.TOPIC_UID,
        C.USER_NO, U.NICKNAME,

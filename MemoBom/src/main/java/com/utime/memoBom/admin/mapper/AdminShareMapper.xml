@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminShareMapper">
 
 <!--SELECT SHARE_UID, TARGET_TYPE, TARGET_UID, USER_NO,
        CREATE_AT, LAST_ACCESS_AT, ACCESS_CNT, BOT_ACCESS_CNT, ACTIVE

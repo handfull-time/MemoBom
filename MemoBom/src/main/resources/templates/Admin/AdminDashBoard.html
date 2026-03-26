@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{Admin/AdminLayout}">
+
+<body>
+	<th:block layout:fragment="admin_title">Dashboard</th:block>
+	<th:block layout:fragment="admin_content">
+		<input type="date" name="date"><br>
+		사용자 : [[${item.user}]]<br/>
+		토픽 : [[${item.topic}]]<br/>
+		글 : [[${item.fragment}]]<br/>
+		댓글 : [[${item.comment}]]<br/>
+		이모션 : [[${item.emotion}]]<br/>
+		스크랩 : [[${item.scrap}]]<br/>
+		공유 : [[${item.share}]]<br/>
+		푸시 : [[${item.push}]]<br/>
+		
+		<!-- 위 내용 클릭 하면 각 해당 페이지로 이동한다. -->
+		<!-- 예) 사용자 클릭 /Lotus/User.html?date=${date} -->
+	</th:block>
+</body>
+</html>

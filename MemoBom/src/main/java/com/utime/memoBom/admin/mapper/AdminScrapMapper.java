@@ -2,10 +2,7 @@ package com.utime.memoBom.admin.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
-/**
- * 게시글 처리
- */
 @Mapper
-public interface AdminMapper {
-	
+public interface AdminScrapMapper {
+
 }

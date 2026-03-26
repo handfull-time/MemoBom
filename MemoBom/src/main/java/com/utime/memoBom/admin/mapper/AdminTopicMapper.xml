@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.utime.memoBom.admin.mapper.AdminMapper">
+<mapper namespace="com.utime.memoBom.admin.mapper.AdminTopicMapper">
 
 <!-- 토픽 목록(+글 수)
 SELECT T.TOPIC_UID, T.NAME, T.COLOR, T.EXTERNAL, T.EMOTION, T.COMMENTS,

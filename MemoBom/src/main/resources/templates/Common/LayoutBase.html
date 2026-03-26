@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-	<title th:text="'MemoBom' + (${pageTitle} != null ? ' - ' + ${pageTitle} : '')">MemoBom</title>
+	<title layout:fragment="title">MemoBom</title>
 
 	<th:block th:replace="~{Common/Favicon :: Favicon}"></th:block>
 	<script th:inline="javascript">

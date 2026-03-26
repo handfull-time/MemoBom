@@ -12,10 +12,12 @@ import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
 import com.utime.memoBom.common.util.CacheIntervalMap;
 import com.utime.memoBom.common.util.RsaEncDec;
+import com.utime.memoBom.common.vo.EJwtRole;
 import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.user.dao.UserDao;
 import com.utime.memoBom.user.service.AuthService;
 import com.utime.memoBom.user.vo.ReqUniqueVo;
+import com.utime.memoBom.user.vo.UserVo;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,11 +35,6 @@ class AuthServiceImpl implements AuthService {
 	final UserDao userDao;
 	final KeyValueDao kvDao;
 	final JwtProvider jwtProvider;
-	
-	@PostConstruct
-	private void init() throws Exception{
-		
-	}
 	
 	/**
 	 * Interval 에 추가.
