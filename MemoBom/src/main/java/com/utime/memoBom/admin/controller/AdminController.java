@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.admin.service.AdminService;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -179,6 +180,19 @@ public class AdminController {
 	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo ) {
 		
 		return adminService.getTopicList(user, searchVo );
+	}
+
+	/**
+	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param topicVo 토픽 수정 값
+	 * @return 저장 결과
+	 */
+	@ResponseBody
+	@PostMapping(path = {"TopicSave.json" })
+	public ReturnBasic saveTopicEditable(LoginUser user, @RequestBody AdminTopicVo topicVo) {
+		return adminService.updateTopicEditable(user, topicVo);
 	}
 	
 	/**

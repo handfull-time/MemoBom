@@ -3,6 +3,52 @@
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminTopicMapper">
 
+	<select id="getTopicList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminTopicVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(T.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			TO_CHAR(T.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			T.TOPIC_NO AS topicNo,
+			T.OWNER_NO AS ownerNo,
+			T.ENABLED AS enabled,
+			CAST(T.UID AS VARCHAR) AS uid,
+			T.EXTERNAL AS external,
+			T.EMOTION AS emotion,
+			T.COMMENTS AS comments,
+			T.MAX_LEN AS maxLen,
+			T.NAME AS name,
+			T.NAME_UPPER AS nameUpper,
+			T.DESCRIPTION AS description,
+			T.IMOGI AS imogi,
+			T.COLOR AS color,
+			T.EMOJI_SET_TYPE AS emojiSetType,
+			T.AI AS ai,
+			T.PROMPT AS prompt
+		FROM MB_TOPIC T
+		WHERE TO_CHAR(T.REG_DATE, 'YYYY-MM-DD') = #{date}
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.DESCRIPTION) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(T.UID AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY T.TOPIC_NO DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
+	<update id="updateTopicEditable" parameterType="com.utime.memoBom.admin.vo.AdminTopicVo">
+		UPDATE MB_TOPIC
+		SET ENABLED = #{enabled},
+			MAX_LEN = #{maxLen},
+			AI = #{ai},
+			PROMPT = #{prompt},
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		WHERE TOPIC_NO = #{topicNo}
+	</update>
+
 <!-- 토픽 목록(+글 수)
 SELECT T.TOPIC_UID, T.NAME, T.COLOR, T.EXTERNAL, T.EMOTION, T.COMMENTS,
        T.MAX_LEN, T.EMOJI_SET_TYPE, T.EDITABLE, T.ACTIVE,

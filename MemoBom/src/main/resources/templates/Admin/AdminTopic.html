@@ -6,6 +6,304 @@
 <body>
 	<th:block layout:fragment="admin_title">Topic</th:block>
 	<th:block layout:fragment="admin_content">
+		<div class="w-full max-w-7xl mx-auto space-y-4">
+			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
+				<div class="flex flex-col md:flex-row md:items-center gap-3">
+					<div class="flex items-center gap-2">
+						<label for="searchDate" class="text-sm font-medium text-slate-600">조회일</label>
+						<input id="searchDate" type="date" name="date" th:value="${date}"
+							class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
+					</div>
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (name/description/uid)"
+						class="w-full md:w-[420px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+				</div>
+			</div>
+
+			<div id="topicList" class="space-y-3"></div>
+			<div id="pageSentinel" class="h-1"></div>
+		</div>
+
+		<template id="tplTopicCard">
+			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
+				<div class="flex items-center justify-between gap-2">
+					<div class="min-w-0">
+						<div class="text-lg font-semibold text-slate-900 truncate">
+							<span class="imogi">🧩</span>
+							<span class="name">name</span>
+						</div>
+						<div class="text-xs text-slate-500 mt-0.5">topicNo: <span class="topicNo tabular-nums">0</span></div>
+					</div>
+					<div class="text-xs text-slate-500 uid break-all text-right max-w-[220px]">uid</div>
+				</div>
+
+				<div class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
+					<div>ownerNo: <span class="ownerNo tabular-nums">0</span></div>
+					<div>nameUpper: <span class="nameUpper">-</span></div>
+					<div>description: <span class="description">-</span></div>
+					<div>color: <span class="color">-</span></div>
+					<div>emojiSetType: <span class="emojiSetType">0</span></div>
+					<div>external: <span class="external">false</span></div>
+					<div>emotion: <span class="emotion">false</span></div>
+					<div>comments: <span class="comments">false</span></div>
+					<div>regDate: <span class="regDate tabular-nums">-</span></div>
+					<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+				</div>
+
+				<div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+					<div class="rounded-lg border border-slate-200 p-2 flex items-center justify-between">
+						<span class="text-sm text-slate-600">ENABLED</span>
+						<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
+					</div>
+					<label class="rounded-lg border border-slate-200 p-2 flex items-center gap-2">
+						<span class="text-sm text-slate-600 shrink-0">MAX_LEN</span>
+						<input type="number" min="0" class="maxLenInput w-full h-8 px-2 rounded border border-slate-300 text-sm">
+					</label>
+					<div class="rounded-lg border border-slate-200 p-2 flex items-center justify-between">
+						<span class="text-sm text-slate-600">AI</span>
+						<pp-toggle class="aiToggle" on-text="ON" off-text="OFF"></pp-toggle>
+					</div>
+					<label class="rounded-lg border border-slate-200 p-2 flex items-center gap-2">
+						<span class="text-sm text-slate-600 shrink-0">PROMPT</span>
+						<input type="text" class="promptInput w-full h-8 px-2 rounded border border-slate-300 text-sm" placeholder="prompt">
+					</label>
+				</div>
+			</article>
+		</template>
+	</th:block>
+
+	<th:block layout:fragment="admin_script">
+		<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
+		<script th:inline="javascript">
+			(() => {
+				const PAGE_SIZE = 20;
+				const listUrl = /*[[@{/Lotus/TopicList.json}]]*/ '/Lotus/TopicList.json';
+				const saveUrl = /*[[@{/Lotus/TopicSave.json}]]*/ '/Lotus/TopicSave.json';
+
+				const elList = document.getElementById('topicList');
+				const elSentinel = document.getElementById('pageSentinel');
+				const elDate = document.getElementById('searchDate');
+				const elKeyword = document.getElementById('keyword');
+				const tpl = document.getElementById('tplTopicCard');
+
+				let pageNo = 1;
+				let loading = false;
+				let done = false;
+
+				function text(v, fallback = '-') {
+					if (v === null || v === undefined) return fallback;
+					const s = String(v).trim();
+					return s ? s : fallback;
+				}
+
+				function toastInfo(msg) {
+					showToast('안내', msg, ToastType.INFO, 1300);
+				}
+
+				function toastSuccess(msg) {
+					showToast('완료', msg, ToastType.SUCCESS, 1200);
+				}
+
+				function toastError(msg) {
+					showToast('오류', msg, ToastType.ERROR, 1800);
+				}
+
+				async function saveEditable(payload) {
+					const res = await apiPost(saveUrl, payload);
+					if (!res || res.code !== '0') {
+						throw new Error((res && res.message) || '토픽 저장 실패');
+					}
+				}
+
+				function bindEditable(node, item) {
+					const enabledToggle = node.querySelector('.enabledToggle');
+					const aiToggle = node.querySelector('.aiToggle');
+					const maxLenInput = node.querySelector('.maxLenInput');
+					const promptInput = node.querySelector('.promptInput');
+
+					let enabled = !!item.enabled;
+					let ai = !!item.ai;
+					let maxLen = Number(item.maxLen || 0);
+					let prompt = text(item.prompt, '');
+
+					enabledToggle.checked = enabled;
+					aiToggle.checked = ai;
+					maxLenInput.value = String(maxLen);
+					promptInput.value = prompt;
+
+					enabledToggle.addEventListener('change', async (e) => {
+						const next = !!(e.detail && e.detail.checked);
+						const prev = enabled;
+						enabledToggle.setAttribute('disabled', '');
+						try {
+							await saveEditable({ topicNo: item.topicNo, enabled: next, ai, maxLen, prompt });
+							enabled = next;
+							toastSuccess(`topicNo ${item.topicNo} ENABLED 저장 완료`);
+						} catch (err) {
+							console.error(err);
+							enabledToggle.checked = prev;
+							toastError('ENABLED 저장 실패');
+						} finally {
+							enabledToggle.removeAttribute('disabled');
+						}
+					});
+
+					aiToggle.addEventListener('change', async (e) => {
+						const next = !!(e.detail && e.detail.checked);
+						const prev = ai;
+						aiToggle.setAttribute('disabled', '');
+						try {
+							await saveEditable({ topicNo: item.topicNo, enabled, ai: next, maxLen, prompt });
+							ai = next;
+							toastSuccess(`topicNo ${item.topicNo} AI 저장 완료`);
+						} catch (err) {
+							console.error(err);
+							aiToggle.checked = prev;
+							toastError('AI 저장 실패');
+						} finally {
+							aiToggle.removeAttribute('disabled');
+						}
+					});
+
+					maxLenInput.addEventListener('blur', async () => {
+						const next = Number(maxLenInput.value || 0);
+						if (Number.isNaN(next) || next < 0 || next === maxLen) {
+							maxLenInput.value = String(maxLen);
+							return;
+						}
+
+						maxLenInput.setAttribute('disabled', '');
+						try {
+							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen: next, prompt });
+							maxLen = next;
+							toastSuccess(`topicNo ${item.topicNo} MAX_LEN 저장 완료`);
+						} catch (err) {
+							console.error(err);
+							maxLenInput.value = String(maxLen);
+							toastError('MAX_LEN 저장 실패');
+						} finally {
+							maxLenInput.removeAttribute('disabled');
+						}
+					});
+
+					promptInput.addEventListener('blur', async () => {
+						const next = text(promptInput.value, '');
+						if (next === prompt) return;
+
+						promptInput.setAttribute('disabled', '');
+						try {
+							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen, prompt: next });
+							prompt = next;
+							toastSuccess(`topicNo ${item.topicNo} PROMPT 저장 완료`);
+						} catch (err) {
+							console.error(err);
+							promptInput.value = prompt;
+							toastError('PROMPT 저장 실패');
+						} finally {
+							promptInput.removeAttribute('disabled');
+						}
+					});
+				}
+
+				function renderItem(item) {
+					const node = tpl.content.firstElementChild.cloneNode(true);
+
+					node.querySelector('.imogi').textContent = text(item.imogi, '🧩');
+					node.querySelector('.name').textContent = text(item.name);
+					node.querySelector('.topicNo').textContent = text(item.topicNo, '0');
+					node.querySelector('.uid').textContent = text(item.uid);
+					node.querySelector('.ownerNo').textContent = text(item.ownerNo, '0');
+					node.querySelector('.nameUpper').textContent = text(item.nameUpper);
+					node.querySelector('.description').textContent = text(item.description);
+					node.querySelector('.color').textContent = text(item.color);
+					node.querySelector('.emojiSetType').textContent = text(item.emojiSetType, '0');
+					node.querySelector('.external').textContent = String(!!item.external);
+					node.querySelector('.emotion').textContent = String(!!item.emotion);
+					node.querySelector('.comments').textContent = String(!!item.comments);
+					node.querySelector('.regDate').textContent = text(item.regDate);
+					node.querySelector('.updateDate').textContent = text(item.updateDate);
+
+					bindEditable(node, item);
+					return node;
+				}
+
+				async function loadNextPage() {
+					if (loading || done) return;
+					loading = true;
+					try {
+						const res = await apiGetWithParam(listUrl, {
+							date: elDate.value,
+							keyword: elKeyword.value,
+							pageNo
+						});
+						if (!res || res.code !== '0') {
+							throw new Error((res && res.message) || '토픽 목록 조회 실패');
+						}
+
+						const list = Array.isArray(res.data) ? res.data : [];
+						if (list.length === 0 && pageNo === 1) {
+							elList.innerHTML = '';
+							done = true;
+							toastInfo('조회 결과가 없습니다.');
+							return;
+						}
+
+						const frag = document.createDocumentFragment();
+						list.forEach((item) => frag.appendChild(renderItem(item)));
+						elList.appendChild(frag);
+
+						pageNo += 1;
+						done = list.length < PAGE_SIZE;
+					} catch (err) {
+						console.error(err);
+						toastError('토픽 목록 조회 중 오류가 발생했습니다.');
+					} finally {
+						loading = false;
+					}
+				}
+
+				async function reload() {
+					pageNo = 1;
+					done = false;
+					loading = false;
+					elList.innerHTML = '';
+					await loadNextPage();
+				}
+
+				function openDatePicker() {
+					if (typeof elDate.showPicker === 'function') {
+						elDate.showPicker();
+					}
+				}
+
+				function initEvents() {
+					elDate.addEventListener('click', openDatePicker);
+					elDate.addEventListener('focus', openDatePicker);
+					elDate.addEventListener('change', reload);
+
+					elKeyword.addEventListener('keydown', async (e) => {
+						if (e.key !== 'Enter') return;
+						e.preventDefault();
+						await reload();
+					});
+				}
+
+				function initInfiniteScroll() {
+					if (window.AdminUtils && typeof window.AdminUtils.createInfiniteObserver === 'function') {
+						window.AdminUtils.createInfiniteObserver(elSentinel, async () => {
+							await loadNextPage();
+						});
+					}
+				}
+
+				async function init() {
+					initEvents();
+					initInfiniteScroll();
+					await reload();
+				}
+
+				window.addEventListener('DOMContentLoaded', init);
+			})();
+		</script>
 	</th:block>
 </body>
 </html>
