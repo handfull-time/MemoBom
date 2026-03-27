@@ -23,70 +23,70 @@
 				</div>
 			</div>
 
-			<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-				<a th:href="@{/Lotus/User.html(date=${date})}" th:attr="data-base-url=@{/Lotus/User.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">사용자</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="user">[[${item.user}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+				<div class="hidden md:grid grid-cols-[1fr_120px_48px] px-4 py-3 text-xs font-semibold text-slate-500 bg-slate-50 border-b border-slate-200">
+					<span>항목</span>
+					<span class="text-right">건수</span>
+					<span class="text-center">이동</span>
+				</div>
 
-				<a th:href="@{/Lotus/Topic.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Topic.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">토픽</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="topic">[[${item.topic}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+				<div class="divide-y divide-slate-200">
+					<a th:href="@{/Lotus/User.html(date=${date})}" th:attr="data-base-url=@{/Lotus/User.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">사용자</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="user">[[${item.user}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Fragment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Fragment.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">글</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="fragment">[[${item.fragment}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Topic.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Topic.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">토픽</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="topic">[[${item.topic}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Comment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Comment.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">댓글</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="comment">[[${item.comment}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Fragment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Fragment.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">글</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="fragment">[[${item.fragment}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Emotion.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Emotion.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">이모션</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="emotion">[[${item.emotion}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Comment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Comment.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">댓글</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="comment">[[${item.comment}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Scrap.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Scrap.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">스크랩</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="scrap">[[${item.scrap}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Emotion.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Emotion.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">이모션</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="emotion">[[${item.emotion}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Share.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Share.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">공유</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="share">[[${item.share}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Scrap.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Scrap.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">스크랩</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="scrap">[[${item.scrap}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
 
-				<a th:href="@{/Lotus/Push.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Push.html}"
-					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
-					<p class="text-sm text-slate-500">푸시</p>
-					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="push">[[${item.push}]]</p>
-					<img src="/images/my/url_move.svg" alt="자세히 보기"
-						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
-				</a>
+					<a th:href="@{/Lotus/Share.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Share.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">공유</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="share">[[${item.share}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
+
+					<a th:href="@{/Lotus/Push.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Push.html}"
+						class="dashboard-link group grid grid-cols-[1fr_72px_28px] md:grid-cols-[1fr_120px_48px] items-center gap-2 px-4 py-4 hover:bg-slate-50 transition">
+						<p class="text-sm text-slate-700">푸시</p>
+						<p class="text-right text-xl font-bold text-slate-900 tabular-nums" data-key="push">[[${item.push}]]</p>
+						<img th:src="@{/images/my/url_move.svg}" alt="자세히 보기" class="justify-self-center h-4 w-4 opacity-60 group-hover:opacity-100">
+					</a>
+				</div>
 			</div>
 		</div>
 	</th:block>
