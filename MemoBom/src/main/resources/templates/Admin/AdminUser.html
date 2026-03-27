@@ -26,43 +26,40 @@
 
 		<template id="tplUserCard">
 			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-				<div class="grid grid-cols-[96px_1fr] md:grid-cols-[120px_1fr] gap-3 p-4">
-					<img class="profile w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover border border-slate-200 bg-slate-50"
-						alt="profile">
+				<div class="p-3">
+					<div class="grid grid-cols-[88px_1fr] gap-3">
+						<img class="profile w-[88px] h-[88px] rounded-xl object-cover border border-slate-200 bg-slate-50" alt="profile">
 						<div class="min-w-0">
-							<div class="flex items-center gap-2 flex-wrap">
-								<div class="nickname text-base font-semibold text-slate-900 truncate">-</div>
-								<span class="enabled px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">-</span>
-								<div class="flex items-center gap-1">
-									<span class="text-xs text-slate-500">Enabled</span>
-									<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
-								</div>
+							<div class="flex items-center gap-2">
+								<div class="id text-lg font-semibold text-slate-900 truncate">-</div>
+								<span class="enabled px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">활성</span>
 							</div>
-						<div class="mt-1 text-sm text-slate-600">
-							<span class="id">-</span> · <span class="email">-</span>
-						</div>
-						<div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-500">
-							<div>userNo: <span class="userNo tabular-nums">0</span></div>
-							<div>provider: <span class="provider">-</span></div>
-							<div>role: <span class="role">-</span></div>
-							<div>regDate: <span class="regDate tabular-nums">-</span></div>
-							<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
-						</div>
-							<div class="mt-2 flex flex-col md:flex-row gap-2">
-								<input type="text"
-									class="noteInput flex-1 h-9 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
-									placeholder="note 입력">
-								<div class="flex items-center gap-2">
-										<button type="button"
-											class="btnSaveNote h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 hover:bg-slate-50">
-											note 저장
-										</button>
-									</div>
-								</div>
+							<div class="mt-1 text-sm text-slate-600">
+								<span class="userNoWrap">userNo: <span class="userNo tabular-nums">0</span></span>
+							</div>
+							<div class="mt-1 grid grid-cols-2 gap-x-2 text-sm text-slate-600">
+								<div>role: <span class="role">-</span></div>
+								<div>provider: <span class="provider">-</span></div>
+							</div>
+							<div class="mt-1 flex items-center gap-2 text-sm text-slate-600">
+								<span>Enabled</span>
+								<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
 							</div>
 						</div>
-					</article>
-				</template>
+					</div>
+					<div class="mt-2 grid grid-cols-2 gap-x-3 text-sm text-slate-600">
+						<div>regDate: <span class="regDate tabular-nums">-</span></div>
+						<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+					</div>
+					<div class="mt-2">
+						<input type="text"
+							class="noteInput w-full h-9 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+							placeholder="노트 입력">
+					</div>
+					<div class="mt-1 text-xs text-slate-400">노트는 입력 후 포커스가 벗어나면 자동 저장됩니다.</div>
+							</div>
+			</article>
+		</template>
 		</th:block>
 	
 	<th:block layout:fragment="admin_script">
@@ -116,10 +113,8 @@
 					node.querySelector('.profile').src = profile;
 					node.querySelector('.profile').onerror = (e) => { e.target.src = defaultProfile; };
 
-					node.querySelector('.nickname').textContent = text(item.nickname);
-					node.querySelector('.id').textContent = text(item.id);
-					node.querySelector('.email').textContent = text(item.email);
-					node.querySelector('.userNo').textContent = text(item.userNo, '0');
+						node.querySelector('.id').textContent = text(item.id);
+						node.querySelector('.userNo').textContent = text(item.userNo, '0');
 					node.querySelector('.provider').textContent = text(item.provider);
 					node.querySelector('.role').textContent = text(item.role);
 					node.querySelector('.regDate').textContent = text(item.regDate);
@@ -127,25 +122,34 @@
 					const noteInput = node.querySelector('.noteInput');
 					noteInput.value = text(item.note, '');
 
-					const btnSaveNote = node.querySelector('.btnSaveNote');
-					btnSaveNote.addEventListener('click', async () => {
-						btnSaveNote.disabled = true;
-						try {
-							const res = await apiPost(noteSaveUrl, {
-								userNo: item.userNo,
-								note: noteInput.value
-							});
-							if (!res || res.code !== '0') {
-								throw new Error((res && res.message) || 'note 저장 실패');
+						let lastSavedNote = text(item.note, '');
+						let noteSaving = false;
+
+						noteInput.addEventListener('blur', async () => {
+							const nextNote = text(noteInput.value, '');
+							if (noteSaving || nextNote === lastSavedNote) return;
+
+							noteSaving = true;
+							noteInput.setAttribute('disabled', '');
+							try {
+								const res = await apiPost(noteSaveUrl, {
+									userNo: item.userNo,
+									note: nextNote
+								});
+								if (!res || res.code !== '0') {
+									throw new Error((res && res.message) || 'note 저장 실패');
+								}
+								lastSavedNote = nextNote;
+								showState('info', `userNo ${item.userNo} note 저장 완료`);
+							} catch (err) {
+								console.error(err);
+								noteInput.value = lastSavedNote;
+								showState('err', 'note 저장 중 오류가 발생했습니다.');
+							} finally {
+								noteInput.removeAttribute('disabled');
+								noteSaving = false;
 							}
-							showState('info', `userNo ${item.userNo} note 저장 완료`);
-						} catch (err) {
-							console.error(err);
-							showState('err', 'note 저장 중 오류가 발생했습니다.');
-						} finally {
-							btnSaveNote.disabled = false;
-						}
-					});
+						});
 
 						const enabled = !!item.enabled;
 						const enabledEl = node.querySelector('.enabled');
