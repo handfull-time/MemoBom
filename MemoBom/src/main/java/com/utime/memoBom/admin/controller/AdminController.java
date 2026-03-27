@@ -24,6 +24,16 @@ public class AdminController {
 	
 	final AdminService adminService;
 	
+	/**
+	 * 관리자 로그인 전환을 처리한다.
+	 *
+	 * @param request HTTP 요청
+	 * @param response HTTP 응답
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @return 리다이렉트 경로
+	 * @throws Exception 로그인 처리 중 예외
+	 */
 	@GetMapping(path = {"Login.html" })
     public String adminLogin( HttpServletRequest request, HttpServletResponse response, ModelMap model, LoginUser user ) throws Exception {
 
@@ -34,6 +44,16 @@ public class AdminController {
 		}
     }
 	
+	/**
+	 * 관리자 로그아웃(원 사용자 복귀)을 처리한다.
+	 *
+	 * @param request HTTP 요청
+	 * @param response HTTP 응답
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @return 리다이렉트 경로
+	 * @throws Exception 로그아웃 처리 중 예외
+	 */
 	@GetMapping(path = {"Logout.html" })
     public String adminLogout( HttpServletRequest request, HttpServletResponse response, ModelMap model, LoginUser user ) throws Exception {
 
@@ -43,10 +63,12 @@ public class AdminController {
     }
 
 	/**
-	 * 관리자 메인 -대쉬 보드
-	 * @param request
-	 * @param model
-	 * @return
+	 * 관리자 대시보드 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 대시보드 템플릿 경로
 	 */
 	@GetMapping(path = {"", "/", "index.html" })
     public String adminMain( ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
@@ -57,6 +79,29 @@ public class AdminController {
 		return "Admin/AdminDashBoard";
     }
 
+	/**
+	 * 관리자 대시보드 집계 정보를 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 대시보드 응답 데이터
+	 */
+	@ResponseBody
+	@GetMapping(path = {"Dashboard.json"})
+	public ReturnBasic getDashboard(LoginUser user, @RequestParam(required = false) String date) {
+		final ReturnBasic result = new ReturnBasic();
+		result.setData(adminService.getDashboard(date));
+		return result;
+	}
+
+	/**
+	 * 사용자 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 사용자 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"User.html" })
     public String adminUsers(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 
@@ -64,6 +109,13 @@ public class AdminController {
 		return "Admin/AdminUser";
     }
 	
+	/**
+	 * 사용자 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 사용자 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"UserList.json" })
 	public ReturnBasic getUserList(LoginUser user, AdminSearchVo searchVo ) {
@@ -71,6 +123,14 @@ public class AdminController {
 		return adminService.getUserList(user, searchVo );
 	}
 	
+	/**
+	 * 토픽 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 토픽 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Topic.html" })
     public String adminTopics(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -78,6 +138,13 @@ public class AdminController {
 		return "Admin/AdminTopic";
     }
 	
+	/**
+	 * 토픽 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 토픽 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"TopicList.json" })
 	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo ) {
@@ -85,6 +152,14 @@ public class AdminController {
 		return adminService.getTopicList(user, searchVo );
 	}
 	
+	/**
+	 * 글(프래그먼트) 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 글 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Fragment.html" })
     public String adminFragments(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -92,6 +167,13 @@ public class AdminController {
 		return "Admin/AdminFragment";
     }
 	
+	/**
+	 * 글(프래그먼트) 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 글 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"FragmentList.json" })
 	public ReturnBasic getFragmentList(LoginUser user, AdminSearchVo searchVo ) {
@@ -99,6 +181,14 @@ public class AdminController {
 		return adminService.getFragmentList(user, searchVo );
 	}
 	
+	/**
+	 * 댓글 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 댓글 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Comment.html" })
     public String adminComments(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -106,6 +196,13 @@ public class AdminController {
 		return "Admin/AdminComment";
     }
 	
+	/**
+	 * 댓글 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 댓글 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"CommentList.json" })
 	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo ) {
@@ -113,6 +210,14 @@ public class AdminController {
 		return adminService.getCommentList(user, searchVo );
 	}
 	
+	/**
+	 * 이모션 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 이모션 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Emotion.html" })
     public String adminEmotions(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -120,6 +225,13 @@ public class AdminController {
 		return "Admin/AdminEmotion";
     }
 	
+	/**
+	 * 이모션 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 이모션 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"EmotionList.json" })
 	public ReturnBasic getEmotionList(LoginUser user, AdminSearchVo searchVo ) {
@@ -127,6 +239,14 @@ public class AdminController {
 		return adminService.getEmotionList(user, searchVo );
 	}
 	
+	/**
+	 * 스크랩 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 스크랩 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Scrap.html" })
     public String adminScrap(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -134,6 +254,13 @@ public class AdminController {
 		return "Admin/AdminScrap";
     }
 	
+	/**
+	 * 스크랩 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 스크랩 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"ScrapList.json" })
 	public ReturnBasic getScrapList(LoginUser user, AdminSearchVo searchVo ) {
@@ -141,6 +268,14 @@ public class AdminController {
 		return adminService.getScrapList(user, searchVo );
 	}
 	
+	/**
+	 * 공유 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 공유 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Share.html" })
     public String adminShares(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -148,6 +283,13 @@ public class AdminController {
 		return "Admin/AdminShare";
     }
 	
+	/**
+	 * 공유 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 공유 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"ShareList.json" })
 	public ReturnBasic getShareList(LoginUser user, AdminSearchVo searchVo ) {
@@ -155,6 +297,14 @@ public class AdminController {
 		return adminService.getShareList(user, searchVo );
 	}
 	
+	/**
+	 * 푸시 관리 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param date 조회 일자(yyyy-MM-dd)
+	 * @return 푸시 관리 템플릿 경로
+	 */
 	@GetMapping(path = {"Push.html" })
     public String adminPush(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
 		
@@ -162,6 +312,13 @@ public class AdminController {
 		return "Admin/AdminPush";
     }
 	
+	/**
+	 * 푸시 목록을 JSON으로 반환한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param searchVo 조회 조건
+	 * @return 푸시 목록 응답
+	 */
 	@ResponseBody
 	@GetMapping(path = {"PushList.json" })
 	public ReturnBasic getPushList(LoginUser user, AdminSearchVo searchVo ) {
@@ -169,6 +326,13 @@ public class AdminController {
 		return adminService.getPushList(user, searchVo );
 	}
 	
+	/**
+	 * 설정 화면을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @return 설정 화면 템플릿 경로
+	 */
 	@GetMapping(path = {"Setting.html" })
     public String adminSettings(ModelMap model, LoginUser user ) {
 		
@@ -176,4 +340,3 @@ public class AdminController {
     }
 	
 }
-

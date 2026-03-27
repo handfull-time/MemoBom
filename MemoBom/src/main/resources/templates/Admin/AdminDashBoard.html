@@ -6,18 +6,143 @@
 <body>
 	<th:block layout:fragment="admin_title">Dashboard</th:block>
 	<th:block layout:fragment="admin_content">
-		<input type="date" name="date"><br>
-		사용자 : [[${item.user}]]<br/>
-		토픽 : [[${item.topic}]]<br/>
-		글 : [[${item.fragment}]]<br/>
-		댓글 : [[${item.comment}]]<br/>
-		이모션 : [[${item.emotion}]]<br/>
-		스크랩 : [[${item.scrap}]]<br/>
-		공유 : [[${item.share}]]<br/>
-		푸시 : [[${item.push}]]<br/>
-		
-		<!-- 위 내용 클릭 하면 각 해당 페이지로 이동한다. -->
-		<!-- 예) 사용자 클릭 /Lotus/User.html?date=${date} -->
+		<div class="w-full max-w-7xl mx-auto space-y-4">
+
+			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4 md:p-5">
+				<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+					<div>
+						<h1 class="text-xl md:text-2xl font-bold text-slate-900">관리자 대시보드</h1>
+						<p class="text-sm text-slate-500 mt-1">선택한 날짜 기준 생성 건수를 확인할 수 있습니다.</p>
+					</div>
+
+					<div class="flex items-center gap-2">
+						<label for="dashboardDate" class="text-sm font-medium text-slate-600">조회일</label>
+						<input id="dashboardDate" type="date" name="date" th:value="${date}"
+							class="h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+					</div>
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+				<a th:href="@{/Lotus/User.html(date=${date})}" th:attr="data-base-url=@{/Lotus/User.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">사용자</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="user">[[${item.user}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Topic.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Topic.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">토픽</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="topic">[[${item.topic}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Fragment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Fragment.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">글</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="fragment">[[${item.fragment}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Comment.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Comment.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">댓글</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="comment">[[${item.comment}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Emotion.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Emotion.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">이모션</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="emotion">[[${item.emotion}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Scrap.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Scrap.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">스크랩</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="scrap">[[${item.scrap}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Share.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Share.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">공유</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="share">[[${item.share}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+
+				<a th:href="@{/Lotus/Push.html(date=${date})}" th:attr="data-base-url=@{/Lotus/Push.html}"
+					class="dashboard-link group bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition">
+					<p class="text-sm text-slate-500">푸시</p>
+					<p class="mt-2 text-2xl font-bold text-slate-900" data-key="push">[[${item.push}]]</p>
+					<img src="/images/my/url_move.svg" alt="자세히 보기"
+						class="mt-2 h-4 w-4 opacity-60 group-hover:opacity-100">
+				</a>
+			</div>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="admin_script">
+		<script>
+			(function () {
+				const dateInput = document.getElementById('dashboardDate');
+				if (!dateInput) return;
+
+				const countKeys = ['user', 'topic', 'fragment', 'comment', 'emotion', 'scrap', 'share', 'push'];
+
+				function updateLinks(date) {
+					document.querySelectorAll('.dashboard-link').forEach((link) => {
+						const baseUrl = link.dataset.baseUrl;
+						if (!baseUrl) return;
+						link.href = `${baseUrl}?date=${encodeURIComponent(date)}`;
+					});
+				}
+
+				function updateCounts(item) {
+					countKeys.forEach((key) => {
+						const el = document.querySelector(`[data-key="${key}"]`);
+						if (!el) return;
+						el.textContent = (item && item[key] != null) ? item[key] : 0;
+					});
+				}
+
+				async function loadDashboard(date) {
+					const cp = window.contextPath || '';
+					const url = `${cp}/Lotus/Dashboard.json?date=${encodeURIComponent(date)}`;
+					const result = await apiGet(url);
+
+					if (!result || result.code !== '0') {
+						throw new Error('dashboard apiGet failed');
+					}
+
+					updateCounts(result && result.data ? result.data : {});
+					updateLinks(date);
+
+					const currentUrl = new URL(window.location.href);
+					currentUrl.searchParams.set('date', date);
+					window.history.replaceState({}, '', currentUrl.toString());
+				}
+
+				dateInput.addEventListener('change', async (e) => {
+					const date = e.target.value;
+					if (!date) return;
+					try {
+						await loadDashboard(date);
+					} catch (err) {
+						console.error(err);
+					}
+				});
+			})();
+		</script>
 	</th:block>
 </body>
 </html>

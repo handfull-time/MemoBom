@@ -45,8 +45,8 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public DashboardVo getDashboard(String date) {
-		//TODO dashBoardMapper를 이용해 DashboardVo 내용을 완성.
-		return new DashboardVo();
+		final DashboardVo item = dashBoardMapper.getDashboard(date);
+		return item == null ? new DashboardVo() : item;
 	}
 
 	@Override
