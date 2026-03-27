@@ -18,7 +18,7 @@
 					<div class="flex items-center gap-2">
 						<label for="dashboardDate" class="text-sm font-medium text-slate-600">조회일</label>
 						<input id="dashboardDate" type="date" name="date" th:value="${date}"
-							class="h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+							class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
 					</div>
 				</div>
 			</div>
@@ -93,9 +93,9 @@
 
 	<th:block layout:fragment="admin_script">
 		<script>
-			(function () {
-				const dateInput = document.getElementById('dashboardDate');
-				if (!dateInput) return;
+				(function () {
+					const dateInput = document.getElementById('dashboardDate');
+					if (!dateInput) return;
 
 				const countKeys = ['user', 'topic', 'fragment', 'comment', 'emotion', 'scrap', 'share', 'push'];
 
@@ -132,7 +132,16 @@
 					window.history.replaceState({}, '', currentUrl.toString());
 				}
 
-				dateInput.addEventListener('change', async (e) => {
+					function openDatePicker() {
+						if (typeof dateInput.showPicker === 'function') {
+							dateInput.showPicker();
+						}
+					}
+
+					dateInput.addEventListener('click', openDatePicker);
+					dateInput.addEventListener('focus', openDatePicker);
+
+					dateInput.addEventListener('change', async (e) => {
 					const date = e.target.value;
 					if (!date) return;
 					try {
