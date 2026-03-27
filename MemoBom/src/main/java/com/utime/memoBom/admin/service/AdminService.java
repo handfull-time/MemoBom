@@ -1,6 +1,7 @@
 package com.utime.memoBom.admin.service;
 
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
@@ -107,5 +108,23 @@ public interface AdminService {
 	 * @return 푸시 목록 응답
 	 */
 	public ReturnBasic getPushList(LoginUser user, AdminSearchVo searchVo);
+
+	/**
+	 * 사용자 메모(note)를 저장한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param userVo 사용자 정보(userNo, note)
+	 * @return 처리 결과
+	 */
+	public ReturnBasic updateUserNote(LoginUser user, AdminUserVo userVo);
+
+	/**
+	 * 사용자를 삭제한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param userVo 사용자 정보(userNo)
+	 * @return 처리 결과
+	 */
+	public ReturnBasic deleteUser(LoginUser user, AdminUserVo userVo);
 
 }

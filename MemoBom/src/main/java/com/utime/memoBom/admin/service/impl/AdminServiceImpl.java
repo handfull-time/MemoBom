@@ -244,4 +244,34 @@ class AdminServiceImpl implements AdminService {
 		
 		return result;
 	}
+
+	@Override
+	public ReturnBasic updateUserNote(LoginUser user, AdminUserVo userVo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (userVo == null || userVo.getUserNo() == null) {
+			return result.setCodeMessage("E", "userNo 값이 필요합니다.");
+		}
+
+		final int updated = adminDao.updateUserNote(userVo.getUserNo(), userVo.getNote());
+		if (updated <= 0) {
+			return result.setCodeMessage("E", "저장할 사용자를 찾지 못했습니다.");
+		}
+		return result;
+	}
+
+	@Override
+	public ReturnBasic deleteUser(LoginUser user, AdminUserVo userVo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (userVo == null || userVo.getUserNo() == null) {
+			return result.setCodeMessage("E", "userNo 값이 필요합니다.");
+		}
+
+		final int deleted = adminDao.deleteUser(userVo.getUserNo());
+		if (deleted <= 0) {
+			return result.setCodeMessage("E", "삭제할 사용자를 찾지 못했습니다.");
+		}
+		return result;
+	}
 }

@@ -33,6 +33,18 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
+	<update id="updateUserNote">
+		UPDATE MB_USER
+		SET DESCRIPTION = #{note},
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		WHERE USER_NO = #{userNo}
+	</update>
+
+	<delete id="deleteUser">
+		DELETE FROM MB_USER
+		WHERE USER_NO = #{userNo}
+	</delete>
+
 <!-- 사용자 목록
 SELECT USER_NO, UID, NICKNAME, PROFILE_URL, CREATE_AT, STATUS, PUSH_ENABLED
 FROM MB_USER

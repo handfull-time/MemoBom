@@ -95,4 +95,14 @@ class AdminDaoImpl implements AdminDao {
 		
 		return null;
 	}
+
+	@Override
+	public int updateUserNote(Long userNo, String note) {
+		return userMapper.updateUserNote(userNo, note);
+	}
+
+	@Override
+	public int deleteUser(Long userNo) {
+		return userMapper.deleteUser(userNo);
+	}
 }

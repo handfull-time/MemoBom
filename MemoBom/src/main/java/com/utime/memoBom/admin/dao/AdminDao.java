@@ -87,5 +87,22 @@ public interface AdminDao {
 	 */
 	List<AdminPushVo> getPushList(AdminSearchVo searchVo);
 
+	/**
+	 * 사용자 메모(note)를 저장한다.
+	 *
+	 * @param userNo 사용자 번호
+	 * @param note 메모
+	 * @return 반영 건수
+	 */
+	int updateUserNote(Long userNo, String note);
+
+	/**
+	 * 사용자를 삭제한다.
+	 *
+	 * @param userNo 사용자 번호
+	 * @return 반영 건수
+	 */
+	int deleteUser(Long userNo);
+
 
 }

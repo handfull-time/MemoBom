@@ -3,12 +3,15 @@ package com.utime.memoBom.admin.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.admin.service.AdminService;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 
@@ -121,6 +124,32 @@ public class AdminController {
 	public ReturnBasic getUserList(LoginUser user, AdminSearchVo searchVo ) {
 		
 		return adminService.getUserList(user, searchVo );
+	}
+
+	/**
+	 * 사용자 메모(note)를 저장한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param userVo 사용자 정보(userNo, note)
+	 * @return 저장 결과
+	 */
+	@ResponseBody
+	@PostMapping(path = {"UserNoteSave.json" })
+	public ReturnBasic saveUserNote(LoginUser user, @RequestBody AdminUserVo userVo ) {
+		return adminService.updateUserNote(user, userVo);
+	}
+
+	/**
+	 * 사용자를 삭제한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param userVo 사용자 정보(userNo)
+	 * @return 삭제 결과
+	 */
+	@ResponseBody
+	@PostMapping(path = {"UserDelete.json" })
+	public ReturnBasic deleteUser(LoginUser user, @RequestBody AdminUserVo userVo ) {
+		return adminService.deleteUser(user, userVo);
 	}
 	
 	/**

@@ -44,11 +44,25 @@
 							<div>regDate: <span class="regDate tabular-nums">-</span></div>
 							<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
 						</div>
-						<div class="mt-2 text-sm text-slate-700 note break-words">-</div>
+							<div class="mt-2 flex flex-col md:flex-row gap-2">
+								<input type="text"
+									class="noteInput flex-1 h-9 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+									placeholder="note 입력">
+								<div class="flex items-center gap-2">
+									<button type="button"
+										class="btnSaveNote h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 hover:bg-slate-50">
+										note 저장
+									</button>
+									<button type="button"
+										class="btnDeleteUser h-9 px-3 rounded-lg border border-red-300 bg-red-50 text-sm text-red-700 hover:bg-red-100">
+										사용자 삭제
+									</button>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-			</article>
-		</template>
+				</article>
+			</template>
 	</th:block>
 	
 	<th:block layout:fragment="admin_script">
@@ -56,6 +70,8 @@
 			(() => {
 				const PAGE_SIZE = 20;
 				const url = /*[[@{/Lotus/UserList.json}]]*/ '/Lotus/UserList.json';
+				const noteSaveUrl = /*[[@{/Lotus/UserNoteSave.json}]]*/ '/Lotus/UserNoteSave.json';
+				const userDeleteUrl = /*[[@{/Lotus/UserDelete.json}]]*/ '/Lotus/UserDelete.json';
 				const defaultProfile = /*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg';
 
 				const elList = document.getElementById('userList');
@@ -107,7 +123,49 @@
 					node.querySelector('.role').textContent = text(item.role);
 					node.querySelector('.regDate').textContent = text(item.regDate);
 					node.querySelector('.updateDate').textContent = text(item.updateDate);
-					node.querySelector('.note').textContent = text(item.note);
+					const noteInput = node.querySelector('.noteInput');
+					noteInput.value = text(item.note, '');
+
+					const btnSaveNote = node.querySelector('.btnSaveNote');
+					btnSaveNote.addEventListener('click', async () => {
+						btnSaveNote.disabled = true;
+						try {
+							const res = await apiPost(noteSaveUrl, {
+								userNo: item.userNo,
+								note: noteInput.value
+							});
+							if (!res || res.code !== '0') {
+								throw new Error((res && res.message) || 'note 저장 실패');
+							}
+							showState('info', `userNo ${item.userNo} note 저장 완료`);
+						} catch (err) {
+							console.error(err);
+							showState('err', 'note 저장 중 오류가 발생했습니다.');
+						} finally {
+							btnSaveNote.disabled = false;
+						}
+					});
+
+					const btnDeleteUser = node.querySelector('.btnDeleteUser');
+					btnDeleteUser.addEventListener('click', async () => {
+						const ok = window.confirm(`userNo ${item.userNo} 사용자를 삭제하시겠습니까?`);
+						if (!ok) return;
+
+						btnDeleteUser.disabled = true;
+						try {
+							const res = await apiPost(userDeleteUrl, { userNo: item.userNo });
+							if (!res || res.code !== '0') {
+								throw new Error((res && res.message) || '사용자 삭제 실패');
+							}
+							node.remove();
+							showState('info', `userNo ${item.userNo} 삭제 완료`);
+						} catch (err) {
+							console.error(err);
+							showState('err', '사용자 삭제 중 오류가 발생했습니다.');
+						} finally {
+							btnDeleteUser.disabled = false;
+						}
+					});
 
 					const enabled = !!item.enabled;
 					const enabledEl = node.querySelector('.enabled');
