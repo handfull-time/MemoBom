@@ -1,6 +1,7 @@
 package com.utime.memoBom.admin.service;
 
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
 import com.utime.memoBom.common.security.LoginUser;
@@ -126,5 +127,14 @@ public interface AdminService {
 	 * @return 처리 결과
 	 */
 	public ReturnBasic updateUserEnabled(LoginUser user, AdminUserVo userVo);
+
+	/**
+	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param topicVo 토픽 수정 값
+	 * @return 처리 결과
+	 */
+	public ReturnBasic updateTopicEditable(LoginUser user, AdminTopicVo topicVo);
 
 }

@@ -56,8 +56,12 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminTopicVo> getTopicList(AdminSearchVo searchVo) {
-		
-		return null;
+		return topicMapper.getTopicList(searchVo);
+	}
+
+	@Override
+	public int updateTopicEditable(AdminTopicVo topicVo) {
+		return topicMapper.updateTopicEditable(topicVo);
 	}
 
 	@Override

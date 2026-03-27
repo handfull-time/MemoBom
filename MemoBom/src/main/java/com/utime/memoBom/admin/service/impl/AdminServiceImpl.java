@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.utime.memoBom.admin.dao.AdminDao;
 import com.utime.memoBom.admin.service.AdminService;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
 import com.utime.memoBom.common.security.JwtProvider;
@@ -181,7 +182,7 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getTopicList(searchVo) );
+		result.setData( adminDao.getTopicList(this.procDate(searchVo)) );
 		
 		return result;
 	}
@@ -272,6 +273,21 @@ class AdminServiceImpl implements AdminService {
 		final int updated = adminDao.updateUserEnabled(userVo.getUserNo(), userVo.getEnabled());
 		if (updated <= 0) {
 			return result.setCodeMessage("E", "수정할 사용자를 찾지 못했습니다.");
+		}
+		return result;
+	}
+
+	@Override
+	public ReturnBasic updateTopicEditable(LoginUser user, AdminTopicVo topicVo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (topicVo == null || topicVo.getTopicNo() == null) {
+			return result.setCodeMessage("E", "topicNo 값이 필요합니다.");
+		}
+
+		final int updated = adminDao.updateTopicEditable(topicVo);
+		if (updated <= 0) {
+			return result.setCodeMessage("E", "수정할 토픽을 찾지 못했습니다.");
 		}
 		return result;
 	}

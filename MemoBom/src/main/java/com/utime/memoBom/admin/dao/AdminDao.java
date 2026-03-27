@@ -40,6 +40,14 @@ public interface AdminDao {
 	List<AdminTopicVo> getTopicList(AdminSearchVo searchVo);
 
 	/**
+	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 *
+	 * @param topicVo 수정 대상 값
+	 * @return 반영 건수
+	 */
+	int updateTopicEditable(AdminTopicVo topicVo);
+
+	/**
 	 * 글(프래그먼트) 목록을 조회한다.
 	 *
 	 * @param searchVo 조회 조건

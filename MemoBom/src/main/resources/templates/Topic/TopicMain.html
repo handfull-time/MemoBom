@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">주제</th:block>
+<header>
+	<title layout:fragment="title">주제</title>
+</header>
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: Header_Search(
