@@ -97,12 +97,12 @@ public interface AdminDao {
 	int updateUserNote(Long userNo, String note);
 
 	/**
-	 * 사용자를 삭제한다.
+	 * 사용자 활성화(enabled) 값을 변경한다.
 	 *
 	 * @param userNo 사용자 번호
+	 * @param enabled 활성화 여부
 	 * @return 반영 건수
 	 */
-	int deleteUser(Long userNo);
-
+	int updateUserEnabled(Long userNo, Boolean enabled);
 
 }

@@ -29,11 +29,15 @@
 				<div class="grid grid-cols-[96px_1fr] md:grid-cols-[120px_1fr] gap-3 p-4">
 					<img class="profile w-24 h-24 md:w-28 md:h-28 rounded-xl object-cover border border-slate-200 bg-slate-50"
 						alt="profile">
-					<div class="min-w-0">
-						<div class="flex items-center gap-2 flex-wrap">
-							<div class="nickname text-base font-semibold text-slate-900 truncate">-</div>
-							<span class="enabled px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">-</span>
-						</div>
+						<div class="min-w-0">
+							<div class="flex items-center gap-2 flex-wrap">
+								<div class="nickname text-base font-semibold text-slate-900 truncate">-</div>
+								<span class="enabled px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">-</span>
+								<div class="flex items-center gap-1">
+									<span class="text-xs text-slate-500">Enabled</span>
+									<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
+								</div>
+							</div>
 						<div class="mt-1 text-sm text-slate-600">
 							<span class="id">-</span> · <span class="email">-</span>
 						</div>
@@ -49,29 +53,26 @@
 									class="noteInput flex-1 h-9 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
 									placeholder="note 입력">
 								<div class="flex items-center gap-2">
-									<button type="button"
-										class="btnSaveNote h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 hover:bg-slate-50">
-										note 저장
-									</button>
-									<button type="button"
-										class="btnDeleteUser h-9 px-3 rounded-lg border border-red-300 bg-red-50 text-sm text-red-700 hover:bg-red-100">
-										사용자 삭제
-									</button>
+										<button type="button"
+											class="btnSaveNote h-9 px-3 rounded-lg border border-slate-300 bg-white text-sm text-slate-700 hover:bg-slate-50">
+											note 저장
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</article>
-			</template>
-	</th:block>
+					</article>
+				</template>
+		</th:block>
 	
 	<th:block layout:fragment="admin_script">
+		<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
 		<script th:inline="javascript">
 			(() => {
 				const PAGE_SIZE = 20;
 				const url = /*[[@{/Lotus/UserList.json}]]*/ '/Lotus/UserList.json';
 				const noteSaveUrl = /*[[@{/Lotus/UserNoteSave.json}]]*/ '/Lotus/UserNoteSave.json';
-				const userDeleteUrl = /*[[@{/Lotus/UserDelete.json}]]*/ '/Lotus/UserDelete.json';
+				const enabledSaveUrl = /*[[@{/Lotus/UserEnabledSave.json}]]*/ '/Lotus/UserEnabledSave.json';
 				const defaultProfile = /*[[@{/images/profile-placeholder.svg}]]*/ '/images/profile-placeholder.svg';
 
 				const elList = document.getElementById('userList');
@@ -146,36 +147,44 @@
 						}
 					});
 
-					const btnDeleteUser = node.querySelector('.btnDeleteUser');
-					btnDeleteUser.addEventListener('click', async () => {
-						const ok = window.confirm(`userNo ${item.userNo} 사용자를 삭제하시겠습니까?`);
-						if (!ok) return;
+						const enabled = !!item.enabled;
+						const enabledEl = node.querySelector('.enabled');
+						enabledEl.textContent = enabled ? '활성' : '비활성';
+						enabledEl.classList.remove('bg-slate-100', 'text-slate-700', 'bg-emerald-100', 'text-emerald-700');
+						if (enabled) enabledEl.classList.add('bg-emerald-100', 'text-emerald-700');
+						else enabledEl.classList.add('bg-slate-100', 'text-slate-700');
 
-						btnDeleteUser.disabled = true;
-						try {
-							const res = await apiPost(userDeleteUrl, { userNo: item.userNo });
-							if (!res || res.code !== '0') {
-								throw new Error((res && res.message) || '사용자 삭제 실패');
+						const enabledToggle = node.querySelector('.enabledToggle');
+						enabledToggle.checked = enabled;
+						enabledToggle.addEventListener('change', async (e) => {
+							const next = !!(e.detail && e.detail.checked);
+							const prev = !next;
+							enabledToggle.setAttribute('disabled', '');
+							try {
+								const res = await apiPost(enabledSaveUrl, {
+									userNo: item.userNo,
+									enabled: next
+								});
+								if (!res || res.code !== '0') {
+									throw new Error((res && res.message) || 'enabled 변경 실패');
+								}
+
+								enabledEl.textContent = next ? '활성' : '비활성';
+								enabledEl.classList.remove('bg-slate-100', 'text-slate-700', 'bg-emerald-100', 'text-emerald-700');
+								if (next) enabledEl.classList.add('bg-emerald-100', 'text-emerald-700');
+								else enabledEl.classList.add('bg-slate-100', 'text-slate-700');
+								showState('info', `userNo ${item.userNo} enabled 변경 완료`);
+							} catch (err) {
+								console.error(err);
+								enabledToggle.checked = prev;
+								showState('err', 'enabled 변경 중 오류가 발생했습니다.');
+							} finally {
+								enabledToggle.removeAttribute('disabled');
 							}
-							node.remove();
-							showState('info', `userNo ${item.userNo} 삭제 완료`);
-						} catch (err) {
-							console.error(err);
-							showState('err', '사용자 삭제 중 오류가 발생했습니다.');
-						} finally {
-							btnDeleteUser.disabled = false;
-						}
-					});
+						});
 
-					const enabled = !!item.enabled;
-					const enabledEl = node.querySelector('.enabled');
-					enabledEl.textContent = enabled ? '활성' : '비활성';
-					enabledEl.classList.remove('bg-slate-100', 'text-slate-700', 'bg-emerald-100', 'text-emerald-700');
-					if (enabled) enabledEl.classList.add('bg-emerald-100', 'text-emerald-700');
-					else enabledEl.classList.add('bg-slate-100', 'text-slate-700');
-
-					return node;
-				}
+						return node;
+					}
 
 				async function loadNextPage() {
 					if (loading || done) return;

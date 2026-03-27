@@ -140,18 +140,18 @@ public class AdminController {
 	}
 
 	/**
-	 * 사용자를 삭제한다.
+	 * 사용자 활성화(enabled)를 변경한다.
 	 *
 	 * @param user 현재 사용자
-	 * @param userVo 사용자 정보(userNo)
-	 * @return 삭제 결과
+	 * @param userVo 사용자 정보(userNo, enabled)
+	 * @return 변경 결과
 	 */
 	@ResponseBody
-	@PostMapping(path = {"UserDelete.json" })
-	public ReturnBasic deleteUser(LoginUser user, @RequestBody AdminUserVo userVo ) {
-		return adminService.deleteUser(user, userVo);
+	@PostMapping(path = {"UserEnabledSave.json" })
+	public ReturnBasic saveUserEnabled(LoginUser user, @RequestBody AdminUserVo userVo ) {
+		return adminService.updateUserEnabled(user, userVo);
 	}
-	
+
 	/**
 	 * 토픽 관리 화면을 반환한다.
 	 *

@@ -102,7 +102,7 @@ class AdminDaoImpl implements AdminDao {
 	}
 
 	@Override
-	public int deleteUser(Long userNo) {
-		return userMapper.deleteUser(userNo);
+	public int updateUserEnabled(Long userNo, Boolean enabled) {
+		return userMapper.updateUserEnabled(userNo, enabled);
 	}
 }

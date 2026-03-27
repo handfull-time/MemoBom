@@ -15,5 +15,5 @@ public interface AdminUserMapper {
 
 	int updateUserNote(@Param("userNo") Long userNo, @Param("note") String note);
 
-	int deleteUser(@Param("userNo") Long userNo);
+	int updateUserEnabled(@Param("userNo") Long userNo, @Param("enabled") Boolean enabled);
 }

@@ -40,10 +40,12 @@
 		WHERE USER_NO = #{userNo}
 	</update>
 
-	<delete id="deleteUser">
-		DELETE FROM MB_USER
+	<update id="updateUserEnabled">
+		UPDATE MB_USER
+		SET ENABLED = #{enabled},
+			UPDATE_DATE = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
-	</delete>
+	</update>
 
 <!-- 사용자 목록
 SELECT USER_NO, UID, NICKNAME, PROFILE_URL, CREATE_AT, STATUS, PUSH_ENABLED

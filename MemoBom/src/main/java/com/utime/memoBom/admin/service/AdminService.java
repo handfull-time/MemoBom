@@ -119,12 +119,12 @@ public interface AdminService {
 	public ReturnBasic updateUserNote(LoginUser user, AdminUserVo userVo);
 
 	/**
-	 * 사용자를 삭제한다.
+	 * 사용자 활성화(enabled)를 변경한다.
 	 *
 	 * @param user 요청 사용자
-	 * @param userVo 사용자 정보(userNo)
+	 * @param userVo 사용자 정보(userNo, enabled)
 	 * @return 처리 결과
 	 */
-	public ReturnBasic deleteUser(LoginUser user, AdminUserVo userVo);
+	public ReturnBasic updateUserEnabled(LoginUser user, AdminUserVo userVo);
 
 }

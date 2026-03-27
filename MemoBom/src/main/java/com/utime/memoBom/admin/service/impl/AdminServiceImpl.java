@@ -261,17 +261,18 @@ class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public ReturnBasic deleteUser(LoginUser user, AdminUserVo userVo) {
+	public ReturnBasic updateUserEnabled(LoginUser user, AdminUserVo userVo) {
 		final ReturnBasic result = new ReturnBasic();
 
-		if (userVo == null || userVo.getUserNo() == null) {
-			return result.setCodeMessage("E", "userNo 값이 필요합니다.");
+		if (userVo == null || userVo.getUserNo() == null || userVo.getEnabled() == null) {
+			return result.setCodeMessage("E", "userNo, enabled 값이 필요합니다.");
 		}
 
-		final int deleted = adminDao.deleteUser(userVo.getUserNo());
-		if (deleted <= 0) {
-			return result.setCodeMessage("E", "삭제할 사용자를 찾지 못했습니다.");
+		final int updated = adminDao.updateUserEnabled(userVo.getUserNo(), userVo.getEnabled());
+		if (updated <= 0) {
+			return result.setCodeMessage("E", "수정할 사용자를 찾지 못했습니다.");
 		}
 		return result;
 	}
+
 }
