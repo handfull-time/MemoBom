@@ -3,7 +3,7 @@
 
 <head>
 	<!-- meta 네이버:카카오 지원 -->
-	<meta property="og:type" content="website">
+	<meta property="og:type" content="article">
 	<!-- 공유시 이동 url -->
 	<meta property="og:url" th:content="${item.url}">
 	<!-- 공유시 보여질 제목 -->
@@ -41,7 +41,7 @@
 		(function () {
 			// 일부 인앱/프리뷰는 'bot html'을 그대로 보여줄 수 있으니
 			// 사람에게는 즉시 실제 페이지로 보냄.
-			var url = /*[[${item.url}]]*/ "";
+			const url = /*[[${item.url}]]*/ null;
 
 			if (!url) return;
 
@@ -50,7 +50,7 @@
 		})();
 	</script>
 
-	[[${item.text}]]
+	<p th:text="${item.text}">Redirecting...</p>
 </body>
 
 </html>

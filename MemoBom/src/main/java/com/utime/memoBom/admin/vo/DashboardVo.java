@@ -1,4 +1,4 @@
-package com.utime.memoBom.admin.vo.gemini;
+package com.utime.memoBom.admin.vo;
 
 import lombok.Data;
 

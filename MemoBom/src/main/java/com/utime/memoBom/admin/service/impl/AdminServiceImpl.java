@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.admin.dao.AdminDao;
 import com.utime.memoBom.admin.service.AdminService;
-import com.utime.memoBom.admin.vo.gemini.DashboardVo;
+import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.DashboardVo;
 import com.utime.memoBom.common.security.JwtProvider;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.util.AppUtils;
@@ -116,6 +117,8 @@ class AdminServiceImpl implements AdminService {
 		return result;
 	}
 	
+    private final java.time.format.DateTimeFormatter formatter =
+            java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 	/**
 	 * date가 null/blank 이거나 yyyy-MM-dd 형식이 아니면 오늘 날짜 반환
 	 *
@@ -130,8 +133,6 @@ class AdminServiceImpl implements AdminService {
 	 * @return 유효하면 그대로 반환, 아니면 오늘 날짜 (yyyy-MM-dd)
 	 */
 	private String getDate(String date) {
-	    final java.time.format.DateTimeFormatter formatter =
-	            java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 	    if (date == null || date.isBlank()) {
 	        return java.time.LocalDate.now().format(formatter);
@@ -151,10 +152,96 @@ class AdminServiceImpl implements AdminService {
 	    }
 	}
 	
+	
+	private AdminSearchVo procDate(AdminSearchVo searchVo) {
+		searchVo.setDate( this.getDate(searchVo.getDate()) );
+		return searchVo;
+	}
+	
 	@Override
 	public DashboardVo getDashboard(String date) {
 		
 		
-		return adminDao.getDashboard( getDate(date) );
+		return adminDao.getDashboard( this.getDate(date) );
+	}
+
+	@Override
+	public ReturnBasic getUserList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getUserList(this.procDate(searchVo)) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getTopicList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getFragmentList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getFragmentList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getCommentList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getEmotionList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getEmotionList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getScrapList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getScrapList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getShareList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getShareList(searchVo) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getPushList(LoginUser user, AdminSearchVo searchVo) {
+		
+		final ReturnBasic result = new ReturnBasic();
+		
+		result.setData( adminDao.getPushList(searchVo) );
+		
+		return result;
 	}
 }

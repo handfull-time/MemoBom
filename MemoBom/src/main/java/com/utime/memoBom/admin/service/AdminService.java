@@ -1,6 +1,7 @@
 package com.utime.memoBom.admin.service;
 
-import com.utime.memoBom.admin.vo.gemini.DashboardVo;
+import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.DashboardVo;
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.ReturnBasic;
 
@@ -33,4 +34,21 @@ public interface AdminService {
 	 * @return
 	 */
 	public DashboardVo getDashboard(String date);
+
+	public ReturnBasic getUserList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getFragmentList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getEmotionList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getScrapList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getShareList(LoginUser user, AdminSearchVo searchVo);
+
+	public ReturnBasic getPushList(LoginUser user, AdminSearchVo searchVo);
+
 }

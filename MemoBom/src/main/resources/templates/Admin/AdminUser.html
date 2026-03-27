@@ -6,6 +6,32 @@
 <body>
 	<th:block layout:fragment="admin_title">User</th:block>
 	<th:block layout:fragment="admin_content">
+		<input type="date" name="date" th:value="${date}" ><br>
+		<input type="text" name="keyword" placeholder="검색어" ><br>
+		<!-- 
+			item을 표시할 template를 위치 한다.
+		-->
+		<template id="tplUserCard">
+			regDate, updateDate, userNo, enabled,  role, provider, id, email, nickname, note, profileUrl 표시
+		</template>
+	</th:block>
+	
+	<th:block layout:fragment="admin_script">
+		<script th:inline="javascript">
+			
+			async function contentLoad() {
+				const url = /*[[@{/Lotus/UserList.json}]]*/ '/Lotus/UserList.json';
+				
+				// 이것으로 무한 스크롤 페이징
+			}
+			
+			async function init(){
+				await contentLoad();
+			}
+			
+			window.addEventListener("DOMContentLoaded", init);
+		</script>
+		
 	</th:block>
 </body>
 </html>

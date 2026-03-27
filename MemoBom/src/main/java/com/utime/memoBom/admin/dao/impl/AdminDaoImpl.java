@@ -1,5 +1,7 @@
 package com.utime.memoBom.admin.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.utime.memoBom.admin.dao.AdminDao;
@@ -13,7 +15,16 @@ import com.utime.memoBom.admin.mapper.AdminScrapMapper;
 import com.utime.memoBom.admin.mapper.AdminShareMapper;
 import com.utime.memoBom.admin.mapper.AdminTopicMapper;
 import com.utime.memoBom.admin.mapper.AdminUserMapper;
-import com.utime.memoBom.admin.vo.gemini.DashboardVo;
+import com.utime.memoBom.admin.vo.AdminCommentVo;
+import com.utime.memoBom.admin.vo.AdminEmotionVo;
+import com.utime.memoBom.admin.vo.AdminFragmentVo;
+import com.utime.memoBom.admin.vo.AdminPushVo;
+import com.utime.memoBom.admin.vo.AdminScrapVo;
+import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminShareVo;
+import com.utime.memoBom.admin.vo.AdminTopicVo;
+import com.utime.memoBom.admin.vo.AdminUserVo;
+import com.utime.memoBom.admin.vo.DashboardVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,5 +47,53 @@ class AdminDaoImpl implements AdminDao {
 	public DashboardVo getDashboard(String date) {
 		//TODO dashBoardMapper를 이용해 DashboardVo 내용을 완성.
 		return new DashboardVo();
+	}
+
+	@Override
+	public List<AdminUserVo> getUserList(AdminSearchVo searchVo) {
+		//TODO userMapper를 이용해 List<AdminUserVo> 내용을 완성.
+		return null;
+	}
+
+	@Override
+	public List<AdminTopicVo> getTopicList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminCommentVo> getCommentList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminEmotionVo> getEmotionList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminScrapVo> getScrapList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminShareVo> getShareList(AdminSearchVo searchVo) {
+		
+		return null;
+	}
+
+	@Override
+	public List<AdminPushVo> getPushList(AdminSearchVo searchVo) {
+		
+		return null;
 	}
 }
