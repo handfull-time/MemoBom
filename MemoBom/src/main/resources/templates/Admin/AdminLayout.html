@@ -87,6 +87,31 @@
 				}
 			};
 
+			window.AdminUtils = {
+				/**
+				 * 무한 스크롤 관찰자 생성
+				 * @param {Element} sentinel 관찰 대상 element
+				 * @param {() => Promise<void>} onIntersect 교차 시 실행할 비동기 함수
+				 * @param {Object} options IntersectionObserver 옵션
+				 * @returns {IntersectionObserver|null}
+				 */
+				createInfiniteObserver(sentinel, onIntersect, options = {}) {
+					if (!sentinel || typeof onIntersect !== 'function') return null;
+					if (typeof IntersectionObserver !== 'function') return null;
+
+					const observer = new IntersectionObserver(async (entries) => {
+						if (!entries[0] || !entries[0].isIntersecting) return;
+						await onIntersect();
+					}, {
+						root: null,
+						rootMargin: options.rootMargin || '300px 0px',
+						threshold: options.threshold ?? 0
+					});
+					observer.observe(sentinel);
+					return observer;
+				}
+			};
+
 			// ESC로 닫기
 			document.addEventListener('keydown', (e) => {
 				if (e.key === 'Escape') AdminMenu.close();

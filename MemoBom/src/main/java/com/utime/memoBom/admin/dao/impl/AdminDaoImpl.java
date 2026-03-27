@@ -51,8 +51,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminUserVo> getUserList(AdminSearchVo searchVo) {
-		//TODO userMapper를 이용해 List<AdminUserVo> 내용을 완성.
-		return null;
+		return userMapper.getUserList(searchVo);
 	}
 
 	@Override

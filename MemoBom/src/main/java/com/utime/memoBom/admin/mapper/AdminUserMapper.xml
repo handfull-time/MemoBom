@@ -3,6 +3,36 @@
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminUserMapper">
 
+	<select id="getUserList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminUserVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(U.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			TO_CHAR(U.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			U.USER_NO AS userNo,
+			U.ENABLED AS enabled,
+			U.ROLE AS role,
+			U.PROVIDER AS provider,
+			U.ID AS id,
+			U.EMAIL AS email,
+			U.NICKNAME AS nickname,
+			U.DESCRIPTION AS note,
+			U.PROFILE_IMG_PATH AS profileUrl
+		FROM MB_USER U
+		WHERE TO_CHAR(U.REG_DATE, 'YYYY-MM-DD') = #{date}
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.EMAIL) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.PROVIDER) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY U.USER_NO DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
 <!-- 사용자 목록
 SELECT USER_NO, UID, NICKNAME, PROFILE_URL, CREATE_AT, STATUS, PUSH_ENABLED
 FROM MB_USER
