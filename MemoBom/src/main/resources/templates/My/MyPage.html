@@ -96,10 +96,12 @@
 
 			<th:block th:if="${isAdmin}">
 				<div class="h-[1px] bg-slate-200/70"></div>
-				<a th:href="@{/Lotus/Login.html}"
-					class="shrink-0 px-2 py-2 text-dynamic-sm font-medium text-blue-500 hover:text-blue-600">
-					AdminPage
-				</a>
+				<div class="px-4 py-3">
+					<a th:href="@{/Lotus/Login.html}"
+						class="w-full inline-flex items-center justify-center rounded-xl border border-blue-200 bg-blue-50 py-2.5 text-dynamic-sm font-semibold text-blue-700 hover:bg-blue-100 transition">
+						AdminPage
+					</a>
+				</div>
 			</th:block>
 
 			<!-- 하단 액션: 로그아웃(버튼) + 탈퇴(우측) -->
