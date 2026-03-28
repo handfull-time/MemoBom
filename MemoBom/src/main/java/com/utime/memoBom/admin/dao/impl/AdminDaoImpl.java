@@ -102,8 +102,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminPushVo> getPushList(AdminSearchVo searchVo) {
-		
-		return null;
+		return pushMapper.getPushList(searchVo);
 	}
 
 	@Override
