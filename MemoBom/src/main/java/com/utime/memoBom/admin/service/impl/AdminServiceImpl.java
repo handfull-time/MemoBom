@@ -269,7 +269,7 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getScrapList(searchVo) );
+		result.setData( adminDao.getScrapList(this.procDate(searchVo)) );
 		
 		return result;
 	}

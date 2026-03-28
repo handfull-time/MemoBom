@@ -29,7 +29,7 @@
 					<div class="min-w-0">
 						<div class="text-lg font-semibold text-slate-900 break-words flex items-center gap-2">
 							<span class="typeBadge px-2 py-0.5 rounded-full border text-xs font-semibold">TOPIC</span>
-							<span class="content text-base">-</span>
+							<span class="content text-base truncate whitespace-nowrap overflow-hidden max-w-[220px] md:max-w-[520px]">-</span>
 						</div>
 						<div class="text-xs text-slate-500 mt-0.5">
 							shareNo: <span class="shareNo tabular-nums">0</span>
@@ -37,11 +37,10 @@
 					</div>
 				</div>
 
-				<div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-1 text-sm text-slate-600">
+				<div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
 					<div>구분: <span class="typeText">topic</span></div>
 					<div>날짜: <span class="createAt tabular-nums">-</span></div>
 					<div>사람: <span class="userNickname">-</span></div>
-					<div>계정: <span class="userId">-</span></div>
 				</div>
 			</article>
 		</template>
@@ -91,7 +90,7 @@
 					node.querySelector('.typeText').textContent = type;
 					node.querySelector('.createAt').textContent = text(item.createAt);
 					node.querySelector('.userNickname').textContent = text(item.userNickname);
-					node.querySelector('.userId').textContent = text(item.userId);
+					node.querySelector('.content').title = content;
 					node.querySelector('.content').textContent = content;
 					const badge = node.querySelector('.typeBadge');
 					badge.textContent = type.toUpperCase();

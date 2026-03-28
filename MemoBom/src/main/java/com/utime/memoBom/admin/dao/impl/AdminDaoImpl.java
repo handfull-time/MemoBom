@@ -92,8 +92,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminScrapVo> getScrapList(AdminSearchVo searchVo) {
-		
-		return null;
+		return scrapMapper.getScrapList(searchVo);
 	}
 
 	@Override
