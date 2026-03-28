@@ -242,7 +242,7 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getEmotionList(searchVo) );
+		result.setData( adminDao.getEmotionList(this.procDate(searchVo)) );
 		
 		return result;
 	}

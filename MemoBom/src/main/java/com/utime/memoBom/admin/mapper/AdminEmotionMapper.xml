@@ -3,6 +3,53 @@
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminEmotionMapper">
 
+	<select id="getEmotionList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminEmotionVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(E.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			TO_CHAR(E.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			E.EMOTION_LOG_ID AS emotionLogId,
+			E.TARGET_TYPE AS targetType,
+			E.TARGET_NO AS targetNo,
+			E.USER_NO AS userNo,
+			U.ID AS userId,
+			U.NICKNAME AS userNickname,
+			E.EMOTION AS emotion,
+			COALESCE(F1.FRAGMENT_NO, F2.FRAGMENT_NO) AS fragmentNo,
+			SUBSTRING(CAST(COALESCE(F1.CONTENT, F2.CONTENT) AS VARCHAR), 1, 80) AS fragmentContent,
+			C.COMMENT_NO AS commentNo,
+			CAST(C.CONTENT AS VARCHAR) AS commentContent,
+			T.NAME AS topicName
+		FROM MB_FRAGMENT_EMOTION_LOG E
+		INNER JOIN MB_USER U
+			ON U.USER_NO = E.USER_NO
+		LEFT JOIN MB_FRAGMENT F1
+			ON E.TARGET_TYPE = 1
+			AND F1.FRAGMENT_NO = E.TARGET_NO
+		LEFT JOIN MB_FRAGMENT_COMMENTS C
+			ON E.TARGET_TYPE = 2
+			AND C.COMMENT_NO = E.TARGET_NO
+		LEFT JOIN MB_FRAGMENT F2
+			ON F2.FRAGMENT_NO = C.FRAGMENT_NO
+		LEFT JOIN MB_TOPIC T
+			ON T.TOPIC_NO = COALESCE(F1.TOPIC_NO, F2.TOPIC_NO)
+		WHERE TO_CHAR(E.REG_DATE, 'YYYY-MM-DD') = #{date}
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(E.EMOTION) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(COALESCE(F1.CONTENT, F2.CONTENT) AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(C.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY E.EMOTION_LOG_ID DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
 <!-- 토픽별 리액션 집계
 SELECT T.TOPIC_UID, T.NAME,
        COUNT(*) AS TOTAL,
