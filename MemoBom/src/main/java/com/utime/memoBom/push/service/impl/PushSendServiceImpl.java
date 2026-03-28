@@ -175,7 +175,7 @@ class PushSendServiceImpl implements PushSendService {
         	pushDao.savePushSub( vo );
 		} catch (Exception e) {
 			log.error("", e);
-			return new ReturnBasic("E", e.getMessage());
+			return new ReturnBasic("EPSH001", e.getMessage());
 		}
 
     	return new ReturnBasic();
@@ -188,7 +188,7 @@ class PushSendServiceImpl implements PushSendService {
 			pushDao.removePushSub(endpoint);
 		} catch (Exception e) {
 			log.error("", e);
-			return new ReturnBasic("E", e.getMessage());
+			return new ReturnBasic("EPSH002", e.getMessage());
 		}
          
          return new ReturnBasic();
@@ -198,7 +198,7 @@ class PushSendServiceImpl implements PushSendService {
     public ReturnBasic sendPush(LoginUser user, PushSendDataVo data) throws Exception {
     	
     	if( user == null || data == null ) {
-    		return new ReturnBasic("E", "null 안됨.");
+    		return new ReturnBasic("EPSH003", "null 안됨.");
     	}
 
     	final UUID uid = UUID.randomUUID();
@@ -210,9 +210,9 @@ class PushSendServiceImpl implements PushSendService {
     			alarmDao.addPushAlarm(user, data, uid);
     		} catch (Exception e) {
     			log.error("", e);
-    			return new ReturnBasic("E", e.getMessage());
+    			return new ReturnBasic("EPSH004", e.getMessage());
     		}
-    		return new ReturnBasic("E", "보낼 대상 없음.");
+    		return new ReturnBasic("EPSH005", "보낼 대상 없음.");
     	}
     	
 		final PushNotiDataDto pushDto = new PushNotiDataDto();
@@ -279,11 +279,11 @@ class PushSendServiceImpl implements PushSendService {
 			alarmDao.addPushAlarm(user, data, uid);
 		} catch (Exception e) {
 			log.error("", e);
-			return result.setCodeMessage("E", e.getMessage());
+			return result.setCodeMessage("EPSH006", e.getMessage());
 		}
 
         if( okCount < 1 ) {
-        	result.setCodeMessage("E", "푸시 발송 실패");
+        	result.setCodeMessage("EPSH007", "푸시 발송 실패");
         }
 
     	return result;
@@ -308,7 +308,7 @@ class PushSendServiceImpl implements PushSendService {
     		result.setData( Boolean.valueOf(enabled) );
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", e.getMessage());
+			result.setCodeMessage("EPSH008", e.getMessage());
 		}
      
     	return result;

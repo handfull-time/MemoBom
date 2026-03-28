@@ -83,7 +83,7 @@ public class TestController {
 			log.info(result.toString());
 		} catch (Exception e) {
 			log.error("", e);
-			model.addAttribute("res", new ReturnBasic("E", e.getMessage()) );
+			model.addAttribute("res", new ReturnBasic("ERT001", e.getMessage()) );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";

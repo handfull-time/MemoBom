@@ -56,19 +56,19 @@ class KeyUtil {
 		final String sealValue = keyValueDao.getValueAndRemove(seal);
 		
 		if( AppUtils.isEmpty(sealValue)) {
-			return new ReturnBasic("E", "유효시간이 초과 되거나 잘못된 요청 입니다.");
+			return new ReturnBasic("EKEY001", "유효시간이 초과 되거나 잘못된 요청 입니다.");
 		}
 		
 		final EDevicePlatform dp = device.getDevice();
 		if( dp == null || dp == EDevicePlatform.Unknown ) {
 			log.info("알 수 없는 장치");
-			return new ReturnBasic("E", "잘못된 장치 입니다.");
+			return new ReturnBasic("EKEY002", "잘못된 장치 입니다.");
 		}
 		
 		final String compareValue = user.uid() + device.getModel() + dp;
 		if( !sealValue.equals(compareValue) ) {
 			log.warn("접속 정보 오류 {} - {}", sealValue, compareValue);
-			return new ReturnBasic("E", "잘못된 요청 입니다.");
+			return new ReturnBasic("EKEY003", "잘못된 요청 입니다.");
 		}
 		
 		return new ReturnBasic();

@@ -117,11 +117,11 @@ class ShareServiceImpl implements ShareService {
 			vo = shareDao.addShareInfo(user, targetType, targetUid);
 		} catch (Exception e) {
 			log.error("", e);
-			return result.setCodeMessage("E", "공유 대상 조회에 실패했습니다.");
+			return result.setCodeMessage("ESHR001", "공유 대상 조회에 실패했습니다.");
 		}
 
 		if (vo == null) {
-			return result.setCodeMessage("E", "공유 대상 정보가 없습니다.");
+			return result.setCodeMessage("ESHR002", "공유 대상 정보가 없습니다.");
 		}
 
 		final ShareDto shareDto = new ShareDto();

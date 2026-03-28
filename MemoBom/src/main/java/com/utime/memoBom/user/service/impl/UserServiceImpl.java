@@ -80,11 +80,11 @@ class UserServiceImpl implements UserService{
 		
 		final UserVo dbUser = userDao.getUserFromUid(user.uid());
 		if( dbUser == null ) {
-			return result.setCodeMessage("E", "사용자 정보 없습니다.");
+			return result.setCodeMessage("EUSR001", "사용자 정보 없습니다.");
 		}
 		
 		if( ! dbUser.getEmail().equals(email) ) {
-			result.setCodeMessage("E", "사용자 정보 일치하지 않습니다.");
+			result.setCodeMessage("EUSR002", "사용자 정보 일치하지 않습니다.");
 		}
 		
 		return result;
@@ -96,14 +96,14 @@ class UserServiceImpl implements UserService{
 		
 		final ReturnBasic result = new ReturnBasic();
 		if( ! user.uid().equals(data.getUid())) {
-			return result.setCodeMessage("E", "이용자 정보 불일치");
+			return result.setCodeMessage("EUSR003", "이용자 정보 불일치");
 		}
 		
 		try {
 			userDao.updateUserInfo( user, data.getNickname(), data.getProfile());
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", e.getMessage());
+			result.setCodeMessage("EUSR004", e.getMessage());
 		}
 		
 		return result;
@@ -114,7 +114,7 @@ class UserServiceImpl implements UserService{
 		
 		final ReturnBasic result = new ReturnBasic();
 		if( ! user.uid().equals(data.getUid())) {
-			return result.setCodeMessage("E", "이용자 정보 불일치");
+			return result.setCodeMessage("EUSR005", "이용자 정보 불일치");
 		}
 		
 		try {
@@ -126,7 +126,7 @@ class UserServiceImpl implements UserService{
 			
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", e.getMessage());
+			result.setCodeMessage("EUSR006", e.getMessage());
 		}
 		
 		return result;
@@ -264,7 +264,7 @@ class UserServiceImpl implements UserService{
 	@Override
 	public ReturnBasic searchInviteUser(LoginUser user, String nickName) {
 		if( nickName != null && nickName.length() < 3 ) {
-			return new ReturnBasic("E", "검색어가 부족합니다.");
+			return new ReturnBasic("EUSR007", "검색어가 부족합니다.");
 		}
 		
 		final List<BasicUserVo> userBasiclist = userDao.searchInviteUser(user, nickName);

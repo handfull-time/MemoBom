@@ -77,7 +77,7 @@ public class BoardController {
 		
 		final String key = boardServce.createKey(request, user);
 		if( key == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
+			model.addAttribute("res", new ReturnBasic("EBC001", "접속하신 장치를 확인해 주세요.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
@@ -85,7 +85,7 @@ public class BoardController {
 		
 		final FragmentDto resultItem = boardServce.loadFragment(user, uid);
 		if( resultItem == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "요청 값이 유효하지 않습니다.") );
+			model.addAttribute("res", new ReturnBasic("EBC002", "요청 값이 유효하지 않습니다.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";
@@ -138,7 +138,7 @@ public class BoardController {
 			list = topicServce.loadUserTopicList( user );
 			
 			if( AppUtils.isEmpty(list)) {
-				model.addAttribute("res", new ReturnBasic("E", "개인 주제를 먼저 정하세요.") );
+				model.addAttribute("res", new ReturnBasic("EBC003", "개인 주제를 먼저 정하세요.") );
 				model.addAttribute(AppDefine.KeyShowFooter, false );
 			    model.addAttribute(AppDefine.KeyLoadScript, false );
 				return "Common/ErrorAlert";
@@ -147,7 +147,7 @@ public class BoardController {
 		
 		final String key = boardServce.createKey(request, user);
 		if( key == null ) {
-			model.addAttribute("res", new ReturnBasic("E", "접속하신 장치를 확인해 주세요.") );
+			model.addAttribute("res", new ReturnBasic("EBC004", "접속하신 장치를 확인해 주세요.") );
 			model.addAttribute(AppDefine.KeyShowFooter, false );
 		    model.addAttribute(AppDefine.KeyLoadScript, false );
 			return "Common/ErrorAlert";

@@ -145,7 +145,7 @@ class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessH
 			result = jwtProvider.procLogin(request, response, userVo);
 		} catch (Exception e) {
 			log.error("", e);
-			result = new ReturnBasic("E", e.getLocalizedMessage());
+			result = new ReturnBasic("EOAU001", e.getLocalizedMessage());
 		}
 
         if (result.isError()) {

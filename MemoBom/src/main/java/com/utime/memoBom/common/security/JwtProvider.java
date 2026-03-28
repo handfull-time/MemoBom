@@ -266,13 +266,13 @@ public class JwtProvider {
         
     	final String id = claims.getId(); // JWT Subject (여기서는 User ID/Email)
         if (id == null || id.isBlank()) {
-        	result.setCodeMessage("E", "ID is empty.");
+        	result.setCodeMessage("EJWT001", "ID is empty.");
         	return result;
         }
         
         final String sid = (String)claims.get(CLM_SID, String.class);
         if (sid == null || sid.isBlank()) {
-        	result.setCodeMessage("E", "SID is empty.");
+        	result.setCodeMessage("EJWT002", "SID is empty.");
         	return result;
         }
 
@@ -293,7 +293,7 @@ public class JwtProvider {
 
         if (user == null) {
         	log.info("Db user is null.");
-        	result.setCodeMessage("E", "Db user is null.");
+        	result.setCodeMessage("EJWT003", "Db user is null.");
         	return result;
         }
         
@@ -305,7 +305,7 @@ public class JwtProvider {
             int tokenUserNo = Integer.parseInt(tokenUserNoStr);
             if (user.getUserNo() != tokenUserNo) {
                 log.warn("User mismatch. tokenUserNo={}, dbUserNo={}", tokenUserNo, user.getUserNo());
-            	result.setCodeMessage("E", "User Missmatch.");
+            	result.setCodeMessage("EJWT004", "User Missmatch.");
             	return result;
             }
         }
@@ -327,7 +327,7 @@ public class JwtProvider {
      * @throws Exception 
      */
     public ReturnBasic procLogin(HttpServletRequest request, HttpServletResponse response, UserVo user) throws Exception {
-        if (user == null) return new ReturnBasic("E", "사용자 정보 없음");
+        if (user == null) return new ReturnBasic("EJWT005", "사용자 정보 없음");
 
         this.procLogout(request, response);
         

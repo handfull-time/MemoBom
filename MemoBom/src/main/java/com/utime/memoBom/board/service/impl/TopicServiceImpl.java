@@ -62,7 +62,7 @@ class TopicServiceImpl implements TopicService {
 		final ReturnBasic result = new ReturnBasic();
 		
 		if( topicDao.checkSameName(uid, name) ) {
-			result.setCodeMessage("E", "There is already a name.");
+			result.setCodeMessage("ETOP001", "There is already a name.");
 		}
 		
 		return result;
@@ -74,13 +74,13 @@ class TopicServiceImpl implements TopicService {
 		final ReturnBasic result = new ReturnBasic();
 		
 		if( topicDao.checkSameName(reqVo.getUid(),  reqVo.getName()) ) {
-			result.setCodeMessage("E", "There is already a name.");
+			result.setCodeMessage("ETOP002", "There is already a name.");
 			return result;
 		}
 		
 		final TopicVo topicDb = topicDao.loadTopic(reqVo.getUid());
 		if( topicDb != null && topicDb.getOwnerNo() != user.userNo() ) {
-			result.setCodeMessage("E", "같은 사용자만 수정 가능 합니다.");
+			result.setCodeMessage("ETOP003", "같은 사용자만 수정 가능 합니다.");
 			return result;
 		}
 		
@@ -92,7 +92,7 @@ class TopicServiceImpl implements TopicService {
 			topicDao.saveTopic(topic);
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("ETOP004", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -117,13 +117,13 @@ class TopicServiceImpl implements TopicService {
 	public ReturnBasic loadTopic(String uid) {
 		final ReturnBasic result = new ReturnBasic();
 		if( AppUtils.isEmpty(uid) ) {
-			result.setCodeMessage("E", "Mosaic ID가 없습니다.");
+			result.setCodeMessage("ETOP005", "Mosaic ID가 없습니다.");
 			return result;
 		} 
 		
 		final TopicVo topic = topicDao.loadTopic(uid);
 		if( topic == null ) {
-			result.setCodeMessage("E", "Mosaic을 찾을 수 없습니다.");
+			result.setCodeMessage("ETOP006", "Mosaic을 찾을 수 없습니다.");
 			return result;
 		}
 		
@@ -136,13 +136,13 @@ class TopicServiceImpl implements TopicService {
 	
 		final ReturnBasic result = new ReturnBasic();
 		if( AppUtils.isEmpty(uid) ) {
-			result.setCodeMessage("E", "Mosaic ID가 없습니다.");
+			result.setCodeMessage("ETOP007", "Mosaic ID가 없습니다.");
 			return result;
 		} 
 		
 		final TopicVo topic = topicDao.loadTopic(user, uid);
 		if( topic == null ) {
-			result.setCodeMessage("E", "Mosaic을 찾을 수 없습니다.");
+			result.setCodeMessage("ETOP008", "Mosaic을 찾을 수 없습니다.");
 			return result;
 		}
 		
@@ -168,11 +168,11 @@ class TopicServiceImpl implements TopicService {
 		try {
 			int res = topicDao.flow(user, reqVo.getUid());
 			if( res <= 0 ) {
-				result.setCodeMessage("E", "No changes were made.");
+				result.setCodeMessage("ETOP009", "No changes were made.");
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("ETOP010", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -203,7 +203,7 @@ class TopicServiceImpl implements TopicService {
 		try {
 			final int res = topicDao.addInviteUser(user, topic.getTopicNo(), targetUser.getUserNo() );
 			if( res <= 0 ) {
-				result.setCodeMessage("E", "No changes were made.");
+				result.setCodeMessage("ETOP011", "No changes were made.");
 				return result;
 			}
 			
@@ -215,7 +215,7 @@ class TopicServiceImpl implements TopicService {
 			pushSendService.sendPush(new LoginUser(targetUser.getUserNo(), targetUser.getUid(), targetUser.getRole()), push);
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("ETOP012", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -225,16 +225,16 @@ class TopicServiceImpl implements TopicService {
 	public ReturnBasic decideInvite(LoginUser user, InviteDecisionDto dto) {
 		final ReturnBasic result = new ReturnBasic();
 		if( user == null ) {
-			result.setCodeMessage("E", "로그인이 필요합니다.");
+			result.setCodeMessage("ETOP013", "로그인이 필요합니다.");
 			return result;
 		}
 		if( AppUtils.isEmpty(dto.getTopicUid()) ) {
-			result.setCodeMessage("E", "토픽 정보가 없습니다.");
+			result.setCodeMessage("ETOP014", "토픽 정보가 없습니다.");
 			return result;
 		}
 
 		if( !topicDao.hasPendingInvite(user, dto.getTopicUid()) ) {
-			result.setCodeMessage("E", "처리할 초대 정보가 없습니다.");
+			result.setCodeMessage("ETOP015", "처리할 초대 정보가 없습니다.");
 			return result;
 		}
 
@@ -246,7 +246,7 @@ class TopicServiceImpl implements TopicService {
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "초대 처리 중 오류가 발생했습니다.");
+			result.setCodeMessage("ETOP016", "초대 처리 중 오류가 발생했습니다.");
 		}
 
 		return result;

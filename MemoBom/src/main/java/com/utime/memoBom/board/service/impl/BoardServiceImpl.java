@@ -61,7 +61,7 @@ class BoardServiceImpl implements BoardService {
 		
 		if( AppUtils.isEmpty(reqVo.getContent())) {
 			log.warn("냉무 ...");
-			return new ReturnBasic("E", "내용이 없습니다.");
+			return new ReturnBasic("EBRD001", "내용이 없습니다.");
 		}
 		
 		final ReturnBasic result = new ReturnBasic();
@@ -74,7 +74,7 @@ class BoardServiceImpl implements BoardService {
 			}			 
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("EBRD002", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -145,7 +145,7 @@ class BoardServiceImpl implements BoardService {
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("EBRD003", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -160,7 +160,7 @@ class BoardServiceImpl implements BoardService {
 			result.setData( boardDao.loadCommentsList(user, uid, pageNo, emojiSetType) );
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("EBRD004", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -174,7 +174,7 @@ class BoardServiceImpl implements BoardService {
 			result.setData( boardDao.procEmotion(user, emotionReqVo) );
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "Error during emotion processing.");
+			result.setCodeMessage("EBRD005", "Error during emotion processing.");
 		}
 		
 		return result;
@@ -187,13 +187,13 @@ class BoardServiceImpl implements BoardService {
 		try {
 			Boolean isScrapped = boardDao.procScrap(user, fragmentUid);
 			if( isScrapped == null ) {
-				result.setCodeMessage("E", "Failed to process scrap.");
+				result.setCodeMessage("EBRD006", "Failed to process scrap.");
 			}else {
 				result.setData( isScrapped );
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("EBRD007", "An error occurred while saving.");
 		}
 		
 		return result;
@@ -233,7 +233,7 @@ class BoardServiceImpl implements BoardService {
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage("E", "An error occurred while saving.");
+			result.setCodeMessage("EBRD008", "An error occurred while saving.");
 		}
 
 		return result;

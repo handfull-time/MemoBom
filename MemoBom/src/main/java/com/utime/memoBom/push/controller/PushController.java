@@ -49,7 +49,7 @@ public class PushController {
     	
         if (dto == null || dto.endpoint == null || dto.keys == null ||
             dto.keys.p256dh == null || dto.keys.auth == null) {
-            return ResponseEntity.internalServerError().body( new ReturnBasic("E", "invalid subscription") );
+            return ResponseEntity.internalServerError().body( new ReturnBasic("EPSC001", "invalid subscription") );
         }
  
         final ReturnBasic res = pushSendService.upsert( user, dto );
