@@ -54,7 +54,7 @@ public interface AdminDao {
 	 * @param topicVo 수정 대상 값
 	 * @return 반영 건수
 	 */
-	int updateTopicEditable(AdminTopicVo topicVo);
+	int updateTopicEditable(AdminTopicVo topicVo)throws Exception;
 
 	/**
 	 * 글(프래그먼트) 목록을 조회한다.
@@ -119,7 +119,7 @@ public interface AdminDao {
 	 * @param note 메모
 	 * @return 반영 건수
 	 */
-	int updateUserNote(Long userNo, String note);
+	int updateUserNote(Long userNo, String note)throws Exception;
 
 	/**
 	 * 사용자 활성화(enabled) 값을 변경한다.
@@ -128,7 +128,7 @@ public interface AdminDao {
 	 * @param enabled 활성화 여부
 	 * @return 반영 건수
 	 */
-	int updateUserEnabled(Long userNo, Boolean enabled);
+	int updateUserEnabled(Long userNo, Boolean enabled)throws Exception;
 
 	/**
 	 * 댓글 삭제 여부(IS_DELETED)를 변경한다.
@@ -137,6 +137,6 @@ public interface AdminDao {
 	 * @param deleted 삭제 여부
 	 * @return 반영 건수
 	 */
-	int updateCommentDeleted(Long commentNo, Boolean deleted);
+	int updateCommentDeleted(Long commentNo, Boolean deleted)throws Exception;
 
 }

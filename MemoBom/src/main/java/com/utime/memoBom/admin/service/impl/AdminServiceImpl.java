@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.utime.memoBom.admin.dao.AdminDao;
@@ -75,6 +76,15 @@ class AdminServiceImpl implements AdminService {
     		log.info("관리자 추가 정보 : {}", admin);
     		
     		userDao.addUser(admin);
+		}
+	}
+	
+	@Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul")
+	public void cleanupExpired() {
+		try {
+			//TODO 제거 작업
+		} catch (Exception e) {
+			log.error("", e);
 		}
 	}
 	
@@ -247,9 +257,14 @@ class AdminServiceImpl implements AdminService {
 			return result.setCodeMessage("E", "commentNo, deleted 값이 필요합니다.");
 		}
 
-		final int updated = adminDao.updateCommentDeleted(commentVo.getCommentNo(), commentVo.getDeleted());
-		if (updated <= 0) {
-			return result.setCodeMessage("E", "수정할 댓글을 찾지 못했습니다.");
+		try {
+			final int updated = adminDao.updateCommentDeleted(commentVo.getCommentNo(), commentVo.getDeleted());
+			if (updated <= 0) {
+				result.setCodeMessage("E", "수정할 댓글을 찾지 못했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", e.getMessage());
 		}
 		return result;
 	}
@@ -302,9 +317,14 @@ class AdminServiceImpl implements AdminService {
 			return result.setCodeMessage("E", "userNo 값이 필요합니다.");
 		}
 
-		final int updated = adminDao.updateUserNote(userVo.getUserNo(), userVo.getNote());
-		if (updated <= 0) {
-			return result.setCodeMessage("E", "저장할 사용자를 찾지 못했습니다.");
+		try {
+			final int updated = adminDao.updateUserNote(userVo.getUserNo(), userVo.getNote());
+			if (updated <= 0) {
+				result.setCodeMessage("E", "저장할 사용자를 찾지 못했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", e.getMessage());
 		}
 		return result;
 	}
@@ -317,9 +337,14 @@ class AdminServiceImpl implements AdminService {
 			return result.setCodeMessage("E", "userNo, enabled 값이 필요합니다.");
 		}
 
-		final int updated = adminDao.updateUserEnabled(userVo.getUserNo(), userVo.getEnabled());
-		if (updated <= 0) {
-			return result.setCodeMessage("E", "수정할 사용자를 찾지 못했습니다.");
+		try {
+			final int updated = adminDao.updateUserEnabled(userVo.getUserNo(), userVo.getEnabled());
+			if (updated <= 0) {
+				result.setCodeMessage("E", "수정할 사용자를 찾지 못했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", e.getMessage());
 		}
 		return result;
 	}
@@ -332,9 +357,14 @@ class AdminServiceImpl implements AdminService {
 			return result.setCodeMessage("E", "topicNo 값이 필요합니다.");
 		}
 
-		final int updated = adminDao.updateTopicEditable(topicVo);
-		if (updated <= 0) {
-			return result.setCodeMessage("E", "수정할 토픽을 찾지 못했습니다.");
+		try {
+			int updated = adminDao.updateTopicEditable(topicVo);
+			if (updated <= 0) {
+				result.setCodeMessage("E", "수정할 토픽을 찾지 못했습니다.");
+			}
+		} catch (Exception e) {
+			log.error("", e);
+			result.setCodeMessage("E", e.getMessage());
 		}
 		return result;
 	}

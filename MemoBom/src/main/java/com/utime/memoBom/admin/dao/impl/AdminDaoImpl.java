@@ -3,13 +3,13 @@ package com.utime.memoBom.admin.dao.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.utime.memoBom.admin.dao.AdminDao;
 import com.utime.memoBom.admin.mapper.AdminCommentMapper;
 import com.utime.memoBom.admin.mapper.AdminDashBoardMapper;
 import com.utime.memoBom.admin.mapper.AdminEmotionMapper;
 import com.utime.memoBom.admin.mapper.AdminFragmentMapper;
-import com.utime.memoBom.admin.mapper.AdminMapper;
 import com.utime.memoBom.admin.mapper.AdminPushMapper;
 import com.utime.memoBom.admin.mapper.AdminScrapMapper;
 import com.utime.memoBom.admin.mapper.AdminShareMapper;
@@ -33,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 class AdminDaoImpl implements AdminDao {
 	
-	private final AdminMapper adminMapper;
 	private final AdminCommentMapper commentMapper;
 	private final AdminDashBoardMapper dashBoardMapper;
 	private final AdminEmotionMapper emotionMapper;
@@ -66,7 +65,8 @@ class AdminDaoImpl implements AdminDao {
 	}
 
 	@Override
-	public int updateTopicEditable(AdminTopicVo topicVo) {
+	@Transactional(rollbackFor = Exception.class)
+	public int updateTopicEditable(AdminTopicVo topicVo) throws Exception{
 		return topicMapper.updateTopicEditable(topicVo);
 	}
 
@@ -106,17 +106,20 @@ class AdminDaoImpl implements AdminDao {
 	}
 
 	@Override
-	public int updateUserNote(Long userNo, String note) {
+	@Transactional(rollbackFor = Exception.class)
+	public int updateUserNote(Long userNo, String note) throws Exception{
 		return userMapper.updateUserNote(userNo, note);
 	}
 
 	@Override
-	public int updateUserEnabled(Long userNo, Boolean enabled) {
+	@Transactional(rollbackFor = Exception.class)
+	public int updateUserEnabled(Long userNo, Boolean enabled) throws Exception{
 		return userMapper.updateUserEnabled(userNo, enabled);
 	}
 
 	@Override
-	public int updateCommentDeleted(Long commentNo, Boolean deleted) {
+	@Transactional(rollbackFor = Exception.class)
+	public int updateCommentDeleted(Long commentNo, Boolean deleted) throws Exception{
 		return commentMapper.updateCommentDeleted(commentNo, deleted);
 	}
 }
