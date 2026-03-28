@@ -145,7 +145,6 @@
 						await openFragmentPopup(item.fragmentNo);
 					});
 					const deletedToggle = node.querySelector('.deletedToggle');
-					let deleted = !!item.deleted;
 					deletedToggle.checked = deleted;
 					deletedToggle.addEventListener('change', async (e) => {
 						const next = !!(e.detail && e.detail.checked);
