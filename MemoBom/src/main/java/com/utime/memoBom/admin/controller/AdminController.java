@@ -269,6 +269,22 @@ public class AdminController {
 		
 		return adminService.getCommentList(user, searchVo );
 	}
+
+	/**
+	 * 프래그먼트 미리보기 팝업을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param fragmentNo 프래그먼트 번호
+	 * @return 팝업 템플릿 경로
+	 */
+	@GetMapping(path = {"FragmentPreview.popup" })
+	public String adminFragmentPreviewPopup(ModelMap model, LoginUser user, @RequestParam Long fragmentNo) {
+		final ReturnBasic result = adminService.getFragmentPreview(user, fragmentNo);
+		model.addAttribute("result", result);
+		model.addAttribute("item", result.getData());
+		return "Admin/FragmentPreviewPopup";
+	}
 	
 	/**
 	 * 이모션 관리 화면을 반환한다.

@@ -76,9 +76,13 @@ class AdminDaoImpl implements AdminDao {
 	}
 
 	@Override
+	public AdminFragmentVo getFragmentPreview(Long fragmentNo) {
+		return commentMapper.getFragmentPreview(fragmentNo);
+	}
+
+	@Override
 	public List<AdminCommentVo> getCommentList(AdminSearchVo searchVo) {
-		
-		return null;
+		return commentMapper.getCommentList(searchVo);
 	}
 
 	@Override

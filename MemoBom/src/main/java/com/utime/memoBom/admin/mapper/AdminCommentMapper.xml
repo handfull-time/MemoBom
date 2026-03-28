@@ -2,6 +2,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminCommentMapper">
+
+	<select id="getCommentList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminCommentVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(C.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			TO_CHAR(C.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			C.COMMENT_NO AS commentNo,
+			CAST(C.UID AS VARCHAR) AS uid,
+			C.IS_DELETED AS deleted,
+			C.FRAGMENT_NO AS fragmentNo,
+			CAST(F.UID AS VARCHAR) AS fragmentUid,
+			SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 80) AS fragmentContent,
+			F.TOPIC_NO AS topicNo,
+			T.NAME AS topicName,
+			C.USER_NO AS userNo,
+			U.ID AS userId,
+			U.NICKNAME AS userNickname,
+			CAST(C.CONTENT AS VARCHAR) AS content
+		FROM MB_FRAGMENT_COMMENTS C
+		INNER JOIN MB_FRAGMENT F
+			ON F.FRAGMENT_NO = C.FRAGMENT_NO
+		INNER JOIN MB_TOPIC T
+			ON T.TOPIC_NO = F.TOPIC_NO
+		INNER JOIN MB_USER U
+			ON U.USER_NO = C.USER_NO
+		WHERE TO_CHAR(C.REG_DATE, 'YYYY-MM-DD') = #{date}
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(CAST(C.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(C.UID AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY C.COMMENT_NO DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
+	<select id="getFragmentPreview" resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
+		SELECT
+			F.FRAGMENT_NO AS fragmentNo,
+			CAST(F.UID AS VARCHAR) AS uid,
+			TO_CHAR(F.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			F.TOPIC_NO AS topicNo,
+			T.NAME AS topicName,
+			T.IMOGI AS imogi,
+			F.USER_NO AS userNo,
+			U.NICKNAME AS userNickname,
+			U.PROFILE_IMG_PATH AS userProfileUrl,
+			CAST(F.CONTENT AS VARCHAR) AS content
+		FROM MB_FRAGMENT F
+		INNER JOIN MB_TOPIC T
+			ON T.TOPIC_NO = F.TOPIC_NO
+		INNER JOIN MB_USER U
+			ON U.USER_NO = F.USER_NO
+		WHERE F.FRAGMENT_NO = #{fragmentNo}
+	</select>
 <!--
 SELECT C.COMMENT_UID, C.REG_DATE, C.FRAG_UID, F.TOPIC_UID,
        C.USER_NO, U.NICKNAME,

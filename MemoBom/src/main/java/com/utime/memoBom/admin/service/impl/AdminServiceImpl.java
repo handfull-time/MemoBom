@@ -214,7 +214,25 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getCommentList(searchVo) );
+		result.setData( adminDao.getCommentList(this.procDate(searchVo)) );
+		
+		return result;
+	}
+
+	@Override
+	public ReturnBasic getFragmentPreview(LoginUser user, Long fragmentNo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (fragmentNo == null || fragmentNo <= 0) {
+			return result.setCodeMessage("E", "유효한 fragmentNo 값이 필요합니다.");
+		}
+
+		final AdminFragmentVo item = adminDao.getFragmentPreview(fragmentNo);
+		if (item == null) {
+			return result.setCodeMessage("E", "프래그먼트를 찾지 못했습니다.");
+		}
+
+		result.setData(item);
 		
 		return result;
 	}

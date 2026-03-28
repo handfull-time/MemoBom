@@ -65,6 +65,14 @@ public interface AdminDao {
 	List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo);
 
 	/**
+	 * 프래그먼트 미리보기 데이터를 조회한다.
+	 *
+	 * @param fragmentNo 프래그먼트 번호
+	 * @return 프래그먼트 정보
+	 */
+	AdminFragmentVo getFragmentPreview(Long fragmentNo);
+
+	/**
 	 * 댓글 목록을 조회한다.
 	 *
 	 * @param searchVo 조회 조건
