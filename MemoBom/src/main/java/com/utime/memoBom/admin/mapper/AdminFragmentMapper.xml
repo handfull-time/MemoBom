@@ -37,10 +37,10 @@
 				WHERE S.FRAGMENT_NO = F.FRAGMENT_NO
 			) AS scrapCount
 		FROM MB_FRAGMENT F
-		INNER JOIN MB_USER U
-			ON U.USER_NO = F.USER_NO
-		INNER JOIN MB_TOPIC T
-			ON T.TOPIC_NO = F.TOPIC_NO
+			INNER JOIN MB_USER U
+				ON U.USER_NO = F.USER_NO
+			INNER JOIN MB_TOPIC T
+				ON T.TOPIC_NO = F.TOPIC_NO
 		WHERE TO_CHAR(F.REG_DATE, 'YYYY-MM-DD') = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
@@ -55,10 +55,11 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
-	<delete id="deleteFragmentsAfter2Weeks">
+	<delete id="deleteFragments" parameterType="map">
 		DELETE FROM MB_FRAGMENT
-		WHERE IS_DELETED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+		WHERE 1=1
+			AND IS_DELETED = TRUE
+			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
 	</delete>
 
 </mapper>

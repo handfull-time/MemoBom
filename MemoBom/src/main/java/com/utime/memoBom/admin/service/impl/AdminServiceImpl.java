@@ -53,23 +53,6 @@ class AdminServiceImpl implements AdminService {
 	
 	private final String masterProvider = "localhost";
 
-	private static final String ERR_ADMIN_LOGIN_FORBIDDEN = "EADM001";
-	private static final String ERR_TOPIC_NO_INVALID = "EADM002";
-	private static final String ERR_FRAGMENT_NO_INVALID = "EADM003";
-	private static final String ERR_FRAGMENT_NOT_FOUND = "EADM004";
-	private static final String ERR_COMMENT_INPUT_INVALID = "EADM005";
-	private static final String ERR_COMMENT_NOT_FOUND = "EADM006";
-	private static final String ERR_COMMENT_UPDATE_EXCEPTION = "EADM007";
-	private static final String ERR_USER_NO_REQUIRED = "EADM008";
-	private static final String ERR_USER_NOT_FOUND_FOR_NOTE = "EADM009";
-	private static final String ERR_USER_NOTE_UPDATE_EXCEPTION = "EADM010";
-	private static final String ERR_USER_ENABLE_INPUT_INVALID = "EADM011";
-	private static final String ERR_USER_NOT_FOUND_FOR_ENABLE = "EADM012";
-	private static final String ERR_USER_ENABLE_UPDATE_EXCEPTION = "EADM013";
-	private static final String ERR_TOPIC_NO_REQUIRED_FOR_UPDATE = "EADM014";
-	private static final String ERR_TOPIC_NOT_FOUND_FOR_UPDATE = "EADM015";
-	private static final String ERR_TOPIC_UPDATE_EXCEPTION = "EADM016";
-	
 	@PostConstruct
 	private void init() throws Exception{
 
@@ -99,16 +82,14 @@ class AdminServiceImpl implements AdminService {
 	@Scheduled(cron = "0 30 12 * * *", zone = "Asia/Seoul")
 	public void cleanupExpired() {
 		try {
-			final int pushDeleted = adminDao.deleteInactivePushSubsAfter2Weeks();
-			final int commentDeleted = adminDao.deleteCommentsAfter2Weeks();
-			final int fragmentDeleted = adminDao.deleteFragmentsAfter2Weeks();
-			final int topicDeleted = adminDao.deleteDisabledTopicsAfter2Weeks();
-			final int userDeleted = adminDao.deleteDisabledUsersAfter2Weeks();
+			final int pushDeleted = adminDao.deleteInactivePushSubs();
+			final int commentDeleted = adminDao.deleteComments();
+			final int fragmentDeleted = adminDao.deleteFragments();
+			final int topicDeleted = adminDao.deleteDisabledTopics();
+			final int userDeleted = adminDao.deleteDisabledUsers();
 
-			log.info(
-				"cleanupExpired 완료 - push:{}, comments:{}, fragments:{}, topics:{}, users:{}",
-				pushDeleted, commentDeleted, fragmentDeleted, topicDeleted, userDeleted
-			);
+			log.info("cleanupExpired 완료 - push:{}, comments:{}, fragments:{}, topics:{}, users:{}",
+				pushDeleted, commentDeleted, fragmentDeleted, topicDeleted, userDeleted );
 		} catch (Exception e) {
 			log.error("cleanupExpired 실행 중 오류", e);
 		}
@@ -125,7 +106,7 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 		
 		if( ! this.adminUserNoSet.contains(user.userNo()) ) {
-			return result.setCodeMessage(ERR_ADMIN_LOGIN_FORBIDDEN, "접근 권한 불가.");
+			return result.setCodeMessage("EADM001", "접근 권한 불가.");
 		}
 		
 		provider.deleteCookie(request, response, BeforUserUid);
@@ -230,7 +211,7 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (topicNo == null || topicNo <= 0) {
-			return result.setCodeMessage(ERR_TOPIC_NO_INVALID, "유효한 topicNo 값이 필요합니다.");
+			return result.setCodeMessage("EADM002", "유효한 topicNo 값이 필요합니다.");
 		}
 
 		result.setData(adminDao.getTopicFollowUsers(topicNo));
@@ -262,12 +243,12 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (fragmentNo == null || fragmentNo <= 0) {
-			return result.setCodeMessage(ERR_FRAGMENT_NO_INVALID, "유효한 fragmentNo 값이 필요합니다.");
+			return result.setCodeMessage("EADM003", "유효한 fragmentNo 값이 필요합니다.");
 		}
 
 		final AdminFragmentVo item = adminDao.getFragmentPreview(fragmentNo);
 		if (item == null) {
-			return result.setCodeMessage(ERR_FRAGMENT_NOT_FOUND, "프래그먼트를 찾지 못했습니다.");
+			return result.setCodeMessage("EADM004", "프래그먼트를 찾지 못했습니다.");
 		}
 
 		result.setData(item);
@@ -280,17 +261,17 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (commentVo == null || commentVo.getCommentNo() == null || commentVo.getDeleted() == null) {
-			return result.setCodeMessage(ERR_COMMENT_INPUT_INVALID, "commentNo, deleted 값이 필요합니다.");
+			return result.setCodeMessage("EADM005", "commentNo, deleted 값이 필요합니다.");
 		}
 
 		try {
 			final int updated = adminDao.updateCommentDeleted(commentVo.getCommentNo(), commentVo.getDeleted());
 			if (updated <= 0) {
-				result.setCodeMessage(ERR_COMMENT_NOT_FOUND, "수정할 댓글을 찾지 못했습니다.");
+				result.setCodeMessage("EADM006", "수정할 댓글을 찾지 못했습니다.");
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage(ERR_COMMENT_UPDATE_EXCEPTION, e.getMessage());
+			result.setCodeMessage("EADM007", e.getMessage());
 		}
 		return result;
 	}
@@ -340,17 +321,17 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (userVo == null || userVo.getUserNo() == null) {
-			return result.setCodeMessage(ERR_USER_NO_REQUIRED, "userNo 값이 필요합니다.");
+			return result.setCodeMessage("EADM008", "userNo 값이 필요합니다.");
 		}
 
 		try {
 			final int updated = adminDao.updateUserNote(userVo.getUserNo(), userVo.getNote());
 			if (updated <= 0) {
-				result.setCodeMessage(ERR_USER_NOT_FOUND_FOR_NOTE, "저장할 사용자를 찾지 못했습니다.");
+				result.setCodeMessage("EADM009", "저장할 사용자를 찾지 못했습니다.");
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage(ERR_USER_NOTE_UPDATE_EXCEPTION, e.getMessage());
+			result.setCodeMessage("EADM00A", e.getMessage());
 		}
 		return result;
 	}
@@ -360,17 +341,17 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (userVo == null || userVo.getUserNo() == null || userVo.getEnabled() == null) {
-			return result.setCodeMessage(ERR_USER_ENABLE_INPUT_INVALID, "userNo, enabled 값이 필요합니다.");
+			return result.setCodeMessage("EADM00B", "userNo, enabled 값이 필요합니다.");
 		}
 
 		try {
 			final int updated = adminDao.updateUserEnabled(userVo.getUserNo(), userVo.getEnabled());
 			if (updated <= 0) {
-				result.setCodeMessage(ERR_USER_NOT_FOUND_FOR_ENABLE, "수정할 사용자를 찾지 못했습니다.");
+				result.setCodeMessage("EADM00C", "수정할 사용자를 찾지 못했습니다.");
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage(ERR_USER_ENABLE_UPDATE_EXCEPTION, e.getMessage());
+			result.setCodeMessage("EADM00D", e.getMessage());
 		}
 		return result;
 	}
@@ -380,17 +361,17 @@ class AdminServiceImpl implements AdminService {
 		final ReturnBasic result = new ReturnBasic();
 
 		if (topicVo == null || topicVo.getTopicNo() == null) {
-			return result.setCodeMessage(ERR_TOPIC_NO_REQUIRED_FOR_UPDATE, "topicNo 값이 필요합니다.");
+			return result.setCodeMessage("EADM00E", "topicNo 값이 필요합니다.");
 		}
 
 		try {
 			int updated = adminDao.updateTopicEditable(topicVo);
 			if (updated <= 0) {
-				result.setCodeMessage(ERR_TOPIC_NOT_FOUND_FOR_UPDATE, "수정할 토픽을 찾지 못했습니다.");
+				result.setCodeMessage("EADM00F", "수정할 토픽을 찾지 못했습니다.");
 			}
 		} catch (Exception e) {
 			log.error("", e);
-			result.setCodeMessage(ERR_TOPIC_UPDATE_EXCEPTION, e.getMessage());
+			result.setCodeMessage("EADM00G", e.getMessage());
 		}
 		return result;
 	}

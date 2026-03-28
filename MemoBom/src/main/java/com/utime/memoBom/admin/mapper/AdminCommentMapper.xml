@@ -23,12 +23,12 @@
 			U.NICKNAME AS userNickname,
 			CAST(C.CONTENT AS VARCHAR) AS content
 		FROM MB_FRAGMENT_COMMENTS C
-		INNER JOIN MB_FRAGMENT F
-			ON F.FRAGMENT_NO = C.FRAGMENT_NO
-		INNER JOIN MB_TOPIC T
-			ON T.TOPIC_NO = F.TOPIC_NO
-		INNER JOIN MB_USER U
-			ON U.USER_NO = C.USER_NO
+			INNER JOIN MB_FRAGMENT F
+				ON F.FRAGMENT_NO = C.FRAGMENT_NO
+			INNER JOIN MB_TOPIC T
+				ON T.TOPIC_NO = F.TOPIC_NO
+			INNER JOIN MB_USER U
+				ON U.USER_NO = C.USER_NO
 		WHERE TO_CHAR(C.REG_DATE, 'YYYY-MM-DD') = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
@@ -44,7 +44,7 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
-	<select id="getFragmentPreview" resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
+	<select id="getFragmentPreview" parameterType="map" resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
 		SELECT
 			F.FRAGMENT_NO AS fragmentNo,
 			CAST(F.UID AS VARCHAR) AS uid,
@@ -57,24 +57,25 @@
 			U.PROFILE_IMG_PATH AS userProfileUrl,
 			CAST(F.CONTENT AS VARCHAR) AS content
 		FROM MB_FRAGMENT F
-		INNER JOIN MB_TOPIC T
-			ON T.TOPIC_NO = F.TOPIC_NO
-		INNER JOIN MB_USER U
-			ON U.USER_NO = F.USER_NO
+			INNER JOIN MB_TOPIC T
+				ON T.TOPIC_NO = F.TOPIC_NO
+			INNER JOIN MB_USER U
+				ON U.USER_NO = F.USER_NO
 		WHERE F.FRAGMENT_NO = #{fragmentNo}
 	</select>
 
-	<update id="updateCommentDeleted">
+	<update id="updateCommentDeleted" parameterType="map">
 		UPDATE MB_FRAGMENT_COMMENTS
 		SET IS_DELETED = #{deleted},
 			UPDATE_DATE = CURRENT_TIMESTAMP
 		WHERE COMMENT_NO = #{commentNo}
 	</update>
 
-	<delete id="deleteCommentsAfter2Weeks">
+	<delete id="deleteComments" parameterType="map">
 		DELETE FROM MB_FRAGMENT_COMMENTS
-		WHERE IS_DELETED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+		WHERE 1=1
+			AND IS_DELETED = TRUE
+			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -14, CURRENT_TIMESTAMP)
 	</delete>
 
 </mapper>

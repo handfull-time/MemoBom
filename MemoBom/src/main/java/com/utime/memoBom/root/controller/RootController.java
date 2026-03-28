@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +67,7 @@ public class RootController {
 	    response.setContentLength(profile.getBinary().length);
 	    
 	    //브라우저 캐시도 허용
-	    response.setHeader("Cache-Control", "public, max-age=300");
+	    response.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=300");
 
 	    try (OutputStream os = response.getOutputStream()) {
 	        os.write(profile.getBinary());

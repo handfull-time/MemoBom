@@ -33,24 +33,25 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
-	<update id="updateUserNote">
+	<update id="updateUserNote" parameterType="map">
 		UPDATE MB_USER
 		SET DESCRIPTION = #{note},
 			UPDATE_DATE = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
 	</update>
 
-	<update id="updateUserEnabled">
+	<update id="updateUserEnabled" parameterType="map">
 		UPDATE MB_USER
 		SET ENABLED = #{enabled},
 			UPDATE_DATE = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
 	</update>
 
-	<delete id="deleteDisabledUsersAfter2Weeks">
+	<delete id="deleteDisabledUsers" parameterType="map">
 		DELETE FROM MB_USER
-		WHERE ENABLED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+		WHERE 1=1
+			AND ENABLED = FALSE
+			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
 	</delete>
 
 </mapper>

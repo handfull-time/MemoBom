@@ -17,5 +17,5 @@ public interface AdminUserMapper {
 
 	int updateUserEnabled(@Param("userNo") Long userNo, @Param("enabled") Boolean enabled);
 
-	int deleteDisabledUsersAfter2Weeks();
+	int deleteDisabledUsers(@Param("day") int day);
 }

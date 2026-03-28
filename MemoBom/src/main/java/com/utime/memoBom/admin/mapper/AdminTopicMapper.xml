@@ -38,7 +38,7 @@
 				WHERE TF.TOPIC_NO = T.TOPIC_NO
 			) AS followCount
 		FROM MB_TOPIC T
-		LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
+			LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
 		WHERE TO_CHAR(T.REG_DATE, 'YYYY-MM-DD') = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
@@ -61,7 +61,7 @@
 		WHERE TOPIC_NO = #{topicNo}
 	</update>
 
-	<select id="getTopicFollowUsers" resultType="com.utime.memoBom.admin.vo.AdminTopicFollowVo">
+	<select id="getTopicFollowUsers" parameterType="map" resultType="com.utime.memoBom.admin.vo.AdminTopicFollowVo">
 		SELECT
 			U.USER_NO AS userNo,
 			U.ID AS id,
@@ -69,16 +69,17 @@
 			U.PROFILE_IMG_PATH AS profileUrl,
 			TO_CHAR(F.CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS followDate
 		FROM MB_TOPIC_FOLLOW F
-		INNER JOIN MB_USER U
-			ON U.USER_NO = F.USER_NO
+			INNER JOIN MB_USER U
+				ON U.USER_NO = F.USER_NO
 		WHERE F.TOPIC_NO = #{topicNo}
 		ORDER BY F.CREATED_AT DESC, U.USER_NO DESC
 	</select>
 
-	<delete id="deleteDisabledTopicsAfter2Weeks">
+	<delete id="deleteDisabledTopics" parameterType="map">
 		DELETE FROM MB_TOPIC
-		WHERE ENABLED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+		WHERE 1=1
+			AND ENABLED = FALSE
+			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
 	</delete>
 
 </mapper>

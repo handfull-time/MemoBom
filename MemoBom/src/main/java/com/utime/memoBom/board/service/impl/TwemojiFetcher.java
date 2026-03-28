@@ -12,6 +12,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+
 /**
  * 이미지 웹에서 다운받아 처리 함.
  */
@@ -43,7 +45,7 @@ public final class TwemojiFetcher {
 		final String url = TWEMOJI_BASE_72 + cps + ".png";
 		try {
 			
-			final HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).header("User-Agent", "OgImageBot/1.0").GET().build();
+			final HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).header(HttpHeaders.USER_AGENT, "OgImageBot/1.0").GET().build();
 
 			final HttpResponse<Path> res = http.send(req, HttpResponse.BodyHandlers.ofFile(
 					// 임시파일에 받고, 성공 시 rename

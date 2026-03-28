@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -326,14 +327,14 @@ public class BoardController {
 	    final String encodedFileName = URLEncoder
 	            .encode(originalFileName, StandardCharsets.UTF_8)
 	            .replace("+", "%20");
-	    
+
 	    response.setHeader(
-	            "Content-Disposition",
+	    		HttpHeaders.CONTENT_DISPOSITION,
 	            "inline; filename=\"" + asciiFileName + "\"; filename*=UTF-8''" + encodedFileName
 	    );
 	    
 	    //브라우저 캐시도 허용
-	    response.setHeader("Cache-Control", "public, max-age=300");
+	    response.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=300");
 
 	    try (OutputStream os = response.getOutputStream()) {
 	        os.write(image.getBinary());

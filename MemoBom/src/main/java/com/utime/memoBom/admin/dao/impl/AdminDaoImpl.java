@@ -42,6 +42,11 @@ class AdminDaoImpl implements AdminDao {
 	private final AdminShareMapper shareMapper;
 	private final AdminTopicMapper topicMapper;
 	private final AdminUserMapper userMapper;
+	
+	/**
+	 * 삭제 대기 일자
+	 */
+	private final int deleteLimitDay = 14;
 
 	@Override
 	public DashboardVo getDashboard(String date) {
@@ -125,31 +130,31 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int deleteInactivePushSubsAfter2Weeks() throws Exception {
-		return pushMapper.deleteInactivePushSubsAfter2Weeks();
+	public int deleteInactivePushSubs() throws Exception {
+		return pushMapper.deleteInactivePushSubs(deleteLimitDay);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int deleteCommentsAfter2Weeks() throws Exception {
-		return commentMapper.deleteCommentsAfter2Weeks();
+	public int deleteComments() throws Exception {
+		return commentMapper.deleteComments(deleteLimitDay);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int deleteFragmentsAfter2Weeks() throws Exception {
-		return fragmentMapper.deleteFragmentsAfter2Weeks();
+	public int deleteFragments() throws Exception {
+		return fragmentMapper.deleteFragments(deleteLimitDay);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int deleteDisabledTopicsAfter2Weeks() throws Exception {
-		return topicMapper.deleteDisabledTopicsAfter2Weeks();
+	public int deleteDisabledTopics() throws Exception {
+		return topicMapper.deleteDisabledTopics(deleteLimitDay);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public int deleteDisabledUsersAfter2Weeks() throws Exception {
-		return userMapper.deleteDisabledUsersAfter2Weeks();
+	public int deleteDisabledUsers() throws Exception {
+		return userMapper.deleteDisabledUsers(deleteLimitDay);
 	}
 }

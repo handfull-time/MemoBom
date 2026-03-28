@@ -18,5 +18,5 @@ public interface AdminTopicMapper {
 
 	List<AdminTopicFollowVo> getTopicFollowUsers(@Param("topicNo") Long topicNo);
 
-	int deleteDisabledTopicsAfter2Weeks();
+	int deleteDisabledTopics(@Param("day") int day);
 }
