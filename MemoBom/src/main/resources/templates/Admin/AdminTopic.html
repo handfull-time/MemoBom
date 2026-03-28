@@ -52,7 +52,11 @@
 							</button>
 						</div>
 						<div>color: <span class="color">-</span></div>
-						<div>emojiSetType: <span class="emojiSetType">-</span></div>
+						<div class="flex items-center gap-1.5 flex-wrap">
+							<span>emojiSetType:</span>
+							<span class="emojiSetTypeBadge px-1.5 py-0.5 rounded-md border border-slate-200 text-xs text-slate-700">-</span>
+							<span class="emojiSetPreview text-base leading-none">-</span>
+						</div>
 						<div>external: <span class="external">-</span></div>
 						<div>emotion: <span class="emotion">-</span></div>
 						<div>comments: <span class="comments">-</span></div>
@@ -118,11 +122,26 @@
 					return String(v);
 				}
 
-				function emojiSetTypeText(value) {
+				function emojiSetTypeInfo(value) {
 					const num = Number(value || 0);
-					if (num === 1) return '감정형 😊 😐 😢 😠 🤩';
-					if (num === 2) return '반응형 👍 ❤️ 😂 😮 😢';
-					return text(value, '0');
+					if (num === 1) {
+						return {
+							label: '감정형',
+							preview: '😊 😐 😢 😠 🤩'
+						};
+					}
+
+					if (num === 2) {
+						return {
+							label: '반응형',
+							preview: '👍 ❤️ 😂 😮 😢'
+						};
+					}
+
+					return {
+						label: text(value, '0'),
+						preview: '-'
+					};
 				}
 
 				function toastInfo(msg) {
@@ -274,7 +293,9 @@
 						colorPreview.style.backgroundColor = '';
 						colorPreview.classList.add('bg-slate-100');
 					}
-					node.querySelector('.emojiSetType').textContent = emojiSetTypeText(item.emojiSetType);
+					const emojiSetTypeInfoObj = emojiSetTypeInfo(item.emojiSetType);
+					node.querySelector('.emojiSetTypeBadge').textContent = emojiSetTypeInfoObj.label;
+					node.querySelector('.emojiSetPreview').textContent = emojiSetTypeInfoObj.preview;
 					node.querySelector('.external').textContent = !!item.external ? '공개' : '비공개';
 					node.querySelector('.emotion').textContent = !!item.emotion ? '사용' : '미사용';
 					node.querySelector('.comments').textContent = !!item.comments ? '사용' : '미사용';
