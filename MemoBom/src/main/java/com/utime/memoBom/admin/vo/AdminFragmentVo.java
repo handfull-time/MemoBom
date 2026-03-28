@@ -12,9 +12,11 @@ public class AdminFragmentVo {
 	Long userNo;
 	String userId;
 	String userNickname;
+	String userProfileUrl;
 	Long topicNo;
 	String topicName;
 	String topicUid;
+	String imogi;
 	String content;
 	Long commentCount;
 	Long emotionCount;

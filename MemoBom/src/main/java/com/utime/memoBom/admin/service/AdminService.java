@@ -84,6 +84,15 @@ public interface AdminService {
 	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
+	 * 프래그먼트 미리보기를 조회한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param fragmentNo 프래그먼트 번호
+	 * @return 프래그먼트 정보 응답
+	 */
+	public ReturnBasic getFragmentPreview(LoginUser user, Long fragmentNo);
+
+	/**
 	 * 이모션 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자

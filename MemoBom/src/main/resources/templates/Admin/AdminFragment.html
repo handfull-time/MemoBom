@@ -14,7 +14,7 @@
 						<input id="searchDate" type="date" name="date" th:value="${date}"
 							   class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
 					</div>
-					<input id="keyword" type="text" name="keyword" placeholder="검색어 (uid/내용/작성자/토픽)"
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (내용/작성자/토픽)"
 						   class="w-full md:w-[420px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
 				</div>
 			</div>
@@ -25,20 +25,16 @@
 
 		<template id="tplFragmentCard">
 			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
-				<div class="flex items-center justify-between gap-2">
+				<div class="flex items-start justify-between gap-2">
 					<div class="min-w-0">
-						<div class="text-lg font-semibold text-slate-900 truncate">
+						<div class="text-lg font-semibold text-slate-900 break-words">
 							<span class="deletedBadge hidden mr-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">삭제됨</span>
 							<span class="topicName">토픽명</span>
 						</div>
-						<div class="text-xs text-slate-500 mt-0.5">
-							fragmentNo: <span class="fragmentNo tabular-nums">0</span>
-							· uid: <span class="uid">-</span>
+						<div class="text-xs text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+							<span>fragmentNo: <span class="fragmentNo tabular-nums">0</span></span>
+							<span class="px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50">topicNo: <span class="topicNo tabular-nums">0</span></span>
 						</div>
-					</div>
-					<div class="text-xs text-slate-500 text-right">
-						<div>topicNo: <span class="topicNo tabular-nums">0</span></div>
-						<div>topicUid: <span class="topicUid">-</span></div>
 					</div>
 				</div>
 
@@ -94,9 +90,7 @@
 					node.querySelector('.deletedBadge').classList.toggle('hidden', !deleted);
 					node.querySelector('.topicName').textContent = text(item.topicName);
 					node.querySelector('.fragmentNo').textContent = text(item.fragmentNo, '0');
-					node.querySelector('.uid').textContent = text(item.uid);
 					node.querySelector('.topicNo').textContent = text(item.topicNo, '0');
-					node.querySelector('.topicUid').textContent = text(item.topicUid);
 					node.querySelector('.userNo').textContent = text(item.userNo, '0');
 					node.querySelector('.userNickname').textContent = text(item.userNickname);
 					node.querySelector('.userId').textContent = text(item.userId);

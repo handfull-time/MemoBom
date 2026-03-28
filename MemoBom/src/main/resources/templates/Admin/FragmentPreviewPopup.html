@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutModal}">
+
+<th:block layout:fragment="modalTitle">Fragment 미리보기</th:block>
+
+<th:block layout:fragment="modalContent">
+	<div th:if="${result != null and result.code != '0'}"
+		 class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+		 th:text="${result.message}">
+		프래그먼트를 불러오지 못했습니다.
+	</div>
+
+	<div th:if="${item != null}" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+		<!-- BoardMain tplFragmentCard top meta 영역 참조 -->
+		<div class="px-3 pt-3">
+			<div class="flex items-center justify-between gap-2">
+				<div class="flex items-center gap-2 min-w-0">
+					<div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-semibold bg-slate-100 border border-slate-300 max-w-full min-w-0">
+						<span class="inline-flex items-center justify-center w-7 h-7 rounded-full text-lg leading-none"
+							  th:text="${item.imogi != null and !#strings.isEmpty(item.imogi) ? item.imogi : '🧩'}">🧩</span>
+						<span class="truncate max-w-[14rem]" th:text="${item.topicName}">Topic</span>
+					</div>
+				</div>
+
+				<div class="flex items-center gap-2 shrink-0">
+					<img class="w-6 h-6 rounded-full border border-slate-200 object-cover"
+						 th:src="${item.userProfileUrl != null and !#strings.isEmpty(item.userProfileUrl) ? item.userProfileUrl : '/images/profile-placeholder.svg'}"
+						 alt="U" />
+					<div class="text-sm font-medium text-slate-700 max-w-[120px] truncate" th:text="${item.userNickname}">User</div>
+					<div class="text-xs text-slate-400 tabular-nums" th:text="${item.regDate}">2026-01-24 05:09</div>
+				</div>
+			</div>
+
+			<div class="mt-2 rounded-xl border border-slate-200 bg-white p-3 text-base text-slate-900 leading-relaxed whitespace-pre-wrap break-words"
+				 th:text="${item.content}">
+				내용
+			</div>
+		</div>
+	</div>
+</th:block>
+
+<th:block layout:fragment="modalButton">
+	<button type="button" onclick="closePopup(this)"
+			class="px-4 py-2 rounded-md border border-gray-300 bg-white">닫기</button>
+</th:block>
+
+</html>
