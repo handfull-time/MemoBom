@@ -269,6 +269,30 @@ public class BoardController {
     }
 	
 	/**
+	 * HTTP 헤더용 ASCII 파일명으로 정리한다.
+	 * @param fileName 원본 파일명
+	 * @return ASCII 안전 파일명
+	 */
+	private String toAsciiFallbackFileName(String fileName) {
+	    if (fileName == null || fileName.isBlank()) {
+	        return "image";
+	    }
+
+	    final int dotIndex = fileName.lastIndexOf('.');
+	    final String ext = (dotIndex >= 0) ? fileName.substring(dotIndex) : "";
+	    String base = (dotIndex >= 0) ? fileName.substring(0, dotIndex) : fileName;
+
+	    base = base.replaceAll("[^A-Za-z0-9._-]", "_");
+	    base = base.replaceAll("_+", "_");
+
+	    if (base.isBlank()) {
+	        base = "image";
+	    }
+
+	    return base + ext;
+	}
+	
+	/**
 	 * Fragment 이미지 정보 갖고 오기
 	 * @param isThumb
 	 * @param index
@@ -295,12 +319,18 @@ public class BoardController {
 	    response.setContentLength(image.getBinary().length);
 	    
 	    // 한글 파일명 인코딩 (RFC 5987 준수)
-	    final String fileName = (image.getName() != null) ? image.getName() : "image";
-	    final String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
-
-	    // Content-Disposition 헤더 설정 (inline: 브라우저 출력, attachment: 다운로드)
-	    // filename*: UTF-8 인코딩을 명시적으로 선언하여 한글 깨짐 방지
-	    response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"; filename*=UTF-8''" + encodedFileName);
+	    final String originalFileName = (image.getName() != null && !image.getName().isBlank())
+	            ? image.getName()
+	            : "image";
+	    final String asciiFileName = toAsciiFallbackFileName(originalFileName);
+	    final String encodedFileName = URLEncoder
+	            .encode(originalFileName, StandardCharsets.UTF_8)
+	            .replace("+", "%20");
+	    
+	    response.setHeader(
+	            "Content-Disposition",
+	            "inline; filename=\"" + asciiFileName + "\"; filename*=UTF-8''" + encodedFileName
+	    );
 	    
 	    //브라우저 캐시도 허용
 	    response.setHeader("Cache-Control", "public, max-age=300");
