@@ -1,11 +1,236 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{Admin/AdminLayout}">
+	 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	 layout:decorate="~{Admin/AdminLayout}">
 
 <body>
 	<th:block layout:fragment="admin_title">Emotion</th:block>
 	<th:block layout:fragment="admin_content">
+		<div class="w-full max-w-7xl mx-auto space-y-4">
+			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
+				<div class="flex flex-col md:flex-row md:items-center gap-3">
+					<div class="flex items-center gap-2">
+						<label for="searchDate" class="text-sm font-medium text-slate-600">조회일</label>
+						<input id="searchDate" type="date" name="date" th:value="${date}"
+							   class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
+					</div>
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (이모션/작성자/토픽/프래그먼트/댓글)"
+						   class="w-full md:w-[480px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+				</div>
+			</div>
+
+			<div id="emotionList" class="space-y-3"></div>
+			<div id="pageSentinel" class="h-1"></div>
+		</div>
+
+		<template id="tplEmotionCard">
+			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
+				<div class="flex items-start justify-between gap-2">
+					<div class="min-w-0">
+						<div class="text-lg font-semibold text-slate-900 break-words">
+							<span class="topicName px-2 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-sm">토픽명</span>
+						</div>
+						<div class="text-xs text-slate-500 mt-0.5">
+							emotionLogId: <span class="emotionLogId tabular-nums">0</span>
+						</div>
+					</div>
+					<div class="text-xs text-slate-500 text-right">
+						<div>작성자: <span class="userNickname">-</span></div>
+						<div>계정: <span class="userId">-</span></div>
+					</div>
+				</div>
+
+				<button type="button"
+						class="fragmentPreviewBtn mt-2 w-full text-left rounded-lg border border-slate-200 bg-slate-50 p-2 hover:bg-slate-100 transition-colors">
+					<div class="text-xs text-slate-500 mb-1 flex items-center justify-between gap-2">
+						<span>Fragment (클릭 시 미리보기)</span>
+						<span class="text-slate-400">↗</span>
+					</div>
+					<div class="fragmentContent text-sm text-slate-700 truncate whitespace-nowrap overflow-hidden">-</div>
+				</button>
+
+				<div class="commentBox hidden mt-2 rounded-lg border border-slate-200 p-2">
+					<div class="text-xs text-slate-500 mb-1">Comment</div>
+					<div class="commentContent text-sm text-slate-800 whitespace-pre-wrap break-words">-</div>
+				</div>
+
+				<div class="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2">
+					<div class="text-xs text-emerald-700 mb-1">Emotion</div>
+					<div class="emotionText text-base font-semibold text-emerald-900">-</div>
+				</div>
+
+				<div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-1 text-sm text-slate-600">
+					<div>target: <span class="targetLabel">-</span></div>
+					<div>fragmentNo: <span class="fragmentNo tabular-nums">0</span></div>
+					<div>regDate: <span class="regDate tabular-nums">-</span></div>
+					<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+				</div>
+			</article>
+		</template>
+	</th:block>
+
+	<th:block layout:fragment="admin_script">
+		<script th:inline="javascript">
+			(() => {
+				const PAGE_SIZE = 20;
+				const listUrl = /*[[@{/Lotus/EmotionList.json}]]*/ '/Lotus/EmotionList.json';
+				const fragmentPopupUrl = /*[[@{/Lotus/FragmentPreview.popup}]]*/ '/Lotus/FragmentPreview.popup';
+
+				const elList = document.getElementById('emotionList');
+				const elSentinel = document.getElementById('pageSentinel');
+				const elDate = document.getElementById('searchDate');
+				const elKeyword = document.getElementById('keyword');
+				const tpl = document.getElementById('tplEmotionCard');
+
+				let pageNo = 1;
+				let loading = false;
+				let done = false;
+
+				function text(v, fallback = '-') {
+					if (v === null || v === undefined) return fallback;
+					const s = String(v).trim();
+					return s ? s : fallback;
+				}
+
+				function targetLabel(v) {
+					return Number(v || 0) === 2 ? 'COMMENT' : 'FRAGMENT';
+				}
+
+				function toastInfo(msg) {
+					showToast('안내', msg, ToastType.INFO, 1300);
+				}
+
+				function toastError(msg) {
+					showToast('오류', msg, ToastType.ERROR, 1800);
+				}
+
+				async function openFragmentPopup(fragmentNo) {
+					if (!fragmentNo) {
+						toastInfo('fragmentNo 정보가 없어 미리보기를 열 수 없습니다.');
+						return;
+					}
+					try {
+						await openPopup({
+							url: `${fragmentPopupUrl}?fragmentNo=${encodeURIComponent(fragmentNo)}`,
+							method: MethodType.Get,
+							contentType: ContentsType.Form,
+							popupId: `fragmentPreview_${fragmentNo}`,
+							width: '760px'
+						});
+					} catch (err) {
+						console.error(err);
+						toastError('프래그먼트 미리보기를 열지 못했습니다.');
+					}
+				}
+
+				function renderItem(item) {
+					const node = tpl.content.firstElementChild.cloneNode(true);
+					const isCommentTarget = Number(item.targetType || 0) === 2;
+					node.querySelector('.topicName').textContent = text(item.topicName);
+					node.querySelector('.emotionLogId').textContent = text(item.emotionLogId, '0');
+					node.querySelector('.userNickname').textContent = text(item.userNickname);
+					node.querySelector('.userId').textContent = text(item.userId);
+					node.querySelector('.fragmentContent').textContent = text(item.fragmentContent);
+					node.querySelector('.emotionText').textContent = text(item.emotion);
+					node.querySelector('.targetLabel').textContent = targetLabel(item.targetType);
+					node.querySelector('.fragmentNo').textContent = text(item.fragmentNo, '0');
+					node.querySelector('.regDate').textContent = text(item.regDate);
+					node.querySelector('.updateDate').textContent = text(item.updateDate);
+
+					const commentBox = node.querySelector('.commentBox');
+					if (isCommentTarget) {
+						commentBox.classList.remove('hidden');
+						node.querySelector('.commentContent').textContent = text(item.commentContent);
+					} else {
+						commentBox.classList.add('hidden');
+					}
+
+					node.querySelector('.fragmentPreviewBtn').addEventListener('click', async () => {
+						await openFragmentPopup(item.fragmentNo);
+					});
+
+					return node;
+				}
+
+				async function loadNextPage() {
+					if (loading || done) return;
+					loading = true;
+					try {
+						const res = await apiGetWithParam(listUrl, {
+							date: elDate.value,
+							keyword: elKeyword.value,
+							pageNo
+						});
+
+						if (!res || res.code !== '0') {
+							throw new Error((res && res.message) || '이모션 목록 조회 실패');
+						}
+
+						const list = Array.isArray(res.data) ? res.data : [];
+						if (list.length === 0 && pageNo === 1) {
+							elList.innerHTML = '';
+							done = true;
+							toastInfo('조회 결과가 없습니다.');
+							return;
+						}
+
+						const frag = document.createDocumentFragment();
+						list.forEach((item) => frag.appendChild(renderItem(item)));
+						elList.appendChild(frag);
+
+						pageNo += 1;
+						done = list.length < PAGE_SIZE;
+					} catch (err) {
+						console.error(err);
+						toastError('이모션 목록 조회 중 오류가 발생했습니다.');
+					} finally {
+						loading = false;
+					}
+				}
+
+				async function reload() {
+					pageNo = 1;
+					done = false;
+					loading = false;
+					elList.innerHTML = '';
+					await loadNextPage();
+				}
+
+				function openDatePicker() {
+					if (typeof elDate.showPicker === 'function') {
+						elDate.showPicker();
+					}
+				}
+
+				function initEvents() {
+					elDate.addEventListener('click', openDatePicker);
+					elDate.addEventListener('focus', openDatePicker);
+					elDate.addEventListener('change', reload);
+
+					elKeyword.addEventListener('keydown', async (e) => {
+						if (e.key !== 'Enter') return;
+						e.preventDefault();
+						await reload();
+					});
+				}
+
+				function initInfiniteScroll() {
+					if (window.AdminUtils && typeof window.AdminUtils.createInfiniteObserver === 'function') {
+						window.AdminUtils.createInfiniteObserver(elSentinel, async () => {
+							await loadNextPage();
+						});
+					}
+				}
+
+				async function init() {
+					initEvents();
+					initInfiniteScroll();
+					await reload();
+				}
+
+				window.addEventListener('DOMContentLoaded', init);
+			})();
+		</script>
 	</th:block>
 </body>
 </html>

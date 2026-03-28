@@ -25,11 +25,11 @@
 
 		<template id="tplCommentCard">
 			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
-				<div class="flex items-center justify-between gap-2">
+				<div class="flex items-start justify-between gap-2">
 					<div class="min-w-0">
-						<div class="text-lg font-semibold text-slate-900 truncate">
-							<span class="deletedBadge hidden mr-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">삭제됨</span>
-							<span class="topicName">토픽명</span>
+						<div class="text-lg font-semibold text-slate-900 break-words flex items-center gap-2 flex-wrap">
+							<span class="deletedBadge hidden px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">삭제됨</span>
+							<span class="topicName px-2 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-sm">토픽명</span>
 						</div>
 						<div class="text-xs text-slate-500 mt-0.5">
 							commentNo: <span class="commentNo tabular-nums">0</span>
@@ -43,8 +43,11 @@
 
 				<button type="button"
 						class="fragmentPreviewBtn mt-2 w-full text-left rounded-lg border border-slate-200 bg-slate-50 p-2 hover:bg-slate-100 transition-colors">
-					<div class="text-xs text-slate-500 mb-1">Fragment (클릭 시 미리보기)</div>
-					<div class="fragmentContent text-sm text-slate-700 line-clamp-1">-</div>
+					<div class="text-xs text-slate-500 mb-1 flex items-center justify-between gap-2">
+						<span>Fragment (클릭 시 미리보기)</span>
+						<span class="text-slate-400">↗</span>
+					</div>
+					<div class="fragmentContent text-sm text-slate-700 truncate whitespace-nowrap overflow-hidden">-</div>
 				</button>
 
 				<div class="mt-2 rounded-lg border border-slate-200 p-2">

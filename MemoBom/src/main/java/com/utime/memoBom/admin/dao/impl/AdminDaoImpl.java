@@ -87,8 +87,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminEmotionVo> getEmotionList(AdminSearchVo searchVo) {
-		
-		return null;
+		return emotionMapper.getEmotionList(searchVo);
 	}
 
 	@Override
