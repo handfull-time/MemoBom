@@ -239,6 +239,21 @@ class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	public ReturnBasic updateCommentDeleted(LoginUser user, AdminCommentVo commentVo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (commentVo == null || commentVo.getCommentNo() == null || commentVo.getDeleted() == null) {
+			return result.setCodeMessage("E", "commentNo, deleted 값이 필요합니다.");
+		}
+
+		final int updated = adminDao.updateCommentDeleted(commentVo.getCommentNo(), commentVo.getDeleted());
+		if (updated <= 0) {
+			return result.setCodeMessage("E", "수정할 댓글을 찾지 못했습니다.");
+		}
+		return result;
+	}
+
+	@Override
 	public ReturnBasic getEmotionList(LoginUser user, AdminSearchVo searchVo) {
 		
 		final ReturnBasic result = new ReturnBasic();

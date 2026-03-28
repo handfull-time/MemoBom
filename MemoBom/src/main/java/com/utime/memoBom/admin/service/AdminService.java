@@ -1,6 +1,7 @@
 package com.utime.memoBom.admin.service;
 
 import com.utime.memoBom.admin.vo.AdminSearchVo;
+import com.utime.memoBom.admin.vo.AdminCommentVo;
 import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
@@ -91,6 +92,15 @@ public interface AdminService {
 	 * @return 프래그먼트 정보 응답
 	 */
 	public ReturnBasic getFragmentPreview(LoginUser user, Long fragmentNo);
+
+	/**
+	 * 댓글 삭제 여부를 변경한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param commentVo 댓글 정보(commentNo, deleted)
+	 * @return 처리 결과
+	 */
+	public ReturnBasic updateCommentDeleted(LoginUser user, AdminCommentVo commentVo);
 
 	/**
 	 * 이모션 목록을 조회한다.

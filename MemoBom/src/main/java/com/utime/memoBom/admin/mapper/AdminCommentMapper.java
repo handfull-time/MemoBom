@@ -13,4 +13,5 @@ import com.utime.memoBom.admin.vo.AdminSearchVo;
 public interface AdminCommentMapper {
 	List<AdminCommentVo> getCommentList(AdminSearchVo searchVo);
 	AdminFragmentVo getFragmentPreview(@Param("fragmentNo") Long fragmentNo);
+	int updateCommentDeleted(@Param("commentNo") Long commentNo, @Param("deleted") Boolean deleted);
 }

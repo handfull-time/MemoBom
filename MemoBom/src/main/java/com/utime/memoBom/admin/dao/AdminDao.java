@@ -130,4 +130,13 @@ public interface AdminDao {
 	 */
 	int updateUserEnabled(Long userNo, Boolean enabled);
 
+	/**
+	 * 댓글 삭제 여부(IS_DELETED)를 변경한다.
+	 *
+	 * @param commentNo 댓글 번호
+	 * @param deleted 삭제 여부
+	 * @return 반영 건수
+	 */
+	int updateCommentDeleted(Long commentNo, Boolean deleted);
+
 }
