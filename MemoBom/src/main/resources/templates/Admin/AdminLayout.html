@@ -7,7 +7,7 @@
 
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: AdminHeader}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: MenuHeader(menuOpenFn='AdminMenu.open()', title='관리')}"></th:block>
 </th:block>
 
 <th:block layout:fragment="css">

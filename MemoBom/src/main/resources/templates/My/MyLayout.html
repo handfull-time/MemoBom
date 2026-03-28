@@ -7,7 +7,7 @@
 
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: MyHeader}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: MenuHeader(menuOpenFn='MyMenu.open()', title='MY')}"></th:block>
 </th:block>
 
 <th:block layout:fragment="css">
