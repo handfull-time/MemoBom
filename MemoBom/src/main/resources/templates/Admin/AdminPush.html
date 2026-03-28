@@ -9,6 +9,11 @@
 		<div class="w-full max-w-7xl mx-auto space-y-4">
 			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
 				<div class="flex flex-col md:flex-row md:items-center gap-3">
+					<div class="flex items-center gap-2">
+						<label for="searchDate" class="text-sm font-medium text-slate-600">조회일</label>
+						<input id="searchDate" type="date" name="date" th:value="${date}"
+							   class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
+					</div>
 					<input id="keyword" type="text" name="keyword" placeholder="검색어 (사용자/브라우저/OS/장치ID)"
 						   class="w-full md:w-[460px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
 				</div>
@@ -54,6 +59,7 @@
 
 				const elList = document.getElementById('pushList');
 				const elSentinel = document.getElementById('pageSentinel');
+				const elDate = document.getElementById('searchDate');
 				const elKeyword = document.getElementById('keyword');
 				const tpl = document.getElementById('tplPushCard');
 
@@ -107,6 +113,7 @@
 					loading = true;
 					try {
 						const res = await apiGetWithParam(listUrl, {
+							date: elDate.value,
 							keyword: elKeyword.value,
 							pageNo
 						});
@@ -144,7 +151,17 @@
 					await loadNextPage();
 				}
 
+				function openDatePicker() {
+					if (typeof elDate.showPicker === 'function') {
+						elDate.showPicker();
+					}
+				}
+
 				function initEvents() {
+					elDate.addEventListener('click', openDatePicker);
+					elDate.addEventListener('focus', openDatePicker);
+					elDate.addEventListener('change', reload);
+
 					elKeyword.addEventListener('keydown', async (e) => {
 						if (e.key !== 'Enter') return;
 						e.preventDefault();

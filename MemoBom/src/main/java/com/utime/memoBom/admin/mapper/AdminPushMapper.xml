@@ -22,7 +22,7 @@
 		FROM MB_PUSH_SUB P
 		LEFT JOIN MB_USER U
 			ON U.USER_NO = P.USER_NO
-		WHERE 1 = 1
+		WHERE TO_CHAR(P.REG_DATE, 'YYYY-MM-DD') = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
