@@ -109,9 +109,13 @@
 				},
 
 				openDatePicker(input) {
-					if (!input) return;
-					if (typeof input.showPicker === 'function') {
+					if (!input || typeof input.showPicker !== 'function') return;
+					try {
 						input.showPicker();
+					} catch (error) {
+						if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
+							console.error(error);
+						}
 					}
 				},
 
@@ -119,7 +123,6 @@
 					if (!input) return;
 					const open = () => this.openDatePicker(input);
 					input.addEventListener('click', open);
-					input.addEventListener('focus', open);
 				},
 				
 				/**
