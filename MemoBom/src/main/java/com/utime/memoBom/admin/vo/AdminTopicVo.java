@@ -8,6 +8,7 @@ public class AdminTopicVo {
 	String updateDate;
 	Long topicNo;
 	Long ownerNo;
+	String ownerNickname;
 	Boolean enabled;
 	String uid;
 	Boolean external;

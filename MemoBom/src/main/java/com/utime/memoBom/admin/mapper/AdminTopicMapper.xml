@@ -12,6 +12,7 @@
 			TO_CHAR(T.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
 			T.TOPIC_NO AS topicNo,
 			T.OWNER_NO AS ownerNo,
+			U.NICKNAME AS ownerNickname,
 			T.ENABLED AS enabled,
 			CAST(T.UID AS VARCHAR) AS uid,
 			T.EXTERNAL AS external,
@@ -27,6 +28,7 @@
 			T.AI AS ai,
 			T.PROMPT AS prompt
 		FROM MB_TOPIC T
+		LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
 		WHERE TO_CHAR(T.REG_DATE, 'YYYY-MM-DD') = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
