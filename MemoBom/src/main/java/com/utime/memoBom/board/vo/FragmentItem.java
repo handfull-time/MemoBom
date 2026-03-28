@@ -22,7 +22,7 @@ public class FragmentItem {
 	Date regDate;
 	/** 내용 */
 	String content;
-	/** 스크랩 여부 */
+	/** 보관함 여부 */
 	boolean scrap;
 	/** 이미지 정보 */
 	BoardImageVo image;

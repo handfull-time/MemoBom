@@ -155,12 +155,12 @@ public class AdminController {
 	}
 
 	/**
-	 * 토픽 관리 화면을 반환한다.
+	 * 얘깃거리 관리 화면을 반환한다.
 	 *
 	 * @param model 모델
 	 * @param user 현재 사용자
 	 * @param date 조회 일자(yyyy-MM-dd)
-	 * @return 토픽 관리 템플릿 경로
+	 * @return 얘깃거리 관리 템플릿 경로
 	 */
 	@GetMapping(path = {"Topic.html" })
     public String adminTopics(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
@@ -170,11 +170,11 @@ public class AdminController {
     }
 
 	/**
-	 * 토픽 팔로우 사용자 목록 팝업을 반환한다.
+	 * 얘깃거리 구독 사용자 목록 팝업을 반환한다.
 	 *
 	 * @param model 모델
 	 * @param user 현재 사용자
-	 * @param topicNo 토픽 번호
+	 * @param topicNo 얘깃거리 번호
 	 * @return 팝업 템플릿 경로
 	 */
 	@GetMapping(path = {"TopicFollow.popup" })
@@ -187,11 +187,11 @@ public class AdminController {
 	}
 	
 	/**
-	 * 토픽 목록을 JSON으로 반환한다.
+	 * 얘깃거리 목록을 JSON으로 반환한다.
 	 *
 	 * @param user 현재 사용자
 	 * @param searchVo 조회 조건
-	 * @return 토픽 목록 응답
+	 * @return 얘깃거리 목록 응답
 	 */
 	@ResponseBody
 	@GetMapping(path = {"TopicList.json" })
@@ -201,10 +201,10 @@ public class AdminController {
 	}
 
 	/**
-	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 * 얘깃거리 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
 	 *
 	 * @param user 현재 사용자
-	 * @param topicVo 토픽 수정 값
+	 * @param topicVo 얘깃거리 수정 값
 	 * @return 저장 결과
 	 */
 	@ResponseBody
@@ -214,7 +214,7 @@ public class AdminController {
 	}
 	
 	/**
-	 * 글(프래그먼트) 관리 화면을 반환한다.
+	 * 글(이야기) 관리 화면을 반환한다.
 	 *
 	 * @param model 모델
 	 * @param user 현재 사용자
@@ -229,7 +229,7 @@ public class AdminController {
     }
 	
 	/**
-	 * 글(프래그먼트) 목록을 JSON으로 반환한다.
+	 * 글(이야기) 목록을 JSON으로 반환한다.
 	 *
 	 * @param user 현재 사용자
 	 * @param searchVo 조회 조건
@@ -285,11 +285,11 @@ public class AdminController {
 	}
 
 	/**
-	 * 프래그먼트 미리보기 팝업을 반환한다.
+	 * 이야기 미리보기 팝업을 반환한다.
 	 *
 	 * @param model 모델
 	 * @param user 현재 사용자
-	 * @param fragmentNo 프래그먼트 번호
+	 * @param fragmentNo 이야기 번호
 	 * @return 팝업 템플릿 경로
 	 */
 	@GetMapping(path = {"FragmentPreview.popup" })
@@ -330,12 +330,12 @@ public class AdminController {
 	}
 	
 	/**
-	 * 스크랩 관리 화면을 반환한다.
+	 * 보관함 관리 화면을 반환한다.
 	 *
 	 * @param model 모델
 	 * @param user 현재 사용자
 	 * @param date 조회 일자(yyyy-MM-dd)
-	 * @return 스크랩 관리 템플릿 경로
+	 * @return 보관함 관리 템플릿 경로
 	 */
 	@GetMapping(path = {"Scrap.html" })
     public String adminScrap(ModelMap model, LoginUser user, @RequestParam(required = false) String date ) {
@@ -345,11 +345,11 @@ public class AdminController {
     }
 	
 	/**
-	 * 스크랩 목록을 JSON으로 반환한다.
+	 * 보관함 목록을 JSON으로 반환한다.
 	 *
 	 * @param user 현재 사용자
 	 * @param searchVo 조회 조건
-	 * @return 스크랩 목록 응답
+	 * @return 보관함 목록 응답
 	 */
 	@ResponseBody
 	@GetMapping(path = {"ScrapList.json" })

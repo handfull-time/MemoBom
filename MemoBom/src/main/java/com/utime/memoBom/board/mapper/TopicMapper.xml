@@ -218,7 +218,7 @@
 		WHERE 1=1
 		    AND TP.ENABLED = TRUE
 		
-		    <!-- 기본은 공개 토픽만. 단, 로그인 유저가 follow 한 토픽이면 비공개도 노출 -->
+		    <!-- 기본은 공개 얘깃거리만. 단, 로그인 유저가 follow 한 얘깃거리이면 비공개도 노출 -->
 		    AND (
 		        TP.EXTERNAL = TRUE
 		        <if test="user != null">
@@ -250,7 +250,7 @@
 		LIMIT 5 OFFSET ((#{page} - 1) * 5)
 	</select>
 
-	<!--토픽 정보 로딩-->
+	<!--얘깃거리 정보 로딩-->
 	<select id="loadTopicResult" parameterType="map" resultMap="TopicResultMap">
 	    SELECT
 	          TP.TOPIC_NO
@@ -284,7 +284,7 @@
 	        LEFT JOIN MB_USER ME
 	            ON ME.UID = #{user.uid}
 	
-	        <!-- 내가 이 토픽을 팔로우했는지 -->
+	        <!-- 내가 이 얘깃거리을 팔로우했는지 -->
 	        LEFT JOIN MB_TOPIC_FOLLOW MYFL
 	            ON MYFL.TOPIC_NO = TP.TOPIC_NO
 	           AND MYFL.USER_NO  = ME.USER_NO
@@ -502,7 +502,7 @@
 		    )
 	</select>
 	
-	<!--“userNo가 만든 토픽 OR userNo가 팔로우한 토픽”**을 조회하고, keyword 검색-->
+	<!--“userNo가 만든 얘깃거리 OR userNo가 팔로우한 얘깃거리”**을 조회하고, keyword 검색-->
 	<select id="listMyOrFollowTopic" parameterType="map" resultMap="TopicMap">
 		SELECT DISTINCT
 			<include refid="TopicColumnSql" /> 
@@ -512,7 +512,7 @@
 		WHERE 1=1
 			AND TP.ENABLED = TRUE
 			
-			<!-- 내가 만든 토픽 OR 내가 팔로우한 토픽 -->
+			<!-- 내가 만든 얘깃거리 OR 내가 팔로우한 얘깃거리 -->
 			AND (
 				TP.OWNER_NO = #{user.userNo}
 				OR MYFL.USER_NO IS NOT NULL

@@ -45,23 +45,23 @@
 						<div>ownerNo: <span class="ownerNo tabular-nums">0</span></div>
 						<div>게시글: <span class="fragmentCount tabular-nums">0</span></div>
 						<div>
-							팔로우:
+							구독수:
 							<button type="button"
 								class="followCountBtn tabular-nums px-1.5 py-0.5 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors">
 								<span class="followCount">0</span>
 							</button>
 						</div>
-						<div>color: <span class="color">-</span></div>
+						<div>색: <span class="color">-</span></div>
 						<div class="flex items-center gap-1.5 flex-wrap">
-							<span>emojiSetType:</span>
+							<span>이모지:</span>
 							<span class="emojiSetTypeBadge px-1.5 py-0.5 rounded-md border border-slate-200 text-xs text-slate-700">-</span>
 							<span class="emojiSetPreview text-base leading-none">-</span>
 						</div>
-						<div>external: <span class="external">-</span></div>
-						<div>emotion: <span class="emotion">-</span></div>
-						<div>comments: <span class="comments">-</span></div>
-						<div>regDate: <span class="regDate tabular-nums">-</span></div>
-						<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+						<div>외부공개: <span class="external">-</span></div>
+						<div>느낌: <span class="emotion">-</span></div>
+						<div>댓글: <span class="comments">-</span></div>
+						<div>생성일: <span class="regDate tabular-nums">-</span></div>
+						<div>수정일: <span class="updateDate tabular-nums">-</span></div>
 					</div>
 
 					<div class="mt-2 rounded-lg border border-slate-200 p-2 text-sm text-slate-700 break-words">
@@ -159,7 +159,7 @@
 				async function saveEditable(payload) {
 					const res = await apiPost(saveUrl, payload);
 					if (!res || res.code !== '0') {
-						throw new Error((res && res.message) || '토픽 저장 실패');
+						throw new Error((res && res.message) || '얘깃거리 저장 실패');
 					}
 				}
 
@@ -186,7 +186,7 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled: next, ai, maxLen, prompt });
 							enabled = next;
-							toastSuccess(`토픽 ${item.topicNo}의 ENABLED 값을 저장했습니다.`);
+							toastSuccess(`얘깃거리 ${item.topicNo}의 ENABLED 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							enabledToggle.checked = prev;
@@ -203,7 +203,7 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai: next, maxLen, prompt });
 							ai = next;
-							toastSuccess(`토픽 ${item.topicNo}의 AI 값을 저장했습니다.`);
+							toastSuccess(`얘깃거리 ${item.topicNo}의 AI 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							aiToggle.checked = prev;
@@ -224,7 +224,7 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen: next, prompt });
 							maxLen = next;
-							toastSuccess(`토픽 ${item.topicNo}의 MAX_LEN 값을 저장했습니다.`);
+							toastSuccess(`얘깃거리 ${item.topicNo}의 MAX_LEN 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							maxLenInput.value = String(maxLen);
@@ -242,7 +242,7 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen, prompt: next });
 							prompt = next;
-							toastSuccess(`토픽 ${item.topicNo}의 PROMPT 값을 저장했습니다.`);
+							toastSuccess(`얘깃거리 ${item.topicNo}의 PROMPT 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							promptInput.value = prompt;
@@ -255,7 +255,7 @@
 
 				async function openFollowPopup(topicNo) {
 					if (!topicNo) {
-						toastInfo('토픽 번호가 없어 팔로우 목록을 열 수 없습니다.');
+						toastInfo('얘깃거리 번호가 없어 구독 목록을 열 수 없습니다.');
 						return;
 					}
 
@@ -269,7 +269,7 @@
 						});
 					} catch (err) {
 						console.error(err);
-						toastError('팔로우 사용자 목록을 열지 못했습니다.');
+						toastError('구독 사용자 목록을 열지 못했습니다.');
 					}
 				}
 
@@ -321,7 +321,7 @@
 							pageNo
 						});
 						if (!res || res.code !== '0') {
-							throw new Error((res && res.message) || '토픽 목록 조회 실패');
+							throw new Error((res && res.message) || '얘깃거리 목록 조회 실패');
 						}
 
 						const list = Array.isArray(res.data) ? res.data : [];
@@ -340,7 +340,7 @@
 						done = list.length < PAGE_SIZE;
 					} catch (err) {
 						console.error(err);
-						toastError('토픽 목록 조회 중 오류가 발생했습니다.');
+						toastError('얘깃거리 목록 조회 중 오류가 발생했습니다.');
 					} finally {
 						loading = false;
 					}

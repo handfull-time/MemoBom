@@ -61,7 +61,7 @@ public interface TopicDao {
 	boolean isEmpty();
 
 	/**
-	 * 토픽 flow 저장
+	 * 얘깃거리 flow 저장
 	 * @param user
 	 * @param uid
 	 * @return
@@ -76,7 +76,7 @@ public interface TopicDao {
 	List<TopicVo> loadUserTopicList(LoginUser user);
 
 	/**
-	 * 토픽 조회
+	 * 얘깃거리 조회
 	 * @param user
 	 * @param topicUid
 	 * @return
@@ -101,7 +101,7 @@ public interface TopicDao {
 	List<LoginUser> getTopicFollowList(LoginUser user, String topicUid);
 
 	/**
-	 * 주제 사용자 초대
+	 * 얘깃거리 사용자 초대
 	 * @param user
 	 * @param topicUid
 	 * @param topicNo
@@ -119,7 +119,7 @@ public interface TopicDao {
 	boolean hasPendingInvite(LoginUser user, String topicUid);
 
 	/**
-	 * 초대 수락 처리 + 토픽 팔로우 추가(이미 팔로우면 유지)
+	 * 초대 수락 처리 + 얘깃거리 팔로우 추가(이미 팔로우면 유지)
 	 * @param user
 	 * @param topicUid
 	 * @return 새로 추가된 follow 수

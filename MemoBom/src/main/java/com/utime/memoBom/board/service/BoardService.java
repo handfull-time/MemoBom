@@ -57,7 +57,7 @@ public interface BoardService {
 	ReturnBasic loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
-	 * 스크랩 처리
+	 * 보관함 처리
 	 * @param user
 	 * @param fragmentUid
 	 * @return

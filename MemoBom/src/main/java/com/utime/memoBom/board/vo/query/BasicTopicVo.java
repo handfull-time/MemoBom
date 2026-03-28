@@ -5,7 +5,7 @@ import com.utime.memoBom.board.vo.EmojiSetType;
 import lombok.Data;
 
 /**
- * 토픽 기본 정보
+ * 얘깃거리 기본 정보
  */
 @Data
 public class BasicTopicVo {

@@ -12,7 +12,7 @@ import com.utime.memoBom.board.vo.query.TopicResultVo;
 import com.utime.memoBom.common.security.LoginUser;
 
 /**
- * 주제 처리
+ * 얘깃거리 처리
  */
 @Mapper
 public interface TopicMapper {
@@ -71,7 +71,7 @@ public interface TopicMapper {
 	List<TopicResultVo> listTopic( @Param("user") LoginUser user, @Param("keyword") String keyword, @Param("page") int page, @Param("sortType") ETopicSortType sortType);
 
 	/**
-	 * uid 해당 토픽 읽기
+	 * uid 해당 얘깃거리 읽기
 	 * @param uid
 	 * @return
 	 */
@@ -171,7 +171,7 @@ public interface TopicMapper {
 	int decreaseTopicStatsCommentCount( @Param("topicNo") long topicNo);
 
 	/**
-	 * 토픽 조회
+	 * 얘깃거리 조회
 	 * @param user
 	 * @param topicUid
 	 * @return
@@ -198,7 +198,7 @@ public interface TopicMapper {
 	List<Long> selectTopicFollowList(@Param("user") LoginUser user, @Param("uid") String topicUid);
 	
 	/**
-	 * 주제 사용자 초대
+	 * 얘깃거리 사용자 초대
 	 * @param user
 	 * @param topicNo
 	 * @param targetUserNo

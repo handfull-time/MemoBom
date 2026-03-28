@@ -134,14 +134,14 @@
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	
-	        <!-- 토픽 정보 -->
+	        <!-- 얘깃거리 정보 -->
 	        CAST(t.UID AS VARCHAR) AS topic_uid,
 	        t.NAME           AS topic_name,
 	        t.COLOR          AS topic_color,
 	        t.IMOGI          AS topic_imogi,
 	        t.EMOJI_SET_TYPE AS emoji_set_type,
 	
-	        <!-- 스크랩 여부(로그인 사용자일 때만) -->
+	        <!-- 보관함 여부(로그인 사용자일 때만) -->
 	        <choose>
 	            <when test="user != null">
 	                CASE WHEN s.USER_NO IS NULL THEN FALSE ELSE TRUE END
@@ -175,7 +175,7 @@
 	      AND u.ENABLED    = TRUE
 	      AND t.ENABLED    = TRUE
 	
-	      -- ✅ 토픽 공개/비공개 접근 조건
+	      -- ✅ 얘깃거리 공개/비공개 접근 조건
 	      AND (
 	            t.EXTERNAL = TRUE
 	            <if test="user != null">
@@ -254,7 +254,7 @@
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	
-	        <!-- 토픽 정보 -->
+	        <!-- 얘깃거리 정보 -->
 	        CAST(t.UID AS VARCHAR) AS topic_uid,
 	        t.NAME           AS topic_name,
 	        t.COLOR          AS topic_color,
@@ -284,7 +284,7 @@
 	      </if>;
 	</select>
     
-    <!--스크랩 존재 여부 확인  -->
+    <!--보관함 존재 여부 확인  -->
     <select id="existsScrap" resultType="boolean">
     	SELECT 
 			CASE COUNT(1) 
@@ -299,7 +299,7 @@
             )
     </select>
     
-	<!--스크랩 삭제  -->
+	<!--보관함 삭제  -->
 	<delete id="deleteScrap">
         DELETE FROM MB_FRAGMENT_SCRAP
         WHERE 1=1
@@ -309,7 +309,7 @@
             )
     </delete>
 	
-	<!--스크랩 추가  -->
+	<!--보관함 추가  -->
 	<insert id="insertScrap" parameterType="map">
         INSERT INTO MB_FRAGMENT_SCRAP (
             USER_NO,

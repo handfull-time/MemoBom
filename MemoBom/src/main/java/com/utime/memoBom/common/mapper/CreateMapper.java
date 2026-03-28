@@ -27,7 +27,7 @@ public interface CreateMapper {
 	int createPushSubscriptionTable();
 	
 	/**
-	 * 토픽 테이블 생성
+	 * 얘깃거리 테이블 생성
 	 * @return
 	 */
 	int createTopic();
@@ -51,7 +51,7 @@ public interface CreateMapper {
 	int createFragmentComments();
 	
 	/**
-	 * 스크랩 생성
+	 * 보관함 생성
 	 * @return
 	 */
 	int createFragmentScrap();
@@ -67,13 +67,13 @@ public interface CreateMapper {
 	int createFragmentHashTagRecord();
 
 	/**
-	 * 토픽 통계 생성
+	 * 얘깃거리 통계 생성
 	 * @return
 	 */
 	int createTopicStats();
 
 	/**
-	 * 토픽 통계 생성
+	 * 얘깃거리 통계 생성
 	 * @return
 	 */
 	int createShare();
@@ -109,7 +109,7 @@ public interface CreateMapper {
 	int createFragmentImage();
 	
 	/** 
-	 * 토픽 초대 생성
+	 * 얘깃거리 초대 생성
 	 * @return
 	 */
 	int createInviteUser();

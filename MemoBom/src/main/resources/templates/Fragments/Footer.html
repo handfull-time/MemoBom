@@ -2,16 +2,16 @@
 	<th:block th:fragment="BasicFooter">
 		<div class="grid grid-cols-3 h-full">
 
-			<!-- LEFT : Mosaic -->
+			<!-- LEFT : Topic -->
 			<div class="flex items-center justify-center cursor-pointer active:bg-gray-100 transition-colors duration-100"
-				th:onclick="|location.href='@{/Mosaic/index.html}'|">
+				th:onclick="|location.href='@{/Topic/index.html}'|">
 				<div class="w-12 h-8 flex items-center justify-center rounded-md transition-all duration-150"
-					th:classappend="${#strings.startsWith(currentPath, '/Mosaic')}
+					th:classappend="${#strings.startsWith(currentPath, '/Topic')}
 						? ' border-2 border-gray-600 bg-sky-50'
 						: ' border-2 border-transparent bg-transparent'">
-					<img th:src="@{/images/bottom/mosaic.svg}" alt="주제"
+					<img th:src="@{/images/bottom/topic.svg}" alt="얘깃거리"
 						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
-						th:classappend="${#strings.startsWith(currentPath, '/Mosaic')} ? '' : ' opacity-80'" />
+						th:classappend="${#strings.startsWith(currentPath, '/Topic')} ? '' : ' opacity-80'" />
 				</div>
 			</div>
 
@@ -22,7 +22,7 @@
 					th:classappend="${#strings.startsWith(currentPath, '/Fragment')}
 						? ' border-2 border-gray-600 bg-sky-50'
 						: ' border-2 border-transparent bg-transparent'">
-					<img th:src="@{/images/bottom/fragment.svg}" alt="메모"
+					<img th:src="@{/images/bottom/fragment.svg}" alt="이야기"
 						class="pointer-events-none w-6 h-6 transition-opacity duration-150"
 						th:classappend="${#strings.startsWith(currentPath, '/Fragment')} ? '' : ' opacity-80'" />
 				</div>

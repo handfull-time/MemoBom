@@ -11,7 +11,7 @@ import lombok.Data;
 public class BasicUserVo {
 	/** 사용자 고유 ID */
 	String uid;
-	/** 닉네임 */
+	/** 별명 */
 	String nickname;
 	/** 이미지 URL */
 	String profileUrl;

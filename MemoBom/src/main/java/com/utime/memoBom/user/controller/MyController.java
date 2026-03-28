@@ -167,16 +167,16 @@ public class MyController {
 		return userService.getMyRedDot( user );
     }
 
-	@GetMapping(path = "Mosaic.html")
-    public String myMosaic(Model model) {
-		return "My/MyMosaic";
+	@GetMapping(path = "Topic.html")
+    public String myTopic(Model model) {
+		return "My/MyTopic";
     }
 	
 	@ResponseBody
-	@GetMapping(path = "MyMosaic.json")
-    public ReturnBasic myMosaic( LoginUser user, MySearchDto searchVo ) {
+	@GetMapping(path = "MyTopic.json")
+    public ReturnBasic myTopic( LoginUser user, MySearchDto searchVo ) {
 		
-		return userService.getMyMosaicDataList( user, searchVo );
+		return userService.getMyTopicDataList( user, searchVo );
     }
 	
 	@GetMapping(path = "Fragments.html")

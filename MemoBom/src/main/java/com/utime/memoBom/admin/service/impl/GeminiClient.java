@@ -190,7 +190,7 @@ public class GeminiClient {
 
 /*
  * GeminiResponse response = geminiClient.callGemini( """ 다음 정보를 JSON으로 응답하라. {
- * "title": "string", "summary": "string" } 주제: Spring Security JWT """ );
+ * "title": "string", "summary": "string" } 얘깃거리: Spring Security JWT """ );
  * 
  * String jsonText = response.getCandidates().get(0)
  * .getContent().getParts().get(0).getText();

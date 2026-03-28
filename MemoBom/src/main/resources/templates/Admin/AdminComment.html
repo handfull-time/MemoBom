@@ -14,7 +14,7 @@
 						<input id="searchDate" type="date" name="date" th:value="${date}"
 							   class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
 					</div>
-					<input id="keyword" type="text" name="keyword" placeholder="검색어 (댓글/프래그먼트/작성자/토픽)"
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (댓글/이야기/작성자/얘깃거리)"
 						   class="w-full md:w-[420px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
 				</div>
 			</div>
@@ -29,7 +29,7 @@
 					<div class="min-w-0">
 						<div class="text-lg font-semibold text-slate-900 break-words flex items-center gap-2 flex-wrap">
 							<span class="deletedBadge hidden px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">삭제됨</span>
-							<span class="topicName px-2 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-sm">토픽명</span>
+							<span class="topicName px-2 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-sm">얘깃거리명</span>
 						</div>
 						<div class="text-xs text-slate-500 mt-0.5">
 							commentNo: <span class="commentNo tabular-nums">0</span>
@@ -122,7 +122,7 @@
 						});
 					} catch (err) {
 						console.error(err);
-						toastError('프래그먼트 미리보기를 열지 못했습니다.');
+						toastError('이야기 미리보기를 열지 못했습니다.');
 					}
 				}
 

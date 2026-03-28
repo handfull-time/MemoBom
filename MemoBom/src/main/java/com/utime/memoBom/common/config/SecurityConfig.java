@@ -91,7 +91,7 @@ public class SecurityConfig {
         // 수동 추가
         final List<RequestMatcher> extended = new java.util.ArrayList<>(permitAllMatchers);
         extended.add(matcher.matcher("/Fragment/**"));
-        extended.add(matcher.matcher("/Mosaic/**"));
+        extended.add(matcher.matcher("/Topic/**"));
         extended.add(matcher.matcher("/"));
         extended.add(PathRequest.toStaticResources().atCommonLocations());
         extended.add(matcher.matcher("/manifest.webmanifest"));
@@ -109,9 +109,9 @@ public class SecurityConfig {
         	    .requestMatchers(
         	    		  "/Fragment/Tessera.html"
         	    		, "/Fragment/Save.json"
-        	    		, "/Mosaic/Ensemble.html"
-        	    		, "/Mosaic/Save.json"
-        	    		, "/Mosaic/Flow.json"
+        	    		, "/Topic/Ensemble.html"
+        	    		, "/Topic/Save.json"
+        	    		, "/Topic/Flow.json"
         	    		, "/Lotus/Login.html"
         	    		, "/Push/**"
         	    		, "/User/**"

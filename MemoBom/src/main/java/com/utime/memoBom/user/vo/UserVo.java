@@ -32,7 +32,7 @@ public class UserVo {
 	String id;
 	/** 사용자 email */
 	String email;
-	/** 닉네임 */
+	/** 별명 */
 	String nickname;
 	/** 비고 */
 	String note;

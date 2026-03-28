@@ -127,11 +127,11 @@ class BoardServiceImpl implements BoardService {
 					result.setTitle( vo == null ? "Art":vo.getNickname() + search);
 				} else if( AppUtils.isNotEmpty( reqVo.getFragUid() ) ) {
 					final FragmentItem vo = boardDao.loadFragment(user, reqVo.getFragUid());
-					final String content = (vo == null)? "Fragment":vo.getContent();
+					final String content = (vo == null)? "이야기":vo.getContent();
 					result.setTitle( (content.length()>6? content.substring(0, 6):content) + search);
 				} else if( AppUtils.isNotEmpty( reqVo.getTopicUid() ) ) {
 					final TopicVo vo = topicDao.loadTopic(user, reqVo.getTopicUid());
-					final String name = (vo == null)? "Mosaic":vo.getName();
+					final String name = (vo == null)? "얘깃거리":vo.getName();
 					result.setTitle( (name.length()>6? name.substring(0, 6):name) + search);
 				} else if( AppUtils.isNotEmpty( reqVo.getCmtUid() ) ) {
 					result.setTitle( "댓글" + search  );
@@ -140,7 +140,7 @@ class BoardServiceImpl implements BoardService {
 				} else if( AppUtils.isNotEmpty( reqVo.getHashtag() ) ) {
 					result.setTitle( reqVo.getHashtag() + search );
 				} else {
-					result.setTitle( "Fragment" );
+					result.setTitle( "이야기" );
 				}
 			}
 		} catch (Exception e) {
@@ -222,7 +222,7 @@ class BoardServiceImpl implements BoardService {
 
 			final PushSendDataVo push = new PushSendDataVo();
 			push.setTitle("댓글 알림");
-			push.setMessage(cmtUserName + "님이 " + fragment.getTopic().getName() + " 토픽에 댓글을 남겼습니다.");
+			push.setMessage(cmtUserName + "님이 " + fragment.getTopic().getName() + " 얘깃거리에 댓글을 남겼습니다.");
 			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
 			push.setLinkUrl("/Fragment/index.html?fragUid=" + reqVo.getUid());
 

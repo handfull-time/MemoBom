@@ -41,7 +41,7 @@ public interface UserService {
 	ReturnBasic getMyAlarmDataList(LoginUser user, MySearchDto searchVo);
 
 	/**
-	 * fragment  목록
+	 * 이야기  목록
 	 * @param user
 	 * @param searchVo
 	 * @return
@@ -49,12 +49,12 @@ public interface UserService {
 	ReturnBasic getMyFragmentsDataList(LoginUser user, MySearchDto searchVo);
 
 	/**
-	 * mosaic  목록
+	 * 얘깃거리 목록
 	 * @param user
 	 * @param searchVo
 	 * @return
 	 */
-	ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo);
+	ReturnBasic getMyTopicDataList(LoginUser user, MySearchDto searchVo);
 
 	/**
 	 * 뎃글 목록
@@ -96,7 +96,7 @@ public interface UserService {
 	BinResultVo getUserProfile(String uid);
 
 	/**
-	 * 회원이 스크랩 한 글 목록
+	 * 회원이 보관함 한 글 목록
 	 * @param user
 	 * @param searchVo
 	 * @return

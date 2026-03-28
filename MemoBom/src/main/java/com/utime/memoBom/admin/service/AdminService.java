@@ -49,25 +49,25 @@ public interface AdminService {
 	public ReturnBasic getUserList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
-	 * 토픽 목록을 조회한다.
+	 * 얘깃거리 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자
 	 * @param searchVo 조회 조건
-	 * @return 토픽 목록 응답
+	 * @return 얘깃거리 목록 응답
 	 */
 	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
-	 * 토픽 팔로우 사용자 목록을 조회한다.
+	 * 얘깃거리 팔로우 사용자 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자
-	 * @param topicNo 토픽 번호
+	 * @param topicNo 얘깃거리 번호
 	 * @return 팔로우 사용자 목록 응답
 	 */
 	public ReturnBasic getTopicFollowUsers(LoginUser user, Long topicNo);
 
 	/**
-	 * 글(프래그먼트) 목록을 조회한다.
+	 * 글(이야기) 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자
 	 * @param searchVo 조회 조건
@@ -85,11 +85,11 @@ public interface AdminService {
 	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
-	 * 프래그먼트 미리보기를 조회한다.
+	 * 이야기 미리보기를 조회한다.
 	 *
 	 * @param user 요청 사용자
-	 * @param fragmentNo 프래그먼트 번호
-	 * @return 프래그먼트 정보 응답
+	 * @param fragmentNo 이야기 번호
+	 * @return 이야기 정보 응답
 	 */
 	public ReturnBasic getFragmentPreview(LoginUser user, Long fragmentNo);
 
@@ -112,11 +112,11 @@ public interface AdminService {
 	public ReturnBasic getEmotionList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
-	 * 스크랩 목록을 조회한다.
+	 * 보관함 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자
 	 * @param searchVo 조회 조건
-	 * @return 스크랩 목록 응답
+	 * @return 보관함 목록 응답
 	 */
 	public ReturnBasic getScrapList(LoginUser user, AdminSearchVo searchVo);
 
@@ -157,10 +157,10 @@ public interface AdminService {
 	public ReturnBasic updateUserEnabled(LoginUser user, AdminUserVo userVo);
 
 	/**
-	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 * 얘깃거리 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
 	 *
 	 * @param user 요청 사용자
-	 * @param topicVo 토픽 수정 값
+	 * @param topicVo 얘깃거리 수정 값
 	 * @return 처리 결과
 	 */
 	public ReturnBasic updateTopicEditable(LoginUser user, AdminTopicVo topicVo);

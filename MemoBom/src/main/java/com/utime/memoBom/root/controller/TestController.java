@@ -168,12 +168,12 @@ public class TestController {
 	}
 	
 	@ResponseBody
-	@GetMapping(path = "MyMosaic.json")
-    public ReturnBasic myMosaic( ) {
+	@GetMapping(path = "MyTopic.json")
+    public ReturnBasic myTopic( ) {
 		
 		final MySearchDto searchVo = new MySearchDto();
 		
-		return userService.getMyMosaicDataList( getLoginUser(), searchVo );
+		return userService.getMyTopicDataList( getLoginUser(), searchVo );
     }
 	
 	@ResponseBody
@@ -229,10 +229,10 @@ public class TestController {
 		LoginUser loginUser = new LoginUser(userNo, basicUserVo.getUid(), EJwtRole.User);
 		
 		final PushSendDataVo data = new PushSendDataVo();
-		data.setTitle("Mosaic");
+		data.setTitle("얘깃거리");
 		data.setMessage("모자익 좋아요.");
 		data.setImageUrl("/MemoBom/images/profile-placeholder.svg");
-		data.setLinkUrl("/Mosaic/index.html");
+		data.setLinkUrl("/Topic/index.html");
 		
     	final ReturnBasic res = pushSendService.sendPush(loginUser, data);
         

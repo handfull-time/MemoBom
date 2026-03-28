@@ -17,13 +17,13 @@ public class BoardVo {
 	/** 작성자 */
 	UserVo user;
 	
-	/** 주제 */
+	/** 얘깃거리 */
 	TopicVo topic;
 	
 	/** 메모 */
 	String memo;
 	
-	/** 스크랩 여부 */
+	/** 보관함 여부 */
 	boolean scraped;
 	
 	

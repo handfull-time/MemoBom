@@ -117,13 +117,13 @@ class TopicServiceImpl implements TopicService {
 	public ReturnBasic loadTopic(String uid) {
 		final ReturnBasic result = new ReturnBasic();
 		if( AppUtils.isEmpty(uid) ) {
-			result.setCodeMessage("ETOP005", "Mosaic ID가 없습니다.");
+			result.setCodeMessage("ETOP005", "얘깃거리 ID가 없습니다.");
 			return result;
 		} 
 		
 		final TopicVo topic = topicDao.loadTopic(uid);
 		if( topic == null ) {
-			result.setCodeMessage("ETOP006", "Mosaic을 찾을 수 없습니다.");
+			result.setCodeMessage("ETOP006", "얘깃거리를 찾을 수 없습니다.");
 			return result;
 		}
 		
@@ -136,13 +136,13 @@ class TopicServiceImpl implements TopicService {
 	
 		final ReturnBasic result = new ReturnBasic();
 		if( AppUtils.isEmpty(uid) ) {
-			result.setCodeMessage("ETOP007", "Mosaic ID가 없습니다.");
+			result.setCodeMessage("ETOP007", "얘깃거리 ID가 없습니다.");
 			return result;
 		} 
 		
 		final TopicVo topic = topicDao.loadTopic(user, uid);
 		if( topic == null ) {
-			result.setCodeMessage("ETOP008", "Mosaic을 찾을 수 없습니다.");
+			result.setCodeMessage("ETOP008", "얘깃거리를 찾을 수 없습니다.");
 			return result;
 		}
 		
@@ -208,10 +208,10 @@ class TopicServiceImpl implements TopicService {
 			}
 			
 			final PushSendDataVo push = new PushSendDataVo();
-			push.setTitle("토픽 초대 알림");
-			push.setMessage(topic.getName() + " 토픽에 초대되었습니다.");
+			push.setTitle("얘깃거리 초대 알림");
+			push.setMessage(topic.getName() + " 얘깃거리에 초대되었습니다.");
 			push.setImageUrl("/MemoBom/images/logo/logo_black.svg");
-			push.setLinkUrl("/Mosaic/InviteUser.html?uid=" + topic.getUid());
+			push.setLinkUrl("/Topic/InviteUser.html?uid=" + topic.getUid());
 			pushSendService.sendPush(new LoginUser(targetUser.getUserNo(), targetUser.getUid(), targetUser.getRole()), push);
 		} catch (Exception e) {
 			log.error("", e);
@@ -229,7 +229,7 @@ class TopicServiceImpl implements TopicService {
 			return result;
 		}
 		if( AppUtils.isEmpty(dto.getTopicUid()) ) {
-			result.setCodeMessage("ETOP014", "토픽 정보가 없습니다.");
+			result.setCodeMessage("ETOP014", "얘깃거리 정보가 없습니다.");
 			return result;
 		}
 

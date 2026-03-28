@@ -3,13 +3,13 @@
 	layout:decorate="~{Common/LayoutBase}">
 
 <header>
-	<title layout:fragment="title">메모</title>
+	<title layout:fragment="title">이야기</title>
 </header>
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: Header_Search(
 		leftTitle=~{Fragments/Icons :: favicon},
-		title='메모', 
+		title='이야기', 
 		rightTitle=~{Fragments/Icons :: fragment_write}
 	) }"></th:block>
 </th:block>
@@ -160,9 +160,9 @@
 				<img class="cUserImg w-7 h-7 rounded-full border border-slate-200 object-cover" alt="u" />
 
 				<div class="flex-1 min-w-0">
-					<!-- 상단 라인: [3.5]닉네임 + [3.2]날짜 + [3.3][3.4]이모션 합 -->
+					<!-- 상단 라인: [3.5]별명 + [3.2]날짜 + [3.3][3.4]이모션 합 -->
 					<div class="flex items-center gap-2">
-						<div class="cNick text-dynamic-sm font-semibold text-slate-800 truncate">닉네임</div>
+						<div class="cNick text-dynamic-sm font-semibold text-slate-800 truncate">별명</div>
 						<div class="cDate text-dynamic-11 text-slate-400 whitespace-nowrap">2026-01-01 13:11</div>
 
 						<button type="button"
@@ -314,7 +314,7 @@
 				await loadNextComments(node, item);
 			}
 
-			/* 댓글 조회([3]) + 페이징(프래그먼트별 page 유지)  */
+			/* 댓글 조회([3]) + 페이징(이야기별 page 유지)  */
 			async function loadNextComments(node, item) {
 				const fuid = item.uid;
 				const st = commentStateMap.get(fuid);
@@ -752,7 +752,7 @@
 						const res = await apiPost(url, {uid});
 
 						if (!res || res.code !== "0") {
-							showToast("오류", (res && res.message) ? res.message : "스크랩 실패", ToastType.ERROR);
+							showToast("오류", (res && res.message) ? res.message : "보관함 실패", ToastType.ERROR);
 							return;
 						}
 
@@ -762,7 +762,7 @@
 
 					} catch (err) {
 						console.error(err);
-						showToast("오류", "네트워크 오류로 스크랩 실패", ToastType.ERROR);
+						showToast("오류", "네트워크 오류로 보관함 실패", ToastType.ERROR);
 					} finally {
 						busy = false;
 					}
@@ -1095,8 +1095,8 @@
 					return;
 				}
 
-				// Mosaic 검색 처리
-				const url = /*[[@{/Fragment/index.html}]]*/ "/Mosaic/index.html";
+				// 이야기 검색 처리
+				const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
 				location.replace(url + "?keyword=" + encodeURIComponent(keyword));
 			}
 			// header buttons

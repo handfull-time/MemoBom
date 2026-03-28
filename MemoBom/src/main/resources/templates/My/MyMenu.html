@@ -25,12 +25,12 @@
 					<span class="font-medium">알람</span>
 				</a>
 
-				<a th:href="@{/My/Mosaic.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
-			           ${path == '/My/Mosaic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
+				<a th:href="@{/My/Topic.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
+			           ${path == '/My/Topic.html' ? 'bg-slate-900 text-white shadow' : 'text-slate-700 hover:bg-gray-100'}|"
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
-						th:classappend="${path == '/My/Mosaic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">주제</span>
+						th:classappend="${path == '/My/Topic.html' ? 'bg-white' : 'bg-slate-300'}"></span>
+					<span class="font-medium">얘깃거리</span>
 				</a>
 
 				<a th:href="@{/My/Fragments.html}"
@@ -39,7 +39,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Fragments.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">메모</span>
+					<span class="font-medium">이야기</span>
 				</a>
 
 				<a th:href="@{/My/Comments.html}" th:class="|flex items-center gap-2 px-3 py-2 rounded-xl transition
@@ -55,7 +55,7 @@
 					onclick="MyMenu.closeIfMobile()">
 					<span class="w-1.5 h-1.5 rounded-full"
 						th:classappend="${path == '/My/Scrap.html' ? 'bg-white' : 'bg-slate-300'}"></span>
-					<span class="font-medium">스크랩</span>
+					<span class="font-medium">보관함</span>
 				</a>
 
 				<div class="my-2 border-t border-gray-200"></div>

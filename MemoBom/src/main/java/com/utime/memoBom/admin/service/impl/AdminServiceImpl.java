@@ -248,7 +248,7 @@ class AdminServiceImpl implements AdminService {
 
 		final AdminFragmentVo item = adminDao.getFragmentPreview(fragmentNo);
 		if (item == null) {
-			return result.setCodeMessage("EADM004", "프래그먼트를 찾지 못했습니다.");
+			return result.setCodeMessage("EADM004", "이야기를 찾지 못했습니다.");
 		}
 
 		result.setData(item);
@@ -367,7 +367,7 @@ class AdminServiceImpl implements AdminService {
 		try {
 			int updated = adminDao.updateTopicEditable(topicVo);
 			if (updated <= 0) {
-				result.setCodeMessage("EADM00F", "수정할 토픽을 찾지 못했습니다.");
+				result.setCodeMessage("EADM00F", "수정할 얘깃거리을 찾지 못했습니다.");
 			}
 		} catch (Exception e) {
 			log.error("", e);

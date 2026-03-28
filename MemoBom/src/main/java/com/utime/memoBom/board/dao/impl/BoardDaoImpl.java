@@ -285,7 +285,7 @@ class BoardDaoImpl implements BoardDao {
 	}
 	
 	/**
-	 * @return true면 스크랩, false면 스크랩 취소
+	 * @return true면 보관함, false면 보관함 취소
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)

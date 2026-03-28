@@ -92,8 +92,8 @@ class ShareServiceImpl implements ShareService {
 		final String fullUrl;
 
 		if (targetType == EShareTargetType.Topic) {
-			fullUrl = "/Mosaic/index.html?uid=" + vo.getUid();
-			result.setImage( "/Share/Mosaic/" + vo.getUid() + ".png" );
+			fullUrl = "/Topic/index.html?uid=" + vo.getUid();
+			result.setImage( "/Share/Topic/" + vo.getUid() + ".png" );
 		} else if (targetType == EShareTargetType.Fragment) {
 			fullUrl = "/Fragment/index.html?fragUid=" + vo.getUid();
 			result.setImage( "/Share/Fragment/" + vo.getUid() + ".webp" );

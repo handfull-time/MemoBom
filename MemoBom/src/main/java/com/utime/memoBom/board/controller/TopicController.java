@@ -25,11 +25,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("Mosaic")
+@RequestMapping("Topic")
 @RequiredArgsConstructor
 public class TopicController {
 	
-	// Mosaic (조각보)로 바꾸자.
+	// Topic 서비스
 	final TopicService topicServce;
 	
 	/**
@@ -44,7 +44,7 @@ public class TopicController {
     		@RequestParam(required = false) String uid) {
 		
 		if(topicServce.isEmpty() && user != null ) {
-			return "redirect:/Mosaic/Ensemble.html";
+			return "redirect:/Topic/Ensemble.html";
 		}else {
 			model.addAttribute("keyword", keyword);
 			model.addAttribute("uid", uid);
@@ -65,7 +65,7 @@ public class TopicController {
 	}
 	
 	/**
-	 * 토픽 상세 보기
+	 * 얘깃거리 상세 보기
 	 * @param reqVo
 	 * @return
 	 */
@@ -81,7 +81,7 @@ public class TopicController {
 	final String KeySeal = "seal";
 	
 	/**
-	 * 토픽 상세 보기
+	 * 얘깃거리 상세 보기
 	 * @param reqVo
 	 * @return
 	 */
@@ -134,7 +134,7 @@ public class TopicController {
 	}
 	
 	/**
-	 * 토픽 저장
+	 * 얘깃거리 저장
 	 * @param reqVo
 	 * @return
 	 */
@@ -157,7 +157,7 @@ public class TopicController {
 	}
 	
 	/**
-	 * 토픽 언 팔로우 / 팔로우
+	 * 얘깃거리 언 팔로우 / 팔로우
 	 * @param user
 	 * @param reqVo
 	 * @return
@@ -200,12 +200,5 @@ public class TopicController {
 	public ReturnBasic inviteDecision(LoginUser user, @RequestBody InviteDecisionDto dto) {
 		return topicServce.decideInvite(user, dto);
 	}
-
-	
-//	@GetMapping(path = "Mosaic.html", params = "keyword")
-//    public String topicSearch( ModelMap model, LoginUser user, @RequestParam() String keyword) {
-//		model.addAttribute("keyword", keyword );
-//		return "Topic/TopicMain";
-//    }
 
 }

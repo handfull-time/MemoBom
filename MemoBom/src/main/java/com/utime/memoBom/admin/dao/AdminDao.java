@@ -33,23 +33,23 @@ public interface AdminDao {
 	List<AdminUserVo> getUserList(AdminSearchVo searchVo);
 
 	/**
-	 * 토픽 목록을 조회한다.
+	 * 얘깃거리 목록을 조회한다.
 	 *
 	 * @param searchVo 조회 조건
-	 * @return 토픽 목록
+	 * @return 얘깃거리 목록
 	 */
 	List<AdminTopicVo> getTopicList(AdminSearchVo searchVo);
 
 	/**
-	 * 토픽을 팔로우한 사용자 목록을 조회한다.
+	 * 얘깃거리을 팔로우한 사용자 목록을 조회한다.
 	 *
-	 * @param topicNo 토픽 번호
+	 * @param topicNo 얘깃거리 번호
 	 * @return 팔로우 사용자 목록
 	 */
 	List<AdminTopicFollowVo> getTopicFollowUsers(Long topicNo);
 
 	/**
-	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
+	 * 얘깃거리 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.
 	 *
 	 * @param topicVo 수정 대상 값
 	 * @return 반영 건수
@@ -57,7 +57,7 @@ public interface AdminDao {
 	int updateTopicEditable(AdminTopicVo topicVo)throws Exception;
 
 	/**
-	 * 글(프래그먼트) 목록을 조회한다.
+	 * 글(이야기) 목록을 조회한다.
 	 *
 	 * @param searchVo 조회 조건
 	 * @return 글 목록
@@ -65,10 +65,10 @@ public interface AdminDao {
 	List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo);
 
 	/**
-	 * 프래그먼트 미리보기 데이터를 조회한다.
+	 * 이야기 미리보기 데이터를 조회한다.
 	 *
-	 * @param fragmentNo 프래그먼트 번호
-	 * @return 프래그먼트 정보
+	 * @param fragmentNo 이야기 번호
+	 * @return 이야기 정보
 	 */
 	AdminFragmentVo getFragmentPreview(Long fragmentNo);
 
@@ -89,10 +89,10 @@ public interface AdminDao {
 	List<AdminEmotionVo> getEmotionList(AdminSearchVo searchVo);
 
 	/**
-	 * 스크랩 목록을 조회한다.
+	 * 보관함 목록을 조회한다.
 	 *
 	 * @param searchVo 조회 조건
-	 * @return 스크랩 목록
+	 * @return 보관함 목록
 	 */
 	List<AdminScrapVo> getScrapList(AdminSearchVo searchVo);
 

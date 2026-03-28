@@ -3,13 +3,13 @@
 	layout:decorate="~{Common/LayoutBase}">
 
 <header>
-	<title layout:fragment="title">주제</title>
+	<title layout:fragment="title">얘깃거리</title>
 </header>
 
 <th:block layout:fragment="header">
 	<th:block th:replace="~{Fragments/Header :: Header_Search(
 			leftTitle=~{Fragments/Icons :: favicon},
-			title='주제', 
+			title='얘깃거리', 
 			rightTitle=~{Fragments/Icons :: topic_write}
 		) }"></th:block>
 </th:block>
@@ -34,11 +34,11 @@
 	</th:block>
 
 	<th:block th:if="${keyword == null and uid != null}">
-		<!-- 단일 Mosaic(Topic UID 지정) -->
+		<!-- 단일 얘깃거리(Topic UID 지정) -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">주제</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">선택한 주제입니다.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">얘깃거리</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">선택한 얘깃거리입니다.</p>
 			</div>
 
 			<div id="singleList" class="space-y-2"></div>
@@ -49,8 +49,8 @@
 		<!-- 상단 섹션: 인기 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">인기 주제</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">요즘 뜨는 주제를 모아봤어요.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">인기 얘깃거리</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">요즘 뜨는 얘깃거리를 모아봤어요.</p>
 			</div>
 
 			<div id="trendingList" class="space-y-2"></div>
@@ -67,8 +67,8 @@
 		<!-- 하단 섹션: 새로운 -->
 		<section class="space-y-2">
 			<div class="px-2 pt-2">
-				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">새로운 주제</h2>
-				<p class="text-dynamic-xs text-slate-500 mt-1">최근 생성된 주제에요.</p>
+				<h2 class="text-dynamic-2xl font-extrabold tracking-tight">새로운 얘깃거리</h2>
+				<p class="text-dynamic-xs text-slate-500 mt-1">최근 생성된 얘깃거리에요.</p>
 			</div>
 
 			<div id="freshList" class="space-y-2"></div>
@@ -97,7 +97,7 @@
 					<div class="flex items-center justify-between gap-2">
 						<span
 							class="topic-name block font-bold text-dynamic-base text-slate-900 truncate cursor-pointer hover:text-indigo-600 transition-colors">
-							MosaicName
+							얘깃거리
 						</span>
 						<button type="button" id="btn-flow"
 							class="btn-follow shrink-0 h-7 flex items-center justify-center rounded-lg hover:opacity-80 transition-opacity">
@@ -202,7 +202,7 @@
 				if (!append && (!topics || topics.length === 0)) {
 					const empty = document.createElement("div");
 					empty.className = "mx-2 rounded-2xl border border-slate-200 bg-white p-4 text-dynamic-sm text-slate-500";
-					empty.textContent = "표시할 토픽이 없습니다.";
+					empty.textContent = "표시할 얘깃거리이 없습니다.";
 					container.appendChild(empty);
 					return;
 				}
@@ -271,7 +271,7 @@
 							return;
 						}
 
-						const ask = "[" + t.name + "] 팔로우" + (isFlow ? " 해지할까요?" : "할까요?");
+						const ask = "[" + t.name + "] 구독" + (isFlow ? " 해지할까요?" : "할까요?");
 						const ok = await confirmP(ask);
 						if (!ok) return;
 
@@ -279,7 +279,7 @@
 						btn_follow.disabled = true;
 
 						try {
-							const url = /*[[@{/Mosaic/Flow.json}]]*/ "/Mosaic/Flow.json";
+							const url = /*[[@{/Topic/Flow.json}]]*/ "/Topic/Flow.json";
 							const res = await apiPost(url, {uid: uidVal});
 
 							if (!res || res.code !== "0") {
@@ -291,7 +291,7 @@
 							isFlow = !isFlow;
 							applyFlowUI();
 							
-							showToast("안내", "[" + t.name + "] 팔로우" + (before ? " 해지했습니다." : "했습니다."), ToastType.SUCCESS);
+							showToast("안내", "[" + t.name + "] 구독" + (before ? " 해지했습니다." : "했습니다."), ToastType.SUCCESS);
 
 							const cur = Number(t.flowCount || 0);
 							if (!before && isFlow) t.flowCount = cur + 1;
@@ -310,7 +310,7 @@
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "얘깃거리 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 						const url = /*[[@{/Fragment/index.html}]]*/ "/Fragment/index.html";
@@ -321,10 +321,10 @@
 						e.stopPropagation();
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "얘깃거리 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
-						const url = /*[[@{/Mosaic/Item.html}]]*/ "/Mosaic/Item.html";
+						const url = /*[[@{/Topic/Item.html}]]*/ "/Topic/Item.html";
 						location.href = url + "?uid=" + encodeURIComponent(uidVal);
 					});
 
@@ -348,7 +348,7 @@
 						
 						const uidVal = (t.uid || "").trim();
 						if (!uidVal) {
-							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "얘깃거리 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 						
@@ -359,7 +359,7 @@
 							  "안내",
 							  `<div class="flex items-center gap-2">
 							     <img src="${flowIcon}" class="w-5 h-5" alt="flow">
-							     <span>를 이용해 팔로우를 먼저 해 주세요.</span>
+							     <span>를 이용해 구독을 먼저 해 주세요.</span>
 							   </div>`,
 							  ToastType.SUCCESS,
 							  2000
@@ -389,7 +389,7 @@
 
 						const uid = (t.uid || "").trim();
 						if (!uid) {
-							showToast("안내", "주제 UID가 없습니다.", ToastType.WARNING, 1500); 
+							showToast("안내", "얘깃거리 UID가 없습니다.", ToastType.WARNING, 1500); 
 							return;
 						}
 
@@ -400,7 +400,7 @@
 							}
 
 							await openPopup({
-								url: (/*[[@{/Mosaic/InviteUser.popup}]]*/ "/Mosaic/InviteUser.popup") + "?topicUid=" + encodeURIComponent(uid),
+								url: (/*[[@{/Topic/InviteUser.popup}]]*/ "/Topic/InviteUser.popup") + "?topicUid=" + encodeURIComponent(uid),
 								method: MethodType.Get,
 								contentType: ContentsType.Form,
 								popupId: "inviteUserPopup",
@@ -462,7 +462,7 @@
 				if (sortType === ETopicSortType.search) setMoreButtonState(sortType, btnMoreSearch);
 
 				try {
-					const baseUrl = /*[[@{/Mosaic/List.json}]]*/ "/Mosaic/List.json";
+					const baseUrl = /*[[@{/Topic/List.json}]]*/ "/Topic/List.json";
 					const params = {
 						uid: (sortType === ETopicSortType.uid ? topicUid : null),
 						sortType: sortType,
@@ -526,7 +526,7 @@
 					return;
 				}
 
-				// uid가 있으면: 단일 주제 화면(1개만)
+				// uid가 있으면: 단일 얘깃거리 화면(1개만)
 				const uidMode = !!(topicUid && String(topicUid).trim() !== "");
 				if (uidMode) {
 					fetchPage(ETopicSortType.uid);
@@ -551,8 +551,8 @@
 				return;
 			}
 
-			// 주제 검색 처리
-			const url = /*[[@{/Mosaic/index.html}]]*/ "/Mosaic/index.html";
+			// 얘깃거리 검색 처리
+			const url = /*[[@{/Topic/index.html}]]*/ "/Topic/index.html";
 			location.replace(url + "?keyword=" + encodeURIComponent(keyword));
 		}
 
@@ -561,7 +561,7 @@
 		}
 
 		function functionRight() {
-			location.href = /*[[@{/Mosaic/Ensemble.html}]]*/ '/Mosaic/Ensemble.html';
+			location.href = /*[[@{/Topic/Ensemble.html}]]*/ '/Topic/Ensemble.html';
 		}
 	</script>
 </th:block>

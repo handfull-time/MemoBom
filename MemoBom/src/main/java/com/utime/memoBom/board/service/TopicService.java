@@ -85,7 +85,7 @@ public interface TopicService {
 	boolean isEmpty();
 
 	/**
-	 * 토픽 흐름 저장
+	 * 얘깃거리 흐름 저장
 	 * @param user
 	 * @param reqVo
 	 * @return
@@ -109,7 +109,7 @@ public interface TopicService {
 	ReturnBasic decideInvite(LoginUser user, InviteDecisionDto dto);
 
 	/**
-	 * 해당 토픽에 대한 사용자 초대 대기 여부
+	 * 해당 얘깃거리에 대한 사용자 초대 대기 여부
 	 * @param user
 	 * @param topicUid
 	 * @return

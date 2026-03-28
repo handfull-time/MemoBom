@@ -112,7 +112,7 @@ class UserDaoImpl implements UserDao {
 
 	    int updated = 0;
 
-	    // 1) 닉네임
+	    // 1) 별명
 	    if (AppUtils.isNotEmpty(nickname)) {
 	        updated += userMapper.updateNicname(user, nickname);
 	    }

@@ -2,14 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">주제</th:block>
+<header>
+	<title layout:fragment="title">얘깃거리 쓰기</title>
+</header>
 
 <th:block layout:fragment="css">
 </th:block>
 
 <th:block layout:fragment="header">
 	<th:block
-		th:replace="~{Fragments/Header :: Header_Back(${topic.uid == null ? '새로운 주제' : ('주제 ' + topic.name)})}">
+		th:replace="~{Fragments/Header :: Header_Back(${topic.uid == null ? '새로운 얘깃거리' : ('얘깃거리 ' + topic.name)})}">
 	</th:block>
 </th:block>
 
@@ -17,7 +19,7 @@
 	<div class="mx-auto w-full px-4 py-4 space-y-4">
 		<!-- Page intro -->
 		<div class="px-1">
-			<h2 class="text-dynamic-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새로운 주제' :
+			<h2 class="text-dynamic-base font-semibold tracking-tight text-slate-900">[[${topic.uid == null ? '새로운 얘깃거리' :
 				topic.name}]]</h2>
 			<p class="mt-1 text-dynamic-xs text-gray-500">이름과 스타일을 정하고, 옵션을 선택해 주세요.</p>
 		</div>
@@ -59,7 +61,7 @@
 			<div class="mt-4">
 				<label class="block text-dynamic-11 font-medium text-slate-500 mb-1">설명</label>
 				<textarea id="description" rows="4" maxlength="256" th:text="${topic?.description}"
-					placeholder="이 토픽을 어떤 용도로 쓸지 간단히 적어주세요." class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400
+					placeholder="이 얘깃거리을 어떤 용도로 쓸지 간단히 적어주세요." class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400
                     focus:outline-none focus:ring-2 focus:ring-slate-300 resize-none"></textarea>
 				<p class="mt-2 text-dynamic-xs text-gray-500">짧게 적어도 충분해요.</p>
 			</div>
@@ -121,7 +123,7 @@
 					</button>
 				</div>
 
-				<p class="mt-2 text-dynamic-xs text-gray-500">토픽 성격에 맞는 반응 방식을 선택하세요.</p>
+				<p class="mt-2 text-dynamic-xs text-gray-500">얘깃거리 성격에 맞는 반응 방식을 선택하세요.</p>
 			</div>
 		</section>
 
@@ -347,7 +349,7 @@
 					name: name
 				};
 
-				const url = /*[[@{/Mosaic/SameName.json}]]*/ '/Mosaic/SameName.json';
+				const url = /*[[@{/Topic/SameName.json}]]*/ '/Topic/SameName.json';
 				try {
 					const data = await apiGetWithParam(url, sendObj);
 
@@ -360,7 +362,6 @@
 					if (data.code === "0") {
 						lastCheckedName = name;
 						nameOk = true;
-						//						setNameStatus("ok", "사용 가능한 이름입니다.");
 						return true;
 					} else {
 						nameOk = false;
@@ -417,7 +418,7 @@
 				btnSave.disabled = true;
 
 				try {
-					const url = /*[[@{/Mosaic/Save.json}]]*/ '/Mosaic/Save.json';
+					const url = /*[[@{/Topic/Save.json}]]*/ '/Topic/Save.json';
 					const data = await apiPost(url, payload);
 
 					if (!data) {
@@ -426,8 +427,8 @@
 					}
 
 					if (data.code === "0") {
-						await alertP("주제가 저장되었습니다.");
-						location.replace(/*[[@{/Mosaic/index.html}]]*/ '/Mosaic/index.html');
+						await alertP("얘깃거리가 저장되었습니다.");
+						location.replace(/*[[@{/Topic/index.html}]]*/ '/Topic/index.html');
 					} else {
 						showToast("오류", data.message || "저장 실패", ToastType.ERROR);
 					}

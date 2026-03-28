@@ -6,10 +6,10 @@
 
 <th:block layout:fragment="modalContent">
 	<div class="space-y-3">
-		<div class="text-dynamic-sm text-slate-600">닉네임으로 사용자를 검색해 초대할 수 있습니다.</div>
+		<div class="text-dynamic-sm text-slate-600">별명으로 사용자를 검색해 초대할 수 있습니다.</div>
 
 		<div class="flex items-center gap-2">
-			<input id="inviteNickName" type="search" autocomplete="off" placeholder="닉네임 검색"
+			<input id="inviteNickName" type="search" autocomplete="off" placeholder="별명 검색"
 				class="w-full h-10 rounded-xl border  text-dynamic-sm border-slate-200 px-3 outline-none focus:ring-2 focus:ring-sky-300" />
 			<button id="btnInviteSearch" type="button"
 				class="h-8 px-3 rounded-xl bg-slate-900 text-white text-dynamic-sm hover:bg-slate-800 flex items-center justify-center"
@@ -180,7 +180,7 @@
 
 				try {
 					btnInvite.disabled = true;
-					const url = (/*[[@{/Mosaic/InviteUser.json}]]*/ '/Mosaic/InviteUser.json');
+					const url = (/*[[@{/Topic/InviteUser.json}]]*/ '/Topic/InviteUser.json');
 					const res = await apiPost(url, {
 						topicUid: topicUid,
 						userUid: selectedUid
@@ -201,7 +201,7 @@
 				}
 			});
 
-			setState('닉네임을 입력 후 검색해 주세요.');
+			setState('별명을 입력 후 검색해 주세요.');
 		})();
 	</script>
 </th:block>

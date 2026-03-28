@@ -63,7 +63,7 @@ public interface BoardMapper {
     FragmentItem getFragment( @Param("fNo") long no, @Param("fUid") String uid);
 
     /**
-     * 스크랩 존재 여부 확인
+     * 보관함 존재 여부 확인
      * @param userNo
      * @param fragmentUid
      * @return
@@ -71,7 +71,7 @@ public interface BoardMapper {
 	boolean existsScrap(@Param("userNo") long userNo, @Param("fUid") String fragmentUid);
 
 	/**
-	 * 스크랩 삭제
+	 * 보관함 삭제
 	 * @param userNo
 	 * @param fragmentUid
 	 * @return
@@ -79,7 +79,7 @@ public interface BoardMapper {
 	int deleteScrap(@Param("userNo") long userNo, @Param("fUid") String fragmentUid);
 
 	/**
-	 * 스크랩 추가
+	 * 보관함 추가
 	 * @param userNo
 	 * @param fragmentUid
 	 * @return

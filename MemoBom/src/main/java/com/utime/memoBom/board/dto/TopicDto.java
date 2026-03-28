@@ -6,7 +6,7 @@ import com.utime.memoBom.board.vo.TopicVo;
 import lombok.Data;
 
 /**
- * 토픽(주제) 정보 DTO
+ * 얘깃거리(얘깃거리) 정보 DTO
  */
 @Data
 public class TopicDto {

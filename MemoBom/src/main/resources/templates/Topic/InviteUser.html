@@ -2,17 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{Common/LayoutBase}">
 
-<th:block layout:fragment="title">토픽 초대</th:block>
+<header>
+	<th:block layout:fragment="title">얘깃거리 초대</th:block>
+</header>
 
 <th:block layout:fragment="header">
-	<th:block th:replace="~{Fragments/Header :: Header_Back('토픽 초대')}"></th:block>
+	<th:block th:replace="~{Fragments/Header :: Header_Back('얘깃거리 초대')}"></th:block>
 </th:block>
 
 <th:block layout:fragment="content">
 	<div class="mx-auto w-full px-4 py-4 space-y-4">
 		<section class="bg-blue-50 rounded-2xl border border-blue-200 p-4">
-			<h2 class="text-dynamic-base font-semibold text-blue-900">토픽 초대가 도착했어요</h2>
-			<p class="mt-1 text-dynamic-sm text-blue-800">아래 토픽 정보를 확인하고 가입 여부를 선택해 주세요.</p>
+			<h2 class="text-dynamic-base font-semibold text-blue-900">얘깃거리 초대가 도착했어요</h2>
+			<p class="mt-1 text-dynamic-sm text-blue-800">아래 얘깃거리 정보를 확인하고 가입 여부를 선택해 주세요.</p>
 		</section>
 
 			<section class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
@@ -20,9 +22,9 @@
 					<div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-dynamic-2xl"
 						th:text="${topic.imogi ?: '📌'}">📌</div>
 					<div class="min-w-0">
-						<div class="text-dynamic-base font-semibold text-slate-900 break-words" th:text="${topic.name}">토픽명</div>
+						<div class="text-dynamic-base font-semibold text-slate-900 break-words" th:text="${topic.name}">얘깃거리명</div>
 						<div class="text-dynamic-xs text-slate-500">
-							토픽 생성자: <span th:text="${topic.user.nickname}">닉네임</span>
+							얘깃거리 생성자: <span th:text="${topic.user.nickname}">별명</span>
 						</div>
 					</div>
 				</div>
@@ -33,7 +35,7 @@
 					</div>
 				</div>
 				<div class="text-dynamic-sm text-slate-700 whitespace-pre-line break-words"
-					th:text="${topic.description ?: '토픽 설명이 없습니다.'}">토픽 설명</div>
+					th:text="${topic.description ?: '얘깃거리 설명이 없습니다.'}">얘깃거리 설명</div>
 			</section>
 
 		<section th:if="${pendingInvite}" class="grid grid-cols-2 gap-2">
@@ -60,13 +62,13 @@
 			const btnInviteReject = document.getElementById("btnInviteReject");
 
 			async function submitInviteDecision(accept) {
-				const ask = accept ? "토픽 가입을 수락하시겠습니까?" : "토픽 초대를 거절하시겠습니까?";
+				const ask = accept ? "얘깃거리 가입을 수락하시겠습니까?" : "얘깃거리 초대를 거절하시겠습니까?";
 				const ok = await confirmP(ask);
 				if (!ok) {
 					return;
 				}
 
-				const url = /*[[@{/Mosaic/InviteDecision.json}]]*/ '/Mosaic/InviteDecision.json';
+				const url = /*[[@{/Topic/InviteDecision.json}]]*/ '/Topic/InviteDecision.json';
 				const payload = {
 					topicUid: /*[[${topic.uid}]]*/ null,
 					accept

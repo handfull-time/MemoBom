@@ -50,10 +50,10 @@ public interface BoardDao {
 	List<CommentItem> loadCommentsList(LoginUser user, String uid, int pageNo, EmojiSetType emojiSetType);
 
 	/**
-	 * 스크랩 처리
+	 * 보관함 처리
 	 * @param user
 	 * @param fragmentUid
-	 * @return null이면 실패, true면 스크랩, false면 스크랩 취소
+	 * @return null이면 실패, true면 보관함, false면 보관함 취소
 	 */
 	Boolean procScrap(LoginUser user, String fragmentUid) throws Exception;
 	
@@ -93,7 +93,7 @@ public interface BoardDao {
 	List<MyCommentVo> listMyComments(LoginUser user, String keyword, int pageNo);
 	
 	/**
-	 * user가 스크랩한 목록
+	 * user가 보관함한 목록
 	 * @param user
 	 * @param keyword
 	 * @param pageNo

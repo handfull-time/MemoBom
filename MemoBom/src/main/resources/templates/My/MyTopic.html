@@ -3,7 +3,7 @@
      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
      layout:decorate="~{My/MyLayout}">
 
-	<th:block layout:fragment="my_title">나의 주제</th:block>	 
+	<th:block layout:fragment="my_title">나의 얘깃거리</th:block>	 
 <body>
 	<th:block layout:fragment="my_content">
 	  <div class="w-full mx-auto px-4 pb-24">
@@ -45,7 +45,7 @@
 	    <div id="sentinel" class="h-10"></div>
 
 	    <!-- 템플릿 -->
-	    <template id="tplMosaicItem">
+	    <template id="tplTopicItem">
 	      <div class="relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/70">
 	        <div class="color-bar absolute left-0 top-0 h-full w-2"></div>
 
@@ -82,7 +82,7 @@
 	<script>
 	(function () {
 	  const cp = window.contextPath || '';
-	  const API_URL = cp + '/My/MyMosaic.json';
+	  const API_URL = cp + '/My/MyTopic.json';
 
 	  const $list = document.getElementById('list');
 	  const $state = document.getElementById('state');
@@ -90,7 +90,7 @@
 	  const $keyword = document.getElementById('keyword');
 	  const $btnSearch = document.getElementById('btnSearch');
 	  const $btnReset = document.getElementById('btnReset');
-	  const tpl = document.getElementById('tplMosaicItem');
+	  const tpl = document.getElementById('tplTopicItem');
 
 	  let pageNo = 1;
 	  let loading = false;
@@ -188,7 +188,7 @@
 		  const uid = btn.dataset.uid;
 		  if (!uid) return;
 
-		  location.href = cp + '/Mosaic/Item.html?uid=' + encodeURIComponent(uid);
+		  location.href = cp + '/Topic/Item.html?uid=' + encodeURIComponent(uid);
 	  });
 
 	  async function resetAndLoad() {

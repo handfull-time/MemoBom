@@ -3,7 +3,7 @@
 	layout:decorate="~{My/MyLayout}">
 
 
-<th:block layout:fragment="my_title">MY Scrap</th:block>
+<th:block layout:fragment="my_title">나의 보관함</th:block>
 
 <body>
 <th:block layout:fragment="my_content">
@@ -43,7 +43,7 @@
 	        <!-- 좌측 topic 컬러바 -->
 	        <div class="color-bar absolute left-0 top-0 h-full w-2"></div>
 
-	        <!-- 상단: topic row + 날짜 + 스크랩아이콘 + → -->
+	        <!-- 상단: topic row + 날짜 + 보관함아이콘 + → -->
 	        <div class="px-4 pt-3 pb-2 flex items-center gap-2">
 	          <!-- topic 클릭 영역 -->
 	          <button type="button"
@@ -56,21 +56,21 @@
 	          <!-- 날짜 -->
 	          <span class="reg-date text-dynamic-xs text-slate-500 shrink-0">2026-01-29 17:08</span>
 
-	          <!-- 스크랩 아이콘(해제) -->
+	          <!-- 보관함 아이콘(해제) -->
 	          <button type="button"
 	                  class="btn-unscrap shrink-0 p-2 rounded-xl hover:bg-slate-100
 	                         ring-1 ring-slate-200"
-	                  aria-label="스크랩 해제">
+	                  aria-label="보관함 해제">
 					  <img th:src="@{/images/fragment/scrap_on.svg}"
 					     alt="scrap"
 					     class="icon-scrap-img block pointer-events-none"/>
 	          </button>
 
-	          <!-- → 링크(프래그먼트) -->
+	          <!-- → 링크(이야기) -->
 	          <button type="button"
 	                  class="btn-frag-link shrink-0 p-2 rounded-xl hover:bg-slate-100
 	                         ring-1 ring-slate-200"
-	                  aria-label="프래그먼트로 이동">
+	                  aria-label="이야기로 이동">
 	            <svg xmlns="http://www.w3.org/2000/svg"
 	                 viewBox="0 0 24 24"
 	                 width="20" height="20"
@@ -178,12 +178,12 @@
 	    }
 	  }
 
-	  // 스크랩 해제
+	  // 보관함 해제
 	  async function doUnscrap(card) {
 	    const fragUid = card?.dataset?.fragUid;
 	    if (!fragUid) return;
 
-	    const ok = await confirmP('스크랩을 해제할까요?');
+	    const ok = await confirmP('보관함을 해제할까요?');
 	    if (!ok) return;
 
 	    try {
@@ -191,14 +191,14 @@
 	      const res = await apiPost(API_UNSCRAP, { uid: fragUid });
 
 	      if (!res || res.code !== '0') {
-	        await alertP(res?.message || '스크랩 해제에 실패했습니다.');
+	        await alertP(res?.message || '보관함 해제에 실패했습니다.');
 	        return;
 	      }
 
 	      // 화면에서 제거
 	      card.remove();
 
-	      showToast('', '스크랩을 해제했습니다.', ToastType.SUCCESS, 1200);
+	      showToast('', '보관함을 해제했습니다.', ToastType.SUCCESS, 1200);
 
 	      // 리스트가 비면 상태 메시지
 	      if ($list.children.length === 0 && ended) {
@@ -217,7 +217,7 @@
 	    const card = e.target.closest('.card');
 	    if (!card) return;
 
-	    // 1) 스크랩 아이콘 클릭 → 해제
+	    // 1) 보관함 아이콘 클릭 → 해제
 	    const btnUnscrap = e.target.closest('button.btn-unscrap');
 	    if (btnUnscrap) {
 	      doUnscrap(card);

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{My/MyLayout}">
 
-<th:block layout:fragment="my_title">마이페이지</th:block>
+<th:block layout:fragment="my_title">내꺼</th:block>
 
 
 
@@ -36,7 +36,7 @@
 				</label>
 
 				<input id="nickname" th:value="${item.user.nickname}" maxlength="32" class="mt-3 w-full text-center text-dynamic-xl font-bold tracking-tight text-slate-900
-                      outline-none bg-transparent" placeholder="닉네임" />
+                      outline-none bg-transparent" placeholder="별명" />
 			</div>
 
 			<!-- 구분선 -->
@@ -48,13 +48,13 @@
 
 				<ul class="rounded-2xl bg-slate-50 divide-y divide-slate-200/50 overflow-hidden">
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">주제 생성</span>
+						<span class="text-slate-700">얘깃거리 생성</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.topicCreatedCount}">0</span>
 					</li>
 					<div class="h-[1px] bg-slate-200/60"></div>
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">주제 팔로우</span>
+						<span class="text-slate-700">얘깃거리 구독</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.topicFollowCount}">0</span>
 					</li>
@@ -65,7 +65,7 @@
 					</li>
 					<div class="h-[1px] bg-slate-200/60"></div>
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">메모 작성</span>
+						<span class="text-slate-700">이야기 작성</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.fragmentWriteCount}">0</span>
 					</li>
@@ -77,7 +77,7 @@
 					</li>
 					<div class="h-[1px] bg-slate-200/60"></div>
 					<li class="flex items-center justify-between px-4 py-3">
-						<span class="text-slate-700">메모 감정 참여</span>
+						<span class="text-slate-700">이야기 감정 참여</span>
 						<span class="font-semibold text-slate-900"
 							th:text="${item.statistics.fragmentEmotionCount}">0</span>
 					</li>
@@ -93,13 +93,12 @@
 			<!-- 구분선 -->
 			<div class="h-[1px] bg-slate-200/70"></div>
 
-
 			<th:block th:if="${isAdmin}">
 				<div class="h-[1px] bg-slate-200/70"></div>
 				<div class="px-4 py-3">
 					<a th:href="@{/Lotus/Login.html}"
 						class="w-full inline-flex items-center justify-center rounded-xl border border-blue-200 bg-blue-50 py-2.5 text-dynamic-sm font-semibold text-blue-700 hover:bg-blue-100 transition">
-						AdminPage
+						관리자 페이지
 					</a>
 				</div>
 			</th:block>
@@ -155,7 +154,7 @@
 			}
 
 			/* =====================
-			 * 닉네임 변경 감지
+			 * 별명 변경 감지
 			 * ===================== */
 			$nickname.addEventListener('input', () => {
 				const now = ($nickname.value || '').trim();
@@ -207,7 +206,7 @@
 			});
 
 			/* =====================
-			 * 페이지 이탈 시 닉네임만 저장
+			 * 페이지 이탈 시 별명만 저장
 			 * ===================== */
 			async function saveNicknameIfNeeded() {
 				if (!dirtyNickname || savingNickname) return;
@@ -230,15 +229,15 @@
 						dirtyNickname = false;
 					}
 				} catch (e) {
-					console.warn('닉네임 자동 저장 실패', e);
-					showToast('오류', '닉네임 자동 저장 중 오류가 발생했습니다.', ToastType.ERROR, 1800);
+					console.warn('별명 자동 저장 실패', e);
+					showToast('오류', '별명 자동 저장 중 오류가 발생했습니다.', ToastType.ERROR, 1800);
 				} finally {
 					savingNickname = false;
 				}
 			}
 
 			/* =====================
-			 * 닉네임 포커스 아웃 시 저장 ⭕
+			 * 별명 포커스 아웃 시 저장 ⭕
 			 * ===================== */
 			$nickname.addEventListener('blur', async () => {
 				await saveNicknameIfNeeded();
@@ -252,7 +251,7 @@
 			});
 
 			/* =====================
-			 * 로그아웃 / 탈퇴 시에도 닉네임 저장 후 진행
+			 * 로그아웃 / 탈퇴 시에도 별명 저장 후 진행
 			 * ===================== */
 			async function leaveAfterNicknameSave(next) {
 				await saveNicknameIfNeeded();

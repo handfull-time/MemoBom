@@ -249,13 +249,13 @@ showCustomConfirm("정말로 삭제하시겠습니까?", function(result) {
     }
 });
 
-showCustomPrompt("변경할 닉네임을 입력하세요.", function(inputValue) {
+showCustomPrompt("변경할 별명을 입력하세요.", function(inputValue) {
     if (inputValue === false) {
         console.log("입력이 취소되었습니다.");
     } else if (inputValue.trim() === "") {
-        showCustomAlert("닉네임은 공백일 수 없습니다.");
+        showCustomAlert("별명은 공백일 수 없습니다.");
     } else {
-        console.log("입력된 닉네임:", inputValue);
+        console.log("입력된 별명:", inputValue);
         updateNickname(inputValue);
     }
 });

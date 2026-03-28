@@ -94,8 +94,8 @@ public class ShareController {
 	 * @throws Exception
 	 */
 	@ResponseBody
-	@GetMapping(value = "Share/Mosaic/{uid}.png", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> ogMosaic( @PathVariable String uid ) throws Exception {
+	@GetMapping(value = "Share/Topic/{uid}.png", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> ogTopic( @PathVariable String uid ) throws Exception {
     	
         final byte[] png = shareServce.drawTopicOgImagePngBytes(uid);
         if (png == null || png.length == 0) {

@@ -190,7 +190,7 @@ class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public ReturnBasic getMyMosaicDataList(LoginUser user, MySearchDto searchVo) {
+	public ReturnBasic getMyTopicDataList(LoginUser user, MySearchDto searchVo) {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
