@@ -13,12 +13,45 @@
 	        </svg>
 	      </button>
 
-	      <div class="font-bold">[[${title}]]</div>
+	      <div class="font-bold" data-role="menu-header-title" th:attr="data-base-title=${title}">[[${title}]]</div>
 	    </div>
 
 	    <!-- (옵션) 우측 버튼 영역 -->
 	    <div class="text-dynamic-sm text-gray-500"></div>
 	  </div>
+
+	  <script th:inline="javascript">
+		(function () {
+			const titleEl = document.querySelector('[data-role="menu-header-title"]');
+			if (!titleEl) return;
+
+			const baseTitle = (titleEl.dataset.baseTitle || '').trim();
+
+			function resolveActiveMenuName() {
+				const path = window.location.pathname;
+				const escapedPath = window.CSS && typeof window.CSS.escape === 'function'
+					? window.CSS.escape(path)
+					: path.replace(/([\"'\\])/g, '\\$1');
+				const pathMatchedLabel = document.querySelector(`nav a[href="${escapedPath}"] .font-medium`);
+				if (pathMatchedLabel) return (pathMatchedLabel.textContent || '').trim();
+
+				const activeLabel = document.querySelector('nav a.bg-slate-900 .font-medium');
+				if (!activeLabel) return '';
+				return (activeLabel.textContent || '').trim();
+			}
+
+			function applyTitle() {
+				const menuName = resolveActiveMenuName();
+				titleEl.textContent = menuName ? `${baseTitle}-${menuName}` : baseTitle;
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', applyTitle, { once: true });
+			} else {
+				applyTitle();
+			}
+		})();
+	  </script>
 	</th:block>
 	
 	<th:block th:fragment="Header_Back(title)">
