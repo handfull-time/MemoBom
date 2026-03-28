@@ -85,27 +85,20 @@
 				const elKeyword = document.getElementById('keyword');
 				const tpl = document.getElementById('tplCommentCard');
 
+
+				const adminUtils = window.AdminUtils;
+				const text = (value, fallback = '-') => adminUtils.text(value, fallback);
+				const toastInfo = (message, duration = 1300) => adminUtils.toastInfo(message, duration);
+				const toastSuccess = (message, duration = 1200) => adminUtils.toastSuccess(message, duration);
+				const toastError = (message, duration = 1800) => adminUtils.toastError(message, duration);
+
 				let pageNo = 1;
 				let loading = false;
 				let done = false;
 
-				function text(v, fallback = '-') {
-					if (v === null || v === undefined) return fallback;
-					const s = String(v).trim();
-					return s ? s : fallback;
-				}
 
-				function toastInfo(msg) {
-					showToast('안내', msg, ToastType.INFO, 1300);
-				}
 
-				function toastError(msg) {
-					showToast('오류', msg, ToastType.ERROR, 1800);
-				}
 
-				function toastSuccess(msg) {
-					showToast('완료', msg, ToastType.SUCCESS, 1200);
-				}
 
 				async function openFragmentPopup(fragmentNo) {
 					if (!fragmentNo) {
@@ -217,15 +210,9 @@
 					await loadNextPage();
 				}
 
-				function openDatePicker() {
-					if (typeof elDate.showPicker === 'function') {
-						elDate.showPicker();
-					}
-				}
 
 				function initEvents() {
-					elDate.addEventListener('click', openDatePicker);
-					elDate.addEventListener('focus', openDatePicker);
+					adminUtils.bindDatePickerOpener(elDate);
 					elDate.addEventListener('change', reload);
 
 					elKeyword.addEventListener('keydown', async (e) => {

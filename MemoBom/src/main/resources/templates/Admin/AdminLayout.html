@@ -89,6 +89,38 @@
 
 			window.AdminUtils = {
 				DATE_STORAGE_KEY: 'admin.search.date',
+
+				text(value, fallback = '-') {
+					if (value === null || value === undefined) return fallback;
+					const normalized = String(value).trim();
+					return normalized ? normalized : fallback;
+				},
+
+				toastInfo(message, duration = 1300) {
+					showToast('안내', message, ToastType.INFO, duration);
+				},
+
+				toastSuccess(message, duration = 1200) {
+					showToast('완료', message, ToastType.SUCCESS, duration);
+				},
+
+				toastError(message, duration = 1800) {
+					showToast('오류', message, ToastType.ERROR, duration);
+				},
+
+				openDatePicker(input) {
+					if (!input) return;
+					if (typeof input.showPicker === 'function') {
+						input.showPicker();
+					}
+				},
+
+				bindDatePickerOpener(input) {
+					if (!input) return;
+					const open = () => this.openDatePicker(input);
+					input.addEventListener('click', open);
+					input.addEventListener('focus', open);
+				},
 				
 				/**
 				 * 무한 스크롤 관찰자 생성

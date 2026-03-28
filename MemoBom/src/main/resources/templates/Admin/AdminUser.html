@@ -82,23 +82,16 @@
 				let done = false;
 				let observer = null;
 
-				function toastInfo(msg) {
-					showToast('안내', msg, ToastType.INFO, 1400);
-				}
 
-				function toastSuccess(msg) {
-					showToast('완료', msg, ToastType.SUCCESS, 1200);
-				}
+				const adminUtils = window.AdminUtils;
+				const text = (value, fallback = '-') => adminUtils.text(value, fallback);
+				const toastInfo = (message, duration = 1400) => adminUtils.toastInfo(message, duration);
+				const toastSuccess = (message, duration = 1200) => adminUtils.toastSuccess(message, duration);
+				const toastError = (message, duration = 1800) => adminUtils.toastError(message, duration);
 
-				function toastError(msg) {
-					showToast('오류', msg, ToastType.ERROR, 1800);
-				}
 
-				function text(v, fallback = '-') {
-					if (v === null || v === undefined) return fallback;
-					const s = String(v).trim();
-					return s ? s : fallback;
-				}
+
+
 
 				function renderItem(item) {
 					const node = tpl.content.firstElementChild.cloneNode(true);
@@ -229,15 +222,9 @@
 					await loadNextPage();
 				}
 
-				function openDatePicker() {
-					if (typeof elDate.showPicker === 'function') {
-						elDate.showPicker();
-					}
-				}
 
 				function initEvents() {
-					elDate.addEventListener('click', openDatePicker);
-					elDate.addEventListener('focus', openDatePicker);
+					adminUtils.bindDatePickerOpener(elDate);
 					elDate.addEventListener('change', reload);
 
 					elKeyword.addEventListener('keydown', async (e) => {

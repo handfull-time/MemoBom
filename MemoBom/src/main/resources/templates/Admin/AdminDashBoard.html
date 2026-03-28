@@ -131,15 +131,7 @@
 					currentUrl.searchParams.set('date', date);
 					window.history.replaceState({}, '', currentUrl.toString());
 				}
-
-					function openDatePicker() {
-						if (typeof dateInput.showPicker === 'function') {
-							dateInput.showPicker();
-						}
-					}
-
-					dateInput.addEventListener('click', openDatePicker);
-					dateInput.addEventListener('focus', openDatePicker);
+					window.AdminUtils.bindDatePickerOpener(dateInput);
 
 					dateInput.addEventListener('change', async (e) => {
 					const date = e.target.value;
