@@ -25,12 +25,10 @@
 
 		<template id="tplScrapCard">
 			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
-				<div class="text-lg font-semibold text-slate-900 truncate">스크랩</div>
-				<div class="mt-1 text-sm text-slate-800 truncate whitespace-nowrap overflow-hidden fragmentContent">-</div>
-				<div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
+				<div class="text-sm text-slate-800 truncate whitespace-nowrap overflow-hidden fragmentContent">-</div>
+				<div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 text-sm text-slate-600">
 					<div>날짜: <span class="regDate tabular-nums">-</span></div>
 					<div>사람: <span class="userNickname">-</span></div>
-					<div>계정: <span class="userId">-</span></div>
 				</div>
 			</article>
 		</template>
@@ -73,7 +71,6 @@
 					node.querySelector('.fragmentContent').textContent = content;
 					node.querySelector('.regDate').textContent = text(item.regDate);
 					node.querySelector('.userNickname').textContent = text(item.userNickname);
-					node.querySelector('.userId').textContent = text(item.userId);
 					return node;
 				}
 
