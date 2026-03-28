@@ -88,6 +88,8 @@
 			};
 
 			window.AdminUtils = {
+				DATE_STORAGE_KEY: 'admin.search.date',
+				
 				/**
 				 * 무한 스크롤 관찰자 생성
 				 * @param {Element} sentinel 관찰 대상 element
@@ -109,8 +111,70 @@
 					});
 					observer.observe(sentinel);
 					return observer;
+				},
+
+				getTodayDate() {
+					const now = new Date();
+					const y = now.getFullYear();
+					const m = String(now.getMonth() + 1).padStart(2, '0');
+					const d = String(now.getDate()).padStart(2, '0');
+					return `${y}-${m}-${d}`;
+				},
+
+				normalizeDate(value) {
+					const raw = String(value || '').trim();
+					if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return '';
+					const dt = new Date(`${raw}T00:00:00`);
+					if (Number.isNaN(dt.getTime())) return '';
+					return raw;
+				},
+
+				loadDateFromStorage() {
+					try {
+						return this.normalizeDate(localStorage.getItem(this.DATE_STORAGE_KEY));
+					} catch (e) {
+						return '';
+					}
+				},
+
+				saveDateToStorage(value) {
+					const normalized = this.normalizeDate(value) || this.getTodayDate();
+					try {
+						localStorage.setItem(this.DATE_STORAGE_KEY, normalized);
+					} catch (e) {
+						// ignore
+					}
+					return normalized;
+				},
+
+				bindDateInput(input) {
+					if (!input) return;
+					const current = this.normalizeDate(input.value);
+					const stored = this.loadDateFromStorage();
+					const applied = current || stored || this.getTodayDate();
+					input.value = applied;
+					this.saveDateToStorage(applied);
+					
+					input.addEventListener('change', () => {
+						const changed = this.normalizeDate(input.value) || this.getTodayDate();
+						input.value = changed;
+						this.saveDateToStorage(changed);
+					});
+				},
+
+				initDatePersistence(root = document) {
+					const inputs = root.querySelectorAll('input[type="date"][name="date"]');
+					inputs.forEach((input) => this.bindDateInput(input));
 				}
 			};
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', () => {
+					window.AdminUtils.initDatePersistence();
+				});
+			} else {
+				window.AdminUtils.initDatePersistence();
+			}
 
 			// ESC로 닫기
 			document.addEventListener('keydown', (e) => {

@@ -287,7 +287,7 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getPushList(searchVo) );
+		result.setData( adminDao.getPushList(this.procDate(searchVo)) );
 		
 		return result;
 	}
