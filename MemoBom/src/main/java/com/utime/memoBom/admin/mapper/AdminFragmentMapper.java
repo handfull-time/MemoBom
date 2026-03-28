@@ -10,4 +10,5 @@ import com.utime.memoBom.admin.vo.AdminSearchVo;
 @Mapper
 public interface AdminFragmentMapper {
 	List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo);
+	int deleteFragmentsAfter2Weeks();
 }

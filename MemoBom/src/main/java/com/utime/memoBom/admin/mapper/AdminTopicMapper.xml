@@ -75,4 +75,10 @@
 		ORDER BY F.CREATED_AT DESC, U.USER_NO DESC
 	</select>
 
+	<delete id="deleteDisabledTopicsAfter2Weeks">
+		DELETE FROM MB_TOPIC
+		WHERE ENABLED = FALSE
+			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+	</delete>
+
 </mapper>

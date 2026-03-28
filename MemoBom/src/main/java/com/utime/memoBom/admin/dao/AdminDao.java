@@ -139,4 +139,14 @@ public interface AdminDao {
 	 */
 	int updateCommentDeleted(Long commentNo, Boolean deleted)throws Exception;
 
+	int deleteInactivePushSubsAfter2Weeks() throws Exception;
+
+	int deleteCommentsAfter2Weeks() throws Exception;
+
+	int deleteFragmentsAfter2Weeks() throws Exception;
+
+	int deleteDisabledTopicsAfter2Weeks() throws Exception;
+
+	int deleteDisabledUsersAfter2Weeks() throws Exception;
+
 }

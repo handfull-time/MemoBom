@@ -36,4 +36,10 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
+	<delete id="deleteInactivePushSubsAfter2Weeks">
+		DELETE FROM MB_PUSH_SUB
+		WHERE IS_ACTIVE = FALSE
+			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+	</delete>
+
 </mapper>

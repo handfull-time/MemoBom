@@ -17,4 +17,6 @@ public interface AdminTopicMapper {
 	int updateTopicEditable(AdminTopicVo topicVo);
 
 	List<AdminTopicFollowVo> getTopicFollowUsers(@Param("topicNo") Long topicNo);
+
+	int deleteDisabledTopicsAfter2Weeks();
 }

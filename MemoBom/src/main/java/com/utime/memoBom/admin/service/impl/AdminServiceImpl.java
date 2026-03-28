@@ -79,12 +79,21 @@ class AdminServiceImpl implements AdminService {
 		}
 	}
 	
-	@Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 30 12 * * *", zone = "Asia/Seoul")
 	public void cleanupExpired() {
 		try {
-			//TODO 제거 작업
+			final int pushDeleted = adminDao.deleteInactivePushSubsAfter2Weeks();
+			final int commentDeleted = adminDao.deleteCommentsAfter2Weeks();
+			final int fragmentDeleted = adminDao.deleteFragmentsAfter2Weeks();
+			final int topicDeleted = adminDao.deleteDisabledTopicsAfter2Weeks();
+			final int userDeleted = adminDao.deleteDisabledUsersAfter2Weeks();
+
+			log.info(
+				"cleanupExpired 완료 - push:{}, comments:{}, fragments:{}, topics:{}, users:{}",
+				pushDeleted, commentDeleted, fragmentDeleted, topicDeleted, userDeleted
+			);
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("cleanupExpired 실행 중 오류", e);
 		}
 	}
 	

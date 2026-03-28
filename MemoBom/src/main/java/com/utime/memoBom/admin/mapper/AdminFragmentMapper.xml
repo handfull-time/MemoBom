@@ -55,4 +55,10 @@
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
 
+	<delete id="deleteFragmentsAfter2Weeks">
+		DELETE FROM MB_FRAGMENT
+		WHERE IS_DELETED = FALSE
+			AND UPDATE_DATE <![CDATA[<]]> CURRENT_TIMESTAMP - INTERVAL '14 day'
+	</delete>
+
 </mapper>

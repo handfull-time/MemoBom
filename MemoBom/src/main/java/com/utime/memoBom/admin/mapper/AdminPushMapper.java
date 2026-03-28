@@ -10,4 +10,5 @@ import com.utime.memoBom.admin.vo.AdminSearchVo;
 @Mapper
 public interface AdminPushMapper {
 	List<AdminPushVo> getPushList(AdminSearchVo searchVo);
+	int deleteInactivePushSubsAfter2Weeks();
 }

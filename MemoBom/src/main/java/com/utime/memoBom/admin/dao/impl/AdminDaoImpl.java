@@ -122,4 +122,34 @@ class AdminDaoImpl implements AdminDao {
 	public int updateCommentDeleted(Long commentNo, Boolean deleted) throws Exception{
 		return commentMapper.updateCommentDeleted(commentNo, deleted);
 	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int deleteInactivePushSubsAfter2Weeks() throws Exception {
+		return pushMapper.deleteInactivePushSubsAfter2Weeks();
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int deleteCommentsAfter2Weeks() throws Exception {
+		return commentMapper.deleteCommentsAfter2Weeks();
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int deleteFragmentsAfter2Weeks() throws Exception {
+		return fragmentMapper.deleteFragmentsAfter2Weeks();
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int deleteDisabledTopicsAfter2Weeks() throws Exception {
+		return topicMapper.deleteDisabledTopicsAfter2Weeks();
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public int deleteDisabledUsersAfter2Weeks() throws Exception {
+		return userMapper.deleteDisabledUsersAfter2Weeks();
+	}
 }
