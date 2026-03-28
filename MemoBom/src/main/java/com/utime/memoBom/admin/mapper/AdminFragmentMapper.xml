@@ -3,6 +3,58 @@
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminFragmentMapper">
 
+	<select id="getFragmentList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(F.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			TO_CHAR(F.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			F.FRAGMENT_NO AS fragmentNo,
+			CAST(F.UID AS VARCHAR) AS uid,
+			F.IS_DELETED AS deleted,
+			F.USER_NO AS userNo,
+			U.ID AS userId,
+			U.NICKNAME AS userNickname,
+			F.TOPIC_NO AS topicNo,
+			T.NAME AS topicName,
+			CAST(T.UID AS VARCHAR) AS topicUid,
+			CAST(F.CONTENT AS VARCHAR) AS content,
+			(
+				SELECT COUNT(1)
+				FROM MB_FRAGMENT_COMMENTS C
+				WHERE C.FRAGMENT_NO = F.FRAGMENT_NO
+			) AS commentCount,
+			(
+				SELECT COUNT(1)
+				FROM MB_FRAGMENT_EMOTION_LOG E
+				WHERE E.TARGET_TYPE = 1
+					AND E.TARGET_NO = F.FRAGMENT_NO
+			) AS emotionCount,
+			(
+				SELECT COUNT(1)
+				FROM MB_FRAGMENT_SCRAP S
+				WHERE S.FRAGMENT_NO = F.FRAGMENT_NO
+			) AS scrapCount
+		FROM MB_FRAGMENT F
+		INNER JOIN MB_USER U
+			ON U.USER_NO = F.USER_NO
+		INNER JOIN MB_TOPIC T
+			ON T.TOPIC_NO = F.TOPIC_NO
+		WHERE TO_CHAR(F.REG_DATE, 'YYYY-MM-DD') = #{date}
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(CAST(F.UID AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY F.FRAGMENT_NO DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
 <!-- 글 목록(관리자용)
 SELECT F.FRAG_UID, F.REG_DATE, F.USER_NO, U.NICKNAME,
        F.TOPIC_UID, T.NAME AS TOPIC_NAME,

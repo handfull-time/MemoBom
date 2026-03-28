@@ -72,8 +72,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo) {
-		
-		return null;
+		return fragmentMapper.getFragmentList(searchVo);
 	}
 
 	@Override

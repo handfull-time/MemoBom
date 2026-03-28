@@ -204,7 +204,7 @@ class AdminServiceImpl implements AdminService {
 		
 		final ReturnBasic result = new ReturnBasic();
 		
-		result.setData( adminDao.getFragmentList(searchVo) );
+		result.setData( adminDao.getFragmentList(this.procDate(searchVo)) );
 		
 		return result;
 	}
