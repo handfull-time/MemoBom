@@ -3,6 +3,44 @@
 
 <mapper namespace="com.utime.memoBom.admin.mapper.AdminShareMapper">
 
+	<select id="getShareList"
+		parameterType="com.utime.memoBom.admin.vo.AdminSearchVo"
+		resultType="com.utime.memoBom.admin.vo.AdminShareVo">
+		<bind name="offset" value="(pageNo - 1) * 20"/>
+		SELECT
+			TO_CHAR(S.CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') AS createAt,
+			S.SHARE_NO AS shareNo,
+			CAST(S.UID AS VARCHAR) AS uid,
+			S.TARGET_TYPE AS targetType,
+			S.TARGET_NO AS targetNo,
+			S.USER_NO AS userNo,
+			U.ID AS userId,
+			U.NICKNAME AS userNickname,
+			T.NAME AS topicName,
+			SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 80) AS fragmentContent
+		FROM MB_SHARE S
+		LEFT JOIN MB_USER U
+			ON U.USER_NO = S.USER_NO
+		LEFT JOIN MB_TOPIC T
+			ON S.TARGET_TYPE = 0
+			AND T.TOPIC_NO = S.TARGET_NO
+		LEFT JOIN MB_FRAGMENT F
+			ON S.TARGET_TYPE = 1
+			AND F.FRAGMENT_NO = S.TARGET_NO
+		WHERE TO_CHAR(S.CREATE_AT, 'YYYY-MM-DD') = #{date}
+			AND S.TARGET_TYPE IN (0, 1)
+		<if test="keyword != null and keyword != ''">
+			AND (
+				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+			)
+		</if>
+		ORDER BY S.SHARE_NO DESC
+		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+	</select>
+
 <!--SELECT SHARE_UID, TARGET_TYPE, TARGET_UID, USER_NO,
        CREATE_AT, LAST_ACCESS_AT, ACCESS_CNT, BOT_ACCESS_CNT, ACTIVE
 FROM MB_SHARE

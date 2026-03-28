@@ -98,8 +98,7 @@ class AdminDaoImpl implements AdminDao {
 
 	@Override
 	public List<AdminShareVo> getShareList(AdminSearchVo searchVo) {
-		
-		return null;
+		return shareMapper.getShareList(searchVo);
 	}
 
 	@Override
