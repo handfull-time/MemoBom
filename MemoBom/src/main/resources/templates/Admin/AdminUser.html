@@ -14,7 +14,7 @@
 						<input id="searchDate" type="date" name="date" th:value="${date}"
 							class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
 					</div>
-					<input id="keyword" type="text" name="keyword" placeholder="검색어 (id/email/nickname/provider)"
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (아이디/이메일/닉네임/로그인 방식)"
 						class="w-full md:w-[420px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
 				</div>
 			</div>
@@ -131,14 +131,14 @@
 									note: nextNote
 								});
 								if (!res || res.code !== '0') {
-									throw new Error((res && res.message) || 'note 저장 실패');
+									throw new Error((res && res.message) || '노트 저장 실패');
 								}
 								lastSavedNote = nextNote;
-									toastSuccess(`userNo ${item.userNo} note 저장 완료`);
+									toastSuccess(`사용자 ${item.userNo}의 노트를 저장했습니다.`);
 								} catch (err) {
 									console.error(err);
 									noteInput.value = lastSavedNote;
-									toastError('note 저장 중 오류가 발생했습니다.');
+									toastError('노트 저장 중 오류가 발생했습니다.');
 								} finally {
 								noteInput.removeAttribute('disabled');
 								noteSaving = false;
@@ -164,18 +164,18 @@
 									enabled: next
 								});
 								if (!res || res.code !== '0') {
-									throw new Error((res && res.message) || 'enabled 변경 실패');
+									throw new Error((res && res.message) || '활성 상태 변경 실패');
 								}
 
 								enabledEl.textContent = next ? '활성' : '비활성';
 								enabledEl.classList.remove('bg-slate-100', 'text-slate-700', 'bg-emerald-100', 'text-emerald-700');
 								if (next) enabledEl.classList.add('bg-emerald-100', 'text-emerald-700');
 								else enabledEl.classList.add('bg-slate-100', 'text-slate-700');
-									toastSuccess(`userNo ${item.userNo} enabled 변경 완료`);
+									toastSuccess(`사용자 ${item.userNo}의 활성 상태를 저장했습니다.`);
 								} catch (err) {
 									console.error(err);
 									enabledToggle.checked = prev;
-									toastError('enabled 변경 중 오류가 발생했습니다.');
+									toastError('활성 상태 저장 중 오류가 발생했습니다.');
 								} finally {
 								enabledToggle.removeAttribute('disabled');
 							}

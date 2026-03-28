@@ -188,6 +188,18 @@ class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
+	public ReturnBasic getTopicFollowUsers(LoginUser user, Long topicNo) {
+		final ReturnBasic result = new ReturnBasic();
+
+		if (topicNo == null || topicNo <= 0) {
+			return result.setCodeMessage("E", "유효한 topicNo 값이 필요합니다.");
+		}
+
+		result.setData(adminDao.getTopicFollowUsers(topicNo));
+		return result;
+	}
+
+	@Override
 	public ReturnBasic getFragmentList(LoginUser user, AdminSearchVo searchVo) {
 		
 		final ReturnBasic result = new ReturnBasic();

@@ -9,6 +9,7 @@ import com.utime.memoBom.admin.vo.AdminPushVo;
 import com.utime.memoBom.admin.vo.AdminScrapVo;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
 import com.utime.memoBom.admin.vo.AdminShareVo;
+import com.utime.memoBom.admin.vo.AdminTopicFollowVo;
 import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
@@ -38,6 +39,14 @@ public interface AdminDao {
 	 * @return 토픽 목록
 	 */
 	List<AdminTopicVo> getTopicList(AdminSearchVo searchVo);
+
+	/**
+	 * 토픽을 팔로우한 사용자 목록을 조회한다.
+	 *
+	 * @param topicNo 토픽 번호
+	 * @return 팔로우 사용자 목록
+	 */
+	List<AdminTopicFollowVo> getTopicFollowUsers(Long topicNo);
 
 	/**
 	 * 토픽 수정 가능 항목(ENABLED, MAX_LEN, AI, PROMPT)을 저장한다.

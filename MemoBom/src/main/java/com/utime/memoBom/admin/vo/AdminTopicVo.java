@@ -23,4 +23,6 @@ public class AdminTopicVo {
 	Integer emojiSetType;
 	Boolean ai;
 	String prompt;
+	Integer fragmentCount;
+	Integer followCount;
 }

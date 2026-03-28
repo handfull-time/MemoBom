@@ -22,6 +22,7 @@ import com.utime.memoBom.admin.vo.AdminPushVo;
 import com.utime.memoBom.admin.vo.AdminScrapVo;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
 import com.utime.memoBom.admin.vo.AdminShareVo;
+import com.utime.memoBom.admin.vo.AdminTopicFollowVo;
 import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
 import com.utime.memoBom.admin.vo.DashboardVo;
@@ -57,6 +58,11 @@ class AdminDaoImpl implements AdminDao {
 	@Override
 	public List<AdminTopicVo> getTopicList(AdminSearchVo searchVo) {
 		return topicMapper.getTopicList(searchVo);
+	}
+
+	@Override
+	public List<AdminTopicFollowVo> getTopicFollowUsers(Long topicNo) {
+		return topicMapper.getTopicFollowUsers(topicNo);
 	}
 
 	@Override

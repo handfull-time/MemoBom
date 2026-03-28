@@ -167,6 +167,23 @@ public class AdminController {
 		model.addAttribute("date", date );
 		return "Admin/AdminTopic";
     }
+
+	/**
+	 * 토픽 팔로우 사용자 목록 팝업을 반환한다.
+	 *
+	 * @param model 모델
+	 * @param user 현재 사용자
+	 * @param topicNo 토픽 번호
+	 * @return 팝업 템플릿 경로
+	 */
+	@GetMapping(path = {"TopicFollow.popup" })
+	public String adminTopicFollowPopup(ModelMap model, LoginUser user, @RequestParam Long topicNo) {
+		final ReturnBasic result = adminService.getTopicFollowUsers(user, topicNo);
+		model.addAttribute("topicNo", topicNo);
+		model.addAttribute("result", result);
+		model.addAttribute("followers", result.getData());
+		return "Admin/TopicFollowPopup";
+	}
 	
 	/**
 	 * 토픽 목록을 JSON으로 반환한다.

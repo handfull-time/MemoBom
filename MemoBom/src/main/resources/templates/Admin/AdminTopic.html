@@ -14,7 +14,7 @@
 						<input id="searchDate" type="date" name="date" th:value="${date}"
 							class="h-10 px-3 rounded-xl border border-slate-300 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400">
 					</div>
-					<input id="keyword" type="text" name="keyword" placeholder="검색어 (name/description/uid)"
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (이름/설명/작성자)"
 						class="w-full md:w-[420px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
 				</div>
 			</div>
@@ -43,6 +43,14 @@
 
 					<div class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
 						<div>ownerNo: <span class="ownerNo tabular-nums">0</span></div>
+						<div>게시글: <span class="fragmentCount tabular-nums">0</span></div>
+						<div>
+							팔로우:
+							<button type="button"
+								class="followCountBtn tabular-nums px-1.5 py-0.5 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors">
+								<span class="followCount">0</span>
+							</button>
+						</div>
 						<div>color: <span class="color">-</span></div>
 						<div>emojiSetType: <span class="emojiSetType">0</span></div>
 						<div>external: <span class="external">-</span></div>
@@ -57,13 +65,15 @@
 					</div>
 
 					<div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
-						<div class="rounded-lg border border-slate-200 p-2 flex items-center justify-between">
-							<span class="text-sm text-slate-600">ENABLED</span>
-							<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
-						</div>
-						<div class="rounded-lg border border-slate-200 p-2 flex items-center justify-between">
-							<span class="text-sm text-slate-600">AI</span>
-							<pp-toggle class="aiToggle" on-text="ON" off-text="OFF"></pp-toggle>
+						<div class="rounded-lg border border-slate-200 p-2 grid grid-cols-2 gap-2 md:col-span-2">
+							<div class="flex items-center justify-between rounded-md border border-slate-200 px-2 py-1.5">
+								<span class="text-sm text-slate-600">ENABLED</span>
+								<pp-toggle class="enabledToggle" on-text="ON" off-text="OFF"></pp-toggle>
+							</div>
+							<div class="flex items-center justify-between rounded-md border border-slate-200 px-2 py-1.5">
+								<span class="text-sm text-slate-600">AI</span>
+								<pp-toggle class="aiToggle" on-text="ON" off-text="OFF"></pp-toggle>
+							</div>
 						</div>
 						<label class="rounded-lg border border-slate-200 p-2 flex items-center gap-2">
 							<span class="text-sm text-slate-600 shrink-0">MAX_LEN</span>
@@ -71,7 +81,7 @@
 						</label>
 						<div class="rounded-lg border border-slate-200 p-2 md:col-span-2">
 							<div class="text-sm text-slate-600 mb-1">PROMPT</div>
-							<textarea rows="5" class="promptInput w-full px-2 py-1.5 rounded border border-slate-300 text-sm resize-y" placeholder="prompt"></textarea>
+							<textarea rows="5" class="promptInput w-full px-2 py-1.5 rounded border border-slate-300 text-sm resize-y" placeholder="프롬프트를 입력하세요."></textarea>
 						</div>
 					</div>
 				</article>
@@ -85,6 +95,7 @@
 				const PAGE_SIZE = 20;
 				const listUrl = /*[[@{/Lotus/TopicList.json}]]*/ '/Lotus/TopicList.json';
 				const saveUrl = /*[[@{/Lotus/TopicSave.json}]]*/ '/Lotus/TopicSave.json';
+				const followPopupUrl = /*[[@{/Lotus/TopicFollow.popup}]]*/ '/Lotus/TopicFollow.popup';
 
 				const elList = document.getElementById('topicList');
 				const elSentinel = document.getElementById('pageSentinel');
@@ -100,6 +111,11 @@
 					if (v === null || v === undefined) return fallback;
 					const s = String(v).trim();
 					return s ? s : fallback;
+				}
+
+				function nullableText(v) {
+					if (v === null || v === undefined) return '';
+					return String(v);
 				}
 
 				function toastInfo(msg) {
@@ -130,7 +146,7 @@
 					let enabled = !!item.enabled;
 					let ai = !!item.ai;
 					let maxLen = Number(item.maxLen || 0);
-					let prompt = text(item.prompt, '');
+					let prompt = nullableText(item.prompt);
 
 					enabledToggle.checked = enabled;
 					aiToggle.checked = ai;
@@ -144,11 +160,11 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled: next, ai, maxLen, prompt });
 							enabled = next;
-							toastSuccess(`topicNo ${item.topicNo} ENABLED 저장 완료`);
+							toastSuccess(`토픽 ${item.topicNo}의 ENABLED 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							enabledToggle.checked = prev;
-							toastError('ENABLED 저장 실패');
+							toastError('ENABLED 값 저장에 실패했습니다.');
 						} finally {
 							enabledToggle.removeAttribute('disabled');
 						}
@@ -161,11 +177,11 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai: next, maxLen, prompt });
 							ai = next;
-							toastSuccess(`topicNo ${item.topicNo} AI 저장 완료`);
+							toastSuccess(`토픽 ${item.topicNo}의 AI 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							aiToggle.checked = prev;
-							toastError('AI 저장 실패');
+							toastError('AI 값 저장에 실패했습니다.');
 						} finally {
 							aiToggle.removeAttribute('disabled');
 						}
@@ -182,33 +198,53 @@
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen: next, prompt });
 							maxLen = next;
-							toastSuccess(`topicNo ${item.topicNo} MAX_LEN 저장 완료`);
+							toastSuccess(`토픽 ${item.topicNo}의 MAX_LEN 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							maxLenInput.value = String(maxLen);
-							toastError('MAX_LEN 저장 실패');
+							toastError('MAX_LEN 값 저장에 실패했습니다.');
 						} finally {
 							maxLenInput.removeAttribute('disabled');
 						}
 					});
 
 					promptInput.addEventListener('blur', async () => {
-						const next = text(promptInput.value, '');
+						const next = nullableText(promptInput.value);
 						if (next === prompt) return;
 
 						promptInput.setAttribute('disabled', '');
 						try {
 							await saveEditable({ topicNo: item.topicNo, enabled, ai, maxLen, prompt: next });
 							prompt = next;
-							toastSuccess(`topicNo ${item.topicNo} PROMPT 저장 완료`);
+							toastSuccess(`토픽 ${item.topicNo}의 PROMPT 값을 저장했습니다.`);
 						} catch (err) {
 							console.error(err);
 							promptInput.value = prompt;
-							toastError('PROMPT 저장 실패');
+							toastError('PROMPT 값 저장에 실패했습니다.');
 						} finally {
 							promptInput.removeAttribute('disabled');
 						}
 					});
+				}
+
+				async function openFollowPopup(topicNo) {
+					if (!topicNo) {
+						toastInfo('토픽 번호가 없어 팔로우 목록을 열 수 없습니다.');
+						return;
+					}
+
+					try {
+						await openPopup({
+							url: `${followPopupUrl}?topicNo=${encodeURIComponent(topicNo)}`,
+							method: MethodType.Get,
+							contentType: ContentsType.Form,
+							popupId: `topicFollow_${topicNo}`,
+							width: '640px'
+						});
+					} catch (err) {
+						console.error(err);
+						toastError('팔로우 사용자 목록을 열지 못했습니다.');
+					}
 				}
 
 				function renderItem(item) {
@@ -218,6 +254,8 @@
 					node.querySelector('.name').textContent = text(item.name);
 					node.querySelector('.topicNo').textContent = text(item.topicNo, '0');
 					node.querySelector('.ownerNo').textContent = text(item.ownerNo, '0');
+					node.querySelector('.fragmentCount').textContent = text(item.fragmentCount, '0');
+					node.querySelector('.followCount').textContent = text(item.followCount, '0');
 					node.querySelector('.ownerNickname').textContent = text(item.ownerNickname);
 					node.querySelector('.description').textContent = text(item.description);
 					node.querySelector('.color').textContent = text(item.color);
@@ -236,6 +274,11 @@
 					node.querySelector('.comments').textContent = !!item.comments ? '사용' : '미사용';
 					node.querySelector('.regDate').textContent = text(item.regDate);
 					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					const followCountBtn = node.querySelector('.followCountBtn');
+					followCountBtn.addEventListener('click', async (e) => {
+						e.preventDefault();
+						await openFollowPopup(item.topicNo);
+					});
 
 					bindEditable(node, item);
 					return node;
