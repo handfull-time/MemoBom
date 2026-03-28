@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Common/LayoutModal}">
+
+<th:block layout:fragment="modalTitle">토픽 팔로우 사용자</th:block>
+
+<th:block layout:fragment="modalContent">
+	<div class="space-y-3">
+		<div class="text-sm text-slate-600">
+			토픽 번호: <span class="font-semibold tabular-nums" th:text="${topicNo}">0</span>
+		</div>
+
+		<div th:if="${result != null and result.code != '0'}"
+			 class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600"
+			 th:text="${result.message}">
+			목록을 불러오지 못했습니다.
+		</div>
+
+		<div th:if="${followers == null or #lists.isEmpty(followers)}"
+			 class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-6 text-center text-sm text-slate-500">
+			팔로우한 사용자가 없습니다.
+		</div>
+
+		<div th:if="${followers != null and !#lists.isEmpty(followers)}"
+			 class="max-h-[60dvh] overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
+			<div class="flex items-center gap-3 px-3 py-2" th:each="item : ${followers}">
+				<img class="w-9 h-9 rounded-full border border-slate-200 object-cover bg-slate-100"
+					 th:src="${item.profileUrl != null and !#strings.isEmpty(item.profileUrl) ? item.profileUrl : '/images/profile-placeholder.svg'}"
+					 alt="profile">
+				<div class="min-w-0 flex-1">
+					<div class="text-sm font-semibold text-slate-900 truncate">
+						<span th:text="${item.nickname}">닉네임</span>
+						<span class="text-slate-400">·</span>
+						<span class="text-slate-500 font-normal" th:text="${item.id}">id</span>
+					</div>
+					<div class="text-xs text-slate-500">
+						userNo: <span class="tabular-nums" th:text="${item.userNo}">0</span>
+						· followDate: <span class="tabular-nums" th:text="${item.followDate}">-</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
+
+<th:block layout:fragment="modalButton">
+	<button type="button" onclick="closePopup(this)"
+			class="px-4 py-2 rounded-md border border-gray-300 bg-white">닫기</button>
+</th:block>
+
+</html>

@@ -57,6 +57,15 @@ public interface AdminService {
 	public ReturnBasic getTopicList(LoginUser user, AdminSearchVo searchVo);
 
 	/**
+	 * 토픽 팔로우 사용자 목록을 조회한다.
+	 *
+	 * @param user 요청 사용자
+	 * @param topicNo 토픽 번호
+	 * @return 팔로우 사용자 목록 응답
+	 */
+	public ReturnBasic getTopicFollowUsers(LoginUser user, Long topicNo);
+
+	/**
 	 * 글(프래그먼트) 목록을 조회한다.
 	 *
 	 * @param user 요청 사용자

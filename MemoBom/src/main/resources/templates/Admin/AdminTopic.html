@@ -43,6 +43,14 @@
 
 					<div class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
 						<div>ownerNo: <span class="ownerNo tabular-nums">0</span></div>
+						<div>게시글: <span class="fragmentCount tabular-nums">0</span></div>
+						<div>
+							팔로우:
+							<button type="button"
+								class="followCountBtn tabular-nums px-1.5 py-0.5 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors">
+								<span class="followCount">0</span>
+							</button>
+						</div>
 						<div>color: <span class="color">-</span></div>
 						<div>emojiSetType: <span class="emojiSetType">0</span></div>
 						<div>external: <span class="external">-</span></div>
@@ -87,6 +95,7 @@
 				const PAGE_SIZE = 20;
 				const listUrl = /*[[@{/Lotus/TopicList.json}]]*/ '/Lotus/TopicList.json';
 				const saveUrl = /*[[@{/Lotus/TopicSave.json}]]*/ '/Lotus/TopicSave.json';
+				const followPopupUrl = /*[[@{/Lotus/TopicFollow.popup}]]*/ '/Lotus/TopicFollow.popup';
 
 				const elList = document.getElementById('topicList');
 				const elSentinel = document.getElementById('pageSentinel');
@@ -218,6 +227,26 @@
 					});
 				}
 
+				async function openFollowPopup(topicNo) {
+					if (!topicNo) {
+						toastInfo('토픽 번호가 없어 팔로우 목록을 열 수 없습니다.');
+						return;
+					}
+
+					try {
+						await openPopup({
+							url: `${followPopupUrl}?topicNo=${encodeURIComponent(topicNo)}`,
+							method: MethodType.Get,
+							contentType: ContentsType.Form,
+							popupId: `topicFollow_${topicNo}`,
+							width: '640px'
+						});
+					} catch (err) {
+						console.error(err);
+						toastError('팔로우 사용자 목록을 열지 못했습니다.');
+					}
+				}
+
 				function renderItem(item) {
 					const node = tpl.content.firstElementChild.cloneNode(true);
 
@@ -225,6 +254,8 @@
 					node.querySelector('.name').textContent = text(item.name);
 					node.querySelector('.topicNo').textContent = text(item.topicNo, '0');
 					node.querySelector('.ownerNo').textContent = text(item.ownerNo, '0');
+					node.querySelector('.fragmentCount').textContent = text(item.fragmentCount, '0');
+					node.querySelector('.followCount').textContent = text(item.followCount, '0');
 					node.querySelector('.ownerNickname').textContent = text(item.ownerNickname);
 					node.querySelector('.description').textContent = text(item.description);
 					node.querySelector('.color').textContent = text(item.color);
@@ -243,6 +274,11 @@
 					node.querySelector('.comments').textContent = !!item.comments ? '사용' : '미사용';
 					node.querySelector('.regDate').textContent = text(item.regDate);
 					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					const followCountBtn = node.querySelector('.followCountBtn');
+					followCountBtn.addEventListener('click', async (e) => {
+						e.preventDefault();
+						await openFollowPopup(item.topicNo);
+					});
 
 					bindEditable(node, item);
 					return node;

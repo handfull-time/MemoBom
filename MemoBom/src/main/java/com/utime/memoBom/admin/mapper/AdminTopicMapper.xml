@@ -26,7 +26,17 @@
 			T.COLOR AS color,
 			T.EMOJI_SET_TYPE AS emojiSetType,
 			T.AI AS ai,
-			T.PROMPT AS prompt
+			T.PROMPT AS prompt,
+			(
+				SELECT COUNT(1)
+				FROM MB_FRAGMENT F
+				WHERE F.TOPIC_NO = T.TOPIC_NO
+			) AS fragmentCount,
+			(
+				SELECT COUNT(1)
+				FROM MB_TOPIC_FOLLOW TF
+				WHERE TF.TOPIC_NO = T.TOPIC_NO
+			) AS followCount
 		FROM MB_TOPIC T
 		LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
 		WHERE TO_CHAR(T.REG_DATE, 'YYYY-MM-DD') = #{date}
@@ -50,6 +60,20 @@
 			UPDATE_DATE = CURRENT_TIMESTAMP
 		WHERE TOPIC_NO = #{topicNo}
 	</update>
+
+	<select id="getTopicFollowUsers" resultType="com.utime.memoBom.admin.vo.AdminTopicFollowVo">
+		SELECT
+			U.USER_NO AS userNo,
+			U.ID AS id,
+			U.NICKNAME AS nickname,
+			U.PROFILE_IMG_PATH AS profileUrl,
+			TO_CHAR(F.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS followDate
+		FROM MB_TOPIC_FOLLOW F
+		INNER JOIN MB_USER U
+			ON U.USER_NO = F.USER_NO
+		WHERE F.TOPIC_NO = #{topicNo}
+		ORDER BY F.REG_DATE DESC, U.USER_NO DESC
+	</select>
 
 <!-- 토픽 목록(+글 수)
 SELECT T.TOPIC_UID, T.NAME, T.COLOR, T.EXTERNAL, T.EMOTION, T.COMMENTS,
