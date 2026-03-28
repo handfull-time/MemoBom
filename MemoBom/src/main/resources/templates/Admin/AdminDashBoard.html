@@ -93,9 +93,10 @@
 
 	<th:block layout:fragment="admin_script">
 		<script>
-				(function () {
-					const dateInput = document.getElementById('dashboardDate');
-					if (!dateInput) return;
+			(function () {
+				const dateInput = document.getElementById('dashboardDate');
+				if (!dateInput) return;
+				const adminUtils = window.AdminUtils;
 
 				const countKeys = ['user', 'topic', 'fragment', 'comment', 'emotion', 'scrap', 'share', 'push'];
 
@@ -131,9 +132,24 @@
 					currentUrl.searchParams.set('date', date);
 					window.history.replaceState({}, '', currentUrl.toString());
 				}
-					window.AdminUtils.bindDatePickerOpener(dateInput);
 
-					dateInput.addEventListener('change', async (e) => {
+				function resolveInitialDate() {
+					const normalized = adminUtils.normalizeDate(dateInput.value);
+					if (normalized) return normalized;
+					const stored = adminUtils.loadDateFromStorage();
+					return stored || adminUtils.getTodayDate();
+				}
+
+				async function init() {
+					const initialDate = resolveInitialDate();
+					dateInput.value = initialDate;
+					adminUtils.saveDateToStorage(initialDate);
+					await loadDashboard(initialDate);
+				}
+
+				adminUtils.bindDatePickerOpener(dateInput);
+
+				dateInput.addEventListener('change', async (e) => {
 					const date = e.target.value;
 					if (!date) return;
 					try {
@@ -141,6 +157,10 @@
 					} catch (err) {
 						console.error(err);
 					}
+				});
+
+				init().catch((err) => {
+					console.error(err);
 				});
 			})();
 		</script>
