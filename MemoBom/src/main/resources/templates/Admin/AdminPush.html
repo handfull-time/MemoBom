@@ -1,11 +1,174 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-     layout:decorate="~{Admin/AdminLayout}">
+	 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	 layout:decorate="~{Admin/AdminLayout}">
 
 <body>
 	<th:block layout:fragment="admin_title">Push</th:block>
 	<th:block layout:fragment="admin_content">
+		<div class="w-full max-w-7xl mx-auto space-y-4">
+			<div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
+				<div class="flex flex-col md:flex-row md:items-center gap-3">
+					<input id="keyword" type="text" name="keyword" placeholder="검색어 (사용자/브라우저/OS/장치ID)"
+						   class="w-full md:w-[460px] h-10 px-3 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+				</div>
+			</div>
+
+			<div id="pushList" class="space-y-3"></div>
+			<div id="pageSentinel" class="h-1"></div>
+		</div>
+
+		<template id="tplPushCard">
+			<article class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden p-3">
+				<div class="flex items-start justify-between gap-2">
+					<div class="min-w-0">
+						<div class="text-lg font-semibold text-slate-900 break-words flex items-center gap-2 flex-wrap">
+							<span class="activeBadge px-2 py-0.5 rounded-full border text-xs font-semibold">ACTIVE</span>
+							<span class="userNickname">-</span>
+							<span class="text-sm text-slate-500">(<span class="userId">-</span>)</span>
+						</div>
+						<div class="text-xs text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+							<span>subNo: <span class="subNo tabular-nums">0</span></span>
+							<span>userNo: <span class="userNo tabular-nums">0</span></span>
+						</div>
+					</div>
+				</div>
+
+				<div class="mt-2 grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-1 text-sm text-slate-600">
+					<div>브라우저: <span class="browser">-</span></div>
+					<div>OS: <span class="os">-</span></div>
+					<div>장치ID: <span class="deviceId break-all">-</span></div>
+					<div>등록일: <span class="regDate tabular-nums">-</span></div>
+					<div>마지막 발송일: <span class="lastPushDate tabular-nums">-</span></div>
+					<div>실패 횟수: <span class="failCount tabular-nums">0</span></div>
+				</div>
+			</article>
+		</template>
+	</th:block>
+
+	<th:block layout:fragment="admin_script">
+		<script th:inline="javascript">
+			(() => {
+				const PAGE_SIZE = 20;
+				const listUrl = /*[[@{/Lotus/PushList.json}]]*/ '/Lotus/PushList.json';
+
+				const elList = document.getElementById('pushList');
+				const elSentinel = document.getElementById('pageSentinel');
+				const elKeyword = document.getElementById('keyword');
+				const tpl = document.getElementById('tplPushCard');
+
+				let pageNo = 1;
+				let loading = false;
+				let done = false;
+
+				function text(v, fallback = '-') {
+					if (v === null || v === undefined) return fallback;
+					const s = String(v).trim();
+					return s ? s : fallback;
+				}
+
+				function toastInfo(msg) {
+					showToast('안내', msg, ToastType.INFO, 1300);
+				}
+
+				function toastError(msg) {
+					showToast('오류', msg, ToastType.ERROR, 1800);
+				}
+
+				function renderItem(item) {
+					const node = tpl.content.firstElementChild.cloneNode(true);
+					const active = !!item.active;
+
+					node.querySelector('.subNo').textContent = text(item.subNo, '0');
+					node.querySelector('.userNo').textContent = text(item.userNo, '0');
+					node.querySelector('.userId').textContent = text(item.userId);
+					node.querySelector('.userNickname').textContent = text(item.userNickname);
+					node.querySelector('.browser').textContent = text(item.browser);
+					node.querySelector('.os').textContent = text(item.os);
+					node.querySelector('.deviceId').textContent = text(item.deviceId);
+					node.querySelector('.regDate').textContent = text(item.regDate);
+					node.querySelector('.lastPushDate').textContent = text(item.lastPushDate);
+					node.querySelector('.failCount').textContent = text(item.failCount, '0');
+
+					const badge = node.querySelector('.activeBadge');
+					badge.textContent = active ? 'ACTIVE' : 'INACTIVE';
+					badge.classList.remove('border-emerald-200', 'bg-emerald-50', 'text-emerald-700', 'border-rose-200', 'bg-rose-50', 'text-rose-700');
+					if (active) {
+						badge.classList.add('border-emerald-200', 'bg-emerald-50', 'text-emerald-700');
+					} else {
+						badge.classList.add('border-rose-200', 'bg-rose-50', 'text-rose-700');
+					}
+
+					return node;
+				}
+
+				async function loadNextPage() {
+					if (loading || done) return;
+					loading = true;
+					try {
+						const res = await apiGetWithParam(listUrl, {
+							keyword: elKeyword.value,
+							pageNo
+						});
+						if (!res || res.code !== '0') {
+							throw new Error((res && res.message) || '푸시 목록 조회 실패');
+						}
+
+						const list = Array.isArray(res.data) ? res.data : [];
+						if (list.length === 0 && pageNo === 1) {
+							elList.innerHTML = '';
+							done = true;
+							toastInfo('조회 결과가 없습니다.');
+							return;
+						}
+
+						const frag = document.createDocumentFragment();
+						list.forEach((item) => frag.appendChild(renderItem(item)));
+						elList.appendChild(frag);
+
+						pageNo += 1;
+						done = list.length < PAGE_SIZE;
+					} catch (err) {
+						console.error(err);
+						toastError('푸시 목록 조회 중 오류가 발생했습니다.');
+					} finally {
+						loading = false;
+					}
+				}
+
+				async function reload() {
+					pageNo = 1;
+					done = false;
+					loading = false;
+					elList.innerHTML = '';
+					await loadNextPage();
+				}
+
+				function initEvents() {
+					elKeyword.addEventListener('keydown', async (e) => {
+						if (e.key !== 'Enter') return;
+						e.preventDefault();
+						await reload();
+					});
+				}
+
+				function initInfiniteScroll() {
+					if (window.AdminUtils && typeof window.AdminUtils.createInfiniteObserver === 'function') {
+						window.AdminUtils.createInfiniteObserver(elSentinel, async () => {
+							await loadNextPage();
+						});
+					}
+				}
+
+				async function init() {
+					initEvents();
+					initInfiniteScroll();
+					await reload();
+				}
+
+				window.addEventListener('DOMContentLoaded', init);
+			})();
+		</script>
 	</th:block>
 </body>
 </html>
