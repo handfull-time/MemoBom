@@ -55,6 +55,11 @@
 					<div class="commentContent text-sm text-slate-800 whitespace-pre-wrap break-words">-</div>
 				</div>
 
+				<div class="mt-2 rounded-lg border border-slate-200 p-2 flex items-center justify-between">
+					<span class="text-sm text-slate-600">IS_DELETED</span>
+					<pp-toggle class="deletedToggle" on-text="ON" off-text="OFF"></pp-toggle>
+				</div>
+
 				<div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-1 text-sm text-slate-600">
 					<div>userNo: <span class="userNo tabular-nums">0</span></div>
 					<div>fragmentNo: <span class="fragmentNo tabular-nums">0</span></div>
@@ -66,11 +71,13 @@
 	</th:block>
 
 	<th:block layout:fragment="admin_script">
+		<script type="text/javascript" th:src="@{/js/ToggleButton.js(v=${assetVersion})}"></script>
 		<script th:inline="javascript">
 			(() => {
 				const PAGE_SIZE = 20;
 				const listUrl = /*[[@{/Lotus/CommentList.json}]]*/ '/Lotus/CommentList.json';
 				const fragmentPopupUrl = /*[[@{/Lotus/FragmentPreview.popup}]]*/ '/Lotus/FragmentPreview.popup';
+				const deletedSaveUrl = /*[[@{/Lotus/CommentDeletedSave.json}]]*/ '/Lotus/CommentDeletedSave.json';
 
 				const elList = document.getElementById('commentList');
 				const elSentinel = document.getElementById('pageSentinel');
@@ -94,6 +101,10 @@
 
 				function toastError(msg) {
 					showToast('오류', msg, ToastType.ERROR, 1800);
+				}
+
+				function toastSuccess(msg) {
+					showToast('완료', msg, ToastType.SUCCESS, 1200);
 				}
 
 				async function openFragmentPopup(fragmentNo) {
@@ -132,6 +143,32 @@
 					node.querySelector('.updateDate').textContent = text(item.updateDate);
 					node.querySelector('.fragmentPreviewBtn').addEventListener('click', async () => {
 						await openFragmentPopup(item.fragmentNo);
+					});
+					const deletedToggle = node.querySelector('.deletedToggle');
+					let deleted = !!item.deleted;
+					deletedToggle.checked = deleted;
+					deletedToggle.addEventListener('change', async (e) => {
+						const next = !!(e.detail && e.detail.checked);
+						const prev = deleted;
+						deletedToggle.setAttribute('disabled', '');
+						try {
+							const res = await apiPost(deletedSaveUrl, {
+								commentNo: item.commentNo,
+								deleted: next
+							});
+							if (!res || res.code !== '0') {
+								throw new Error((res && res.message) || 'IS_DELETED 변경 실패');
+							}
+							deleted = next;
+							node.querySelector('.deletedBadge').classList.toggle('hidden', !next);
+							toastSuccess(`댓글 ${item.commentNo}의 IS_DELETED를 저장했습니다.`);
+						} catch (err) {
+							console.error(err);
+							deletedToggle.checked = prev;
+							toastError('IS_DELETED 저장 중 오류가 발생했습니다.');
+						} finally {
+							deletedToggle.removeAttribute('disabled');
+						}
 					});
 
 					return node;

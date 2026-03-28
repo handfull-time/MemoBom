@@ -96,6 +96,22 @@
 					return Number(v || 0) === 2 ? 'COMMENT' : 'FRAGMENT';
 				}
 
+				function emotionToEmoji(value) {
+					const key = String(value || '').trim().toLowerCase();
+					switch (key) {
+						case 'joy': return '😊 joy';
+						case 'normal': return '😐 normal';
+						case 'sadness': return '😢 sadness';
+						case 'anger': return '😠 anger';
+						case 'pleasure': return '🤩 pleasure';
+						case 'like': return '👍 like';
+						case 'love': return '❤️ love';
+						case 'laugh': return '😂 laugh';
+						case 'wow': return '😮 wow';
+						default: return text(value);
+					}
+				}
+
 				function toastInfo(msg) {
 					showToast('안내', msg, ToastType.INFO, 1300);
 				}
@@ -131,7 +147,7 @@
 					node.querySelector('.userNickname').textContent = text(item.userNickname);
 					node.querySelector('.userId').textContent = text(item.userId);
 					node.querySelector('.fragmentContent').textContent = text(item.fragmentContent);
-					node.querySelector('.emotionText').textContent = text(item.emotion);
+					node.querySelector('.emotionText').textContent = emotionToEmoji(item.emotion);
 					node.querySelector('.targetLabel').textContent = targetLabel(item.targetType);
 					node.querySelector('.fragmentNo').textContent = text(item.fragmentNo, '0');
 					node.querySelector('.regDate').textContent = text(item.regDate);

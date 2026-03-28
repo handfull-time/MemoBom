@@ -63,6 +63,13 @@
 			ON U.USER_NO = F.USER_NO
 		WHERE F.FRAGMENT_NO = #{fragmentNo}
 	</select>
+
+	<update id="updateCommentDeleted">
+		UPDATE MB_FRAGMENT_COMMENTS
+		SET IS_DELETED = #{deleted},
+			UPDATE_DATE = CURRENT_TIMESTAMP
+		WHERE COMMENT_NO = #{commentNo}
+	</update>
 <!--
 SELECT C.COMMENT_UID, C.REG_DATE, C.FRAG_UID, F.TOPIC_UID,
        C.USER_NO, U.NICKNAME,

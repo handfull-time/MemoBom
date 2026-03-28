@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.utime.memoBom.admin.service.AdminService;
+import com.utime.memoBom.admin.vo.AdminCommentVo;
 import com.utime.memoBom.admin.vo.AdminSearchVo;
 import com.utime.memoBom.admin.vo.AdminTopicVo;
 import com.utime.memoBom.admin.vo.AdminUserVo;
@@ -268,6 +269,19 @@ public class AdminController {
 	public ReturnBasic getCommentList(LoginUser user, AdminSearchVo searchVo ) {
 		
 		return adminService.getCommentList(user, searchVo );
+	}
+
+	/**
+	 * 댓글 삭제 여부(IS_DELETED)를 저장한다.
+	 *
+	 * @param user 현재 사용자
+	 * @param commentVo 댓글 정보(commentNo, deleted)
+	 * @return 저장 결과
+	 */
+	@ResponseBody
+	@PostMapping(path = {"CommentDeletedSave.json" })
+	public ReturnBasic saveCommentDeleted(LoginUser user, @RequestBody AdminCommentVo commentVo) {
+		return adminService.updateCommentDeleted(user, commentVo);
 	}
 
 	/**
