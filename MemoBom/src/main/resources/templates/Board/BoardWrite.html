@@ -76,6 +76,9 @@
 				th:text="${item == null ? '' : item.content}"
 				style="font-size: var(--font-base); line-height: 1.6;"
 				class="min-h-[160px] w-full border-0 outline-none resize-none overflow-hidden p-3 text-dynamic-15 box-border bg-transparent"></textarea>
+
+			<!-- 하단 고정 영역(진행바/해시태그/푸터)에 가리지 않도록 여유 스크롤 공간 -->
+			<div class="h-20 shrink-0" aria-hidden="true"></div>
 		</div>
 
 		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
