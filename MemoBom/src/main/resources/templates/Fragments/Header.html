@@ -82,7 +82,12 @@
 				<button type="button" aria-label="left" onclick="functionLeft()"
 					class="shrink-0 w-10 h-10 flex items-center justify-center">
 
-					<th:block th:if="${leftTitle != null}" th:replace="${leftTitle}"></th:block>
+					<th:block th:if="${leftTitle != null and #strings.startsWith(leftTitle, '/')}">
+						<img th:src="@{${leftTitle}}" alt="left icon" class="w-8 h-8" />
+					</th:block>
+					<th:block th:if="${leftTitle != null and !#strings.startsWith(leftTitle, '/')}">
+						<th:block th:replace="${leftTitle}"></th:block>
+					</th:block>
 				</button>
 
 				<!-- ✅ spacer: 오른쪽(🔍+우측버튼) 1칸 = w-10 -->
@@ -124,7 +129,12 @@
 				<button type="button" aria-label="right" data-role="right-btn" onclick="functionRight()"
 					class="w-10 h-10 flex items-center justify-center">
 
-					<th:block th:if="${rightTitle != null}" th:replace="${rightTitle}"></th:block>
+					<th:block th:if="${rightTitle != null and #strings.startsWith(rightTitle, '/')}">
+						<img th:src="@{${rightTitle}}" alt="right icon" class="w-8 h-8" />
+					</th:block>
+					<th:block th:if="${rightTitle != null and !#strings.startsWith(rightTitle, '/')}">
+						<th:block th:replace="${rightTitle}"></th:block>
+					</th:block>
 				</button>
 
 			</div>
