@@ -222,9 +222,10 @@
 		let __imgMeta = { width: 0, height: 0, name: '' };
 		const __initialImageUrl = /*[[${itemImageUrl}]]*/ null;
 		const __draftKey = (() => {
-			const seal = /*[[${seal}]]*/ '';
-			const uid = /*[[${item != null ? item.uid : 'new'}]]*/ 'new';
-			return `board-write-draft:${seal}:${uid}`;
+			// seal(createKey)은 요청 시마다 바뀔 수 있으므로 draft key에 사용하면 복원이 불가능해짐.
+			// 수정 화면은 글 uid 기준으로, 신규 작성은 고정 키로 저장한다.
+			const uid = /*[[${item != null ? item.uid : null}]]*/ null;
+			return uid ? `board-write-draft:item:${uid}` : 'board-write-draft:new';
 		})();
 		let __draftTimerId = null;
 		let __lastDraftFingerprint = '';
