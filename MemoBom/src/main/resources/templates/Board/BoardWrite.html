@@ -177,7 +177,7 @@
 			ta.style.height = `${ta.scrollHeight}px`;
 		}
 
-		document.addEventListener("DOMContentLoaded", () => {
+		document.addEventListener("DOMContentLoaded", async () => {
 			const ta = document.getElementById("content");
 			if (!ta) return;
 
@@ -187,9 +187,22 @@
 			    applyTopicToEditor(topic);
 			}
 
+			const draft = __loadDraft();
+			if (draft) {
+				const useDraft = await confirmP('임시 저장된 작성 내용이 있어요.\n불러오시겠어요?');
+				if (useDraft) {
+					await __applyDraftToEditor(draft);
+				} else {
+					__clearDraft();
+				}
+			}
+
 			// 입력할 때마다 업데이트
 			ta.addEventListener("input", updateContentProgress, {passive: true});
 			ta.addEventListener("input", autoResizeContent, {passive: true});
+			ta.addEventListener("input", __queueDraftSave, {passive: true});
+			document.getElementById('hashtags')?.addEventListener('input', __queueDraftSave, {passive: true});
+			setInterval(() => __saveDraft(), 15000);
 
 			// 초기 1회
 			updateContentProgress();
@@ -208,6 +221,48 @@
 		let __imgObjectUrl = null;
 		let __imgMeta = { width: 0, height: 0, name: '' };
 		const __initialImageUrl = /*[[${itemImageUrl}]]*/ null;
+		const __draftKey = (() => {
+			const seal = /*[[${seal}]]*/ '';
+			const uid = /*[[${item != null ? item.uid : 'new'}]]*/ 'new';
+			return `board-write-draft:${seal}:${uid}`;
+		})();
+		let __draftTimerId = null;
+		let __lastDraftFingerprint = '';
+
+		function __blobToDataUrl(blob) {
+			return new Promise((resolve, reject) => {
+				const fr = new FileReader();
+				fr.onload = () => resolve(fr.result);
+				fr.onerror = reject;
+				fr.readAsDataURL(blob);
+			});
+		}
+
+		function __dataUrlToBlob(dataUrl) {
+			const parts = dataUrl.split(',');
+			const mime = (parts[0].match(/:(.*?);/) || [])[1] || 'image/webp';
+			const bin = atob(parts[1] || '');
+			let n = bin.length;
+			const u8 = new Uint8Array(n);
+			while (n--) u8[n] = bin.charCodeAt(n);
+			return new Blob([u8], {type: mime});
+		}
+
+		function __loadDraft() {
+			try {
+				const raw = localStorage.getItem(__draftKey);
+				if (!raw) return null;
+				return JSON.parse(raw);
+			} catch (e) {
+				console.warn('draft parse fail', e);
+				return null;
+			}
+		}
+
+		function __clearDraft() {
+			localStorage.removeItem(__draftKey);
+			__lastDraftFingerprint = '';
+		}
 
 		function __revokePreviewUrl() {
 			if (__imgObjectUrl) {
@@ -317,6 +372,103 @@
 			wrap?.classList.remove('hidden');
 		}
 
+		async function __applyDraftToEditor(draft) {
+			if (!draft) return;
+
+			const ta = document.getElementById('content');
+			const hashInput = document.getElementById('hashtags');
+			if (ta) ta.value = draft.content || '';
+			if (hashInput) hashInput.value = draft.hashTag || '';
+
+			if (draft.topicUid) {
+				const topic = (Array.isArray(topics) ? topics : []).find(t => String(t.uid) === String(draft.topicUid));
+				if (topic) {
+					applyTopicToEditor(topic);
+				}
+			}
+
+			if (draft.image?.dataUrl) {
+				__clearSelectedImage();
+				__imgBlob = __dataUrlToBlob(draft.image.dataUrl);
+				__thumbBlob = draft.image.thumbDataUrl ? __dataUrlToBlob(draft.image.thumbDataUrl) : null;
+				__imgMeta = {
+					width: Number(draft.image.width || 0),
+					height: Number(draft.image.height || 0),
+					name: draft.image.name || ''
+				};
+				__imgObjectUrl = URL.createObjectURL(__imgBlob);
+				const imgEl = document.getElementById('imgPreview');
+				const wrap = document.getElementById('imgWrap');
+				if (imgEl) imgEl.src = __imgObjectUrl;
+				wrap?.classList.remove('hidden');
+			} else if (draft.image?.existingImageUrl) {
+				__clearSelectedImage();
+				const imgEl = document.getElementById('imgPreview');
+				const wrap = document.getElementById('imgWrap');
+				if (imgEl) imgEl.src = window.contextPath + draft.image.existingImageUrl;
+				wrap?.classList.remove('hidden');
+			} else {
+				__clearSelectedImage();
+			}
+
+			autoResizeContent();
+			updateContentProgress();
+		}
+
+		async function __saveDraft(force = false) {
+			const contentEl = document.getElementById('content');
+			if (!contentEl) return;
+			const content = (contentEl.value || '').trim();
+			if (!content) {
+				__clearDraft();
+				return;
+			}
+
+			const hashTag = (document.getElementById('hashtags')?.value || '').trim();
+			const topicUid = selectedTopicUid || null;
+
+			const payload = {
+				topicUid,
+				content,
+				hashTag,
+				updatedAt: Date.now(),
+				image: null
+			};
+
+			if (__imgBlob) {
+				payload.image = {
+					dataUrl: await __blobToDataUrl(__imgBlob),
+					thumbDataUrl: __thumbBlob ? await __blobToDataUrl(__thumbBlob) : null,
+					width: __imgMeta.width || 0,
+					height: __imgMeta.height || 0,
+					name: __imgMeta.name || ''
+				};
+			} else if (__initialImageUrl) {
+				payload.image = {
+					existingImageUrl: __initialImageUrl
+				};
+			}
+
+			const fingerprint = JSON.stringify({
+				topicUid: payload.topicUid,
+				content: payload.content,
+				hashTag: payload.hashTag,
+				image: payload.image
+			});
+
+			if (!force && fingerprint === __lastDraftFingerprint) return;
+
+			localStorage.setItem(__draftKey, JSON.stringify(payload));
+			__lastDraftFingerprint = fingerprint;
+		}
+
+		function __queueDraftSave() {
+			if (__draftTimerId) clearTimeout(__draftTimerId);
+			__draftTimerId = setTimeout(() => {
+				__saveDraft();
+			}, 1200);
+		}
+
 		async function submitFragment(url, payload) {
 			// BoardReqDto: MultipartFile(image/thumb) + 기타 필드. (항상 FormData로 전송)
 			const fd = new FormData();
@@ -352,6 +504,7 @@
 
 			const modal = document.getElementById("topicSelectModal");
 			if (modal) modal.remove();
+			__queueDraftSave();
 		}
 
 		function initTopicModalCompact() {
@@ -412,14 +565,19 @@
 				const file = e.target?.files?.[0];
 				try {
 					await __onSelectImageFile(file);
+					__queueDraftSave();
 				} catch (err) {
 					console.error(err);
 					showToast('에러', err?.message || '이미지 처리 실패', ToastType.ERROR, 1800);
 					__clearSelectedImage();
+					__queueDraftSave();
 				}
 			});
 
-			document.getElementById('btnImgRemove')?.addEventListener('click', __clearSelectedImage);
+			document.getElementById('btnImgRemove')?.addEventListener('click', () => {
+				__clearSelectedImage();
+				__queueDraftSave();
+			});
 		});
 
 		async function onClickWrite() {
@@ -454,6 +612,7 @@
 				}
 
 				if (data.code === "0") {
+					__clearDraft();
 					await alertP("이야기가 추가됐습니다.");
 					window.__disableDirtyGuard__?.(() => {
 						location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
@@ -506,6 +665,7 @@
 				}
 
 				if (data.code === "0") {
+					__clearDraft();
 					await alertP("이야기가 "+actionName+"됐습니다.");
 					window.__disableDirtyGuard__?.(() => {
 						location.replace(/*[[@{/Fragment/index.html}]]*/ '/Fragment/index.html');
@@ -600,6 +760,7 @@
 				const ok = await confirmP('작성 중인 내용이 있어요.\n정말 나가시겠어요?');
 
 				if (ok) {
+					__clearDraft();
 					allowLeave = true;
 					isDirty = false;
 					window.removeEventListener('beforeunload', onBeforeUnload);
