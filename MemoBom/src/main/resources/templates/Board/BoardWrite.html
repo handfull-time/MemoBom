@@ -53,7 +53,7 @@
 
 	<!-- wrapper: 화면 높이를 기준으로 강제로 잡음 -->
 	<div class="flex flex-col min-h-[320px] h-[calc(100dvh-60px)] h-[calc(100vh-60px)]">
-		<div id="editorScrollArea" class="flex-1 min-h-0 overflow-y-auto">
+		<div id="editorScrollArea" class="flex-1 min-h-0 flex flex-col overflow-hidden">
 
 			<!-- Image Preview (centered, optional) -->
 			<div id="imgWrap" class="hidden shrink-0 px-3 pt-3">
@@ -75,10 +75,7 @@
 				th:disabled="${item == null}"
 				th:text="${item == null ? '' : item.content}"
 				style="font-size: var(--font-base); line-height: 1.6;"
-				class="min-h-[160px] w-full border-0 outline-none resize-none overflow-hidden p-3 text-dynamic-15 box-border bg-transparent"></textarea>
-
-			<!-- 하단 고정 영역(진행바/해시태그/푸터)에 가리지 않도록 여유 스크롤 공간 -->
-			<div class="h-20 shrink-0" aria-hidden="true"></div>
+				class="flex-1 min-h-0 w-full border-0 outline-none resize-none overflow-y-auto p-3 text-dynamic-15 box-border bg-transparent"></textarea>
 		</div>
 
 		<!-- 해시태그: 항상 맨 아래(스크롤 컨테이너 안에서 고정 느낌) -->
@@ -173,13 +170,6 @@
 			if (hint) hint.classList.toggle("hidden", ratio < 0.9);
 		}
 
-		function autoResizeContent() {
-			const ta = document.getElementById("content");
-			if (!ta) return;
-			ta.style.height = 'auto';
-			ta.style.height = `${ta.scrollHeight}px`;
-		}
-
 		document.addEventListener("DOMContentLoaded", async () => {
 			const ta = document.getElementById("content");
 			if (!ta) return;
@@ -202,14 +192,12 @@
 
 			// 입력할 때마다 업데이트
 			ta.addEventListener("input", updateContentProgress, {passive: true});
-			ta.addEventListener("input", autoResizeContent, {passive: true});
 			ta.addEventListener("input", __queueDraftSave, {passive: true});
 			document.getElementById('hashtags')?.addEventListener('input', __queueDraftSave, {passive: true});
 			setInterval(() => __saveDraft(), 15000);
 
 			// 초기 1회
 			updateContentProgress();
-			autoResizeContent();
 			
 		});
 	</script>
@@ -412,7 +400,6 @@
 				__clearSelectedImage();
 			}
 
-			autoResizeContent();
 			updateContentProgress();
 		}
 
