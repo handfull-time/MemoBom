@@ -8,18 +8,18 @@
 		resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			TO_CHAR(F.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
-			TO_CHAR(F.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.UPDATE_DATE) AS updateDate,
 			F.FRAGMENT_NO AS fragmentNo,
-			CAST(F.UID AS VARCHAR) AS uid,
+			F.UID AS uid,
 			F.IS_DELETED AS deleted,
 			F.USER_NO AS userNo,
 			U.ID AS userId,
 			U.NICKNAME AS userNickname,
 			F.TOPIC_NO AS topicNo,
 			T.NAME AS topicName,
-			CAST(T.UID AS VARCHAR) AS topicUid,
-			CAST(F.CONTENT AS VARCHAR) AS content,
+			T.UID AS topicUid,
+			F.CONTENT AS content,
 			(
 				SELECT COUNT(1)
 				FROM MB_FRAGMENT_COMMENTS C
@@ -41,18 +41,18 @@
 				ON U.USER_NO = F.USER_NO
 			INNER JOIN MB_TOPIC T
 				ON T.TOPIC_NO = F.TOPIC_NO
-		WHERE TO_CHAR(F.REG_DATE, 'YYYY-MM-DD') = #{date}
+		WHERE STRFTIME('%Y-%m-%d', F.REG_DATE) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
-				UPPER(CAST(F.UID AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
-				OR UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				UPPER(F.UID) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(F.CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'
 				OR UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
 				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
 				OR UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
 			)
 		</if>
 		ORDER BY F.FRAGMENT_NO DESC
-		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+		LIMIT 20 OFFSET #{offset}
 	</select>
 	
 	<delete id="deleteFragmentsImage" parameterType="map">
@@ -60,16 +60,16 @@
 		WHERE FRAGMENT_NO IN (
 		    SELECT FRAGMENT_NO
 		    FROM MB_FRAGMENT
-		    WHERE IS_DELETED = TRUE
-		      AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
+		    WHERE IS_DELETED = 1
+		      AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 		)
 	</delete>
 
 	<delete id="deleteFragments" parameterType="map">
 		DELETE FROM MB_FRAGMENT
 		WHERE 1=1
-			AND IS_DELETED = TRUE
-			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
+			AND IS_DELETED = 1
+			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

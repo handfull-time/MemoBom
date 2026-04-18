@@ -8,13 +8,13 @@
 		resultType="com.utime.memoBom.admin.vo.AdminTopicVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			TO_CHAR(T.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
-			TO_CHAR(T.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', T.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', T.UPDATE_DATE) AS updateDate,
 			T.TOPIC_NO AS topicNo,
 			T.OWNER_NO AS ownerNo,
 			U.NICKNAME AS ownerNickname,
 			T.ENABLED AS enabled,
-			CAST(T.UID AS VARCHAR) AS uid,
+			T.UID AS uid,
 			T.EXTERNAL AS external,
 			T.EMOTION AS emotion,
 			T.COMMENTS AS comments,
@@ -39,16 +39,16 @@
 			) AS followCount
 		FROM MB_TOPIC T
 			LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
-		WHERE TO_CHAR(T.REG_DATE, 'YYYY-MM-DD') = #{date}
+		WHERE STRFTIME('%Y-%m-%d', T.REG_DATE) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
 				OR UPPER(T.DESCRIPTION) LIKE '%' || UPPER(#{keyword}) || '%'
-				OR UPPER(CAST(T.UID AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(T.UID) LIKE '%' || UPPER(#{keyword}) || '%'
 			)
 		</if>
 		ORDER BY T.TOPIC_NO DESC
-		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+		LIMIT 20 OFFSET #{offset}
 	</select>
 
 	<update id="updateTopicEditable" parameterType="com.utime.memoBom.admin.vo.AdminTopicVo">
@@ -67,7 +67,7 @@
 			U.ID AS id,
 			U.NICKNAME AS nickname,
 			U.PROFILE_IMG_PATH AS profileUrl,
-			TO_CHAR(F.CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS followDate
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.CREATED_AT) AS followDate
 		FROM MB_TOPIC_FOLLOW F
 			INNER JOIN MB_USER U
 				ON U.USER_NO = F.USER_NO
@@ -78,8 +78,8 @@
 	<delete id="deleteDisabledTopics" parameterType="map">
 		DELETE FROM MB_TOPIC
 		WHERE 1=1
-			AND ENABLED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
+			AND ENABLED = 0
+			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminUserVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			TO_CHAR(U.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
-			TO_CHAR(U.UPDATE_DATE, 'YYYY-MM-DD HH24:MI:SS') AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', U.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', U.UPDATE_DATE) AS updateDate,
 			U.USER_NO AS userNo,
 			U.ENABLED AS enabled,
 			U.ROLE AS role,
@@ -20,7 +20,7 @@
 			U.DESCRIPTION AS note,
 			U.PROFILE_IMG_PATH AS profileUrl
 		FROM MB_USER U
-		WHERE TO_CHAR(U.REG_DATE, 'YYYY-MM-DD') = #{date}
+		WHERE STRFTIME('%Y-%m-%d', U.REG_DATE) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -30,7 +30,7 @@
 			)
 		</if>
 		ORDER BY U.USER_NO DESC
-		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+		LIMIT 20 OFFSET #{offset}
 	</select>
 
 	<update id="updateUserNote" parameterType="map">
@@ -50,8 +50,8 @@
 	<delete id="deleteDisabledUsers" parameterType="map">
 		DELETE FROM MB_USER
 		WHERE 1=1
-			AND ENABLED = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
+			AND ENABLED = 0
+			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

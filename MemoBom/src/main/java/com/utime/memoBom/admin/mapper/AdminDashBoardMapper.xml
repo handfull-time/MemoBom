@@ -7,28 +7,28 @@
 		SELECT
 			(SELECT COUNT(*)
 			 FROM MB_USER
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "user",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "user",
 			(SELECT COUNT(*)
 			 FROM MB_TOPIC
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "topic",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "topic",
 			(SELECT COUNT(*)
 			 FROM MB_FRAGMENT
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "fragment",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "fragment",
 			(SELECT COUNT(*)
 			 FROM MB_FRAGMENT_COMMENTS
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "comment",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "comment",
 			(SELECT COUNT(*)
 			 FROM MB_FRAGMENT_EMOTION_LOG
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "emotion",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "emotion",
 			(SELECT COUNT(*)
 			 FROM MB_FRAGMENT_SCRAP
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "scrap",
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "scrap",
 			(SELECT COUNT(*)
 			 FROM MB_SHARE
-			 WHERE TO_CHAR(CREATE_AT, 'YYYY-MM-DD') = #{date}) AS "share",
+			 WHERE STRFTIME('%Y-%m-%d', CREATE_AT) = #{date}) AS "share",
 			(SELECT COUNT(*)
 			 FROM MB_PUSH_SUB
-			 WHERE TO_CHAR(REG_DATE, 'YYYY-MM-DD') = #{date}) AS "push"
+			 WHERE STRFTIME('%Y-%m-%d', REG_DATE) = #{date}) AS "push"
 	</select>
 
 </mapper>

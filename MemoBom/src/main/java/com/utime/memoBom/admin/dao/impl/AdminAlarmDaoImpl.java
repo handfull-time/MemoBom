@@ -22,7 +22,7 @@ class AdminAlarmDaoImpl implements AdminAlarmDao {
 	@Transactional(rollbackFor = Exception.class)
 	public int addPushAlarm(LoginUser user, PushSendDataVo data, UUID uid) throws Exception {
 
-		return alarmMapper.insertPushAlarm(user, data, uid);
+		return alarmMapper.insertPushAlarm(user, data, uid == null ? UUID.randomUUID().toString() : uid.toString());
 	}
 	
 	@Override

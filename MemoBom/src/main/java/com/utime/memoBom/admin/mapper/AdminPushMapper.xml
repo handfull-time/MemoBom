@@ -8,7 +8,7 @@
 		resultType="com.utime.memoBom.admin.vo.AdminPushVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			TO_CHAR(P.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', P.REG_DATE) AS regDate,
 			P.SUB_NO AS subNo,
 			P.USER_NO AS userNo,
 			U.ID AS userId,
@@ -18,11 +18,11 @@
 			P.BROWSER AS browser,
 			P.OS AS os,
 			P.FAIL_COUNT AS failCount,
-			TO_CHAR(P.LAST_PUSH_DATE, 'YYYY-MM-DD HH24:MI:SS') AS lastPushDate
+			STRFTIME('%Y-%m-%d %H:%M:%S', P.LAST_PUSH_DATE) AS lastPushDate
 		FROM MB_PUSH_SUB P
 			LEFT JOIN MB_USER U
 				ON U.USER_NO = P.USER_NO
-		WHERE TO_CHAR(P.REG_DATE, 'YYYY-MM-DD') = #{date}
+		WHERE STRFTIME('%Y-%m-%d', P.REG_DATE) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -33,14 +33,14 @@
 			)
 		</if>
 		ORDER BY P.SUB_NO DESC
-		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+		LIMIT 20 OFFSET #{offset}
 	</select>
 
 	<delete id="deleteInactivePushSubs" parameterType="map">
 		DELETE FROM MB_PUSH_SUB
 		WHERE 1=1
-			AND IS_ACTIVE = FALSE
-			AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP) 
+			AND IS_ACTIVE = 0
+			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days') 
 	</delete>
 
 </mapper>

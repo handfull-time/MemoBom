@@ -8,27 +8,27 @@
 		resultType="com.utime.memoBom.admin.vo.AdminScrapVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			TO_CHAR(S.REG_DATE, 'YYYY-MM-DD HH24:MI:SS') AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', S.REG_DATE) AS regDate,
 			S.USER_NO AS userNo,
 			U.ID AS userId,
 			U.NICKNAME AS userNickname,
 			S.FRAGMENT_NO AS fragmentNo,
-			SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 80) AS fragmentContent
+			SUBSTR(F.CONTENT, 1, 80) AS fragmentContent
 		FROM MB_FRAGMENT_SCRAP S
 			INNER JOIN MB_USER U
 				ON U.USER_NO = S.USER_NO
 			INNER JOIN MB_FRAGMENT F
 				ON F.FRAGMENT_NO = S.FRAGMENT_NO
-		WHERE TO_CHAR(S.REG_DATE, 'YYYY-MM-DD') = #{date}
+		WHERE STRFTIME('%Y-%m-%d', S.REG_DATE) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
 				OR UPPER(U.NICKNAME) LIKE '%' || UPPER(#{keyword}) || '%'
-				OR UPPER(CAST(F.CONTENT AS VARCHAR)) LIKE '%' || UPPER(#{keyword}) || '%'
+				OR UPPER(F.CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'
 			)
 		</if>
 		ORDER BY S.REG_DATE DESC
-		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
+		LIMIT 20 OFFSET #{offset}
 	</select>
 
 </mapper>

@@ -1,7 +1,5 @@
 package com.utime.memoBom.admin.mapper;
 
-import java.util.UUID;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +18,7 @@ public interface AdminAlarmMapper {
 	 * @param data
 	 * @return
 	 */
-	int insertPushAlarm( @Param("user") LoginUser user, @Param("push") PushSendDataVo data, @Param("uid") UUID uid );
+	int insertPushAlarm( @Param("user") LoginUser user, @Param("push") PushSendDataVo data, @Param("uid") String uid );
 	
 	/**
 	 * 알람 읽음 처리.
