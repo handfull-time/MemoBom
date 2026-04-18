@@ -54,6 +54,16 @@
 		ORDER BY F.FRAGMENT_NO DESC
 		OFFSET #{offset} ROWS FETCH NEXT 20 ROWS ONLY
 	</select>
+	
+	<delete id="deleteFragmentsImage" parameterType="map">
+		DELETE FROM MB_FRAGMENT_IMAGE
+		WHERE FRAGMENT_NO IN (
+		    SELECT FRAGMENT_NO
+		    FROM MB_FRAGMENT
+		    WHERE IS_DELETED = TRUE
+		      AND UPDATE_DATE <![CDATA[<]]> DATEADD('DAY', -${day}, CURRENT_TIMESTAMP)
+		)
+	</delete>
 
 	<delete id="deleteFragments" parameterType="map">
 		DELETE FROM MB_FRAGMENT

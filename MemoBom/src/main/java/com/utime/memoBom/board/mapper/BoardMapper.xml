@@ -63,6 +63,7 @@
         <association property="topic" javaType="com.utime.memoBom.board.vo.TopicVo">
             <result property="uid" column="topic_uid" />
             <result property="name" column="topic_name" />
+            <result property="ownerNo" column="topic_ownerNo" />
             <result property="color" column="topic_color" />
             <result property="imogi" column="topic_imogi" />
             <result property="emojiSetType" column="emoji_set_type" 
@@ -137,6 +138,7 @@
 	        <!-- 얘깃거리 정보 -->
 	        CAST(t.UID AS VARCHAR) AS topic_uid,
 	        t.NAME           AS topic_name,
+	        t.OWNER_NO       AS topic_ownerNo,
 	        t.COLOR          AS topic_color,
 	        t.IMOGI          AS topic_imogi,
 	        t.EMOJI_SET_TYPE AS emoji_set_type,

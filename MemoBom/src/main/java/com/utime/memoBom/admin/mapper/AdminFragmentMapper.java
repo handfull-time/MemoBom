@@ -11,5 +11,6 @@ import com.utime.memoBom.admin.vo.AdminSearchVo;
 @Mapper
 public interface AdminFragmentMapper {
 	List<AdminFragmentVo> getFragmentList(AdminSearchVo searchVo);
+	int deleteFragmentsImage(@Param("day") int day);
 	int deleteFragments(@Param("day") int day);
 }

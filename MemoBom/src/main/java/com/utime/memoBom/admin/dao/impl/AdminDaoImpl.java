@@ -143,7 +143,13 @@ class AdminDaoImpl implements AdminDao {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int deleteFragments() throws Exception {
-		return fragmentMapper.deleteFragments(deleteLimitDay);
+		
+		int result = 0;
+		
+		result += fragmentMapper.deleteFragmentsImage(deleteLimitDay);
+		result += fragmentMapper.deleteFragments(deleteLimitDay);
+		
+		return result;
 	}
 
 	@Override
