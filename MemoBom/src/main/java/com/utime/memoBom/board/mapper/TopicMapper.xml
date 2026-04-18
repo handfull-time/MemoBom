@@ -12,7 +12,7 @@
 	   		END AS RES
 	   	FROM MB_TOPIC_FOLLOW FL
 	   		INNER JOIN MB_TOPIC TP ON FL.TOPIC_NO = TP.TOPIC_NO
-	   	WHERE TP.ENABLED = TRUE AND FL.USER_NO = #{userNo}
+	   	WHERE TP.ENABLED = 1 AND FL.USER_NO = #{userNo}
 	</select>
 	
 	<!-- topic이 있나?-->
@@ -23,7 +23,7 @@
 				ELSE 0
 	   		END AS RES
 	   	FROM MB_TOPIC
-	   	WHERE ENABLED = TRUE 
+	   	WHERE ENABLED = 1 
 	</select>
 	
 	
@@ -48,6 +48,7 @@
 			UPDATE_DATE 
 			, OWNER_NO
 			, ENABLED 
+			, UID
 			, EXTERNAL
 			, EMOTION
 			, COMMENTS
@@ -63,7 +64,8 @@
 		) VALUES (
 			CURRENT_TIMESTAMP
 			, #{ownerNo}
-			, TRUE
+			, 1
+			, #{uid}
 			, #{external}
 			, #{emotion}
 			, #{comments}
@@ -103,7 +105,7 @@
 	 	TP.TOPIC_NO
 		, TP.ENABLED 
 		, TP.OWNER_NO
-		, CAST(TP.UID AS VARCHAR) AS UID 
+		, TP.UID AS UID 
 		, TP.EXTERNAL
 		, TP.EMOTION
 		, TP.COMMENTS
@@ -142,7 +144,7 @@
 			<include refid="TopicColumnSql" /> 
 		FROM MB_TOPIC TP
 		WHERE 1=1
-			AND ENABLED = TRUE
+			AND ENABLED = 1
 			<if test="uid != null and ! uid.isEmpty()">
 				AND UID = #{uid}
 			</if>
@@ -179,7 +181,7 @@
 		      TP.TOPIC_NO
 		    , TP.OWNER_NO
 		    , TP.EXTERNAL
-		    , CAST(TP.UID AS VARCHAR) AS UID
+		    , TP.UID AS UID
 		    , TP.NAME
 		    , TP.DESCRIPTION
 		    , TP.IMOGI
@@ -190,7 +192,7 @@
 		    , TP.ENABLED
 		    , TP.EMOJI_SET_TYPE
 		
-		    , CAST(USR.UID AS VARCHAR) AS USER_UID
+		    , USR.UID AS USER_UID
 		    , USR.NICKNAME
 		    , USR.PROFILE_IMG_PATH
 		
@@ -216,11 +218,11 @@
 		        ON ST.TOPIC_NO = TP.TOPIC_NO
 		
 		WHERE 1=1
-		    AND TP.ENABLED = TRUE
+		    AND TP.ENABLED = 1
 		
 		    <!-- 기본은 공개 얘깃거리만. 단, 로그인 유저가 follow 한 얘깃거리이면 비공개도 노출 -->
 		    AND (
-		        TP.EXTERNAL = TRUE
+		        TP.EXTERNAL = 1
 		        <if test="user != null">
 		            OR MYFL.USER_NO IS NOT NULL
 		        </if>
@@ -228,7 +230,7 @@
 		
 		    <!-- 검색 -->
 		    <if test="keyword != null and keyword != ''">
-		        AND TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
+		        AND TP.NAME_UPPER LIKE '%' || UPPER(#{keyword}) || '%'
 		    </if>
 		<choose>
 		    <when test="sortType != null and sortType.name() == 'fresh'">
@@ -256,7 +258,7 @@
 	          TP.TOPIC_NO
 	        , TP.OWNER_NO
 	        , TP.EXTERNAL
-	        , CAST(TP.UID AS VARCHAR) AS UID
+	        , TP.UID AS UID
 	        , TP.NAME
 	        , TP.DESCRIPTION
 	        , TP.IMOGI
@@ -267,7 +269,7 @@
 	        , TP.ENABLED
 	        , TP.EMOJI_SET_TYPE
 	
-	        , CAST(USR.UID AS VARCHAR) AS USER_UID
+	        , USR.UID AS USER_UID
 	        , USR.NICKNAME
 	        , USR.PROFILE_IMG_PATH
 	
@@ -294,7 +296,7 @@
 	
 	    WHERE 1=1
 	    	AND TP.UID = #{uid}
-	    	AND TP.ENABLED = TRUE
+	    	AND TP.ENABLED = 1
 	</select>
 
 
@@ -345,7 +347,7 @@
 	        JOIN MB_TOPIC_FOLLOW MYFL
 	            ON MYFL.TOPIC_NO = TP.TOPIC_NO 
 	    WHERE 1=1
-	    	AND TP.ENABLED = TRUE
+	    	AND TP.ENABLED = 1
 	    	AND MYFL.USER_NO = #{userNo}
 	    ORDER BY TP.NAME
     </select>
@@ -411,78 +413,56 @@
     
     <!-- 통계 리빌드용 -->
     <update id="rebuildTopicStats">
-	    MERGE INTO MB_TOPIC_STATS ST
-		USING (
-		    SELECT
-		        TP.TOPIC_NO AS TOPIC_NO,
-		
-		        COALESCE(FL.CNT, 0) AS FOLLOW_COUNT,
-		        COALESCE(FG.CNT, 0) AS FRAGMENT_COUNT,
-		        COALESCE(CM.CNT, 0) AS COMMENT_COUNT,
-		
-		        FG.LAST_AT AS LAST_FRAGMENT_AT,
-		        CM.LAST_AT AS LAST_COMMENT_AT
-		
-		    FROM MB_TOPIC TP
-		
-		    LEFT JOIN (
-		        SELECT TOPIC_NO, COUNT(*) CNT
-		        FROM MB_TOPIC_FOLLOW
-		        GROUP BY TOPIC_NO
-		    ) FL
-		      ON FL.TOPIC_NO = TP.TOPIC_NO
-		
-		    LEFT JOIN (
-		        SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
-		        FROM MB_FRAGMENT
-		        WHERE IS_DELETED = FALSE
-		        GROUP BY TOPIC_NO
-		    ) FG
-		      ON FG.TOPIC_NO = TP.TOPIC_NO
-		
-		    LEFT JOIN (
-		        SELECT
-		            F.TOPIC_NO,
-		            COUNT(*) CNT,
-		            MAX(C.REG_DATE) LAST_AT
-		        FROM MB_FRAGMENT_COMMENTS C
-		        JOIN MB_FRAGMENT F
-		          ON F.FRAGMENT_NO = C.FRAGMENT_NO
-		        WHERE F.IS_DELETED = FALSE
-		        GROUP BY F.TOPIC_NO
-		    ) CM
-		      ON CM.TOPIC_NO = TP.TOPIC_NO
-		) SRC
-		ON ST.TOPIC_NO = SRC.TOPIC_NO
-		
-		WHEN MATCHED THEN
-		    UPDATE SET
-		        ST.FOLLOW_COUNT      = SRC.FOLLOW_COUNT,
-		        ST.FRAGMENT_COUNT    = SRC.FRAGMENT_COUNT,
-		        ST.COMMENT_COUNT     = SRC.COMMENT_COUNT,
-		        ST.LAST_FRAGMENT_AT  = SRC.LAST_FRAGMENT_AT,
-		        ST.LAST_COMMENT_AT   = SRC.LAST_COMMENT_AT,
-		        ST.UPDATED_AT        = CURRENT_TIMESTAMP
-		
-		WHEN NOT MATCHED THEN
-		    INSERT (
-		        TOPIC_NO,
-		        FOLLOW_COUNT,
-		        FRAGMENT_COUNT,
-		        COMMENT_COUNT,
-		        LAST_FRAGMENT_AT,
-		        LAST_COMMENT_AT,
-		        UPDATED_AT
-		    )
-		    VALUES (
-		        SRC.TOPIC_NO,
-		        SRC.FOLLOW_COUNT,
-		        SRC.FRAGMENT_COUNT,
-		        SRC.COMMENT_COUNT,
-		        SRC.LAST_FRAGMENT_AT,
-		        SRC.LAST_COMMENT_AT,
-		        CURRENT_TIMESTAMP
-		    )
+	    INSERT INTO MB_TOPIC_STATS (
+	    	TOPIC_NO
+	    	, FOLLOW_COUNT
+	    	, FRAGMENT_COUNT
+	    	, COMMENT_COUNT
+	    	, LAST_FRAGMENT_AT
+	    	, LAST_COMMENT_AT
+	    	, UPDATED_AT
+	    )
+	    SELECT
+	        TP.TOPIC_NO AS TOPIC_NO
+	        , COALESCE(FL.CNT, 0) AS FOLLOW_COUNT
+	        , COALESCE(FG.CNT, 0) AS FRAGMENT_COUNT
+	        , COALESCE(CM.CNT, 0) AS COMMENT_COUNT
+	        , FG.LAST_AT AS LAST_FRAGMENT_AT
+	        , CM.LAST_AT AS LAST_COMMENT_AT
+	        , CURRENT_TIMESTAMP
+	    FROM MB_TOPIC TP
+	    LEFT JOIN (
+	        SELECT TOPIC_NO, COUNT(*) CNT
+	        FROM MB_TOPIC_FOLLOW
+	        GROUP BY TOPIC_NO
+	    ) FL
+	      ON FL.TOPIC_NO = TP.TOPIC_NO
+	    LEFT JOIN (
+	        SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
+	        FROM MB_FRAGMENT
+	        WHERE IS_DELETED = 0
+	        GROUP BY TOPIC_NO
+	    ) FG
+	      ON FG.TOPIC_NO = TP.TOPIC_NO
+	    LEFT JOIN (
+	        SELECT
+	            F.TOPIC_NO
+	            , COUNT(*) CNT
+	            , MAX(C.REG_DATE) LAST_AT
+	        FROM MB_FRAGMENT_COMMENTS C
+	        JOIN MB_FRAGMENT F
+	          ON F.FRAGMENT_NO = C.FRAGMENT_NO
+	        WHERE F.IS_DELETED = 0
+	        GROUP BY F.TOPIC_NO
+	    ) CM
+	      ON CM.TOPIC_NO = TP.TOPIC_NO
+	    ON CONFLICT(TOPIC_NO) DO UPDATE SET
+	    	FOLLOW_COUNT = excluded.FOLLOW_COUNT
+	    	, FRAGMENT_COUNT = excluded.FRAGMENT_COUNT
+	    	, COMMENT_COUNT = excluded.COMMENT_COUNT
+	    	, LAST_FRAGMENT_AT = excluded.LAST_FRAGMENT_AT
+	    	, LAST_COMMENT_AT = excluded.LAST_COMMENT_AT
+	    	, UPDATED_AT = CURRENT_TIMESTAMP
 	</update>    	
 
 	<select id="loadTopicFromUid" parameterType="map" resultMap="TopicMap">
@@ -495,10 +475,10 @@
 		        ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO  = ME.USER_NO
 		WHERE 1=1
 		    AND TP.UID = #{uid}
-		    AND TP.ENABLED = TRUE
+		    AND TP.ENABLED = 1
 	        AND MYFL.USER_NO  = #{user.userNo}
 		    AND (
-		        TP.EXTERNAL = TRUE OR MYFL.USER_NO IS NOT NULL
+		        TP.EXTERNAL = 1 OR MYFL.USER_NO IS NOT NULL
 		    )
 	</select>
 	
@@ -510,7 +490,7 @@
 			LEFT JOIN MB_TOPIC_FOLLOW MYFL
 				ON MYFL.TOPIC_NO = TP.TOPIC_NO AND MYFL.USER_NO = #{user.userNo}
 		WHERE 1=1
-			AND TP.ENABLED = TRUE
+			AND TP.ENABLED = 1
 			
 			<!-- 내가 만든 얘깃거리 OR 내가 팔로우한 얘깃거리 -->
 			AND (
@@ -521,8 +501,8 @@
 			<!-- 검색 -->
 			<if test="keyword != null and !keyword.isEmpty()">
 				AND (
-					TP.NAME_UPPER LIKE CONCAT('%', UPPER(#{keyword}), '%')
-					OR TP.DESCRIPTION LIKE CONCAT('%', #{keyword}, '%')
+					TP.NAME_UPPER LIKE '%' || UPPER(#{keyword}) || '%'
+					OR TP.DESCRIPTION LIKE '%' || #{keyword} || '%'
 				)
 			</if>
 		ORDER BY TP.TOPIC_NO DESC
@@ -534,10 +514,12 @@
 		useGeneratedKeys="true" keyProperty="shareNo" >
         INSERT INTO MB_SHARE (
             USER_NO
+            , UID
             , TARGET_TYPE
             , TARGET_NO
         ) VALUES (
 			#{userNo}
+			, #{uid}
 			, ${@com.utime.memoBom.board.vo.EShareTargetType@Topic.getCode()} 
             , #{topicNo}
         )
@@ -554,9 +536,9 @@
 	        	ON MYFL.USER_NO = UR.USER_NO
     	WHERE 1=1
     		AND MYFL.USER_NO != #{user.userNo}
-    		AND UR.PUSH_ENABLED = TRUE
-    		AND UR.ENABLED = TRUE
-    		AND TP.ENABLED = TRUE
+    		AND UR.PUSH_ENABLED = 1
+    		AND UR.ENABLED = 1
+    		AND TP.ENABLED = 1
     		AND TP.UID = #{uid}
     </select>
     
@@ -564,17 +546,19 @@
     	INSERT INTO MB_TOPIC_INVITE_USER (
 			TOPIC_NO,
 			SOURCE_USER_NO,
-			TARGET_USER_NO
+			TARGET_USER_NO,
+			UID
 		) VALUES (
 			#{topicNo},
 			 #{user.userNo},
-			 #{targetUserNo}
+			 #{targetUserNo},
+			 #{uid}
 		) 
     </insert>
 
 	<select id="existsPendingInvite" parameterType="map" resultType="boolean">
 		SELECT
-			CASE WHEN COUNT(1) > 0 THEN TRUE ELSE FALSE END
+			CASE WHEN COUNT(1) > 0 THEN 1 ELSE 0 END
 		FROM MB_TOPIC_INVITE_USER INV
 			JOIN MB_TOPIC TP
 				ON TP.TOPIC_NO = INV.TOPIC_NO
@@ -598,7 +582,7 @@
 
 	<select id="selectPendingInviteSourceUser" parameterType="map" resultType="com.utime.memoBom.user.vo.query.BasicUserVo">
 		SELECT
-			CAST(USR.UID AS VARCHAR) AS UID,
+			USR.UID AS UID,
 			USR.NICKNAME AS NICKNAME,
 			USR.PROFILE_IMG_PATH AS PROFILE_URL
 		FROM MB_TOPIC_INVITE_USER INV

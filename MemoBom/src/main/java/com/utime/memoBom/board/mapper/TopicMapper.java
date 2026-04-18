@@ -205,7 +205,7 @@ public interface TopicMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	int insertInviteUser(@Param("user") LoginUser user, @Param("topicNo")long topicNo, @Param("targetUserNo")long targetUserNo);
+	int insertInviteUser(@Param("user") LoginUser user, @Param("topicNo")long topicNo, @Param("targetUserNo")long targetUserNo, @Param("uid") String uid);
 
 	/**
 	 * 초대 대기 여부

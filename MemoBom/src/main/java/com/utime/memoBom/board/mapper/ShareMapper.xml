@@ -8,10 +8,12 @@
 		useGeneratedKeys="true" keyProperty="shareNo" >
         INSERT INTO MB_SHARE (
             USER_NO
+            , UID
             , TARGET_TYPE
             , TARGET_NO
         ) VALUES (
 			#{userNo}
+			, #{uid}
 			, #{targetType, typeHandler=com.utime.memoBom.board.typeHandler.EShareTargetTypeTypeHandler} 
             , #{targetNo}
         )
@@ -28,7 +30,7 @@
     <select id="selectShareData" parameterType="map" resultMap="ShareMap">
     	SELECT 
     		SHARE_NO
-    		, CAST(UID AS VARCHAR) AS UID
+    		, UID AS UID
     		, TARGET_TYPE
     		, TARGET_NO
     	FROM MB_SHARE
@@ -46,10 +48,10 @@
     	SELECT
     		TOPIC_NO AS "targetNo"
     		, NAME AS "text"
-    		, CAST(UID AS VARCHAR) AS "uid"
+    		, UID AS "uid"
     	FROM MB_TOPIC
     	WHERE 1=1 
-    		AND ENABLED = TRUE
+    		AND ENABLED = 1
     		<if test="uid != null and ! uid.isEmpty()">
 				AND UID = #{uid}
 			</if>
@@ -63,10 +65,10 @@
     	SELECT
     		FG.FRAGMENT_NO AS "targetNo"
 	        , FG.CONTENT AS "text"
-	        , CAST(FG.UID AS VARCHAR) AS "uid"
+	        , FG.UID AS "uid"
     	FROM MB_FRAGMENT FG
     	WHERE 1=1 
-    		AND FG.IS_DELETED = FALSE
+    		AND FG.IS_DELETED = 0
     		<if test="uid != null and ! uid.isEmpty()">
 				AND FG.UID = #{uid}
 			</if>

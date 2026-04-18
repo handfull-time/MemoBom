@@ -191,6 +191,7 @@ class BoardDaoImpl implements BoardDao {
 		if (topic == null) {
 			throw new Exception("topic is null.");
 		}
+		item.setUid(UUID.randomUUID().toString());
 
 		result += boardMapper.insertFragment(user, device, topic, item);
 		result += topicMapper.increaseTopicStatsFragmentCount( topic.getTopicNo() );
@@ -318,6 +319,7 @@ class BoardDaoImpl implements BoardDao {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception {
+		reqVo.setCommentUid(UUID.randomUUID().toString());
 		
 		boardMapper.insertComment(user, reqVo);
 		

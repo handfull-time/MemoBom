@@ -1,5 +1,7 @@
 package com.utime.memoBom.board.dao.impl;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +82,7 @@ class ShareDaoImpl implements ShareDao{
 		data.setTargetType(targetType);
 		data.setTargetNo(targetInfo.getTargetNo());
 		data.setUserNo(user==null? 0:user.userNo());
+		data.setUid(UUID.randomUUID().toString());
 
 		shareMapper.insertShareData(data);
 		final ShareDataVo dbData = shareMapper.selectShareData(data.getShareNo(), null);

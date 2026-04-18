@@ -2,6 +2,7 @@ package com.utime.memoBom.board.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,7 @@ class TopicDaoImpl implements TopicDao{
 		int result = 0;
 		
 		if( AppUtils.isEmpty( topic.getUid() ) ) {
+			topic.setUid(UUID.randomUUID().toString());
 			result += topicMapper.insertTopic(topic);
 			result += topicMapper.insertTopicFlow(topic.getOwnerNo(), topic.getTopicNo());
 			result += topicMapper.insertTopicStats(topic.getTopicNo());
@@ -172,7 +174,7 @@ class TopicDaoImpl implements TopicDao{
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public int addInviteUser(LoginUser user, long topicNo, long targetUserNo) throws Exception {
-		return topicMapper.insertInviteUser(user, topicNo, targetUserNo);
+		return topicMapper.insertInviteUser(user, topicNo, targetUserNo, UUID.randomUUID().toString());
 	}
 
 	@Override

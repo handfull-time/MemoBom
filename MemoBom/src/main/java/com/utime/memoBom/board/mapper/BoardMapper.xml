@@ -8,12 +8,14 @@
 		INSERT INTO MB_FRAGMENT ( 
 			USER_NO 
 			, TOPIC_NO 
+			, UID
 			, CONTENT 
 			<if test="req.ip != null and ! req.ip.isEmpty()">, IP </if>
 			<if test="device.device != null">, DEVICE</if> 
 		)VALUES ( 
 			#{user.userNo} 
 			, #{topic.topicNo} 
+			, #{req.uid}
 			, #{req.content} 
 			<if test="req.ip != null and ! req.ip.isEmpty()">, #{req.ip} </if>
 			<if test="device.device != null ">, #{device.device}</if> 
@@ -23,21 +25,21 @@
 
 	<!-- 해시태그: 있으면 아무것도 안 하고, 없으면 생성 -->
 	<update id="mergeFragmentHashTag" parameterType="map">
-		MERGE INTO MB_FRAGMENT_HASHTAG (NAME)
-		KEY (NAME)
+		INSERT INTO MB_FRAGMENT_HASHTAG (NAME)
 		VALUES (#{name})
+		ON CONFLICT(NAME) DO NOTHING
 	</update>
 	
 	<!--해시태그-편린 연결 병합-->
 	<update id="mergeFragmentHashTagRecordByName" parameterType="map">
-	    MERGE INTO MB_FRAGMENT_HASHTAG_RECORD (FRAGMENT_NO, TAG_NO)
-        KEY (FRAGMENT_NO, TAG_NO)
+	    INSERT INTO MB_FRAGMENT_HASHTAG_RECORD (FRAGMENT_NO, TAG_NO)
         VALUES (
             #{fragmentNo},
             (
                 SELECT TAG_NO FROM MB_FRAGMENT_HASHTAG WHERE NAME = #{name}
             )
         )
+        ON CONFLICT(TAG_NO, FRAGMENT_NO) DO NOTHING
 	</update>
 	
   <resultMap id="FragmentItemMap" type="com.utime.memoBom.board.vo.FragmentItem">
@@ -126,17 +128,17 @@
 	    SELECT
 	        <!-- 게시글 정보 -->
 	        f.FRAGMENT_NO    AS fragment_no,
-	        CAST(f.UID AS VARCHAR) AS fragment_uid,
+	        f.UID AS fragment_uid,
 	        f.CONTENT        AS content,
 	        f.REG_DATE       AS reg_date,
 	
 	        <!-- 작성자 정보 -->
-	        CAST(u.UID AS VARCHAR) AS user_uid,
+	        u.UID AS user_uid,
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	
 	        <!-- 얘깃거리 정보 -->
-	        CAST(t.UID AS VARCHAR) AS topic_uid,
+	        t.UID AS topic_uid,
 	        t.NAME           AS topic_name,
 	        t.OWNER_NO       AS topic_ownerNo,
 	        t.COLOR          AS topic_color,
@@ -146,10 +148,10 @@
 	        <!-- 보관함 여부(로그인 사용자일 때만) -->
 	        <choose>
 	            <when test="user != null">
-	                CASE WHEN s.USER_NO IS NULL THEN FALSE ELSE TRUE END
+	                CASE WHEN s.USER_NO IS NULL THEN 0 ELSE 1 END
 	            </when>
 	            <otherwise>
-	                FALSE
+	                0
 	            </otherwise>
 	        </choose> AS is_scrap,
 	        
@@ -173,16 +175,16 @@
 		    	AND img.IMAGE_ORDER = 0
 	    WHERE 1=1
 	      -- 기본 조건
-	      AND f.IS_DELETED = FALSE
-	      AND u.ENABLED    = TRUE
-	      AND t.ENABLED    = TRUE
+	      AND f.IS_DELETED = 0
+	      AND u.ENABLED    = 1
+	      AND t.ENABLED    = 1
 	
 	      -- ✅ 얘깃거리 공개/비공개 접근 조건
 	      AND (
-	            t.EXTERNAL = TRUE
+	            t.EXTERNAL = 1
 	            <if test="user != null">
 	              OR (
-	                   t.EXTERNAL = FALSE
+	                   t.EXTERNAL = 0
 	                   AND EXISTS (
 	                       SELECT 1
 	                       FROM MB_TOPIC_FOLLOW tf
@@ -214,7 +216,7 @@
 	            SELECT 1
 	            FROM MB_FRAGMENT_COMMENTS c
 	            WHERE c.FRAGMENT_NO = f.FRAGMENT_NO
-	              AND c.IS_DELETED  = FALSE
+	              AND c.IS_DELETED  = 0
 	              AND c.UID         = #{req.cmtUid}
 	        )
 	      </if>
@@ -222,8 +224,8 @@
 	      <!-- 검색 조건: 키워드 (CLOB 대응 위해 CAST) -->
 	      <if test="req.keyword != null and !req.keyword.isEmpty() ">
 			AND (
-			     f.CONTENT LIKE CONCAT('%', #{req.keyword}, '%')
-			     OR t.NAME_UPPER LIKE CONCAT('%', UPPER(#{req.keyword}), '%')
+			     f.CONTENT LIKE '%' || #{req.keyword} || '%'
+			     OR t.NAME_UPPER LIKE '%' || UPPER(#{req.keyword}) || '%'
 			)
 			</if>
 	
@@ -247,17 +249,17 @@
 	    SELECT
 	        <!-- 게시글 정보 -->
 	        f.FRAGMENT_NO    AS fragment_no,
-	        CAST(f.UID AS VARCHAR) AS fragment_uid,
+	        f.UID AS fragment_uid,
 	        f.CONTENT        AS content,
 	        f.REG_DATE       AS reg_date,
 	
 	        <!-- 작성자 정보 -->
-	        CAST(u.UID AS VARCHAR) AS user_uid,
+	        u.UID AS user_uid,
 	        u.NICKNAME       AS user_nickname,
 	        u.PROFILE_IMG_PATH AS user_img_url,
 	
 	        <!-- 얘깃거리 정보 -->
-	        CAST(t.UID AS VARCHAR) AS topic_uid,
+	        t.UID AS topic_uid,
 	        t.NAME           AS topic_name,
 	        t.COLOR          AS topic_color,
 	        t.IMOGI          AS topic_imogi,
@@ -273,9 +275,9 @@
 		    	ON img.FRAGMENT_NO = f.FRAGMENT_NO 
 		    	AND img.IMAGE_ORDER = 0
 	    WHERE 1=1
-	      AND f.IS_DELETED = FALSE
-	      AND u.ENABLED    = TRUE
-	      AND t.ENABLED    = TRUE
+	      AND f.IS_DELETED = 0
+	      AND u.ENABLED    = 1
+	      AND t.ENABLED    = 1
 	
 	      <if test="fUid != null and !fUid.isEmpty() ">
 	        AND f.UID = #{fUid}
@@ -344,13 +346,13 @@
 	</delete>
 	
 	<update id="upsertEmotion" parameterType="map">
-		MERGE INTO MB_FRAGMENT_EMOTION_LOG (
+		INSERT INTO MB_FRAGMENT_EMOTION_LOG (
 			USER_NO
 			, TARGET_TYPE
 			, TARGET_NO
 			, EMOTION
 			, UPDATE_DATE
-		) KEY (USER_NO, TARGET_TYPE, TARGET_NO)
+		)
 		VALUES (
 			#{userNo}
 			, #{req.targetType, typeHandler=com.utime.memoBom.board.typeHandler.EEmotionTargetTypeHandler}
@@ -358,6 +360,9 @@
 			, #{req.emotion, typeHandler=com.utime.memoBom.board.typeHandler.EmotionCodeTypeHandler}
 			, CURRENT_TIMESTAMP
 		)
+		ON CONFLICT(USER_NO, TARGET_TYPE, TARGET_NO) DO UPDATE SET
+			EMOTION = excluded.EMOTION,
+			UPDATE_DATE = CURRENT_TIMESTAMP
 	</update>
 
 	<!--댓글 추가-->
@@ -366,6 +371,7 @@
 		INSERT INTO MB_FRAGMENT_COMMENTS (
             FRAGMENT_NO
             , USER_NO
+            , UID
             , CONTENT
             <if test="req.ip != null and ! req.ip.isEmpty()">, IP </if>
             <if test="req.device != null and ! req.device.isEmpty()">, DEVICE</if> 
@@ -374,6 +380,7 @@
                 SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{req.uid}
             )
             , #{user.userNo}
+            , #{req.commentUid}
             , #{req.content}
             <if test="req.ip != null and ! req.ip.isEmpty()">, #{req.ip} </if>
             <if test="req.device != null and ! req.device.isEmpty()">, #{req.device}</if> 
@@ -414,19 +421,19 @@
 	<select id="selectCommentByNo" parameterType="long" resultMap="CommentItemMap">
         SELECT
         	c.COMMENT_NO AS comment_no, 
-            CAST(c.UID AS VARCHAR) AS comment_uid,
+            c.UID AS comment_uid,
             c.CONTENT AS content,
             c.REG_DATE AS reg_date,
             <!-- 작성자 정보 -->
-            CAST(u.UID AS VARCHAR) AS user_uid,
+            u.UID AS user_uid,
             u.NICKNAME AS user_nickname,
             u.PROFILE_IMG_PATH AS user_img_url
         FROM MB_FRAGMENT_COMMENTS c
         	INNER JOIN MB_USER u ON c.USER_NO = u.USER_NO
         WHERE 1=1
         	AND c.COMMENT_NO = #{commentNo}
-            AND c.IS_DELETED = FALSE
-            AND u.ENABLED = TRUE
+            AND c.IS_DELETED = 0
+            AND u.ENABLED = 1
 	</select>
 
 
@@ -434,18 +441,18 @@
 	<select id="loadCommentsList" parameterType="map" resultMap="CommentItemMap">
         SELECT
         	c.COMMENT_NO AS comment_no, 
-            CAST(c.UID AS VARCHAR)  AS comment_uid,
+            c.UID  AS comment_uid,
             c.CONTENT AS content,
             c.REG_DATE AS reg_date,
             <!-- 작성자 정보 -->
-            CAST(u.UID AS VARCHAR)  AS user_uid,
+            u.UID  AS user_uid,
             u.NICKNAME AS user_nickname,
             u.PROFILE_IMG_PATH AS user_img_url
         FROM MB_FRAGMENT_COMMENTS c
         	INNER JOIN MB_USER u ON c.USER_NO = u.USER_NO
         WHERE 1=1
-        	AND c.IS_DELETED = FALSE
-            AND u.ENABLED = TRUE
+        	AND c.IS_DELETED = 0
+            AND u.ENABLED = 1
             AND c.FRAGMENT_NO = (
                 SELECT FRAGMENT_NO FROM MB_FRAGMENT WHERE UID = #{uid}
             )
@@ -456,11 +463,11 @@
     <!--USER_NO가 작성한 MB_FRAGMENT 목록 조회-->
     <select id="listMyFragments" parameterType="map" resultMap="FragmentItemMap">
 		SELECT
-			CAST(F.UID AS VARCHAR) AS fragment_uid,
+			F.UID AS fragment_uid,
 			F.REG_DATE AS reg_date,
-			CAST(F.CONTENT AS VARCHAR) AS content,
+			F.CONTENT AS content,
 	
-			CAST(T.UID AS VARCHAR) AS topic_uid,
+			T.UID AS topic_uid,
 			T.NAME AS topic_name,
 	        T.COLOR AS topic_color,
 	        T.IMOGI AS topic_imogi,
@@ -469,11 +476,11 @@
 			JOIN MB_TOPIC T
 				ON T.TOPIC_NO = F.TOPIC_NO
 	  	WHERE 1=1
-	  		AND F.IS_DELETED = FALSE
+	  		AND F.IS_DELETED = 0
 	  		AND F.USER_NO = #{user.userNo}
 	  		
 			<if test="keyword != null and !keyword.isEmpty()">
-				AND CAST(F.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
+				AND F.CONTENT LIKE '%' || #{keyword} || '%'
 			</if>
 			
 		ORDER BY F.REG_DATE DESC, F.FRAGMENT_NO DESC
@@ -501,22 +508,22 @@
 	<!--USER_NO가 작성한 comment 목록 조회-->
     <select id="listMyComments" parameterType="map" resultMap="MyCommentMap">
 		SELECT
-			CAST(C.UID AS VARCHAR) AS comment_uid,
+			C.UID AS comment_uid,
 			C.CONTENT AS content,
 			C.REG_DATE AS reg_date,
 	
-			CAST(T.UID AS VARCHAR) AS topic_uid,
+			T.UID AS topic_uid,
 			T.NAME AS topic_name,
 	        T.COLOR AS topic_color,
 	        T.IMOGI AS topic_imogi,
 	        T.EMOJI_SET_TYPE AS emoji_set_type,
 	
-			CAST(F.UID AS VARCHAR) AS fragment_uid,
+			F.UID AS fragment_uid,
 	
 			CASE
-				WHEN LENGTH(CAST(F.CONTENT AS VARCHAR)) > 10
-				THEN SUBSTRING(CAST(F.CONTENT AS VARCHAR), 1, 10) || '...'
-				ELSE CAST(F.CONTENT AS VARCHAR)
+				WHEN LENGTH(F.CONTENT) > 10
+				THEN SUBSTR(F.CONTENT, 1, 10) || '...'
+				ELSE F.CONTENT
 			END AS fragment_preview
 		FROM MB_FRAGMENT_COMMENTS C
 			JOIN MB_FRAGMENT F
@@ -526,12 +533,12 @@
 	
 		WHERE 1=1
 		    AND C.USER_NO = #{user.userNo}
-		    AND F.IS_DELETED = FALSE
-		    AND C.IS_DELETED = FALSE
-		    AND T.ENABLED = TRUE
+		    AND F.IS_DELETED = 0
+		    AND C.IS_DELETED = 0
+		    AND T.ENABLED = 1
 		
 		    <if test="keyword != null and !keyword.isEmpty()">
-		      AND CAST(C.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
+		      AND C.CONTENT LIKE '%' || #{keyword} || '%'
 		    </if>
 		
 	  	ORDER BY C.REG_DATE DESC, C.COMMENT_NO DESC
@@ -540,11 +547,11 @@
 
 	<select id="listMyScrapFragments" parameterType="map" resultMap="FragmentItemMap">
 		SELECT
-			CAST(F.UID AS VARCHAR) AS fragment_uid,
+			F.UID AS fragment_uid,
 			F.REG_DATE AS reg_date,
 			F.CONTENT AS content,
 	
-			CAST(T.UID AS VARCHAR) AS topic_uid,
+			T.UID AS topic_uid,
 			T.NAME AS topic_name,
 			T.COLOR AS topic_color,
 			T.IMOGI AS topic_imogi,
@@ -558,11 +565,11 @@
 
 		WHERE 1=1
 			AND S.USER_NO = #{user.userNo}
-			AND F.IS_DELETED = FALSE
-			AND T.ENABLED = TRUE
+			AND F.IS_DELETED = 0
+			AND T.ENABLED = 1
 			
 			<if test="keyword != null and !keyword.isEmpty()">
-		      AND CAST(F.CONTENT AS VARCHAR) LIKE CONCAT('%', #{keyword}, '%')
+		      AND F.CONTENT LIKE '%' || #{keyword} || '%'
 		    </if>
 
 		ORDER BY S.REG_DATE DESC, S.FRAGMENT_NO DESC
@@ -573,7 +580,7 @@
 	<update id="removeFragment" parameterType="map">
 		UPDATE MB_FRAGMENT SET
 			UPDATE_DATE = CURRENT_TIMESTAMP
-			, IS_DELETED = TRUE
+			, IS_DELETED = 1
 		WHERE 1=1
 			AND USER_NO = #{userNo}
 			AND UID = #{uid}
@@ -591,7 +598,7 @@
 	</update>
 	
 	<update id="upsertFragmentImage" parameterType="map">
-		MERGE INTO MB_FRAGMENT_IMAGE (
+		INSERT INTO MB_FRAGMENT_IMAGE (
 			UID
 			, FRAGMENT_NO
 			, USER_NO
@@ -602,7 +609,7 @@
 			, WIDTH
 			, HEIGHT
 			, FILE_SIZE
-		) KEY (FRAGMENT_NO, IMAGE_ORDER)
+		)
 		VALUES (
 			#{item.uid}
 			, #{fragment}
@@ -615,6 +622,16 @@
 			, #{item.height}
 			, #{item.fileSize}
 		)
+		ON CONFLICT(FRAGMENT_NO, IMAGE_ORDER) DO UPDATE SET
+			UID = excluded.UID,
+			USER_NO = excluded.USER_NO,
+			MIME_TYPE = excluded.MIME_TYPE,
+			STORAGE_NAME = excluded.STORAGE_NAME,
+			ORIGINAL_NAME = excluded.ORIGINAL_NAME,
+			WIDTH = excluded.WIDTH,
+			HEIGHT = excluded.HEIGHT,
+			FILE_SIZE = excluded.FILE_SIZE,
+			UPD_DATE = CURRENT_TIMESTAMP
 	</update>
 	
 	<!--Fragment Image 정보 조회-->

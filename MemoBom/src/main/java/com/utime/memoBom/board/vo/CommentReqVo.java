@@ -9,6 +9,8 @@ import lombok.Data;
 public class CommentReqVo {
 	/** 댓글 고유 번호 (insert에서 사용) */
 	long commentNo;
+	/** 댓글 UID (insert에서 사용) */
+	String commentUid;
 	/** 편린 고유 아이디(req 필수) */
 	String uid;
 	/** 내용 (req 필수) */
