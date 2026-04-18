@@ -5,11 +5,11 @@
 
 	<!-- Key-Value 테이블 생성 -->
 	<insert id="createKayValueTable">
-        CREATE TABLE APP_KV (
-			K VARCHAR(128) PRIMARY KEY,
-			V CLOB,
-			EXPIRE_AT TIMESTAMP,
-			UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS APP_KV (
+			K TEXT PRIMARY KEY,
+			V TEXT,
+			EXPIRE_AT TEXT,
+			UPDATED_AT TEXT DEFAULT CURRENT_TIMESTAMP
 		);
     </insert>
 	
@@ -33,29 +33,27 @@
           AND (EXPIRE_AT IS NULL OR EXPIRE_AT > CURRENT_TIMESTAMP)
     </select>
 
-    <!-- 값 설정 -->
+	<!-- 값 설정 -->
 	<update id="setValue" parameterType="map">
-		MERGE INTO APP_KV TARGET
-		USING (
-		  SELECT
-		    CAST(#{key} AS VARCHAR(128)) AS K,
-		    CAST(#{value} AS CLOB) AS V,
-		    CASE
-		      WHEN #{expireMinute} > 0
-		        THEN DATEADD('MINUTE', #{expireMinute}, CURRENT_TIMESTAMP)
-		      ELSE NULL
-		    END AS EXPIRE_AT
-		   FROM DUAL
-		) SOURCE
-		ON TARGET.K = SOURCE.K
-		WHEN MATCHED THEN
-		  UPDATE SET
-		    V = SOURCE.V,
-		    EXPIRE_AT = SOURCE.EXPIRE_AT,
-		    UPDATED_AT = CURRENT_TIMESTAMP
-		WHEN NOT MATCHED THEN
-		  INSERT (K, V, EXPIRE_AT, UPDATED_AT)
-		  VALUES (SOURCE.K, SOURCE.V, SOURCE.EXPIRE_AT, CURRENT_TIMESTAMP);
+		INSERT INTO APP_KV (
+			K
+			, V
+			, EXPIRE_AT
+			, UPDATED_AT
+		) VALUES (
+			#{key}
+			, #{value}
+			, CASE
+				WHEN #{expireMinute} > 0
+					THEN DATETIME(CURRENT_TIMESTAMP, '+' || #{expireMinute} || ' minutes')
+				ELSE NULL
+			  END
+			, CURRENT_TIMESTAMP
+		)
+		ON CONFLICT(K) DO UPDATE SET
+			V = excluded.V,
+			EXPIRE_AT = excluded.EXPIRE_AT,
+			UPDATED_AT = CURRENT_TIMESTAMP
     </update>
 
     <!-- 키 삭제 -->
@@ -69,7 +67,7 @@
         UPDATE APP_KV
         SET EXPIRE_AT = CASE
                           WHEN #{expireMinute} > 0
-                            THEN DATEADD('MINUTE', #{expireMinute}, CURRENT_TIMESTAMP)
+                            THEN DATETIME(CURRENT_TIMESTAMP, '+' || #{expireMinute} || ' minutes')
                           ELSE NULL
                         END,
             UPDATED_AT = CURRENT_TIMESTAMP
@@ -81,7 +79,7 @@
         SELECT 
             CASE 
                 WHEN EXPIRE_AT IS NULL THEN -1
-                ELSE DATEDIFF('MINUTE', CURRENT_TIMESTAMP, EXPIRE_AT)
+                ELSE CAST((JULIANDAY(EXPIRE_AT) - JULIANDAY(CURRENT_TIMESTAMP)) * 24 * 60 AS INTEGER)
             END AS MINUTES_REMAINING
         FROM APP_KV
         WHERE K = #{key}
