@@ -1,6 +1,7 @@
 package com.utime.memoBom.user.dao.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +58,9 @@ class UserDaoImpl implements UserDao {
 	public int addUser(UserVo user) throws Exception {
 		if( user == null ) {
 			throw new Exception("user is null ");
+		}
+		if( AppUtils.isEmpty(user.getUid()) ) {
+			user.setUid(UUID.randomUUID().toString());
 		}
 		
 		final int result = userMapper.insertUser( user );

@@ -4,17 +4,22 @@
 <mapper namespace="com.utime.memoBom.user.mapper.HolidayMapper">
 
 	<insert id="insertHoliday" parameterType="com.utime.memoBom.user.vo.HolidayVo">
-        MERGE INTO MB_HOLIDAY (
-			HOLI_TYPE,
-			LOC_DATE,
-			HOLIDAY,
-			NAME
-		) KEY (LOC_DATE, NAME)
-		VALUES (
-			#{dateKind},
-			PARSEDATETIME(#{locdate}, 'yyyyMMdd'),
-			#{holiday},
-			#{dateName}
+        INSERT INTO MB_HOLIDAY (
+			HOLI_TYPE
+			, LOC_DATE
+			, HOLIDAY
+			, NAME
+		)
+		SELECT
+			#{dateKind}
+			, DATETIME(SUBSTR(#{locdate}, 1, 4) || '-' || SUBSTR(#{locdate}, 5, 2) || '-' || SUBSTR(#{locdate}, 7, 2) || ' 00:00:00')
+			, #{holiday}
+			, #{dateName}
+		WHERE NOT EXISTS (
+			SELECT 1
+			FROM MB_HOLIDAY
+			WHERE LOC_DATE = DATETIME(SUBSTR(#{locdate}, 1, 4) || '-' || SUBSTR(#{locdate}, 5, 2) || '-' || SUBSTR(#{locdate}, 7, 2) || ' 00:00:00')
+			  AND NAME = #{dateName}
 		)
     </insert>
     

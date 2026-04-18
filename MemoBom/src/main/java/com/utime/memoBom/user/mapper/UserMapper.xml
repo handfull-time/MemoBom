@@ -9,6 +9,7 @@
 		INSERT INTO MB_USER (
 			UPDATE_DATE 
 			, ENABLED
+			, UID
 			, ROLE
 			, PROVIDER
 			, ID 
@@ -19,6 +20,7 @@
 		) VALUES (
 			CURRENT_TIMESTAMP
 			, #{enabled}
+			, #{uid}
 			, #{role}
 			, #{provider}
 			, #{id}
@@ -86,7 +88,7 @@
 		SELECT 
 			<include refid="UserColumn" /> 
 		FROM MB_USER UR 
-		WHERE UR.ID = #{id} AND PROVIDER = #{provider} AND ENABLED = TRUE
+		WHERE UR.ID = #{id} AND PROVIDER = #{provider} AND ENABLED = 1
 	</select>
 	
 	
@@ -95,7 +97,7 @@
 		SELECT 
 			<include refid="UserColumn" /> 
 		FROM MB_USER UR 
-		WHERE UR.UID = #{uid} AND ENABLED = TRUE
+		WHERE UR.UID = #{uid} AND ENABLED = 1
 	</select>
 	
 	<!--사용자 정보 조회-->
@@ -103,18 +105,18 @@
 		SELECT 
 			<include refid="UserColumn" /> 
 		FROM MB_USER UR 
-		WHERE UR.USER_NO = #{userNo} AND ENABLED = TRUE
+		WHERE UR.USER_NO = #{userNo} AND ENABLED = 1
 	</select>
 	
 	<!--회원 정보 제거-->
 	<update id="removeUser" parameterType="com.utime.memoBom.user.vo.UserVo" >
 		UPDATE MB_USER SET 
 			UPDATE_DATE = CURRENT_TIMESTAMP
-			, ENABLED = FALSE
+			, ENABLED = 0
 			, ROLE = '-'
 			, PROVIDER = '-'
 			, ID  = '${userNo}'
-		WHERE USER_NO = ${userNo} AND ENABLED = TRUE
+		WHERE USER_NO = ${userNo} AND ENABLED = 1
 	</update>
 	
 	<!--내 작성 데이터-->
@@ -124,45 +126,45 @@
 		    X.TARGET     AS "target",
 		    X.UID        AS "uid",
 	        CASE
-            	WHEN LENGTH(CAST(X.NAME AS VARCHAR)) > 26
-            		THEN SUBSTRING(CAST(X.NAME AS VARCHAR), 1, 23) || '...'
-            	ELSE CAST(X.NAME AS VARCHAR)
+            	WHEN LENGTH(X.NAME) > 26
+            		THEN SUBSTR(X.NAME, 1, 23) || '...'
+            	ELSE X.NAME
        		END AS "name"
 		FROM (
 		    SELECT
 		        F.REG_DATE AS REG_DATE,
 		        'fragment' AS TARGET,
-		        CAST(F.UID AS VARCHAR) AS UID,
+		        F.UID AS UID,
 		        F.CONTENT AS NAME
 		    FROM MB_FRAGMENT F
 		    WHERE F.USER_NO = #{user.userNo}
-		      AND F.REG_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
-		      AND F.REG_DATE <![CDATA[ < ]]> DATEADD('MONTH', 1, PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd'))
-		      AND F.IS_DELETED = FALSE
+		      AND F.REG_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
+		      AND F.REG_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
+		      AND F.IS_DELETED = 0
 		
 		    UNION ALL
 		
 		    SELECT
 		        C.REG_DATE AS REG_DATE,
 		        'comment'  AS TARGET,
-		        CAST(C.UID AS VARCHAR) AS UID,
+		        C.UID AS UID,
 		        C.CONTENT AS NAME
 		    FROM MB_FRAGMENT_COMMENTS C
 		    WHERE C.USER_NO = #{user.userNo}
-		      AND C.REG_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
-		      AND C.REG_DATE <![CDATA[ < ]]> DATEADD('MONTH', 1, PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd'))
+		      AND C.REG_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
+		      AND C.REG_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
 		      
 		    UNION ALL
 		    
 		    SELECT
 		        HL.LOC_DATE AS REG_DATE,
-		        CASE WHEN HL.HOLIDAY = TRUE THEN 'holiday' ELSE 'anniversary' END AS TARGET,
+		        CASE WHEN HL.HOLIDAY = 1 THEN 'holiday' ELSE 'anniversary' END AS TARGET,
 		        '' AS UID,
 		        HL.NAME AS NAME
             FROM MB_HOLIDAY HL
             WHERE 1=1
-            	AND HL.LOC_DATE >= PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd')
-            	AND HL.LOC_DATE <![CDATA[ < ]]> DATEADD('MONTH', 1, PARSEDATETIME(CONCAT(#{date}, '01'), 'yyyyMMdd'))
+            	AND HL.LOC_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
+            	AND HL.LOC_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
 		) X
 		ORDER BY X.REG_DATE ASC
 	</select>
@@ -182,7 +184,7 @@
 			, PROFILE_IMG_PATH 
 			, FONT_SIZE 
 		FROM MB_USER
-		WHERE USER_NO = #{userNo} AND ENABLED = TRUE
+		WHERE USER_NO = #{userNo} AND ENABLED = 1
 	</select>
 	
 	<!-- USER_NO 의 Topic 생성수. topic follow 수. 로그인 한 수. fragment 의 작성 수. 댓글 작성 수. fragment 의 emotion 참여 수. 댓글의 emotion 참여 수 -->
@@ -192,7 +194,7 @@
 		    (SELECT COUNT(*)
 		       FROM MB_TOPIC TP
 		      WHERE TP.OWNER_NO = #{userNo}
-		        AND TP.ENABLED = TRUE
+		        AND TP.ENABLED = 1
 		    ) AS "topicCreatedCount",
 		
 		    <!--/* Topic follow 수 */-->
@@ -211,7 +213,7 @@
 		    (SELECT COUNT(*)
 		       FROM MB_FRAGMENT F
 		      WHERE F.USER_NO = #{userNo}
-		        AND F.IS_DELETED = FALSE
+		        AND F.IS_DELETED = 0
 		    ) AS "fragmentWriteCount",
 		
 		    <!--/* 댓글 작성 수 */-->
@@ -233,7 +235,7 @@
 		      WHERE E.USER_NO = #{userNo}
 		        AND E.TARGET_TYPE = 2
 		    ) AS "commentEmotionCount"
-	    FROM DUAL
+	    
 	</select>
 
  	<!--nickName 변경-->
@@ -241,7 +243,7 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, NICKNAME = #{nickname}
- 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
 
 	<!--개인 이미지 정보 수정-->
@@ -249,14 +251,14 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, PROFILE_IMG_PATH = #{profile}
- 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
  	
  	<!--글자 크기 변경-->
  	<update id="updateMyInfoFontSize" parameterType="map" >
  		UPDATE MB_USER SET
  			FONT_SIZE = #{fs, typeHandler=com.utime.memoBom.user.typeHandler.EFontSizeTypeHandler}
- 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
  	
  	<!--푸시 수신 상태-->
@@ -267,11 +269,10 @@
 		        FROM MB_USER US
 		        INNER JOIN MB_PUSH_SUB PU ON US.USER_NO = PU.USER_NO
 		        WHERE US.USER_NO = #{user.userNo}
-		          AND US.ENABLED = TRUE 
+		          AND US.ENABLED = 1 
 		          AND PU.DEVICE_ID = #{deviceId}  
-		          AND US.PUSH_ENABLED = TRUE
-		    ) THEN TRUE ELSE FALSE END AS PUSH_ENABLED
-		FROM DUAL 
+		          AND US.PUSH_ENABLED = 1
+		    ) THEN 1 ELSE 0 END AS PUSH_ENABLED
  	</select>
 
 	<!--푸시 수신 설정-->
@@ -279,7 +280,7 @@
  		UPDATE MB_USER SET
  			UPDATE_DATE = CURRENT_TIMESTAMP
  			, PUSH_ENABLED = #{enabled}
- 		WHERE USER_NO = #{user.userNo} AND ENABLED = TRUE
+ 		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
  	
  	<!--초대할 사용자 검색-->
@@ -294,8 +295,8 @@
 		WHERE 1=1
 			AND TI.TARGET_USER_NO IS NULL
 			AND UR.USER_NO != #{user.userNo}
-			AND UR.ENABLED = TRUE
-			AND UR.NICKNAME LIKE CONCAT('%', #{nickName}, '%')
+			AND UR.ENABLED = 1
+			AND UR.NICKNAME LIKE '%' || #{nickName} || '%'
 		ORDER BY 
 			CASE 
 				WHEN UPPER(UR.NICKNAME) = UPPER(#{nickName}) THEN 0
@@ -344,9 +345,9 @@
 		WHERE 1=1
 			AND USER_NO = #{user.userNo} 
 			<if test="keyword != null and !keyword.isEmpty()">
-				AND ( TITLE LIKE CONCAT('%', #{keyword}, '%')
+				AND ( TITLE LIKE '%' || #{keyword} || '%'
 					OR
-					MESSAGE LIKE CONCAT('%', #{keyword}, '%')
+					MESSAGE LIKE '%' || #{keyword} || '%'
 				)
 			</if>
 		ORDER BY ALARM_NO DESC
@@ -356,7 +357,7 @@
 	<!--기간 만료된 알람 제거-->
 	<delete id="removeAlarmExpire">
 		DELETE FROM MB_ALARM
-		WHERE CREATE_AT <![CDATA[ <= ]]> DATEADD('MONTH', -3, CURRENT_TIMESTAMP)
+		WHERE CREATE_AT <![CDATA[ <= ]]> DATETIME(CURRENT_TIMESTAMP, '-3 months')
 	</delete>
 	
 </mapper>
