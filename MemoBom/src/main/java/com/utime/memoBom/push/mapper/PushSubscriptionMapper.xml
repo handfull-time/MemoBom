@@ -24,7 +24,7 @@
 	        , #{endPoint}
 	        , #{p256dh}
 	        , #{auth}
-	        , TRUE
+	        , 1
 	        , <choose> <when test="deviceId != null"> #{deviceId} </when> <otherwise> NULL </otherwise> </choose>
 	        , <choose> <when test="userAgent != null"> #{userAgent} </when> <otherwise> NULL </otherwise> </choose>
 	        , <choose> <when test="browser != null"> #{browser} </when> <otherwise> NULL </otherwise> </choose>
@@ -82,7 +82,7 @@
 		FROM MB_PUSH_SUB
 		WHERE 1=1
 			AND USER_NO = #{userNo}
-			AND IS_ACTIVE = TRUE
+			AND IS_ACTIVE = 1
 		ORDER BY SUB_NO DESC
 	</select>
 	
@@ -108,7 +108,7 @@
 			UPDATE_DATE = CURRENT_TIMESTAMP
 			, LAST_PUSH_DATE = CURRENT_TIMESTAMP
 			, FAIL_COUNT = 0
-			, IS_ACTIVE = TRUE
+			, IS_ACTIVE = 1
 		WHERE SUB_NO = #{subNo}
 	</update>
 
@@ -123,7 +123,7 @@
 	<update id="markInactive" parameterType="long">
 		UPDATE MB_PUSH_SUB SET
 			UPDATE_DATE = CURRENT_TIMESTAMP
-			, IS_ACTIVE = FALSE
+			, IS_ACTIVE = 0
 		WHERE SUB_NO = #{subNo}
 	</update>
 	
