@@ -10,24 +10,24 @@
 	   			WHEN 1 THEN 1
 				ELSE 0
 	   		END AS RES
-	   	FROM INFORMATION_SCHEMA.TABLES
+	   	FROM sqlite_master
 	   	WHERE 1=1
-	   		AND TABLE_NAME = #{tableName}
-	   		AND TABLE_SCHEMA = 'PUBLIC'
+	   		AND type = 'table'
+	   		AND UPPER(name) = UPPER(#{tableName})
 	</select>
 	
 	<!-- 인덱스 생성 -->
 	<update id="createIndex" parameterType="map">
-		CREATE INDEX ${indexName} ON ${tableName} ( ${columns} )
+		CREATE INDEX IF NOT EXISTS ${indexName} ON ${tableName} ( ${columns} )
 	</update>
 	
 	<update id="createUniqueIndex" parameterType="map">
-		CREATE UNIQUE INDEX ${indexName} ON ${tableName} ( ${columns} )
+		CREATE UNIQUE INDEX IF NOT EXISTS ${indexName} ON ${tableName} ( ${columns} )
 	</update>
 
 	<!-- 테이블 삭제 -->
 	<update id="dropTable" parameterType="map">
-		DROP TABLE ${tableName}
+		DROP TABLE IF EXISTS ${tableName}
 	</update>
 	
 	<!-- 바이너리 데이터 VO MAP -->
@@ -40,9 +40,9 @@
 	<!-- 테이블 컬럼 정보 조회 -->
     <select id="getColumnInfo" resultType="java.util.Map">
         SELECT 
-        	COLUMN_NAME, DATA_TYPE
-        FROM INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME = #{tableName}
+        	name AS COLUMN_NAME
+        	, type AS DATA_TYPE
+        FROM pragma_table_info('${tableName}')
     </select>
 	
 	<!-- 컬럼 제거 -->
@@ -52,7 +52,7 @@
 
 	<!-- 컬럼 추가 -->
     <update id="addColumn">
-        ALTER TABLE ${tableName} ADD IF NOT EXISTS ${columnName} ${columnType}
+        ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}
         <if test="columnDefault != null">
             DEFAULT ${columnDefault}
         </if>

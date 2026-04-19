@@ -1,5 +1,8 @@
 package com.utime.memoBom.common.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Repository;
 
 import com.utime.memoBom.common.mapper.CommonMapper;
@@ -28,7 +31,14 @@ class CreateRepository {
 			result += mapper.createUser();
 		}
 		
-		common.addColumn("MB_USER", "PUSH_ENABLED", "BOOLEAN", "FALSE", false);
+		final List<Map<String, String>> userColumns = common.getColumnInfo("MB_USER");
+		final boolean hasPushEnabled = userColumns.stream().anyMatch(item -> {
+			final String columnName = item.get("COLUMN_NAME");
+			return columnName != null && "PUSH_ENABLED".equalsIgnoreCase(columnName);
+		});
+		if( !hasPushEnabled ) {
+			common.addColumn("MB_USER", "PUSH_ENABLED", "INTEGER", "0", false);
+		}
 		
 		if( !common.existTable("MB_USER_LOGIN_RECORD") ) {
 			log.info("MB_USER_LOGIN_RECORD 생성");
