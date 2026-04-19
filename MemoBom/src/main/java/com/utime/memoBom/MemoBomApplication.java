@@ -44,15 +44,13 @@ public class MemoBomApplication {
 	 * google client id : https://console.cloud.google.com/
 	 * https://console.cloud.google.com/auth/clients/{google.client-id}?project=memobom
 	 * 
-	 * jdbc:h2:file:${h2.path}/${appName}.h2;AUTO_SERVER=TRUE
+	 * jdbc:sqlite:${sqlite.path}/${appName}.db
 	 * 
 	 * 
 appName=MemoBom
 jwt.secret=
 pwSaltKey=
-h2.username=BomDbAgent
-h2.password=
-h2.path=
+sqlite.path=
 google.client-id=
 google.client-secret=
 
@@ -100,9 +98,7 @@ google.client-secret=
         
 	    final Properties props = new Properties();
 	    props.setProperty("appName", "MemoBom");
-	    props.setProperty("h2.username", "BomDbAgent");
-	    props.setProperty("h2.password", empty);
-	    props.setProperty("h2.path", empty);
+	    props.setProperty("sqlite.path", empty);
 	    props.setProperty("google.client-id", empty);
 	    props.setProperty("google.client-secret", empty);
 	    props.setProperty("korean.dataio.key.SpcdeInfoService", empty);
@@ -134,14 +130,23 @@ google.client-secret=
 	    if( AppUtils.isEmpty( props.getProperty("appName") ) ) {
 	    	throw new RuntimeException("'appName'" + exceptionMessage);
 	    }
-	    if( AppUtils.isEmpty( props.getProperty("h2.username") ) ) {
-	    	throw new RuntimeException("'h2.username'" + exceptionMessage);
-	    }
-	    if( AppUtils.isEmpty( props.getProperty("h2.password") ) ) {
-	    	throw new RuntimeException("'h2.password'" + exceptionMessage);
-	    }
-	    if( AppUtils.isEmpty( props.getProperty("h2.path") ) ) {
-	    	throw new RuntimeException("'h2.path'" + exceptionMessage);
+	    if( AppUtils.isEmpty( props.getProperty("sqlite.path") ) ) {
+	    	throw new RuntimeException("'sqlite.path'" + exceptionMessage);
+	    }else {
+	    	final String sqlitePath = props.getProperty("sqlite.path");
+	    	final Path path = Paths.get(sqlitePath);
+
+	        if ( Files.exists(path) ) {
+	            if (!Files.isDirectory(path)) {
+	                throw new RuntimeException("Path exists but is not a directory: " + sqlitePath);
+	            }
+	        }else {
+	        	try {
+					Files.createDirectories(path);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+	        }
 	    }
 	    if( AppUtils.isEmpty( props.getProperty("google.client-id") ) ) {
 	    	throw new RuntimeException("'google.client-id'" + exceptionMessage);
