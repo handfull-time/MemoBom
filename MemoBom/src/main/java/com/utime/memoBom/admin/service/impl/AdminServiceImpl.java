@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@DependsOn("createRepository")
 @RequiredArgsConstructor
 class AdminServiceImpl implements AdminService {
 	

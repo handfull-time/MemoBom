@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j 
 @Service
+@DependsOn("createRepository")
 public class HolidayServiceImpl {
 	
 	@Value("${korean.dataio.key.SpcdeInfoService}")
