@@ -12,7 +12,7 @@ spring:
   application:
     name: ${appName}
   datasource:
-    url: jdbc:sqlite:${sqlite.path}/${appName}.db
+    url: jdbc:sqlite:${sqlite.path}/${appName}.sqlite
     driver-class-name: org.sqlite.JDBC
     dbcp2:
       validation-query: SELECT 1

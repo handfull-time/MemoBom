@@ -53,8 +53,8 @@
 	
 	<sql id="UserColumn">
 		USER_NO
-		, REG_DATE
-		, UPDATE_DATE
+		, DATETIME(REG_DATE,'localtime') AS REG_DATE
+		, DATETIME(UPDATE_DATE,'localtime') AS UPDATE_DATE
 		, ENABLED 
 		, UID
 		, ROLE 
@@ -335,8 +335,8 @@
 	<select id="listMyAlarm" parameterType="map" resultMap="AlarmVoMap">
 		SELECT
 			UID
-			, CREATE_AT 
-			, READ_AT 
+			, DATETIME(CREATE_AT,'localtime') AS CREATE_AT 
+			, DATETIME(READ_AT,'localtime') AS READ_AT 
 			, ALARM_TYPE 
 			, TITLE 
 			, MESSAGE 

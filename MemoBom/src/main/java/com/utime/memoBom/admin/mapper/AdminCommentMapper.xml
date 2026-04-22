@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminCommentVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', C.REG_DATE) AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', C.UPDATE_DATE) AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', C.REG_DATE, 'localtime') AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', C.UPDATE_DATE, 'localtime') AS updateDate,
 			C.COMMENT_NO AS commentNo,
 			C.UID AS uid,
 			C.IS_DELETED AS deleted,
@@ -48,7 +48,7 @@
 		SELECT
 			F.FRAGMENT_NO AS fragmentNo,
 			F.UID AS uid,
-			STRFTIME('%Y-%m-%d %H:%M:%S', F.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.REG_DATE, 'localtime') AS regDate,
 			F.TOPIC_NO AS topicNo,
 			T.NAME AS topicName,
 			T.IMOGI AS imogi,

@@ -130,7 +130,7 @@
 	        f.FRAGMENT_NO    AS fragment_no,
 	        f.UID AS fragment_uid,
 	        f.CONTENT        AS content,
-	        f.REG_DATE       AS reg_date,
+	        DATETIME(f.REG_DATE, 'localtime') AS reg_date,
 	
 	        <!-- 작성자 정보 -->
 	        u.UID AS user_uid,
@@ -251,7 +251,7 @@
 	        f.FRAGMENT_NO    AS fragment_no,
 	        f.UID AS fragment_uid,
 	        f.CONTENT        AS content,
-	        f.REG_DATE       AS reg_date,
+	        DATETIME(f.REG_DATE, 'localtime') AS reg_date,
 	
 	        <!-- 작성자 정보 -->
 	        u.UID AS user_uid,
@@ -423,7 +423,7 @@
         	c.COMMENT_NO AS comment_no, 
             c.UID AS comment_uid,
             c.CONTENT AS content,
-            c.REG_DATE AS reg_date,
+            DATETIME(c.REG_DATE, 'localtime') AS reg_date,
             <!-- 작성자 정보 -->
             u.UID AS user_uid,
             u.NICKNAME AS user_nickname,
@@ -443,7 +443,7 @@
         	c.COMMENT_NO AS comment_no, 
             c.UID  AS comment_uid,
             c.CONTENT AS content,
-            c.REG_DATE AS reg_date,
+            DATETIME(c.REG_DATE, 'localtime') AS reg_date,
             <!-- 작성자 정보 -->
             u.UID  AS user_uid,
             u.NICKNAME AS user_nickname,
@@ -464,7 +464,7 @@
     <select id="listMyFragments" parameterType="map" resultMap="FragmentItemMap">
 		SELECT
 			F.UID AS fragment_uid,
-			F.REG_DATE AS reg_date,
+			DATETIME(F.REG_DATE, 'localtime') AS reg_date,
 			F.CONTENT AS content,
 	
 			T.UID AS topic_uid,
@@ -510,7 +510,7 @@
 		SELECT
 			C.UID AS comment_uid,
 			C.CONTENT AS content,
-			C.REG_DATE AS reg_date,
+			DATETIME(C.REG_DATE, 'localtime') AS reg_date,
 	
 			T.UID AS topic_uid,
 			T.NAME AS topic_name,
@@ -548,7 +548,7 @@
 	<select id="listMyScrapFragments" parameterType="map" resultMap="FragmentItemMap">
 		SELECT
 			F.UID AS fragment_uid,
-			F.REG_DATE AS reg_date,
+			DATETIME(F.REG_DATE, 'localtime') AS reg_date,
 			F.CONTENT AS content,
 	
 			T.UID AS topic_uid,
