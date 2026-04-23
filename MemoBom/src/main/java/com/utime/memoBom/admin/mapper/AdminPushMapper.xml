@@ -8,7 +8,7 @@
 		resultType="com.utime.memoBom.admin.vo.AdminPushVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', P.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', P.CREATED_AT) AS createdAt,
 			P.SUB_NO AS subNo,
 			P.USER_NO AS userNo,
 			U.ID AS userId,
@@ -22,7 +22,7 @@
 		FROM MB_PUSH_SUB P
 			LEFT JOIN MB_USER U
 				ON U.USER_NO = P.USER_NO
-		WHERE STRFTIME('%Y-%m-%d', P.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', P.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -40,7 +40,7 @@
 		DELETE FROM MB_PUSH_SUB
 		WHERE 1=1
 			AND IS_ACTIVE = 0
-			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days') 
+			AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days') 
 	</delete>
 
 </mapper>

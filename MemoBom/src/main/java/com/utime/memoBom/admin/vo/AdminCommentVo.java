@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminCommentVo {
-	String regDate;
-	String updateDate;
+	String createdAt;
+	String updatedAt;
 	Long commentNo;
 	String uid;
 	Boolean deleted;

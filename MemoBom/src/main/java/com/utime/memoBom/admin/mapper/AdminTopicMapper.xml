@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminTopicVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', T.REG_DATE) AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', T.UPDATE_DATE) AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', T.CREATED_AT) AS createdAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', T.UPDATED_AT) AS updatedAt,
 			T.TOPIC_NO AS topicNo,
 			T.OWNER_NO AS ownerNo,
 			U.NICKNAME AS ownerNickname,
@@ -39,7 +39,7 @@
 			) AS followCount
 		FROM MB_TOPIC T
 			LEFT JOIN MB_USER U ON U.USER_NO = T.OWNER_NO
-		WHERE STRFTIME('%Y-%m-%d', T.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', T.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(T.NAME) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -57,7 +57,7 @@
 			MAX_LEN = #{maxLen},
 			AI = #{ai},
 			PROMPT = #{prompt},
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 		WHERE TOPIC_NO = #{topicNo}
 	</update>
 
@@ -79,7 +79,7 @@
 		DELETE FROM MB_TOPIC
 		WHERE 1=1
 			AND ENABLED = 0
-			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
+			AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

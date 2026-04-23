@@ -45,8 +45,8 @@
 					<div>comments: <span class="commentCount tabular-nums">0</span></div>
 					<div>emotions: <span class="emotionCount tabular-nums">0</span></div>
 					<div>scraps: <span class="scrapCount tabular-nums">0</span></div>
-					<div>regDate: <span class="regDate tabular-nums">-</span></div>
-					<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+					<div>createdAt: <span class="createdAt tabular-nums">-</span></div>
+					<div>updatedAt: <span class="updatedAt tabular-nums">-</span></div>
 				</div>
 
 				<div class="mt-2 rounded-lg border border-slate-200 p-2 text-sm text-slate-700 break-words whitespace-pre-wrap content">-</div>
@@ -93,8 +93,8 @@
 					node.querySelector('.commentCount').textContent = text(item.commentCount, '0');
 					node.querySelector('.emotionCount').textContent = text(item.emotionCount, '0');
 					node.querySelector('.scrapCount').textContent = text(item.scrapCount, '0');
-					node.querySelector('.regDate').textContent = text(item.regDate);
-					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					node.querySelector('.createdAt').textContent = text(item.createdAt);
+					node.querySelector('.updatedAt').textContent = text(item.updatedAt);
 					node.querySelector('.content').textContent = text(item.content);
 
 					return node;

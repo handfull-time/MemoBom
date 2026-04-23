@@ -22,7 +22,7 @@ public class FragmentDto {
 	UserDto user;
 	/** 생성일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	Date regDate;
+	Date createdAt;
 	/** 내용 */
 	String content;
 	/** 보관함 여부 */
@@ -43,7 +43,7 @@ public class FragmentDto {
 		final FragmentDto result = new FragmentDto();
 		
 		result.uid = item.getUid();
-		result.regDate = item.getRegDate();
+		result.createdAt = item.getCreatedAt();
 		result.content = item.getContent();
 		result.scrap = item.isScrap();
 		result.image = ImageDto.of( item.getImage() );

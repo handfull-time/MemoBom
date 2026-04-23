@@ -16,10 +16,10 @@ public class UserVo {
 	long userNo;
 	/** 생성일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	LocalDateTime regDate;
+	LocalDateTime createdAt;
 	/** 수정일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	LocalDateTime updateDate;
+	LocalDateTime updatedAt;
 	/** 사용 여부 */
 	boolean enabled;
 	/** 권한 */

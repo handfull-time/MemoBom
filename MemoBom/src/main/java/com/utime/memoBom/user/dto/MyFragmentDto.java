@@ -10,7 +10,7 @@ import lombok.Data;
 public class MyFragmentDto {
 	/** 생성일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	Date regDate;
+	Date createdAt;
 	/** 게시글 uid */
 	String uid;
 	/** 내용 */

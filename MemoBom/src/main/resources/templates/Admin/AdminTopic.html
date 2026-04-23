@@ -60,8 +60,8 @@
 						<div>외부공개: <span class="external">-</span></div>
 						<div>느낌: <span class="emotion">-</span></div>
 						<div>댓글: <span class="comments">-</span></div>
-						<div>생성일: <span class="regDate tabular-nums">-</span></div>
-						<div>수정일: <span class="updateDate tabular-nums">-</span></div>
+						<div>생성일: <span class="createdAt tabular-nums">-</span></div>
+						<div>수정일: <span class="updatedAt tabular-nums">-</span></div>
 					</div>
 
 					<div class="mt-2 rounded-lg border border-slate-200 p-2 text-sm text-slate-700 break-words">
@@ -292,8 +292,8 @@
 					node.querySelector('.external').textContent = !!item.external ? '공개' : '비공개';
 					node.querySelector('.emotion').textContent = !!item.emotion ? '사용' : '미사용';
 					node.querySelector('.comments').textContent = !!item.comments ? '사용' : '미사용';
-					node.querySelector('.regDate').textContent = text(item.regDate);
-					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					node.querySelector('.createdAt').textContent = text(item.createdAt);
+					node.querySelector('.updatedAt').textContent = text(item.updatedAt);
 					const followCountBtn = node.querySelector('.followCountBtn');
 					followCountBtn.addEventListener('click', async (e) => {
 						e.preventDefault();

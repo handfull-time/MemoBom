@@ -8,7 +8,7 @@
 		resultType="com.utime.memoBom.admin.vo.AdminScrapVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', S.REG_DATE) AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', S.CREATED_AT) AS createdAt,
 			S.USER_NO AS userNo,
 			U.ID AS userId,
 			U.NICKNAME AS userNickname,
@@ -19,7 +19,7 @@
 				ON U.USER_NO = S.USER_NO
 			INNER JOIN MB_FRAGMENT F
 				ON F.FRAGMENT_NO = S.FRAGMENT_NO
-		WHERE STRFTIME('%Y-%m-%d', S.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', S.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -27,7 +27,7 @@
 				OR UPPER(F.CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'
 			)
 		</if>
-		ORDER BY S.REG_DATE DESC
+		ORDER BY S.CREATED_AT DESC
 		LIMIT 20 OFFSET #{offset}
 	</select>
 

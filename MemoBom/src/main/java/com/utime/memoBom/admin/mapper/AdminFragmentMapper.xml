@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminFragmentVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', F.REG_DATE) AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', F.UPDATE_DATE) AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.CREATED_AT) AS createdAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.UPDATED_AT) AS updatedAt,
 			F.FRAGMENT_NO AS fragmentNo,
 			F.UID AS uid,
 			F.IS_DELETED AS deleted,
@@ -41,7 +41,7 @@
 				ON U.USER_NO = F.USER_NO
 			INNER JOIN MB_TOPIC T
 				ON T.TOPIC_NO = F.TOPIC_NO
-		WHERE STRFTIME('%Y-%m-%d', F.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', F.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(F.UID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -61,7 +61,7 @@
 		    SELECT FRAGMENT_NO
 		    FROM MB_FRAGMENT
 		    WHERE IS_DELETED = 1
-		      AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
+		      AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 		)
 	</delete>
 
@@ -69,7 +69,7 @@
 		DELETE FROM MB_FRAGMENT
 		WHERE 1=1
 			AND IS_DELETED = 1
-			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
+			AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

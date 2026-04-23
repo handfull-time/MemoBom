@@ -46,7 +46,7 @@ class CreateRepository {
 			
 			result += common.createIndex("MB_USER_LOGIN_RECORD_IP_INDX", "MB_USER_LOGIN_RECORD", "IP");
 			result += common.createIndex("MB_USER_LOGIN_RECORD_USER_NO_INDX", "MB_USER_LOGIN_RECORD", "USER_NO");
-			result += common.createIndex("MB_USER_LOGIN_RECORD_REG_DATE_INDX", "MB_USER_LOGIN_RECORD", "REG_DATE");
+			result += common.createIndex("MB_USER_LOGIN_RECORD_CREATED_AT_INDX", "MB_USER_LOGIN_RECORD", "CREATED_AT");
 		}
 		
 		if( !common.existTable("MB_TOPIC") ) {
@@ -77,7 +77,7 @@ class CreateRepository {
 			log.info("MB_FRAGMENT 생성");
 			result += mapper.createFragment();
 
-			result += common.createIndex("MB_FRAGMENT_REG_DATE_INDX", "MB_FRAGMENT", "REG_DATE");
+			result += common.createIndex("MB_FRAGMENT_CREATED_AT_INDX", "MB_FRAGMENT", "CREATED_AT");
 			result += common.createIndex("MB_FRAGMENT_USER_NO_INDX", "MB_FRAGMENT", "USER_NO");
 			result += common.createIndex("MB_FRAGMENT_TOPIC_NO_INDX", "MB_FRAGMENT", "TOPIC_NO");
 		}
@@ -88,7 +88,7 @@ class CreateRepository {
 			
 			result += common.createIndex("MB_FRAGMENT_COMMENTS_USER_NO_INDX", "MB_FRAGMENT_COMMENTS", "USER_NO");
 			result += common.createIndex("MB_FRAGMENT_COMMENTS_FRAGMENT_NO_INDX", "MB_FRAGMENT_COMMENTS", "FRAGMENT_NO");
-			result += common.createIndex("MB_FRAGMENT_COMMENTS_REG_DATE_INDX", "MB_FRAGMENT_COMMENTS", "REG_DATE");
+			result += common.createIndex("MB_FRAGMENT_COMMENTS_CREATED_AT_INDX", "MB_FRAGMENT_COMMENTS", "CREATED_AT");
 		}
 
 		if( !common.existTable("MB_FRAGMENT_SCRAP") ) {

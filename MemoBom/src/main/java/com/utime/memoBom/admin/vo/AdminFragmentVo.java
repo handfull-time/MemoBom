@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminFragmentVo {
-	String regDate;
-	String updateDate;
+	String createdAt;
+	String updatedAt;
 	Long fragmentNo;
 	String uid;
 	Boolean deleted;

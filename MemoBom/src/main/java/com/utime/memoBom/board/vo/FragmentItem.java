@@ -19,7 +19,7 @@ public class FragmentItem {
 	/** 사용자 정보 */
 	UserVo user;
 	/** 생성일 */
-	Date regDate;
+	Date createdAt;
 	/** 내용 */
 	String content;
 	/** 보관함 여부 */

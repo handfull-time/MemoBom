@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminCommentVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', C.REG_DATE, 'localtime') AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', C.UPDATE_DATE, 'localtime') AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', C.CREATED_AT, 'localtime') AS createdAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', C.UPDATED_AT, 'localtime') AS updatedAt,
 			C.COMMENT_NO AS commentNo,
 			C.UID AS uid,
 			C.IS_DELETED AS deleted,
@@ -29,7 +29,7 @@
 				ON T.TOPIC_NO = F.TOPIC_NO
 			INNER JOIN MB_USER U
 				ON U.USER_NO = C.USER_NO
-		WHERE STRFTIME('%Y-%m-%d', C.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', C.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(C.CONTENT) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -48,7 +48,7 @@
 		SELECT
 			F.FRAGMENT_NO AS fragmentNo,
 			F.UID AS uid,
-			STRFTIME('%Y-%m-%d %H:%M:%S', F.REG_DATE, 'localtime') AS regDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', F.CREATED_AT, 'localtime') AS createdAt,
 			F.TOPIC_NO AS topicNo,
 			T.NAME AS topicName,
 			T.IMOGI AS imogi,
@@ -67,7 +67,7 @@
 	<update id="updateCommentDeleted" parameterType="map">
 		UPDATE MB_FRAGMENT_COMMENTS
 		SET IS_DELETED = #{deleted},
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 		WHERE COMMENT_NO = #{commentNo}
 	</update>
 
@@ -75,7 +75,7 @@
 		DELETE FROM MB_FRAGMENT_COMMENTS
 		WHERE 1=1
 			AND IS_DELETED = 1
-			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
+			AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

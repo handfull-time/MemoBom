@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.utime.memoBom.common.security.LoginUser;
 import com.utime.memoBom.common.vo.BinResultVo;
-import com.utime.memoBom.common.vo.ReturnBasic;
 import com.utime.memoBom.common.vo.UserDevice;
 import com.utime.memoBom.user.vo.EFontSize;
 import com.utime.memoBom.user.vo.MyWriterVo;

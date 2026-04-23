@@ -47,8 +47,8 @@
 						</div>
 					</div>
 					<div class="mt-2 grid grid-cols-2 gap-x-3 text-sm text-slate-600">
-						<div>regDate: <span class="regDate tabular-nums">-</span></div>
-						<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+						<div>createdAt: <span class="createdAt tabular-nums">-</span></div>
+						<div>updatedAt: <span class="updatedAt tabular-nums">-</span></div>
 					</div>
 					<div class="mt-2">
 						<input type="text"
@@ -104,8 +104,8 @@
 						node.querySelector('.userNo').textContent = text(item.userNo, '0');
 					node.querySelector('.provider').textContent = text(item.provider);
 					node.querySelector('.role').textContent = text(item.role);
-					node.querySelector('.regDate').textContent = text(item.regDate);
-					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					node.querySelector('.createdAt').textContent = text(item.createdAt);
+					node.querySelector('.updatedAt').textContent = text(item.updatedAt);
 					const noteInput = node.querySelector('.noteInput');
 					noteInput.value = text(item.note, '');
 

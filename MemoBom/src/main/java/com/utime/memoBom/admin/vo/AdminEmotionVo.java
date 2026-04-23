@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminEmotionVo {
-	String regDate;
-	String updateDate;
+	String createdAt;
+	String updatedAt;
 	Long emotionLogId;
 	Short targetType;
 	Long targetNo;

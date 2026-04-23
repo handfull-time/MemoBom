@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminUserVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', U.REG_DATE) AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', U.UPDATE_DATE) AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', U.CREATED_AT) AS createdAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', U.UPDATED_AT) AS updatedAt,
 			U.USER_NO AS userNo,
 			U.ENABLED AS enabled,
 			U.ROLE AS role,
@@ -20,7 +20,7 @@
 			U.DESCRIPTION AS note,
 			U.PROFILE_IMG_PATH AS profileUrl
 		FROM MB_USER U
-		WHERE STRFTIME('%Y-%m-%d', U.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', U.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(U.ID) LIKE '%' || UPPER(#{keyword}) || '%'
@@ -36,14 +36,14 @@
 	<update id="updateUserNote" parameterType="map">
 		UPDATE MB_USER
 		SET DESCRIPTION = #{note},
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
 	</update>
 
 	<update id="updateUserEnabled" parameterType="map">
 		UPDATE MB_USER
 		SET ENABLED = #{enabled},
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
 	</update>
 
@@ -51,7 +51,7 @@
 		DELETE FROM MB_USER
 		WHERE 1=1
 			AND ENABLED = 0
-			AND UPDATE_DATE <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
+			AND UPDATED_AT <![CDATA[<]]> DATETIME(CURRENT_TIMESTAMP, '-' || ${day} || ' days')
 	</delete>
 
 </mapper>

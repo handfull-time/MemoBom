@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminTopicVo {
-	String regDate;
-	String updateDate;
+	String createdAt;
+	String updatedAt;
 	Long topicNo;
 	Long ownerNo;
 	String ownerNickname;

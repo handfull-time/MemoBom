@@ -811,7 +811,7 @@
 						location.href = `${window.contextPath}/Fragment/index.html?userUid=${userUid}`;
 					}
 				});
-				node.querySelector(".reg-date").textContent = safeText(item.regDate, "");
+				node.querySelector(".reg-date").textContent = safeText(item.createdAt, "");
 				bindFragmentImage(node, item);
 				node.querySelector(".content").innerHTML = safeText(item.content, "");
 
@@ -857,7 +857,7 @@
 				const u = comment.user || {};
 				if (img && u.profileUrl) img.src = u.profileUrl;
 				nick.textContent = u.nickname || 'User';
-				date.textContent = comment.regDate || '';
+				date.textContent = comment.createdAt || '';
 				cont.innerHTML = safeText(comment.content, "");
 
 				// [3.3][3.4]

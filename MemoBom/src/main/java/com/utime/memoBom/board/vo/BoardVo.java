@@ -12,7 +12,7 @@ public class BoardVo {
 	String uid;
 	
 	/** 작성일 */
-	Date regDate;
+	Date createdAt;
 	
 	/** 작성자 */
 	UserVo user;

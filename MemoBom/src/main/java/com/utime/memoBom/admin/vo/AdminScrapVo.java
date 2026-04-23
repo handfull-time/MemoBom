@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AdminScrapVo {
-	String regDate;
+	String createdAt;
 	Long userNo;
 	String userId;
 	String userNickname;

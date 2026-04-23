@@ -11,7 +11,7 @@ public class MyCommentVo {
 	/** 내용 */
 	String content;
 	/** 생성일 */
-	Date regDate;
+	Date createdAt;
 
 	String fragmentUid;
 	

@@ -8,8 +8,8 @@
 		resultType="com.utime.memoBom.admin.vo.AdminEmotionVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', E.REG_DATE) AS regDate,
-			STRFTIME('%Y-%m-%d %H:%M:%S', E.UPDATE_DATE) AS updateDate,
+			STRFTIME('%Y-%m-%d %H:%M:%S', E.CREATED_AT) AS createdAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', E.UPDATED_AT) AS updatedAt,
 			E.EMOTION_LOG_ID AS emotionLogId,
 			E.TARGET_TYPE AS targetType,
 			E.TARGET_NO AS targetNo,
@@ -35,7 +35,7 @@
 				ON F2.FRAGMENT_NO = C.FRAGMENT_NO
 			LEFT JOIN MB_TOPIC T
 				ON T.TOPIC_NO = COALESCE(F1.TOPIC_NO, F2.TOPIC_NO)
-		WHERE STRFTIME('%Y-%m-%d', E.REG_DATE) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', E.CREATED_AT) = #{date}
 		<if test="keyword != null and keyword != ''">
 			AND (
 				UPPER(E.EMOTION) LIKE '%' || UPPER(#{keyword}) || '%'

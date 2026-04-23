@@ -7,7 +7,7 @@
 	        useGeneratedKeys="true" keyProperty="subNo">
 	
 	    INSERT INTO MB_PUSH_SUB (
-	        UPDATE_DATE
+	        UPDATED_AT
 	        , USER_NO
 	        , END_POINT
 	        , P256DH
@@ -38,7 +38,7 @@
 	<update id="updatePushSub" parameterType="com.utime.memoBom.push.vo.PushSubVo">
 	    UPDATE MB_PUSH_SUB
 	    <set>
-	        UPDATE_DATE = CURRENT_TIMESTAMP
+	        UPDATED_AT = CURRENT_TIMESTAMP
 	        , P256DH = #{p256dh}
 	        , AUTH = #{auth}
 	
@@ -105,7 +105,7 @@
 	<!--발송 성공-->
 	<update id="markSuccess" parameterType="long">
 		UPDATE MB_PUSH_SUB SET
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 			, LAST_PUSH_DATE = CURRENT_TIMESTAMP
 			, FAIL_COUNT = 0
 			, IS_ACTIVE = 1
@@ -114,7 +114,7 @@
 
 	<update id="markFail" parameterType="long">
 		UPDATE MB_PUSH_SUB SET
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 			, FAIL_COUNT = FAIL_COUNT + 1
 		WHERE SUB_NO = #{subNo}
 	</update>
@@ -122,7 +122,7 @@
 	<!--구독 정보 비활성화.-->
 	<update id="markInactive" parameterType="long">
 		UPDATE MB_PUSH_SUB SET
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 			, IS_ACTIVE = 0
 		WHERE SUB_NO = #{subNo}
 	</update>

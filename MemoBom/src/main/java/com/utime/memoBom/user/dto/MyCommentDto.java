@@ -14,7 +14,7 @@ public class MyCommentDto {
 	String content;
 	/** 생성일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	Date regDate;
+	Date createdAt;
 	
 	MyFragmentDto fragment = new MyFragmentDto();
 }

@@ -45,7 +45,7 @@
 	<insert id="insertTopic" parameterType="com.utime.memoBom.board.vo.TopicVo"
 	    useGeneratedKeys="true" keyProperty="topicNo" >
 		INSERT INTO MB_TOPIC (
-			UPDATE_DATE 
+			UPDATED_AT 
 			, OWNER_NO
 			, ENABLED 
 			, UID
@@ -84,7 +84,7 @@
 	<!--topic 수정-->
 	<update id="updateTopic" parameterType="com.utime.memoBom.board.vo.TopicVo">
 		UPDATE MB_TOPIC SET
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 			, ENABLED = #{enabled}
 			, EXTERNAL = #{external}
 			, EMOTION = #{emotion}
@@ -234,18 +234,18 @@
 		    </if>
 		<choose>
 		    <when test="sortType != null and sortType.name() == 'fresh'">
-		        ORDER BY TP.REG_DATE DESC, TP.TOPIC_NO DESC
+		        ORDER BY TP.CREATED_AT DESC, TP.TOPIC_NO DESC
 		    </when>
 		
 		    <when test="sortType != null and sortType.name() == 'trending'">
 		        ORDER BY COALESCE(ST.FRAGMENT_COUNT, 0) DESC,
 		                 COALESCE(ST.FOLLOW_COUNT, 0) DESC,
-		                 TP.REG_DATE DESC,
+		                 TP.CREATED_AT DESC,
 		                 TP.TOPIC_NO DESC
 		    </when>
 		
 		    <otherwise>
-		        ORDER BY TP.REG_DATE DESC, TP.TOPIC_NO DESC
+		        ORDER BY TP.CREATED_AT DESC, TP.TOPIC_NO DESC
 		    </otherwise>
 		</choose>
 		
@@ -438,7 +438,7 @@
 	    ) FL
 	      ON FL.TOPIC_NO = TP.TOPIC_NO
 	    LEFT JOIN (
-	        SELECT TOPIC_NO, COUNT(*) CNT, MAX(REG_DATE) LAST_AT
+	        SELECT TOPIC_NO, COUNT(*) CNT, MAX(CREATED_AT) LAST_AT
 	        FROM MB_FRAGMENT
 	        WHERE IS_DELETED = 0
 	        GROUP BY TOPIC_NO
@@ -448,7 +448,7 @@
 	        SELECT
 	            F.TOPIC_NO
 	            , COUNT(*) CNT
-	            , MAX(C.REG_DATE) LAST_AT
+	            , MAX(C.CREATED_AT) LAST_AT
 	        FROM MB_FRAGMENT_COMMENTS C
 	        JOIN MB_FRAGMENT F
 	          ON F.FRAGMENT_NO = C.FRAGMENT_NO
@@ -594,7 +594,7 @@
 			AND TP.UID = #{uid}
 			AND INV.TARGET_USER_NO = #{user.userNo}
 			AND INV.IS_ACCEPT IS NULL
-		ORDER BY INV.REG_DATE DESC
+		ORDER BY INV.CREATED_AT DESC
 		LIMIT 1
 	</select>
     

@@ -43,7 +43,7 @@
 					<div>브라우저: <span class="browser">-</span></div>
 					<div>OS: <span class="os">-</span></div>
 					<div>장치ID: <span class="deviceId break-all">-</span></div>
-					<div>등록일: <span class="regDate tabular-nums">-</span></div>
+					<div>등록일: <span class="createdAt tabular-nums">-</span></div>
 					<div>마지막 발송일: <span class="lastPushDate tabular-nums">-</span></div>
 					<div>실패 횟수: <span class="failCount tabular-nums">0</span></div>
 				</div>
@@ -88,7 +88,7 @@
 					node.querySelector('.browser').textContent = text(item.browser);
 					node.querySelector('.os').textContent = text(item.os);
 					node.querySelector('.deviceId').textContent = text(item.deviceId);
-					node.querySelector('.regDate').textContent = text(item.regDate);
+					node.querySelector('.createdAt').textContent = text(item.createdAt);
 					node.querySelector('.lastPushDate').textContent = text(item.lastPushDate);
 					node.querySelector('.failCount').textContent = text(item.failCount, '0');
 

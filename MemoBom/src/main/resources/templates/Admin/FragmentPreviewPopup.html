@@ -28,7 +28,7 @@
 						 th:src="${item.userProfileUrl != null and !#strings.isEmpty(item.userProfileUrl) ? item.userProfileUrl : '/images/profile-placeholder.svg'}"
 						 alt="U" />
 					<div class="text-sm font-medium text-slate-700 max-w-[120px] truncate" th:text="${item.userNickname}">User</div>
-					<div class="text-xs text-slate-400 tabular-nums" th:text="${item.regDate}">2026-01-24 05:09</div>
+					<div class="text-xs text-slate-400 tabular-nums" th:text="${item.createdAt}">2026-01-24 05:09</div>
 				</div>
 			</div>
 

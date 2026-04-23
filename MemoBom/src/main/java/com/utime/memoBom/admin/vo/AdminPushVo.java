@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AdminPushVo {
-	String regDate;
+	String createdAt;
 	Long subNo;
 	Long userNo;
 	String userId;

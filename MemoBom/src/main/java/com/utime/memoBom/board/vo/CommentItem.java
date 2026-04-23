@@ -22,7 +22,7 @@ public class CommentItem {
 	String content;
 	/** 생성일 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-	Date regDate;
+	Date createdAt;
 	/** 이모션 목록 */
 	List<EmotionItem> emotionList;
 }

@@ -13,5 +13,5 @@ public class FragmentVo {
 	String uid;
 	String ip;
 	String device;
-	Date regDate;
+	Date createdAt;
 }

@@ -7,7 +7,7 @@
 	<insert id="insertUser" parameterType="com.utime.memoBom.user.vo.UserVo" 
 		useGeneratedKeys="true" keyProperty="userNo" >
 		INSERT INTO MB_USER (
-			UPDATE_DATE 
+			UPDATED_AT 
 			, ENABLED
 			, UID
 			, ROLE
@@ -53,8 +53,8 @@
 	
 	<sql id="UserColumn">
 		USER_NO
-		, DATETIME(REG_DATE,'localtime') AS REG_DATE
-		, DATETIME(UPDATE_DATE,'localtime') AS UPDATE_DATE
+		, DATETIME(CREATED_AT,'localtime') AS CREATED_AT
+		, DATETIME(UPDATED_AT,'localtime') AS UPDATED_AT
 		, ENABLED 
 		, UID
 		, ROLE 
@@ -69,8 +69,8 @@
 	
 	<resultMap id="UserVoMap" type="com.utime.memoBom.user.vo.UserVo">
 		<id column="USER_NO" property="userNo"/>
-		<result column="REG_DATE" property="regDate"/>
-		<result column="UPDATE_DATE" property="updateDate"/>
+		<result column="CREATED_AT" property="createdAt"/>
+		<result column="UPDATED_AT" property="updatedAt"/>
 		<result column="ENABLED" property="enabled"/>
 		<result column="ROLE" property="role"/>
 		<result column="PROVIDER" property="provider"/>
@@ -111,7 +111,7 @@
 	<!--회원 정보 제거-->
 	<update id="removeUser" parameterType="com.utime.memoBom.user.vo.UserVo" >
 		UPDATE MB_USER SET 
-			UPDATE_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 			, ENABLED = 0
 			, ROLE = '-'
 			, PROVIDER = '-'
@@ -122,7 +122,7 @@
 	<!--내 작성 데이터-->
 	<select id="selectMyWriteDataList" parameterType="map" resultType="com.utime.memoBom.user.vo.MyWriterVo" >
 		SELECT
-		    X.REG_DATE   AS "date",
+		    X.CREATED_AT   AS "date",
 		    X.TARGET     AS "target",
 		    X.UID        AS "uid",
 	        CASE
@@ -132,32 +132,32 @@
        		END AS "name"
 		FROM (
 		    SELECT
-		        F.REG_DATE AS REG_DATE,
+		        F.CREATED_AT AS CREATED_AT,
 		        'fragment' AS TARGET,
 		        F.UID AS UID,
 		        F.CONTENT AS NAME
 		    FROM MB_FRAGMENT F
 		    WHERE F.USER_NO = #{user.userNo}
-		      AND F.REG_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
-		      AND F.REG_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
+		      AND F.CREATED_AT >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
+		      AND F.CREATED_AT <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
 		      AND F.IS_DELETED = 0
 		
 		    UNION ALL
 		
 		    SELECT
-		        C.REG_DATE AS REG_DATE,
+		        C.CREATED_AT AS CREATED_AT,
 		        'comment'  AS TARGET,
 		        C.UID AS UID,
 		        C.CONTENT AS NAME
 		    FROM MB_FRAGMENT_COMMENTS C
 		    WHERE C.USER_NO = #{user.userNo}
-		      AND C.REG_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
-		      AND C.REG_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
+		      AND C.CREATED_AT >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
+		      AND C.CREATED_AT <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
 		      
 		    UNION ALL
 		    
 		    SELECT
-		        HL.LOC_DATE AS REG_DATE,
+		        HL.LOC_DATE AS CREATED_AT,
 		        CASE WHEN HL.HOLIDAY = 1 THEN 'holiday' ELSE 'anniversary' END AS TARGET,
 		        '' AS UID,
 		        HL.NAME AS NAME
@@ -166,7 +166,7 @@
             	AND HL.LOC_DATE >= DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00')
             	AND HL.LOC_DATE <![CDATA[ < ]]> DATETIME(SUBSTR(#{date}, 1, 4) || '-' || SUBSTR(#{date}, 5, 2) || '-01 00:00:00', '+1 month')
 		) X
-		ORDER BY X.REG_DATE ASC
+		ORDER BY X.CREATED_AT ASC
 	</select>
 	
 	<resultMap id="BasicUserVoMap" type="com.utime.memoBom.user.vo.query.BasicUserVo">
@@ -241,7 +241,7 @@
  	<!--nickName 변경-->
  	<update id="updateNicname" parameterType="map" >
  		UPDATE MB_USER SET
- 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			UPDATED_AT = CURRENT_TIMESTAMP
  			, NICKNAME = #{nickname}
  		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
@@ -249,7 +249,7 @@
 	<!--개인 이미지 정보 수정-->
 	<update id="updateProfile" parameterType="map" >
  		UPDATE MB_USER SET
- 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			UPDATED_AT = CURRENT_TIMESTAMP
  			, PROFILE_IMG_PATH = #{profile}
  		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>
@@ -278,7 +278,7 @@
 	<!--푸시 수신 설정-->
 	<update id="updatePushStatus" parameterType="map" >
  		UPDATE MB_USER SET
- 			UPDATE_DATE = CURRENT_TIMESTAMP
+ 			UPDATED_AT = CURRENT_TIMESTAMP
  			, PUSH_ENABLED = #{enabled}
  		WHERE USER_NO = #{user.userNo} AND ENABLED = 1
  	</update>

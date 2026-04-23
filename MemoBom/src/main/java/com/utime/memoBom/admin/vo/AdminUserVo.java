@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AdminUserVo {
-	String regDate;
-	String updateDate;
+	String createdAt;
+	String updatedAt;
 	Long userNo;
 	Boolean enabled;
 	String role;

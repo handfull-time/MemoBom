@@ -63,8 +63,8 @@
 				<div class="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-3 gap-y-1 text-sm text-slate-600">
 					<div>userNo: <span class="userNo tabular-nums">0</span></div>
 					<div>fragmentNo: <span class="fragmentNo tabular-nums">0</span></div>
-					<div>regDate: <span class="regDate tabular-nums">-</span></div>
-					<div>updateDate: <span class="updateDate tabular-nums">-</span></div>
+					<div>createdAt: <span class="createdAt tabular-nums">-</span></div>
+					<div>updatedAt: <span class="updatedAt tabular-nums">-</span></div>
 				</div>
 			</article>
 		</template>
@@ -132,8 +132,8 @@
 					node.querySelector('.commentContent').textContent = text(item.content);
 					node.querySelector('.userNo').textContent = text(item.userNo, '0');
 					node.querySelector('.fragmentNo').textContent = text(item.fragmentNo, '0');
-					node.querySelector('.regDate').textContent = text(item.regDate);
-					node.querySelector('.updateDate').textContent = text(item.updateDate);
+					node.querySelector('.createdAt').textContent = text(item.createdAt);
+					node.querySelector('.updatedAt').textContent = text(item.updatedAt);
 					node.querySelector('.fragmentPreviewBtn').addEventListener('click', async () => {
 						await openFragmentPopup(item.fragmentNo);
 					});
