@@ -169,6 +169,7 @@ class CreateRepository {
 			
 			result += common.createIndex("MB_FRAGMENT_IMAGE_USER_NO_INDX", "MB_FRAGMENT_IMAGE", "USER_NO");	
 			result += common.createIndex("MB_FRAGMENT_IMAGE_FRAGMENT_NO_INDX", "MB_FRAGMENT_IMAGE", "FRAGMENT_NO");
+			result += common.createUniqueIndex("MB_FRAGMENT_IMAGE_FRAGMENT_ORDER_INDX", "MB_FRAGMENT_IMAGE", "FRAGMENT_NO, IMAGE_ORDER");
 		}
 		
 		if( !common.existTable("MB_TOPIC_INVITE_USER") ) {

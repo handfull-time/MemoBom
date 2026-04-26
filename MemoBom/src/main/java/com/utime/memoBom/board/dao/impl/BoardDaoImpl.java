@@ -105,10 +105,8 @@ class BoardDaoImpl implements BoardDao {
 		return result;
 	}
 	
-	
-	
 	@Transactional(rollbackFor = Exception.class)
-	private int upsertImage( LoginUser user, long fragmentNo, BoardReqDto reqVo) {
+	private int upsertImage( LoginUser user, long fragmentNo, BoardReqDto reqVo) throws Exception {
 		int result = 0;
 		
 		// 이미지
@@ -159,7 +157,8 @@ class BoardDaoImpl implements BoardDao {
             result = boardMapper.upsertFragmentImage(user, fragmentNo, imgVo);
             
         } catch (IOException e) {
-            result = -1;
+        	log.error("", e);
+        	throw e;
         }
 		return result;
 	}
@@ -191,6 +190,7 @@ class BoardDaoImpl implements BoardDao {
 		if (topic == null) {
 			throw new Exception("topic is null.");
 		}
+		
 		item.setUid(UUID.randomUUID().toString());
 
 		result += boardMapper.insertFragment(user, device, topic, item);
@@ -319,6 +319,7 @@ class BoardDaoImpl implements BoardDao {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public CommentItem saveComment(LoginUser user, CommentReqVo reqVo) throws Exception {
+		
 		reqVo.setCommentUid(UUID.randomUUID().toString());
 		
 		boardMapper.insertComment(user, reqVo);
