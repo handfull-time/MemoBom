@@ -25,7 +25,7 @@
 			 WHERE STRFTIME('%Y-%m-%d', CREATED_AT) = #{date}) AS "scrap",
 			(SELECT COUNT(*)
 			 FROM MB_SHARE
-			 WHERE STRFTIME('%Y-%m-%d', CREATE_AT) = #{date}) AS "share",
+			 WHERE STRFTIME('%Y-%m-%d', CREATED_AT) = #{date}) AS "share",
 			(SELECT COUNT(*)
 			 FROM MB_PUSH_SUB
 			 WHERE STRFTIME('%Y-%m-%d', CREATED_AT) = #{date}) AS "push"

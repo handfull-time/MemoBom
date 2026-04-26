@@ -37,7 +37,7 @@
 		SET
 			MIME_TYPE = #{mimeType},
 			IMAGE = #{image, jdbcType=VARBINARY},
-			UPD_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 		WHERE USER_NO = #{userNo}
 	</update>
 

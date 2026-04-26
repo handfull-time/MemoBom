@@ -631,7 +631,7 @@
 			WIDTH = excluded.WIDTH,
 			HEIGHT = excluded.HEIGHT,
 			FILE_SIZE = excluded.FILE_SIZE,
-			UPD_DATE = CURRENT_TIMESTAMP
+			UPDATED_AT = CURRENT_TIMESTAMP
 	</update>
 	
 	<!--Fragment Image 정보 조회-->

@@ -8,7 +8,7 @@
 		resultType="com.utime.memoBom.admin.vo.AdminShareVo">
 		<bind name="offset" value="(pageNo - 1) * 20"/>
 		SELECT
-			STRFTIME('%Y-%m-%d %H:%M:%S', S.CREATE_AT) AS createAt,
+			STRFTIME('%Y-%m-%d %H:%M:%S', S.CREATED_AT) AS createAt,
 			S.SHARE_NO AS shareNo,
 			S.UID AS uid,
 			S.TARGET_TYPE AS targetType,
@@ -27,7 +27,7 @@
 			LEFT JOIN MB_FRAGMENT F
 				ON S.TARGET_TYPE = 1
 				AND F.FRAGMENT_NO = S.TARGET_NO
-		WHERE STRFTIME('%Y-%m-%d', S.CREATE_AT) = #{date}
+		WHERE STRFTIME('%Y-%m-%d', S.CREATED_AT) = #{date}
 			AND S.TARGET_TYPE IN (0, 1)
 		<if test="keyword != null and keyword != ''">
 			AND (

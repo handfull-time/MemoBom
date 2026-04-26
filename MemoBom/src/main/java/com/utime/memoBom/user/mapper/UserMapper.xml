@@ -323,7 +323,7 @@
 	
 	<resultMap id="AlarmVoMap" type="com.utime.memoBom.user.vo.query.AlarmVo">
 		<id column="UID" property="uid"/>
-		<result column="CREATE_AT" property="createDate"/>
+		<result column="CREATED_AT" property="createDate"/>
 		<result column="READ_AT" property="readDate"/>
 		<result column="ALARM_TYPE" property="alarmType" typeHandler="com.utime.memoBom.user.typeHandler.EAlaramTypeTypeHandler"/>
 		<result column="TITLE" property="title"/>
@@ -335,7 +335,7 @@
 	<select id="listMyAlarm" parameterType="map" resultMap="AlarmVoMap">
 		SELECT
 			UID
-			, DATETIME(CREATE_AT,'localtime') AS CREATE_AT 
+			, DATETIME(CREATED_AT,'localtime') AS CREATED_AT 
 			, DATETIME(READ_AT,'localtime') AS READ_AT 
 			, ALARM_TYPE 
 			, TITLE 
@@ -357,7 +357,7 @@
 	<!--기간 만료된 알람 제거-->
 	<delete id="removeAlarmExpire">
 		DELETE FROM MB_ALARM
-		WHERE CREATE_AT <![CDATA[ <= ]]> DATETIME(CURRENT_TIMESTAMP, '-3 months')
+		WHERE CREATED_AT <![CDATA[ <= ]]> DATETIME(CURRENT_TIMESTAMP, '-3 months')
 	</delete>
 	
 </mapper>

@@ -148,7 +148,7 @@ class CreateRepository {
 			result += mapper.createAlarm();
 			
 			result += common.createIndex("MB_ALARM_USER_NO_INDX", "MB_ALARM", "USER_NO");
-			result += common.createIndex("MB_ALARM_CREATE_AT_INDX", "MB_ALARM", "CREATE_AT");
+			result += common.createIndex("MB_ALARM_CREATED_AT_INDX", "MB_ALARM", "CREATED_AT");
 		}
 		
 		if( !common.existTable("MB_USER_PROFILE") ) {
